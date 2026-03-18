@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>gAIa Verktyg</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #0a0a10;
+            --bg-card: #12121e;
+            --bg-card-hover: #1a1a2e;
+            --accent: #6c63ff;
+            --accent-soft: rgba(108, 99, 255, 0.12);
+            --accent-glow: rgba(108, 99, 255, 0.25);
+            --green: #34d399;
+            --green-soft: rgba(52, 211, 153, 0.12);
+            --amber: #fbbf24;
+            --amber-soft: rgba(251, 191, 36, 0.12);
+            --rose: #f472b6;
+            --rose-soft: rgba(244, 114, 182, 0.12);
+            --cyan: #22d3ee;
+            --cyan-soft: rgba(34, 211, 238, 0.12);
+            --orange: #fb923c;
+            --orange-soft: rgba(251, 146, 60, 0.12);
+            --text: #e8e8f4;
+            --text-dim: #7878a0;
+            --text-muted: #4a4a6a;
+            --border: #1e1e30;
+            --radius: 16px;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* Subtle grid background */
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background:
+                radial-gradient(ellipse at 20% 0%, rgba(108, 99, 255, 0.08) 0%, transparent 50%),
+                radial-gradient(ellipse at 80% 100%, rgba(52, 211, 153, 0.05) 0%, transparent 50%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 0 24px;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Hero */
+        .hero {
+            padding: 64px 0 48px;
+            text-align: center;
+        }
+
+        .hero-logo {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 72px;
+            height: 72px;
+            background: linear-gradient(135deg, var(--accent), #a855f7);
+            border-radius: 20px;
+            font-size: 36px;
+            margin-bottom: 24px;
+            box-shadow: 0 8px 30px var(--accent-glow);
+            animation: float 6s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-6px); }
+        }
+
+        .hero h1 {
+            font-size: 40px;
+            font-weight: 800;
+            letter-spacing: -1px;
+            margin-bottom: 12px;
+            background: linear-gradient(135deg, var(--text), var(--accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .hero p {
+            font-size: 17px;
+            color: var(--text-dim);
+            max-width: 500px;
+            margin: 0 auto;
+            line-height: 1.6;
+        }
+
+        /* Categories */
+        .category {
+            margin-bottom: 48px;
+        }
+
+        .category-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 20px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .category-header h2 {
+            font-size: 15px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: var(--text-dim);
+        }
+
+        .category-count {
+            background: var(--accent-soft);
+            color: var(--accent);
+            font-size: 11px;
+            font-weight: 700;
+            padding: 2px 8px;
+            border-radius: 10px;
+        }
+
+        /* Tool grid */
+        .tools-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 16px;
+        }
+
+        .tool-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 24px;
+            text-decoration: none;
+            color: inherit;
+            transition: all 0.25s ease;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .tool-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: var(--card-accent, var(--accent));
+            opacity: 0;
+            transition: opacity 0.25s ease;
+        }
+
+        .tool-card:hover {
+            background: var(--bg-card-hover);
+            border-color: var(--card-accent, var(--accent));
+            transform: translateY(-3px);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .tool-card:hover::before {
+            opacity: 1;
+        }
+
+        .tool-top {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+        }
+
+        .tool-icon {
+            width: 44px;
+            height: 44px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+            flex-shrink: 0;
+        }
+
+        .tool-arrow {
+            color: var(--text-muted);
+            font-size: 18px;
+            transition: all 0.2s ease;
+        }
+
+        .tool-card:hover .tool-arrow {
+            color: var(--card-accent, var(--accent));
+            transform: translateX(3px);
+        }
+
+        .tool-name {
+            font-size: 17px;
+            font-weight: 700;
+            letter-spacing: -0.3px;
+        }
+
+        .tool-desc {
+            font-size: 13px;
+            color: var(--text-dim);
+            line-height: 1.5;
+            flex: 1;
+        }
+
+        .tool-tags {
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+        }
+
+        .tag {
+            font-size: 11px;
+            font-weight: 500;
+            padding: 3px 10px;
+            border-radius: 6px;
+            background: rgba(255,255,255,0.04);
+            color: var(--text-muted);
+            border: 1px solid var(--border);
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 48px 0;
+            color: var(--text-muted);
+            font-size: 13px;
+            border-top: 1px solid var(--border);
+        }
+
+        footer a {
+            color: var(--accent);
+            text-decoration: none;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .hero { padding: 40px 0 32px; }
+            .hero h1 { font-size: 28px; }
+            .tools-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <section class="hero">
+        <div class="hero-logo">🌎</div>
+        <h1>gAIa Verktyg</h1>
+        <p>Digitala verktyg för undervisning, fågelskådning och kreativt arbete</p>
+    </section>
+
+    <!-- Klassrumsverktyg -->
+    <section class="category">
+        <div class="category-header">
+            <h2>🏫 Klassrumsverktyg</h2>
+            <span class="category-count">5</span>
+        </div>
+        <div class="tools-grid">
+            <a href="https://hktcr.github.io/SoundMonitor/" class="tool-card" style="--card-accent: var(--green);">
+                <div class="tool-top">
+                    <div class="tool-icon" style="background: var(--green-soft); color: var(--green);">🎙️</div>
+                    <span class="tool-arrow">→</span>
+                </div>
+                <div class="tool-name">SoundMonitor</div>
+                <div class="tool-desc">Realtids-ljudmonitor med aktivitetsfaser, streak-counter och nordljus-animation</div>
+                <div class="tool-tags"><span class="tag">klassrum</span><span class="tag">ljud</span></div>
+            </a>
+
+            <a href="https://hktcr.github.io/LessonLab/" class="tool-card" style="--card-accent: var(--amber);">
+                <div class="tool-top">
+                    <div class="tool-icon" style="background: var(--amber-soft); color: var(--amber);">📖</div>
+                    <span class="tool-arrow">→</span>
+                </div>
+                <div class="tool-name">LessonLab</div>
+                <div class="tool-desc">Lösenordsskyddad samling av genomgångsmanus för klassrummet</div>
+                <div class="tool-tags"><span class="tag">lektion</span><span class="tag">manus</span></div>
+            </a>
+
+            <a href="https://hktcr.github.io/StudentSelector/" class="tool-card" style="--card-accent: var(--cyan);">
+                <div class="tool-top">
+                    <div class="tool-icon" style="background: var(--cyan-soft); color: var(--cyan);">🎯</div>
+                    <span class="tool-arrow">→</span>
+                </div>
+                <div class="tool-name">ElevVäljare</div>
+                <div class="tool-desc">Slumpmässigt val av elever med klasslistor och viktning</div>
+                <div class="tool-tags"><span class="tag">klassrum</span><span class="tag">urval</span></div>
+            </a>
+
+            <a href="https://hktcr.github.io/klassrumsplacering/" class="tool-card" style="--card-accent: var(--rose);">
+                <div class="tool-top">
+                    <div class="tool-icon" style="background: var(--rose-soft); color: var(--rose);">🪑</div>
+                    <span class="tool-arrow">→</span>
+                </div>
+                <div class="tool-name">Klassrumsplacering</div>
+                <div class="tool-desc">Elever väljer önskade platser och skickar in sina val till läraren</div>
+                <div class="tool-tags"><span class="tag">klassrum</span><span class="tag">placering</span></div>
+            </a>
+
+            <a href="https://hktcr.github.io/SlideLauncher/" class="tool-card" style="--card-accent: var(--orange);">
+                <div class="tool-top">
+                    <div class="tool-icon" style="background: var(--orange-soft); color: var(--orange);">🖥️</div>
+                    <span class="tool-arrow">→</span>
+                </div>
+                <div class="tool-name">SlideLauncher</div>
+                <div class="tool-desc">Presentationsvisare för SlideCraft-formatet</div>
+                <div class="tool-tags"><span class="tag">presentation</span></div>
+            </a>
+        </div>
+    </section>
+
+    <!-- Fågelverktyg -->
+    <section class="category">
+        <div class="category-header">
+            <h2>🐦 Fågelskådning</h2>
+            <span class="category-count">3</span>
+        </div>
+        <div class="tools-grid">
+            <a href="https://astorpsfaglar.se" class="tool-card" style="--card-accent: var(--green);">
+                <div class="tool-top">
+                    <div class="tool-icon" style="background: var(--green-soft); color: var(--green);">🌿</div>
+                    <span class="tool-arrow">→</span>
+                </div>
+                <div class="tool-name">Fågelåret i Åstorp</div>
+                <div class="tool-desc">Fullständig webbplats med årshjul, artguide, väder och krysslistor</div>
+                <div class="tool-tags"><span class="tag">hugo</span><span class="tag">webbplats</span></div>
+            </a>
+
+            <a href="https://hktcr.github.io/faltlistan/" class="tool-card" style="--card-accent: var(--cyan);">
+                <div class="tool-top">
+                    <div class="tool-icon" style="background: var(--cyan-soft); color: var(--cyan);">📋</div>
+                    <span class="tool-arrow">→</span>
+                </div>
+                <div class="tool-name">Fältlistan</div>
+                <div class="tool-desc">Digital krysslista för fågelskådning — offline-resilient och standalone</div>
+                <div class="tool-tags"><span class="tag">krysslista</span><span class="tag">offline</span></div>
+            </a>
+
+            <a href="https://hktcr.github.io/koordinatvaljare/" class="tool-card" style="--card-accent: var(--amber);">
+                <div class="tool-top">
+                    <div class="tool-icon" style="background: var(--amber-soft); color: var(--amber);">📍</div>
+                    <span class="tool-arrow">→</span>
+                </div>
+                <div class="tool-name">Koordinatväljare</div>
+                <div class="tool-desc">Terrängkarta för att plocka GPS-koordinater — perfekt för fältanteckningar</div>
+                <div class="tool-tags"><span class="tag">karta</span><span class="tag">GPS</span></div>
+            </a>
+        </div>
+    </section>
+
+    <!-- Produktivitetsverktyg -->
+    <section class="category">
+        <div class="category-header">
+            <h2>⚡ Produktivitet</h2>
+            <span class="category-count">3</span>
+        </div>
+        <div class="tools-grid">
+            <a href="https://hktcr.github.io/pdf-verktyg/" class="tool-card" style="--card-accent: var(--accent);">
+                <div class="tool-top">
+                    <div class="tool-icon" style="background: var(--accent-soft); color: var(--accent);">📄</div>
+                    <span class="tool-arrow">→</span>
+                </div>
+                <div class="tool-name">PDF Verktyg</div>
+                <div class="tool-desc">Slå ihop, dela och redigera PDF:er — välj sidor visuellt och exportera</div>
+                <div class="tool-tags"><span class="tag">PDF</span><span class="tag">merge</span></div>
+            </a>
+
+            <a href="https://hktcr.github.io/Bildanalys/" class="tool-card" style="--card-accent: var(--rose);">
+                <div class="tool-top">
+                    <div class="tool-icon" style="background: var(--rose-soft); color: var(--rose);">🖼️</div>
+                    <span class="tool-arrow">→</span>
+                </div>
+                <div class="tool-name">Bildanalys</div>
+                <div class="tool-desc">SharpFrame — extrahera skarpa bildrutor ur video för analys</div>
+                <div class="tool-tags"><span class="tag">bild</span><span class="tag">video</span></div>
+            </a>
+
+            <a href="https://hktcr.github.io/nyhetskartan/" class="tool-card" style="--card-accent: var(--orange);">
+                <div class="tool-top">
+                    <div class="tool-icon" style="background: var(--orange-soft); color: var(--orange);">🗞️</div>
+                    <span class="tool-arrow">→</span>
+                </div>
+                <div class="tool-name">Nyhetskartan</div>
+                <div class="tool-desc">Sammanställning av aktuella nyheter på en interaktiv världskarta</div>
+                <div class="tool-tags"><span class="tag">nyheter</span><span class="tag">karta</span></div>
+            </a>
+        </div>
+    </section>
+</div>
+
+<footer>
+    <p>gAIa Verktyg — <a href="https://github.com/hktcr">github.com/hktcr</a></p>
+</footer>
+
+</body>
+</html>
