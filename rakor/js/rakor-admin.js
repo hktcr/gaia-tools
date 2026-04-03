@@ -58,7 +58,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let state = { grids: {}, groups: {} };
 
     // Field-data-first state
-    let fieldPoints = [];           // Array of { id, lat, lng, count, color }
+    let fieldPoints = [];           // Array of { id, lat, lng, count, color, selected }
     let activePointId = null;       // Which point is being assigned grids
     let pointAssignments = {};      // { pointId: Set<gridId> }
     let rawFieldText = "";          // Original text from field notes
@@ -152,7 +152,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const id = cellObj.id;
             const s = state.grids[id];
 
-            // Skip cells that are currently assigned in this session (they're rendered by renderFieldAssignments)
+            // Skip cells that are currently assigned in this session
             if (sessionAssignedCells.has(id)) return;
 
             if (s && s.status === 'nest' && s.group) {
@@ -236,7 +236,8 @@ document.addEventListener('DOMContentLoaded', () => {
                     points.push({
                         id: 'fp_' + nextPointId++,
                         lat, lng, count,
-                        color: pointColors[(points.length) % pointColors.length]
+                        color: pointColors[(points.length) % pointColors.length],
+                        selected: false  // FIX #1: multiselect state
                     });
                 }
             }
@@ -299,7 +300,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         fieldPoints.forEach((pt, i) => {
             const isActive = pt.id === activePointId;
-            const num = fieldPoints.indexOf(pt) + 1;
+            const num = i + 1;
 
             const icon = L.divIcon({
                 className: 'field-point-icon',
@@ -398,9 +399,8 @@ document.addEventListener('DOMContentLoaded', () => {
         activePointId = pointId;
         renderFieldPoints();
         renderPointList();
-        renderState(); // Re-render to update cell opacities
+        renderState();
 
-        // Fly to the point
         const pt = fieldPoints.find(p => p.id === pointId);
         if (pt) {
             map.flyTo([pt.lat, pt.lng], 15, { animate: true, duration: 0.8 });
@@ -408,10 +408,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function handleCellClick(gridId) {
-        if (!activePointId) {
-            // No active point: do nothing (or show hint)
-            return;
-        }
+        if (!activePointId) return;
 
         const assignments = pointAssignments[activePointId];
         if (!assignments) return;
@@ -419,7 +416,6 @@ document.addEventListener('DOMContentLoaded', () => {
         // Check if this cell is assigned to another point
         for (const pid in pointAssignments) {
             if (pid !== activePointId && pointAssignments[pid].has(gridId)) {
-                // Already assigned to another point — toggle off from that point
                 pointAssignments[pid].delete(gridId);
                 break;
             }
@@ -437,13 +433,14 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // ============================================================
-    // 11. Point list panel
+    // 11. Point list panel (FIX #1: checkboxes, FIX #2: delete)
     // ============================================================
     function renderPointList() {
         const list = document.getElementById('point-list');
 
         if (fieldPoints.length === 0) {
             list.innerHTML = '<li style="color: #aaa; font-style: italic;">Ingen fältdata laddad</li>';
+            updateMergeButton();
             return;
         }
 
@@ -453,46 +450,124 @@ document.addEventListener('DOMContentLoaded', () => {
             li.className = pt.id === activePointId ? 'active-point' : '';
 
             const assignedGrids = pointAssignments[pt.id] ? Array.from(pointAssignments[pt.id]).sort() : [];
-            const gridText = assignedGrids.length > 0 ? assignedGrids.join(', ') : 'inga rutor';
+            const gridText = assignedGrids.length > 0 
+                ? (assignedGrids.length <= 4 ? assignedGrids.join(', ') : assignedGrids.length + ' rutor') 
+                : 'inga rutor';
             const statusIcon = assignedGrids.length > 0 ? '✅' : '⬜';
 
-            li.innerHTML = `
-                <span class="point-badge" style="background: ${pt.color};">${i + 1}</span>
-                <span class="point-info">${statusIcon} ${pt.count > 0 ? pt.count + ' bon' : 'Tomt'}</span>
-                <span class="point-grids">${gridText}</span>
-            `;
+            // FIX #1: Checkbox for multiselect (merge)
+            const checkbox = document.createElement('input');
+            checkbox.type = 'checkbox';
+            checkbox.checked = pt.selected || false;
+            checkbox.style.cssText = 'margin-right: 4px; cursor: pointer; flex-shrink: 0;';
+            checkbox.addEventListener('click', (e) => {
+                e.stopPropagation();
+                pt.selected = checkbox.checked;
+                updateMergeButton();
+            });
+
+            const badge = document.createElement('span');
+            badge.className = 'point-badge';
+            badge.style.background = pt.color;
+            badge.textContent = i + 1;
+
+            const info = document.createElement('span');
+            info.className = 'point-info';
+            info.textContent = `${statusIcon} ${pt.count > 0 ? pt.count + ' bon' : 'Tomt'}`;
+
+            const grids = document.createElement('span');
+            grids.className = 'point-grids';
+            grids.textContent = gridText;
+
+            // FIX #2: Delete button
+            const deleteBtn = document.createElement('span');
+            deleteBtn.textContent = '✕';
+            deleteBtn.title = 'Radera punkt';
+            deleteBtn.style.cssText = 'cursor: pointer; color: #ccc; font-size: 14px; font-weight: 700; padding: 0 2px; flex-shrink: 0; transition: color 0.15s;';
+            deleteBtn.addEventListener('mouseenter', () => deleteBtn.style.color = '#e74c3c');
+            deleteBtn.addEventListener('mouseleave', () => deleteBtn.style.color = '#ccc');
+            deleteBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                deletePoint(pt.id);
+            });
+
+            li.appendChild(checkbox);
+            li.appendChild(badge);
+            li.appendChild(info);
+            li.appendChild(grids);
+            li.appendChild(deleteBtn);
 
             li.addEventListener('click', () => activatePoint(pt.id));
             list.appendChild(li);
         });
+
+        updateMergeButton();
     }
 
     // ============================================================
-    // 12. Merge points
+    // 11b. FIX #2: Delete point
     // ============================================================
-    document.getElementById('btn-merge').addEventListener('click', () => {
-        if (fieldPoints.length < 2) {
-            alert("Det finns bara en punkt — inget att slå ihop.");
-            return;
+    function deletePoint(pointId) {
+        const pt = fieldPoints.find(p => p.id === pointId);
+        if (!pt) return;
+
+        const num = fieldPoints.indexOf(pt) + 1;
+        if (!confirm(`Radera punkt #${num} (${pt.count} bon)?`)) return;
+
+        // Remove from field points
+        const idx = fieldPoints.indexOf(pt);
+        if (idx > -1) fieldPoints.splice(idx, 1);
+
+        // Remove assignments
+        delete pointAssignments[pointId];
+
+        // If active point was deleted, activate first remaining or clear
+        if (activePointId === pointId) {
+            activePointId = fieldPoints.length > 0 ? fieldPoints[0].id : null;
         }
 
-        // Simple merge: merge ALL non-empty points that have assignments
-        const toMerge = fieldPoints.filter(p => p.count > 0 && pointAssignments[p.id] && pointAssignments[p.id].size > 0);
+        renderFieldPoints();
+        renderPointList();
+        renderState();
+        updateStats();
+    }
+
+    // ============================================================
+    // 12. Merge points (FIX #1: selective merge via checkboxes)
+    // ============================================================
+    function updateMergeButton() {
+        const btn = document.getElementById('btn-merge');
+        const selectedCount = fieldPoints.filter(p => p.selected).length;
+        btn.disabled = selectedCount < 2;
+        btn.textContent = selectedCount >= 2 
+            ? `Slå ihop ${selectedCount} valda` 
+            : 'Slå ihop valda';
+    }
+
+    document.getElementById('btn-merge').addEventListener('click', () => {
+        const toMerge = fieldPoints.filter(p => p.selected);
         if (toMerge.length < 2) {
-            alert("Minst två punkter med bon och tilldelade rutor krävs för ihopslagning.");
+            alert("Markera minst 2 punkter med checkboxarna för att slå ihop.");
             return;
         }
 
         const totalCount = toMerge.reduce((sum, p) => sum + p.count, 0);
-        const newCount = prompt(`Slå ihop ${toMerge.length} punkter?\n\nSummerat antal bon: ${totalCount}\n\nRedigera vid behov:`, totalCount);
+        const newCount = prompt(
+            `Slå ihop ${toMerge.length} punkter?\n\n` +
+            `Punkter: ${toMerge.map((p, i) => `#${fieldPoints.indexOf(p) + 1} (${p.count} bon)`).join(', ')}\n` +
+            `Summerat antal bon: ${totalCount}\n\n` +
+            `Redigera vid behov:`, 
+            totalCount
+        );
         if (newCount === null) return;
 
         const parsedCount = parseInt(newCount, 10);
         if (isNaN(parsedCount)) return;
 
-        // Merge into first point
+        // Merge into first selected point
         const target = toMerge[0];
         target.count = parsedCount;
+        target.selected = false;
 
         // Calculate centroid of all merged coordinates
         const centerLat = toMerge.reduce((s, p) => s + p.lat, 0) / toMerge.length;
@@ -507,7 +582,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 pointAssignments[src.id].forEach(gid => pointAssignments[target.id].add(gid));
                 delete pointAssignments[src.id];
             }
-            // Remove merged point
             const idx = fieldPoints.indexOf(src);
             if (idx > -1) fieldPoints.splice(idx, 1);
         }
@@ -529,40 +603,58 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // ============================================================
-    // 13. Statistics
+    // 13. Statistics (FIX #4: separated DB vs session)
     // ============================================================
     function updateStats() {
-        let totalCount = 0;
-        let groupCount = 0;
-
-        // From existing database
+        let dbCount = 0;
+        let dbGroups = 0;
         for (const k in state.groups) {
-            groupCount++;
+            dbGroups++;
             let c = parseInt(state.groups[k].count, 10);
-            if (!isNaN(c)) totalCount += c;
+            if (!isNaN(c)) dbCount += c;
         }
 
-        // From current session field points
+        let sessionCount = 0;
+        let sessionGroups = 0;
         fieldPoints.forEach(pt => {
             if (pt.count > 0) {
-                totalCount += pt.count;
-                groupCount++;
+                sessionCount += pt.count;
+                sessionGroups++;
             }
         });
 
-        const elBon = document.getElementById('stat-bon');
+        const elDbBon = document.getElementById('stat-db-bon');
+        const elSessionBon = document.getElementById('stat-session-bon');
+        const elTotal = document.getElementById('stat-total');
         const elKolonier = document.getElementById('stat-kolonier');
-        if (elBon) elBon.innerText = totalCount;
-        if (elKolonier) elKolonier.innerText = groupCount;
+
+        if (elDbBon) elDbBon.innerText = dbCount;
+        if (elSessionBon) elSessionBon.innerText = sessionCount > 0 ? '+' + sessionCount : '0';
+        if (elTotal) elTotal.innerText = dbCount + sessionCount;
+        if (elKolonier) elKolonier.innerText = dbGroups + sessionGroups;
     }
 
     // ============================================================
-    // 14. Export: Copy for gAIa
+    // 14. Export: Copy for gAIa (FIX #3: warning for unassigned)
     // ============================================================
     document.getElementById('btn-copy-session').addEventListener('click', () => {
         if (fieldPoints.length === 0) {
             alert("Ingen fältdata att exportera. Ladda fältdata först.");
             return;
+        }
+
+        // FIX #3: Warn about unassigned points
+        const unassigned = fieldPoints.filter(pt => {
+            const grids = pointAssignments[pt.id];
+            return !grids || grids.size === 0;
+        });
+        if (unassigned.length > 0) {
+            const nums = unassigned.map(p => '#' + (fieldPoints.indexOf(p) + 1)).join(', ');
+            if (!confirm(
+                `⚠️ ${unassigned.length} punkt(er) saknar tilldelade rutor: ${nums}\n\n` +
+                `Dessa kommer att exporteras med "INGA RUTOR".\n` +
+                `Vill du exportera ändå?`
+            )) return;
         }
 
         const sessionDate = document.getElementById('session-date').value || 'Inget datum';
@@ -595,7 +687,6 @@ document.addEventListener('DOMContentLoaded', () => {
         navigator.clipboard.writeText(txt).then(() => {
             alert("Grymt! Datan är kopierad.\n\nKlistra in detta direkt till gAIa i chatten!\nOriginalfältdatan följer med för arkivering.");
         }).catch(err => {
-            // Fallback: show in prompt
             prompt("Kunde inte kopiera automatiskt. Markera och kopiera manuellt:", txt);
         });
     });
