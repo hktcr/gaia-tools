@@ -1,0 +1,40 @@
+{
+  "_description": "Metadata för att kunna återskapa grid-filen astorp-grid-250m.geojson vid behov",
+  "_generated": "2026-04-03",
+  
+  "grid": {
+    "cell_size_meters": 250,
+    "reference_latitude": 56.1310,
+    "dlat_degrees": 0.002246,
+    "dlng_degrees": 0.004030,
+    "note": "dlng är korrigerad för latitud 56°N: dlng = dlat / cos(56°)"
+  },
+  
+  "bounding_box": {
+    "min_lat": 56.0745,
+    "max_lat": 56.1874,
+    "min_lng": 12.8367,
+    "max_lng": 13.1061
+  },
+  
+  "naming": {
+    "scheme": "Column-letter + Row-number (e.g. A0, B1, AA29)",
+    "column_direction": "West → East (increasing longitude)",
+    "row_direction": "South → North (increasing latitude)"
+  },
+  
+  "filtering": {
+    "method": "Intersects (behåll alla rutor som överlappar kommunen — ingen del av kommunen saknar ruta)",
+    "boundary_file": "astorp-kommun.geojson",
+    "note": "Kantrutor vars centroid är utanför inkluderas om de överlappar gränsen"
+  },
+  
+  "stats": {
+    "total_cells": 1647,
+    "edge_cells": 158,
+    "boundary_points": 1447,
+    "boundary_avg_segment_m": 47.8
+  },
+  
+  "regeneration_command": "python3 generate-grid.py  (see script in this directory)"
+}
