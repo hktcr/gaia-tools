@@ -1,0 +1,55 @@
+{
+  "grids": {
+    "BZ3": {
+      "status": "nest",
+      "group": "obs_2026-04-03_001"
+    },
+    "BZ4": {
+      "status": "nest",
+      "group": "obs_2026-04-03_001"
+    },
+    "CA3": {
+      "status": "nest",
+      "group": "obs_2026-04-03_001"
+    },
+    "CA4": {
+      "status": "nest",
+      "group": "obs_2026-04-03_001"
+    },
+    "CA5": {
+      "status": "nest",
+      "group": "obs_2026-04-03_001"
+    },
+    "CB3": {
+      "status": "nest",
+      "group": "obs_2026-04-03_001"
+    },
+    "CB4": {
+      "status": "nest",
+      "group": "obs_2026-04-03_001"
+    },
+    "CB5": {
+      "status": "nest",
+      "group": "obs_2026-04-03_001"
+    },
+    "CC3": {
+      "status": "nest",
+      "group": "obs_2026-04-03_001"
+    },
+    "CC4": {
+      "status": "nest",
+      "group": "obs_2026-04-03_001"
+    },
+    "CD4": {
+      "status": "nest",
+      "group": "obs_2026-04-03_001"
+    }
+  },
+  "groups": {
+    "obs_2026-04-03_001": {
+      "count": 174,
+      "coordinate": "56.17965, 13.01576",
+      "date": "2026-04-03"
+    }
+  }
+}
