@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Råkoinventering (Admin)</title>
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <!-- MarkerCluster CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.css" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.Default.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="css/rakor-map.css">
+    <style>
+        /* Field-data-first panel overrides */
+        .phase-section { 
+            border: 1px solid #e0e0e0; 
+            border-radius: 8px; 
+            padding: 10px 12px; 
+            margin-bottom: 10px; 
+            background: #fafafa; 
+        }
+        .phase-section h3 { 
+            margin: 0 0 8px 0; 
+            font-size: 0.85em; 
+            text-transform: uppercase; 
+            letter-spacing: 0.5px; 
+            color: #666; 
+        }
+        .phase-section.active { 
+            border-color: #3498db; 
+            background: #f0f7ff; 
+        }
+        .phase-section.done { 
+            border-color: #27ae60; 
+            background: #f0fff4; 
+        }
+        
+        #field-textarea { 
+            width: 100%; 
+            min-height: 80px; 
+            font-family: 'SF Mono', 'Menlo', monospace; 
+            font-size: 0.85em; 
+            padding: 8px; 
+            border: 1px solid #ccc; 
+            border-radius: 6px; 
+            resize: vertical; 
+            line-height: 1.5;
+        }
+        #field-textarea:focus { 
+            outline: none; 
+            border-color: #3498db; 
+            box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2); 
+        }
+        #field-textarea::placeholder { 
+            color: #aaa; 
+            font-style: italic; 
+        }
+        
+        .point-list { 
+            list-style: none; 
+            padding: 0; 
+            margin: 6px 0 0 0; 
+        }
+        .point-list li { 
+            display: flex; 
+            align-items: center; 
+            gap: 6px; 
+            padding: 5px 8px; 
+            margin-bottom: 4px; 
+            border-radius: 6px; 
+            font-size: 0.85em; 
+            cursor: pointer; 
+            transition: all 0.15s ease; 
+            border: 2px solid transparent;
+        }
+        .point-list li:hover { 
+            background: #e8f4fd; 
+        }
+        .point-list li.active-point { 
+            background: #d4edff; 
+            border-color: #3498db; 
+            font-weight: 600; 
+        }
+        .point-list li .point-badge { 
+            display: inline-flex; 
+            align-items: center; 
+            justify-content: center; 
+            width: 22px; 
+            height: 22px; 
+            border-radius: 50%; 
+            font-size: 0.75em; 
+            font-weight: 700; 
+            color: #fff; 
+            flex-shrink: 0; 
+        }
+        .point-list li .point-info { 
+            flex: 1; 
+            white-space: nowrap; 
+            overflow: hidden; 
+            text-overflow: ellipsis; 
+        }
+        .point-list li .point-grids { 
+            font-size: 0.75em; 
+            color: #888; 
+        }
+        .point-list li .point-count { 
+            font-weight: 700; 
+            color: #2b7a78; 
+        }
+        
+        .merge-bar {
+            display: flex;
+            gap: 6px;
+            margin-top: 8px;
+        }
+        .merge-bar .btn { flex: 1; font-size: 0.8em; padding: 5px 8px; }
+        
+        .stat-grid { 
+            display: grid; 
+            grid-template-columns: 1fr 1fr; 
+            gap: 8px; 
+        }
+        .stat-box { 
+            text-align: center; 
+            padding: 8px; 
+            background: #fff; 
+            border-radius: 6px; 
+            border: 1px solid #e0e0e0; 
+        }
+        .stat-box .stat-value { 
+            font-size: 1.6em; 
+            font-weight: 800; 
+            color: #2b7a78; 
+        }
+        .stat-box .stat-label { 
+            font-size: 0.7em; 
+            text-transform: uppercase; 
+            letter-spacing: 0.5px; 
+            color: #888; 
+        }
+
+        .hint-text {
+            font-size: 0.75em;
+            color: #999;
+            margin-top: 4px;
+            line-height: 1.4;
+        }
+    </style>
+</head>
+<body>
+
+<div id="app-container">
+    <div id="map"></div>
+    <div id="ui-panel">
+        <div class="panel-header">
+            <h2>Råkoinventering</h2>
+            <p>Åstorps kommun · Fältdata först</p>
+        </div>
+
+        <!-- Statistik -->
+        <div class="phase-section">
+            <h3>📊 Översikt</h3>
+            <div class="stat-grid">
+                <div class="stat-box">
+                    <div class="stat-value" id="stat-bon">0</div>
+                    <div class="stat-label">Totalt bon</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-value" id="stat-kolonier">0</div>
+                    <div class="stat-label">Kolonier</div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Fas 1: Fältdata-inmatning -->
+        <div class="phase-section active" id="phase-input">
+            <h3>📋 1. Fältdata</h3>
+            <label for="session-date" style="font-size: 0.85em;">Datum:</label>
+            <input type="date" id="session-date" style="width: 100%; margin-bottom: 6px;">
+            <label for="field-textarea" style="font-size: 0.85em;">Fältanteckningar (lat, lng, antal):</label>
+            <textarea id="field-textarea" placeholder="56.17965, 13.01576, 174&#10;56.18100, 13.02000, 42&#10;56.16500, 13.00800, 0"></textarea>
+            <p class="hint-text">En rad per punkt. Skriv <b>0</b> för inventerat tomt. Tryck "Ladda" för att visa på kartan.</p>
+            <button id="btn-load-field" class="btn btn-primary" style="width: 100%; margin-top: 6px;">📍 Ladda fältdata</button>
+        </div>
+
+        <!-- Fas 2: Ruttilldelning -->
+        <div class="phase-section" id="phase-assign">
+            <h3>🗺️ 2. Tilldela rutor</h3>
+            <p style="font-size: 0.8em; color: #666; margin: 0 0 6px 0;">Klicka på en punkt nedan, sedan klicka rutor på kartan.</p>
+            <ul class="point-list" id="point-list">
+                <li style="color: #aaa; font-style: italic;">Ingen fältdata laddad</li>
+            </ul>
+            <div class="merge-bar" id="merge-bar" style="display: none;">
+                <button id="btn-merge" class="btn btn-secondary" disabled>Slå ihop valda</button>
+                <button id="btn-clear-assign" class="btn btn-danger">Rensa</button>
+            </div>
+        </div>
+
+        <!-- Visningsalternativ -->
+        <div class="panel-section">
+            <label style="font-weight: normal; font-size: 0.9em; cursor: pointer;">
+                <input type="checkbox" id="toggle-grid-ids"> Visa rutas koordinat/ID
+            </label>
+        </div>
+
+        <!-- Fas 3: Export -->
+        <div class="panel-section bottom-actions">
+            <button id="btn-export-image" class="btn btn-secondary"><i class="fa fa-camera"></i> Karta som bild</button>
+            <button id="btn-copy-session" class="btn btn-primary"><i class="fa fa-copy"></i> Kopiera för gAIa</button>
+        </div>
+    </div>
+</div>
+
+<!-- Libraries -->
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="https://unpkg.com/leaflet.markercluster@1.4.1/dist/leaflet.markercluster.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@turf/turf@6/turf.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
+<!-- Config -->
+<script>
+    const geojsonUrl = 'data/astorp-kommun.geojson';
+    const gridUrl = 'data/astorp-grid-250m.geojson';
+    const dbUrl = 'data/rakobservations.json';
+</script>
+<script src="js/rakor-admin.js"></script>
+
+</body>
+</html>

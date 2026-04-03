@@ -1,44 +1,37 @@
 document.addEventListener('DOMContentLoaded', () => {
+    // ============================================================
     // 1. Initialize Map
-    const map = L.map('map', {
-        zoomControl: false 
-    }).setView([56.13, 12.94], 12);
-
+    // ============================================================
+    const map = L.map('map', { zoomControl: false }).setView([56.13, 12.94], 12);
     L.control.zoom({ position: 'topright' }).addTo(map);
 
-    // Define Tile Layers
     const streetLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         attribution: '&copy; OpenStreetMap contributors'
     });
-
     const topoLayer = L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', {
         attribution: 'Map data: &copy; OpenStreetMap contributors, SRTM | Map style: &copy; OpenTopoMap (CC-BY-SA)',
         maxZoom: 17
     });
-
     const satLayer = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
-        attribution: 'Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community',
+        attribution: 'Tiles &copy; Esri',
         maxZoom: 19
     });
-
-    // Add default
     streetLayer.addTo(map);
-
-    // Create Layer Control
-    const baseLayers = {
+    L.control.layers({
         "Karta (Street)": streetLayer,
         "Terräng (Topo)": topoLayer,
         "Satellit": satLayer
-    };
+    }, null, { position: 'topleft' }).addTo(map);
 
-    L.control.layers(baseLayers, null, { position: 'topleft' }).addTo(map);
-
-    // Layers
+    // ============================================================
+    // 2. Layers
+    // ============================================================
     let maskLayer = new L.FeatureGroup().addTo(map);
     let cellsLayer = new L.FeatureGroup().addTo(map);
     let groupLayer = new L.FeatureGroup().addTo(map);
     let highlightLayer = new L.FeatureGroup().addTo(map);
-    let labelsLayer = new L.FeatureGroup(); // Added but not to map initially
+    let fieldPointsLayer = new L.FeatureGroup().addTo(map);
+    let labelsLayer = new L.FeatureGroup();
 
     let markerCluster = L.markerClusterGroup({
         maxClusterRadius: 50,
@@ -57,50 +50,52 @@ document.addEventListener('DOMContentLoaded', () => {
     });
     map.addLayer(markerCluster);
 
-    // State
+    // ============================================================
+    // 3. State
+    // ============================================================
     let astorpPolygon = null;
-    let allCells = []; // Array of { id, polygon }
-    let selectedCellIds = new Set();
+    let allCells = [];
     let state = { grids: {}, groups: {} };
-    let sessionAdditions = []; // Ny tracking för kopiera-funktion
 
-    // Load state from the centralized Database JSON
+    // Field-data-first state
+    let fieldPoints = [];           // Array of { id, lat, lng, count, color }
+    let activePointId = null;       // Which point is being assigned grids
+    let pointAssignments = {};      // { pointId: Set<gridId> }
+    let rawFieldText = "";          // Original text from field notes
+    let nextPointId = 1;
+
+    // Color palette for field points
+    const pointColors = [
+        '#e74c3c', '#3498db', '#2ecc71', '#f39c12', '#9b59b6',
+        '#1abc9c', '#e67e22', '#34495e', '#16a085', '#c0392b',
+        '#2980b9', '#27ae60', '#f1c40f', '#8e44ad', '#d35400'
+    ];
+
+    // ============================================================
+    // 4. Load GeoJSON + Database
+    // ============================================================
     function loadState() {
         return fetch(dbUrl + '?t=' + new Date().getTime(), { cache: "no-store" })
-            .then(res => {
-                if(!res.ok) return {};
-                return res.json();
-            })
+            .then(res => { if (!res.ok) return {}; return res.json(); })
             .then(dbData => {
                 state = { grids: {}, groups: {} };
-                if (dbData && dbData.groups) {
-                    state = dbData;
-                }
+                if (dbData && dbData.groups) state = dbData;
             })
             .catch(err => console.warn("Kunde inte ladda databas: ", err));
     }
 
-    // Export function
-    function getExportState() {
-        return state;
-    }
-
-    // 2. Load GeoJSONs
     Promise.all([
         fetch(geojsonUrl).then(res => res.json()),
         fetch(gridUrl).then(res => res.json())
     ]).then(([borderData, gridData]) => {
         if (borderData.features && borderData.features.length > 0) {
-            astorpPolygon = borderData.features[0]; 
+            astorpPolygon = borderData.features[0];
             drawMask(astorpPolygon);
         }
-        
         if (gridData.features && gridData.features.length > 0) {
             gridData.features.forEach(cell => {
                 const id = cell.properties.gridId;
-                allCells.push({ id: id, polygon: cell });
-
-                // Add invisible label marker for Grid IDs
+                allCells.push({ id, polygon: cell });
                 const center = turf.centroid(cell).geometry.coordinates;
                 const icon = L.divIcon({
                     className: 'grid-id-label',
@@ -108,52 +103,38 @@ document.addEventListener('DOMContentLoaded', () => {
                     iconSize: [40, 20],
                     iconAnchor: [20, 10]
                 });
-                L.marker([center[1], center[0]], { icon: icon, interactive: false }).addTo(labelsLayer);
+                L.marker([center[1], center[0]], { icon, interactive: false }).addTo(labelsLayer);
             });
         }
-        
         loadState().then(() => {
             renderState();
+            updateStats();
         });
     }).catch(err => alert("Error loading map data: " + err));
 
-    // ----------------------------------------------------
-    // Mask logic
-    // ----------------------------------------------------
+    // Set default date to today
+    const dateInput = document.getElementById('session-date');
+    dateInput.value = new Date().toISOString().split('T')[0];
+
+    // ============================================================
+    // 5. Mask
+    // ============================================================
     function drawMask(innerPolygon) {
-        const outerCoords = [
-            [[-90, -180], [90, -180], [90, 180], [-90, 180], [-90, -180]]
-        ];
-
+        const outerCoords = [[[-90, -180], [90, -180], [90, 180], [-90, 180], [-90, -180]]];
         let holes = innerPolygon.geometry.coordinates;
-        if (innerPolygon.geometry.type === 'MultiPolygon') {
-             holes = innerPolygon.geometry.coordinates[0];
-        }
-
+        if (innerPolygon.geometry.type === 'MultiPolygon') holes = innerPolygon.geometry.coordinates[0];
         const invertedPoly = turf.polygon([...outerCoords, ...holes]);
-
         L.geoJSON(invertedPoly, {
             style: { fillColor: '#ffffff', fillOpacity: 1.0, color: 'transparent', weight: 0 },
             interactive: false
         }).addTo(maskLayer);
-
         const bbox = turf.bbox(innerPolygon);
         map.fitBounds([[bbox[1], bbox[0]], [bbox[3], bbox[2]]]);
     }
 
-    // ----------------------------------------------------
-    // Rendering logic
-    // ----------------------------------------------------
-    function getCellDefaultStyle(id) {
-        return {
-            fillColor: '#FFD700', // Yellow
-            fillOpacity: 0.3,
-            color: '#c2a300',
-            weight: 1,
-            className: 'grid-cell default-cell'
-        };
-    }
-
+    // ============================================================
+    // 6. Render existing database state (green groups)
+    // ============================================================
     function renderState() {
         cellsLayer.clearLayers();
         groupLayer.clearLayers();
@@ -161,9 +142,18 @@ document.addEventListener('DOMContentLoaded', () => {
 
         let cellsByGroup = {};
 
+        // Determine which cells are assigned to field points (in this session)
+        const sessionAssignedCells = new Set();
+        for (const pid in pointAssignments) {
+            pointAssignments[pid].forEach(gid => sessionAssignedCells.add(gid));
+        }
+
         allCells.forEach(cellObj => {
             const id = cellObj.id;
             const s = state.grids[id];
+
+            // Skip cells that are currently assigned in this session (they're rendered by renderFieldAssignments)
+            if (sessionAssignedCells.has(id)) return;
 
             if (s && s.status === 'nest' && s.group) {
                 if (!cellsByGroup[s.group]) cellsByGroup[s.group] = [];
@@ -173,39 +163,27 @@ document.addEventListener('DOMContentLoaded', () => {
                     style: { fillColor: '#ffffff', fillOpacity: 0.8, color: 'transparent', weight: 0 },
                     interactive: true
                 }).addTo(cellsLayer);
-                layer.on('click', () => toggleSelection(id));
+                layer.on('click', () => handleCellClick(id));
             } else {
                 let layer = L.geoJSON(cellObj.polygon, {
-                    style: getCellDefaultStyle(id),
+                    style: { fillColor: '#FFD700', fillOpacity: 0.3, color: '#c2a300', weight: 1 },
                     interactive: true
                 }).addTo(cellsLayer);
-                layer.on('click', () => toggleSelection(id));
+                layer.on('click', () => handleCellClick(id));
             }
         });
 
         for (const groupId in cellsByGroup) {
             const polys = cellsByGroup[groupId];
             const groupInfo = state.groups[groupId];
-            
             if (polys.length > 0) {
                 let merged = polys[0];
-                for (let i = 1; i < polys.length; i++) {
-                    merged = turf.union(merged, polys[i]);
-                }
+                for (let i = 1; i < polys.length; i++) merged = turf.union(merged, polys[i]);
 
-                let groupGeo = L.geoJSON(merged, {
-                    style: {
-                        fillColor: 'rgb(46, 204, 113)',
-                        fillOpacity: 0.15,
-                        color: '#27ae60',
-                        weight: 1
-                    },
-                    interactive: true
+                L.geoJSON(merged, {
+                    style: { fillColor: 'rgb(46, 204, 113)', fillOpacity: 0.15, color: '#27ae60', weight: 1 },
+                    interactive: false
                 }).addTo(groupLayer);
-
-                groupGeo.on('click', () => {
-                    polys.forEach(p => toggleSelection(p.properties.gridId, true));
-                });
 
                 let centerCoord = [turf.centroid(merged).geometry.coordinates[1], turf.centroid(merged).geometry.coordinates[0]];
                 if (groupInfo && groupInfo.coordinate) {
@@ -214,167 +192,424 @@ document.addEventListener('DOMContentLoaded', () => {
                         if (parts.length === 2 && !isNaN(parseFloat(parts[0])) && !isNaN(parseFloat(parts[1]))) {
                             centerCoord = [parseFloat(parts[0]), parseFloat(parts[1])];
                         }
-                    } catch(e) {}
+                    } catch (e) {}
                 }
 
                 const count = groupInfo ? groupInfo.count : "?";
                 const parsedCount = parseInt(count, 10) || 0;
-                
                 const icon = L.divIcon({
                     className: 'nest-label-icon',
-                    html: `<div class="nest-label-container" title="${groupInfo.date || ''}">${count}</div>`,
+                    html: `<div class="nest-label-container" title="${groupInfo ? groupInfo.date || '' : ''}">${count}</div>`,
                     iconSize: [30, 30],
                     iconAnchor: [15, 15]
                 });
-
-                let m = L.marker(centerCoord, { 
-                    icon: icon, 
-                    interactive: false,
-                    nestCount: parsedCount 
-                });
+                let m = L.marker(centerCoord, { icon, interactive: false, nestCount: parsedCount });
                 markerCluster.addLayer(m);
-                
+
                 if (groupInfo && groupInfo.coordinate) {
-                    L.circleMarker(centerCoord, {radius: 2, color: 'red', fillColor: 'red', fillOpacity: 1, interactive: false}).addTo(groupLayer);
+                    L.circleMarker(centerCoord, { radius: 2, color: 'red', fillColor: 'red', fillOpacity: 1, interactive: false }).addTo(groupLayer);
                 }
             }
         }
-        
-        renderHighlights();
+
+        renderFieldAssignments();
     }
 
-    // ----------------------------------------------------
-    // User Interaction Logic
-    // ----------------------------------------------------
-    function toggleSelection(id, forceSelect = false) {
-        if (selectedCellIds.has(id) && !forceSelect) {
-            selectedCellIds.delete(id);
-        } else {
-            selectedCellIds.add(id);
+    // ============================================================
+    // 7. Field Data First: Parse & Load
+    // ============================================================
+    function parseFieldData(text) {
+        const lines = text.trim().split('\n');
+        const points = [];
+        lines.forEach((line, i) => {
+            line = line.trim();
+            if (!line || line.startsWith('#') || line.startsWith('//')) return;
+
+            // Support: "lat, lng, count" or "lat lng count" or tab-separated
+            const parts = line.replace(/,/g, ' ').replace(/\t/g, ' ').split(/\s+/);
+            if (parts.length >= 3) {
+                const lat = parseFloat(parts[0]);
+                const lng = parseFloat(parts[1]);
+                const count = parseInt(parts[2], 10);
+                if (!isNaN(lat) && !isNaN(lng) && !isNaN(count) &&
+                    lat > 55 && lat < 57 && lng > 12 && lng < 14) {
+                    points.push({
+                        id: 'fp_' + nextPointId++,
+                        lat, lng, count,
+                        color: pointColors[(points.length) % pointColors.length]
+                    });
+                }
+            }
+        });
+        return points;
+    }
+
+    document.getElementById('btn-load-field').addEventListener('click', () => {
+        const textarea = document.getElementById('field-textarea');
+        const text = textarea.value.trim();
+        if (!text) {
+            alert("Skriv in fältdata först (lat, lng, antal — en rad per punkt).");
+            return;
         }
-        updateUI();
-        renderHighlights();
+
+        rawFieldText = text;
+        const parsed = parseFieldData(text);
+        if (parsed.length === 0) {
+            alert("Kunde inte tolka någon giltig fältdata. Format: lat, lng, antal (en rad per punkt).");
+            return;
+        }
+
+        // Add to field points (keep existing ones)
+        parsed.forEach(p => {
+            fieldPoints.push(p);
+            pointAssignments[p.id] = new Set();
+        });
+
+        // Switch to assignment phase
+        document.getElementById('phase-input').classList.remove('active');
+        document.getElementById('phase-input').classList.add('done');
+        document.getElementById('phase-assign').classList.add('active');
+        document.getElementById('merge-bar').style.display = 'flex';
+
+        renderFieldPoints();
+        renderPointList();
+        updateStats();
+
+        // Zoom to show all field points
+        if (fieldPoints.length > 0) {
+            const lats = fieldPoints.map(p => p.lat);
+            const lngs = fieldPoints.map(p => p.lng);
+            map.fitBounds([
+                [Math.min(...lats) - 0.005, Math.min(...lngs) - 0.01],
+                [Math.max(...lats) + 0.005, Math.max(...lngs) + 0.01]
+            ]);
+        }
+
+        // Auto-activate first point
+        if (parsed.length > 0) {
+            activatePoint(parsed[0].id);
+        }
+    });
+
+    // ============================================================
+    // 8. Render field points on map
+    // ============================================================
+    function renderFieldPoints() {
+        fieldPointsLayer.clearLayers();
+
+        fieldPoints.forEach((pt, i) => {
+            const isActive = pt.id === activePointId;
+            const num = fieldPoints.indexOf(pt) + 1;
+
+            const icon = L.divIcon({
+                className: 'field-point-icon',
+                html: `<div style="
+                    width: ${isActive ? 32 : 26}px; 
+                    height: ${isActive ? 32 : 26}px; 
+                    border-radius: 50%; 
+                    background: ${pt.color}; 
+                    color: #fff; 
+                    display: flex; 
+                    align-items: center; 
+                    justify-content: center; 
+                    font-size: ${isActive ? 14 : 12}px; 
+                    font-weight: 700; 
+                    border: ${isActive ? '3px solid #fff' : '2px solid rgba(255,255,255,0.7)'}; 
+                    box-shadow: ${isActive ? '0 0 12px ' + pt.color + ', 0 0 24px rgba(0,0,0,0.3)' : '0 2px 6px rgba(0,0,0,0.3)'}; 
+                    cursor: pointer;
+                    transition: all 0.2s ease;
+                    ${isActive ? 'animation: pulse-point 1.5s ease-in-out infinite;' : ''}
+                ">${num}</div>`,
+                iconSize: [isActive ? 32 : 26, isActive ? 32 : 26],
+                iconAnchor: [isActive ? 16 : 13, isActive ? 16 : 13]
+            });
+
+            const marker = L.marker([pt.lat, pt.lng], { icon, interactive: true, zIndexOffset: isActive ? 1000 : 0 });
+            marker.on('click', () => activatePoint(pt.id));
+
+            // Add count label below
+            if (pt.count > 0) {
+                const countIcon = L.divIcon({
+                    className: 'field-count-label',
+                    html: `<div style="
+                        background: rgba(0,0,0,0.75); 
+                        color: #fff; 
+                        padding: 1px 5px; 
+                        border-radius: 4px; 
+                        font-size: 10px; 
+                        font-weight: 600;
+                        white-space: nowrap;
+                    ">${pt.count} bon</div>`,
+                    iconSize: [50, 16],
+                    iconAnchor: [25, -6]
+                });
+                L.marker([pt.lat, pt.lng], { icon: countIcon, interactive: false }).addTo(fieldPointsLayer);
+            }
+
+            marker.addTo(fieldPointsLayer);
+        });
+
+        // Add CSS animation if not already present
+        if (!document.getElementById('pulse-style')) {
+            const style = document.createElement('style');
+            style.id = 'pulse-style';
+            style.textContent = `
+                @keyframes pulse-point {
+                    0%, 100% { transform: scale(1); }
+                    50% { transform: scale(1.15); }
+                }
+            `;
+            document.head.appendChild(style);
+        }
     }
 
-    function renderHighlights() {
+    // ============================================================
+    // 9. Render field assignments (colored grid cells)
+    // ============================================================
+    function renderFieldAssignments() {
         highlightLayer.clearLayers();
-        allCells.forEach(cellObj => {
-            if (selectedCellIds.has(cellObj.id)) {
+
+        for (const pid in pointAssignments) {
+            const pt = fieldPoints.find(p => p.id === pid);
+            if (!pt) continue;
+
+            pointAssignments[pid].forEach(gridId => {
+                const cellObj = allCells.find(c => c.id === gridId);
+                if (!cellObj) return;
+
                 L.geoJSON(cellObj.polygon, {
                     style: {
-                        fillColor: '#3498db',
-                        fillOpacity: 0.6,
-                        color: '#2980b9',
-                        weight: 2
+                        fillColor: pt.color,
+                        fillOpacity: pid === activePointId ? 0.45 : 0.25,
+                        color: pt.color,
+                        weight: pid === activePointId ? 2 : 1
                     },
-                    interactive: false
-                }).addTo(highlightLayer);
+                    interactive: true
+                }).on('click', () => handleCellClick(gridId))
+                  .addTo(highlightLayer);
+            });
+        }
+    }
+
+    // ============================================================
+    // 10. Point activation & cell clicks
+    // ============================================================
+    function activatePoint(pointId) {
+        activePointId = pointId;
+        renderFieldPoints();
+        renderPointList();
+        renderState(); // Re-render to update cell opacities
+
+        // Fly to the point
+        const pt = fieldPoints.find(p => p.id === pointId);
+        if (pt) {
+            map.flyTo([pt.lat, pt.lng], 15, { animate: true, duration: 0.8 });
+        }
+    }
+
+    function handleCellClick(gridId) {
+        if (!activePointId) {
+            // No active point: do nothing (or show hint)
+            return;
+        }
+
+        const assignments = pointAssignments[activePointId];
+        if (!assignments) return;
+
+        // Check if this cell is assigned to another point
+        for (const pid in pointAssignments) {
+            if (pid !== activePointId && pointAssignments[pid].has(gridId)) {
+                // Already assigned to another point — toggle off from that point
+                pointAssignments[pid].delete(gridId);
+                break;
             }
+        }
+
+        // Toggle assignment for active point
+        if (assignments.has(gridId)) {
+            assignments.delete(gridId);
+        } else {
+            assignments.add(gridId);
+        }
+
+        renderState();
+        renderPointList();
+    }
+
+    // ============================================================
+    // 11. Point list panel
+    // ============================================================
+    function renderPointList() {
+        const list = document.getElementById('point-list');
+
+        if (fieldPoints.length === 0) {
+            list.innerHTML = '<li style="color: #aaa; font-style: italic;">Ingen fältdata laddad</li>';
+            return;
+        }
+
+        list.innerHTML = '';
+        fieldPoints.forEach((pt, i) => {
+            const li = document.createElement('li');
+            li.className = pt.id === activePointId ? 'active-point' : '';
+
+            const assignedGrids = pointAssignments[pt.id] ? Array.from(pointAssignments[pt.id]).sort() : [];
+            const gridText = assignedGrids.length > 0 ? assignedGrids.join(', ') : 'inga rutor';
+            const statusIcon = assignedGrids.length > 0 ? '✅' : '⬜';
+
+            li.innerHTML = `
+                <span class="point-badge" style="background: ${pt.color};">${i + 1}</span>
+                <span class="point-info">${statusIcon} ${pt.count > 0 ? pt.count + ' bon' : 'Tomt'}</span>
+                <span class="point-grids">${gridText}</span>
+            `;
+
+            li.addEventListener('click', () => activatePoint(pt.id));
+            list.appendChild(li);
         });
     }
 
-    function updateUI() {
-        const countSpan = document.getElementById('selected-count');
-        const listDiv = document.getElementById('selected-list');
-        const saveBtn = document.getElementById('btn-save-nests');
-        const clearSelBtn = document.getElementById('btn-clear-selection');
+    // ============================================================
+    // 12. Merge points
+    // ============================================================
+    document.getElementById('btn-merge').addEventListener('click', () => {
+        if (fieldPoints.length < 2) {
+            alert("Det finns bara en punkt — inget att slå ihop.");
+            return;
+        }
 
-        countSpan.innerText = selectedCellIds.size;
-        
-        let ids = Array.from(selectedCellIds).sort();
-        listDiv.innerText = ids.join(", ") || "Inga markerade";
+        // Simple merge: merge ALL non-empty points that have assignments
+        const toMerge = fieldPoints.filter(p => p.count > 0 && pointAssignments[p.id] && pointAssignments[p.id].size > 0);
+        if (toMerge.length < 2) {
+            alert("Minst två punkter med bon och tilldelade rutor krävs för ihopslagning.");
+            return;
+        }
 
-        const hasSelection = selectedCellIds.size > 0;
-        saveBtn.disabled = !hasSelection;
-        clearSelBtn.disabled = !hasSelection;
+        const totalCount = toMerge.reduce((sum, p) => sum + p.count, 0);
+        const newCount = prompt(`Slå ihop ${toMerge.length} punkter?\n\nSummerat antal bon: ${totalCount}\n\nRedigera vid behov:`, totalCount);
+        if (newCount === null) return;
 
-        // Statistics
+        const parsedCount = parseInt(newCount, 10);
+        if (isNaN(parsedCount)) return;
+
+        // Merge into first point
+        const target = toMerge[0];
+        target.count = parsedCount;
+
+        // Calculate centroid of all merged coordinates
+        const centerLat = toMerge.reduce((s, p) => s + p.lat, 0) / toMerge.length;
+        const centerLng = toMerge.reduce((s, p) => s + p.lng, 0) / toMerge.length;
+        target.lat = centerLat;
+        target.lng = centerLng;
+
+        // Merge grid assignments
+        for (let i = 1; i < toMerge.length; i++) {
+            const src = toMerge[i];
+            if (pointAssignments[src.id]) {
+                pointAssignments[src.id].forEach(gid => pointAssignments[target.id].add(gid));
+                delete pointAssignments[src.id];
+            }
+            // Remove merged point
+            const idx = fieldPoints.indexOf(src);
+            if (idx > -1) fieldPoints.splice(idx, 1);
+        }
+
+        activePointId = target.id;
+        renderFieldPoints();
+        renderPointList();
+        renderState();
+        updateStats();
+    });
+
+    document.getElementById('btn-clear-assign').addEventListener('click', () => {
+        if (!confirm("Rensa alla tilldelningar? (Punkterna finns kvar)")) return;
+        for (const pid in pointAssignments) {
+            pointAssignments[pid].clear();
+        }
+        renderState();
+        renderPointList();
+    });
+
+    // ============================================================
+    // 13. Statistics
+    // ============================================================
+    function updateStats() {
         let totalCount = 0;
         let groupCount = 0;
+
+        // From existing database
         for (const k in state.groups) {
             groupCount++;
             let c = parseInt(state.groups[k].count, 10);
             if (!isNaN(c)) totalCount += c;
         }
-        
-        const elBon = document.getElementById('stat-bon');
-        const elKolonier = document.getElementById('stat-kolonier');
-        if(elBon) elBon.innerText = totalCount;
-        if(elKolonier) elKolonier.innerText = groupCount;
-    }
 
-    document.getElementById('btn-clear-selection').addEventListener('click', () => {
-        selectedCellIds.clear();
-        updateUI();
-        renderHighlights();
-    });
-
-    document.getElementById('btn-save-nests').addEventListener('click', () => {
-        if (selectedCellIds.size === 0) return;
-
-        const count = parseInt(document.getElementById('nest-count').value, 10);
-        const coord = document.getElementById('nest-coord').value.trim();
-        const obsDate = document.getElementById('nest-date').value.trim();
-        
-        selectedCellIds.forEach(id => {
-            const existing = state.grids[id];
-            if (existing && existing.group) {
-                let cellsInGroup = 0;
-                for (const k in state.grids) {
-                    if (state.grids[k].group === existing.group) cellsInGroup++;
-                }
-                if (cellsInGroup <= 1) { 
-                    delete state.groups[existing.group];
-                }
+        // From current session field points
+        fieldPoints.forEach(pt => {
+            if (pt.count > 0) {
+                totalCount += pt.count;
+                groupCount++;
             }
         });
 
-        if (count === 0) {
-            selectedCellIds.forEach(id => {
-                state.grids[id] = { status: 'empty' };
-            });
-            sessionAdditions.push({
-                date: obsDate,
-                count: 0,
-                coord: "",
-                grids: Array.from(selectedCellIds).sort()
-            });
-        } else {
-            const groupId = 'obs_' + (obsDate || 'nodate') + '_' + Math.floor(Math.random() * 10000);
-            
-            state.groups[groupId] = { count: count };
-            if (coord) state.groups[groupId].coordinate = coord;
-            if (obsDate) state.groups[groupId].date = obsDate;
-            
-            selectedCellIds.forEach(id => {
-                state.grids[id] = { status: 'nest', group: groupId };
-            });
+        const elBon = document.getElementById('stat-bon');
+        const elKolonier = document.getElementById('stat-kolonier');
+        if (elBon) elBon.innerText = totalCount;
+        if (elKolonier) elKolonier.innerText = groupCount;
+    }
 
-            sessionAdditions.push({
-                date: obsDate,
-                count: count,
-                coord: coord,
-                grids: Array.from(selectedCellIds).sort()
+    // ============================================================
+    // 14. Export: Copy for gAIa
+    // ============================================================
+    document.getElementById('btn-copy-session').addEventListener('click', () => {
+        if (fieldPoints.length === 0) {
+            alert("Ingen fältdata att exportera. Ladda fältdata först.");
+            return;
+        }
+
+        const sessionDate = document.getElementById('session-date').value || 'Inget datum';
+
+        let txt = "RÅKOINVENTERING SESSION:\n";
+
+        // Original field data
+        txt += "\nORIGINALDATA:\n";
+        if (rawFieldText) {
+            rawFieldText.split('\n').forEach(line => {
+                line = line.trim();
+                if (line) txt += `- ${line}\n`;
             });
         }
 
-        selectedCellIds.clear();
-        document.getElementById('nest-count').value = "0";
-        document.getElementById('nest-coord').value = "";
-        updateUI();
-        renderState();
+        // Assignments
+        txt += "\nTILLDELNINGAR:\n";
+        fieldPoints.forEach((pt, i) => {
+            const grids = pointAssignments[pt.id] ? Array.from(pointAssignments[pt.id]).sort() : [];
+            const gridStr = grids.length > 0 ? grids.join(', ') : 'INGA RUTOR';
+            const coordStr = `Pkt: ${pt.lat}, ${pt.lng}`;
+
+            if (pt.count === 0) {
+                txt += `- Datum: ${sessionDate}, Antal bon: 0 (Tomt), ${coordStr}, Rutor: ${gridStr}\n`;
+            } else {
+                txt += `- Datum: ${sessionDate}, Antal bon: ${pt.count}, ${coordStr}, Rutor: ${gridStr}\n`;
+            }
+        });
+
+        navigator.clipboard.writeText(txt).then(() => {
+            alert("Grymt! Datan är kopierad.\n\nKlistra in detta direkt till gAIa i chatten!\nOriginalfältdatan följer med för arkivering.");
+        }).catch(err => {
+            // Fallback: show in prompt
+            prompt("Kunde inte kopiera automatiskt. Markera och kopiera manuellt:", txt);
+        });
     });
 
+    // ============================================================
+    // 15. Image export
+    // ============================================================
     document.getElementById('btn-export-image').addEventListener('click', () => {
         document.body.classList.add('export-mode');
         setTimeout(() => {
             html2canvas(document.getElementById('map'), {
-                useCORS: true,
-                allowTaint: false,
-                backgroundColor: "#ffffff"
+                useCORS: true, allowTaint: false, backgroundColor: "#ffffff"
             }).then(canvas => {
                 document.body.classList.remove('export-mode');
-                
                 const link = document.createElement('a');
                 link.download = `rakor-astorp-${new Date().toISOString().split('T')[0]}.png`;
                 link.href = canvas.toDataURL('image/png');
@@ -386,52 +621,16 @@ document.addEventListener('DOMContentLoaded', () => {
         }, 100);
     });
 
-    document.getElementById('btn-copy-session').addEventListener('click', () => {
-        if (sessionAdditions.length === 0) {
-            alert("Du har inte sparat några ändringar i denna session än.");
-            return;
-        }
-
-        let txt = "RÅKOINVENTERING SESSION:\n";
-        sessionAdditions.forEach(item => {
-            const dateStr = item.date || "Inget datum";
-            const gridStr = item.grids.join(", ");
-            if (item.count === 0) {
-                txt += `- Datum: ${dateStr}, Antal bon: 0 (Tomt), Rutor: ${gridStr}\n`;
-            } else {
-                const coordStr = item.coord ? `, Pkt: ${item.coord}` : "";
-                txt += `- Datum: ${dateStr}, Antal bon: ${item.count}${coordStr}, Rutor: ${gridStr}\n`;
-            }
-        });
-
-        navigator.clipboard.writeText(txt).then(() => {
-            alert("Grymt! Datan är kopierad. Klistra nu in detta direkt till gAIa i chatten!");
-        }).catch(err => {
-            alert("Kunde inte kopiera: " + err);
-        });
-    });
-
+    // ============================================================
+    // 16. Grid ID toggle
+    // ============================================================
     document.getElementById('toggle-grid-ids').addEventListener('change', (e) => {
-        if (e.target.checked) {
-            map.addLayer(labelsLayer);
-        } else {
-            map.removeLayer(labelsLayer);
-        }
+        if (e.target.checked) map.addLayer(labelsLayer);
+        else map.removeLayer(labelsLayer);
     });
 
-    document.getElementById('nest-coord').addEventListener('input', (e) => {
-        const val = e.target.value.trim();
-        // Remove commas and split by spaces
-        const parts = val.replace(/,/g, ' ').split(/\s+/);
-        if (parts.length >= 2) {
-            const lat = parseFloat(parts[0]);
-            const lng = parseFloat(parts[1]);
-            // Skåne bounding box validation
-            if (!isNaN(lat) && !isNaN(lng) && lat > 55 && lat < 57 && lng > 12 && lng < 14) {
-                map.flyTo([lat, lng], 16, { animate: true, duration: 1.0 });
-            }
-        }
-    });
-
-    updateUI();
+    // ============================================================
+    // 17. Initial UI
+    // ============================================================
+    updateStats();
 });
