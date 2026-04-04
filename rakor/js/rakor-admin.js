@@ -362,6 +362,30 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
             marker.addTo(fieldPointsLayer);
+
+            // Show original positions for merged points
+            if (pt.mergedFrom && pt.mergedFrom.length > 1 && isActive) {
+                pt.mergedFrom.forEach((orig, oi) => {
+                    // Small ghost marker at original position
+                    const ghostIcon = L.divIcon({
+                        className: 'ghost-point',
+                        html: `<div style="
+                            width: 12px; height: 12px; border-radius: 50%;
+                            background: ${pt.color}; opacity: 0.5;
+                            border: 1px solid rgba(255,255,255,0.8);
+                            display: flex; align-items: center; justify-content: center;
+                            font-size: 8px; color: #fff; font-weight: 700;
+                        ">${orig.count}</div>`,
+                        iconSize: [12, 12], iconAnchor: [6, 6]
+                    });
+                    L.marker([orig.lat, orig.lng], { icon: ghostIcon, interactive: false }).addTo(fieldPointsLayer);
+
+                    // Dashed line from original to centroid
+                    L.polyline([[orig.lat, orig.lng], [pt.lat, pt.lng]], {
+                        color: pt.color, weight: 1, opacity: 0.4, dashArray: '4,4', interactive: false
+                    }).addTo(fieldPointsLayer);
+                });
+            }
         });
 
         // Add CSS animation if not already present
@@ -491,7 +515,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
             const info = document.createElement('span');
             info.className = 'point-info';
-            info.textContent = `${statusIcon} ${pt.count > 0 ? pt.count + ' bon' : 'Tomt'}`;
+            if (pt.mergedFrom && pt.mergedFrom.length > 1) {
+                const parts = pt.mergedFrom.map(m => m.count).join('+');
+                info.innerHTML = `⭐ <b>${pt.count} bon</b> <span style="font-size:0.75em;color:#888;">(${parts})</span>`;
+            } else {
+                info.textContent = `${statusIcon} ${pt.count > 0 ? pt.count + ' bon' : 'Tomt'}`;
+            }
 
             const grids = document.createElement('span');
             grids.className = 'point-grids';
@@ -600,6 +629,16 @@ document.addEventListener('DOMContentLoaded', () => {
         const target = toMerge[0];
         target.count = parsedCount;
         target.selected = false;
+
+        // Track merge history
+        if (!target.mergedFrom) target.mergedFrom = [{ count: toMerge[0].count, lat: toMerge[0].lat, lng: toMerge[0].lng }];
+        for (let i = 1; i < toMerge.length; i++) {
+            if (toMerge[i].mergedFrom) {
+                target.mergedFrom.push(...toMerge[i].mergedFrom);
+            } else {
+                target.mergedFrom.push({ count: toMerge[i].count, lat: toMerge[i].lat, lng: toMerge[i].lng });
+            }
+        }
 
         // Calculate centroid of all merged coordinates
         const centerLat = toMerge.reduce((s, p) => s + p.lat, 0) / toMerge.length;
