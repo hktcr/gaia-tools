@@ -951,4 +951,21 @@ document.addEventListener('DOMContentLoaded', () => {
     // 17. Initial UI
     // ============================================================
     updateStats();
+
+    // ============================================================
+    // 18. Global access (for Console fixes without breakpoints)
+    // ============================================================
+    window.rakor = {
+        fieldPoints,
+        pointAssignments,
+        emptyGrids,
+        actionLog,
+        renderFieldPoints,
+        renderPointList,
+        renderState,
+        updateStats,
+        logAction,
+        activatePoint,
+        editPoint
+    };
 });
