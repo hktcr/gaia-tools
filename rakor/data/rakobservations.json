@@ -1,5 +1,84 @@
 {
   "grids": {},
   "groups": {},
-  "fieldnotes": []
+  "fieldnotes": [
+    {
+      "session": "2026-04-03",
+      "note": "Inventering av råkbon 3 april 2026 — enbart Åstorps kommun. Det kommer att ta några dagar att gå igenom hela kommunen.",
+      "points": [
+        {
+          "lat": 56.17965,
+          "lng": 13.01576,
+          "count": 10
+        },
+        {
+          "lat": 56.17986,
+          "lng": 13.01659,
+          "count": 77
+        },
+        {
+          "lat": 56.17709,
+          "lng": 13.01709,
+          "count": 40
+        },
+        {
+          "lat": 56.17785,
+          "lng": 13.01556,
+          "count": 47
+        },
+        {
+          "lat": 56.1648,
+          "lng": 12.97951,
+          "count": 12
+        },
+        {
+          "lat": 56.16219,
+          "lng": 12.97525,
+          "count": 7
+        },
+        {
+          "lat": 56.1447,
+          "lng": 12.94217,
+          "count": 26
+        },
+        {
+          "lat": 56.13696,
+          "lng": 12.93258,
+          "count": 31
+        },
+        {
+          "lat": 56.10521,
+          "lng": 12.88395,
+          "count": 16
+        },
+        {
+          "lat": 56.10023,
+          "lng": 12.86581,
+          "count": 42
+        },
+        {
+          "lat": 56.10071,
+          "lng": 12.8632,
+          "count": 141
+        },
+        {
+          "lat": 56.1023,
+          "lng": 12.86229,
+          "count": 15
+        },
+        {
+          "lat": 56.1045,
+          "lng": 12.86973,
+          "count": 3
+        },
+        {
+          "lat": 56.10402,
+          "lng": 12.87812,
+          "count": 13
+        }
+      ],
+      "total_nests": 480,
+      "total_points": 14
+    }
+  ]
 }
