@@ -64,6 +64,16 @@ document.addEventListener('DOMContentLoaded', () => {
     let rawFieldText = "";          // Original text from field notes
     let nextPointId = 1;
 
+    // Action log — captures every operation for the chronicle
+    let actionLog = [];
+    function logAction(type, detail) {
+        actionLog.push({
+            time: new Date().toISOString().substr(11, 8),
+            type,
+            detail
+        });
+    }
+
     // Color palette for field points
     const pointColors = [
         '#e74c3c', '#3498db', '#2ecc71', '#f39c12', '#9b59b6',
@@ -266,6 +276,10 @@ document.addEventListener('DOMContentLoaded', () => {
             pointAssignments[p.id] = new Set();
         });
 
+        // LOG: field data loaded
+        const totalLoaded = parsed.reduce((s, p) => s + p.count, 0);
+        logAction('LADDNING', `${parsed.length} punkter laddade (${totalLoaded} bon). Koordinater: ${parsed.map(p => `${p.lat},${p.lng}=${p.count}`).join('; ')}`);
+
         // Switch to assignment phase
         document.getElementById('phase-input').classList.remove('active');
         document.getElementById('phase-input').classList.add('done');
@@ -424,8 +438,12 @@ document.addEventListener('DOMContentLoaded', () => {
         // Toggle assignment for active point
         if (assignments.has(gridId)) {
             assignments.delete(gridId);
+            const pt = fieldPoints.find(p => p.id === activePointId);
+            logAction('RUTA_BORTTAGEN', `Ruta ${gridId} borttagen från punkt #${fieldPoints.indexOf(pt) + 1}`);
         } else {
             assignments.add(gridId);
+            const pt = fieldPoints.find(p => p.id === activePointId);
+            logAction('RUTA_TILLDELAD', `Ruta ${gridId} tilldelad punkt #${fieldPoints.indexOf(pt) + 1} (${pt.count} bon)`);
         }
 
         renderState();
@@ -514,6 +532,9 @@ document.addEventListener('DOMContentLoaded', () => {
         const num = fieldPoints.indexOf(pt) + 1;
         if (!confirm(`Radera punkt #${num} (${pt.count} bon)?`)) return;
 
+        // LOG: deletion
+        logAction('RADERING', `Punkt #${num} raderad (${pt.count} bon vid ${pt.lat}, ${pt.lng})`);
+
         // Remove from field points
         const idx = fieldPoints.indexOf(pt);
         if (idx > -1) fieldPoints.splice(idx, 1);
@@ -585,6 +606,9 @@ document.addEventListener('DOMContentLoaded', () => {
         const centerLng = toMerge.reduce((s, p) => s + p.lng, 0) / toMerge.length;
         target.lat = centerLat;
         target.lng = centerLng;
+
+        // LOG: merge
+        logAction('SAMMANSLAGNING', `Punkter ${mergeNames} → ${parsedCount} bon vid ${centerLat.toFixed(5)}, ${centerLng.toFixed(5)}. Ärvda rutor: ${totalGrids.size > 0 ? Array.from(totalGrids).sort().join(', ') : 'inga'}`);
 
         // Merge grid assignments — collect ALL grids into target
         for (let i = 1; i < toMerge.length; i++) {
@@ -687,14 +711,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const sessionDate = document.getElementById('session-date').value || 'Inget datum';
 
-        let txt = "RÅKOINVENTERING SESSION:\n";
+        let txt = `RÅKOINVENTERING SESSION: ${sessionDate}\n`;
+        txt += `Exporterad: ${new Date().toISOString()}\n`;
 
         // Original field data
         txt += "\nORIGINALDATA:\n";
         if (rawFieldText) {
             rawFieldText.split('\n').forEach(line => {
                 line = line.trim();
-                if (line) txt += `- ${line}\n`;
+                if (line) txt += `  ${line}\n`;
             });
         }
 
@@ -703,17 +728,30 @@ document.addEventListener('DOMContentLoaded', () => {
         fieldPoints.forEach((pt, i) => {
             const grids = pointAssignments[pt.id] ? Array.from(pointAssignments[pt.id]).sort() : [];
             const gridStr = grids.length > 0 ? grids.join(', ') : 'INGA RUTOR';
-            const coordStr = `Pkt: ${pt.lat}, ${pt.lng}`;
+            const coordStr = `${pt.lat}, ${pt.lng}`;
 
             if (pt.count === 0) {
-                txt += `- Datum: ${sessionDate}, Antal bon: 0 (Tomt), ${coordStr}, Rutor: ${gridStr}\n`;
+                txt += `  Punkt ${i + 1}: Tomt (0 bon), Pos: ${coordStr}, Rutor: ${gridStr}\n`;
             } else {
-                txt += `- Datum: ${sessionDate}, Antal bon: ${pt.count}, ${coordStr}, Rutor: ${gridStr}\n`;
+                txt += `  Punkt ${i + 1}: ${pt.count} bon, Pos: ${coordStr}, Rutor: ${gridStr}\n`;
             }
         });
 
+        // Action log
+        if (actionLog.length > 0) {
+            txt += "\nÅTGÄRDSLOGG:\n";
+            actionLog.forEach(entry => {
+                txt += `  [${entry.time}] ${entry.type}: ${entry.detail}\n`;
+            });
+        }
+
+        // Summary
+        const totalBon = fieldPoints.reduce((s, p) => s + p.count, 0);
+        const withGrids = fieldPoints.filter(p => pointAssignments[p.id] && pointAssignments[p.id].size > 0).length;
+        txt += `\nSAMMANFATTNING: ${fieldPoints.length} punkter, ${totalBon} bon, ${withGrids}/${fieldPoints.length} med rutor\n`;
+
         navigator.clipboard.writeText(txt).then(() => {
-            alert("Grymt! Datan är kopierad.\n\nKlistra in detta direkt till gAIa i chatten!\nOriginalfältdatan följer med för arkivering.");
+            alert(`Kopierat!\n\n${fieldPoints.length} punkter, ${totalBon} bon\nÅtgärdslogg: ${actionLog.length} poster\n\nKlistra in till gAIa i chatten.`);
         }).catch(err => {
             prompt("Kunde inte kopiera automatiskt. Markera och kopiera manuellt:", txt);
         });
