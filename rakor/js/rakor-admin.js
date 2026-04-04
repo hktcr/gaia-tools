@@ -63,6 +63,8 @@ document.addEventListener('DOMContentLoaded', () => {
     let pointAssignments = {};      // { pointId: Set<gridId> }
     let rawFieldText = "";          // Original text from field notes
     let nextPointId = 1;
+    let emptyGrids = new Set();     // Grid cells marked as surveyed-empty
+    let emptyMode = false;          // Toggle for marking empty grids
 
     // Action log — captures every operation for the chronicle
     let actionLog = [];
@@ -428,6 +430,24 @@ document.addEventListener('DOMContentLoaded', () => {
                   .addTo(highlightLayer);
             });
         }
+
+        // Render empty (surveyed) grids with gray diagonal pattern
+        emptyGrids.forEach(gridId => {
+            const cellObj = allCells.find(c => c.id === gridId);
+            if (!cellObj) return;
+
+            L.geoJSON(cellObj.polygon, {
+                style: {
+                    fillColor: '#95a5a6',
+                    fillOpacity: 0.35,
+                    color: '#7f8c8d',
+                    weight: 2,
+                    dashArray: '6,3'
+                },
+                interactive: true
+            }).on('click', () => handleCellClick(gridId))
+              .addTo(highlightLayer);
+        });
     }
 
     // ============================================================
@@ -446,10 +466,31 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function handleCellClick(gridId) {
+        // Empty mode: toggle grid as surveyed-empty
+        if (emptyMode) {
+            // Remove from any point assignment first
+            for (const pid in pointAssignments) {
+                pointAssignments[pid].delete(gridId);
+            }
+            if (emptyGrids.has(gridId)) {
+                emptyGrids.delete(gridId);
+                logAction('TOM_BORTTAGEN', `Ruta ${gridId} avmarkerad som tom`);
+            } else {
+                emptyGrids.add(gridId);
+                logAction('TOM_MARKERAD', `Ruta ${gridId} markerad som inventerad-tom`);
+            }
+            renderState();
+            renderPointList();
+            return;
+        }
+
         if (!activePointId) return;
 
         const assignments = pointAssignments[activePointId];
         if (!assignments) return;
+
+        // Remove from empty set if it was there
+        emptyGrids.delete(gridId);
 
         // Check if this cell is assigned to another point
         for (const pid in pointAssignments) {
@@ -685,12 +726,33 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     document.getElementById('btn-clear-assign').addEventListener('click', () => {
-        if (!confirm("Rensa alla tilldelningar? (Punkterna finns kvar)")) return;
+        if (!confirm("Rensa alla tilldelningar och tomma markeringar? (Punkterna finns kvar)")) return;
         for (const pid in pointAssignments) {
             pointAssignments[pid].clear();
         }
+        emptyGrids.clear();
         renderState();
         renderPointList();
+    });
+
+    // Empty mode toggle
+    document.getElementById('btn-empty-mode').addEventListener('click', () => {
+        emptyMode = !emptyMode;
+        const btn = document.getElementById('btn-empty-mode');
+        if (emptyMode) {
+            btn.textContent = '✅ Tomt-läge AKT IVT (klicka rutor)';
+            btn.style.background = '#d5f5e3';
+            btn.style.borderColor = '#27ae60';
+            btn.style.color = '#1e8449';
+            activePointId = null;
+            renderFieldPoints();
+            renderPointList();
+        } else {
+            btn.textContent = '⬜ Markera tomma rutor';
+            btn.style.background = '#f0f0f0';
+            btn.style.borderColor = '';
+            btn.style.color = '';
+        }
     });
 
     // ============================================================
@@ -784,13 +846,19 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         }
 
+        // Empty grids
+        if (emptyGrids.size > 0) {
+            txt += "\nTOMMA RUTOR (inventerade utan bon):\n";
+            txt += `  ${Array.from(emptyGrids).sort().join(', ')}\n`;
+        }
+
         // Summary
         const totalBon = fieldPoints.reduce((s, p) => s + p.count, 0);
         const withGrids = fieldPoints.filter(p => pointAssignments[p.id] && pointAssignments[p.id].size > 0).length;
-        txt += `\nSAMMANFATTNING: ${fieldPoints.length} punkter, ${totalBon} bon, ${withGrids}/${fieldPoints.length} med rutor\n`;
+        txt += `\nSAMMANFATTNING: ${fieldPoints.length} punkter, ${totalBon} bon, ${withGrids}/${fieldPoints.length} med rutor, ${emptyGrids.size} tomma rutor\n`;
 
         navigator.clipboard.writeText(txt).then(() => {
-            alert(`Kopierat!\n\n${fieldPoints.length} punkter, ${totalBon} bon\nÅtgärdslogg: ${actionLog.length} poster\n\nKlistra in till gAIa i chatten.`);
+            alert(`Kopierat!\n\n${fieldPoints.length} punkter, ${totalBon} bon\n${emptyGrids.size} tomma rutor\nÅtgärdslogg: ${actionLog.length} poster\n\nKlistra in till gAIa i chatten.`);
         }).catch(err => {
             prompt("Kunde inte kopiera automatiskt. Markera och kopiera manuellt:", txt);
         });
