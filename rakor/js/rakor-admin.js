@@ -552,11 +552,22 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         const totalCount = toMerge.reduce((sum, p) => sum + p.count, 0);
+        const mergeNames = toMerge.map(p => `#${fieldPoints.indexOf(p) + 1} (${p.count} bon)`).join(' + ');
+        
+        // Collect all grids from all points being merged
+        let totalGrids = new Set();
+        toMerge.forEach(p => {
+            if (pointAssignments[p.id]) {
+                pointAssignments[p.id].forEach(gid => totalGrids.add(gid));
+            }
+        });
+
         const newCount = prompt(
             `Slå ihop ${toMerge.length} punkter?\n\n` +
-            `Punkter: ${toMerge.map((p, i) => `#${fieldPoints.indexOf(p) + 1} (${p.count} bon)`).join(', ')}\n` +
-            `Summerat antal bon: ${totalCount}\n\n` +
-            `Redigera vid behov:`, 
+            `${mergeNames}\n` +
+            `Summerat: ${totalCount} bon\n` +
+            `Sammanlagda rutor: ${totalGrids.size > 0 ? totalGrids.size + ' st' : 'inga'}\n\n` +
+            `Redigera antal bon vid behov:`, 
             totalCount
         );
         if (newCount === null) return;
@@ -575,7 +586,7 @@ document.addEventListener('DOMContentLoaded', () => {
         target.lat = centerLat;
         target.lng = centerLng;
 
-        // Merge grid assignments
+        // Merge grid assignments — collect ALL grids into target
         for (let i = 1; i < toMerge.length; i++) {
             const src = toMerge[i];
             if (pointAssignments[src.id]) {
@@ -591,6 +602,23 @@ document.addEventListener('DOMContentLoaded', () => {
         renderPointList();
         renderState();
         updateStats();
+
+        // Fly to the merged point and zoom to show all assigned grids
+        const mergedGrids = pointAssignments[target.id];
+        if (mergedGrids && mergedGrids.size > 0) {
+            // Build bounds from all assigned grid cells + the point
+            const bounds = L.latLngBounds([[target.lat, target.lng]]);
+            mergedGrids.forEach(gridId => {
+                const cellObj = allCells.find(c => c.id === gridId);
+                if (cellObj) {
+                    const coords = cellObj.polygon.geometry.coordinates[0];
+                    coords.forEach(c => bounds.extend([c[1], c[0]]));
+                }
+            });
+            map.flyToBounds(bounds.pad(0.2), { animate: true, duration: 0.8 });
+        } else {
+            map.flyTo([target.lat, target.lng], 15, { animate: true, duration: 0.8 });
+        }
     });
 
     document.getElementById('btn-clear-assign').addEventListener('click', () => {
