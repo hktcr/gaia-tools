@@ -567,6 +567,18 @@ document.addEventListener('DOMContentLoaded', () => {
             grids.className = 'point-grids';
             grids.textContent = gridText;
 
+            // Edit button
+            const editBtn = document.createElement('span');
+            editBtn.textContent = '✏️';
+            editBtn.title = 'Redigera position/antal';
+            editBtn.style.cssText = 'cursor: pointer; font-size: 12px; padding: 0 2px; flex-shrink: 0; opacity: 0.5; transition: opacity 0.15s;';
+            editBtn.addEventListener('mouseenter', () => editBtn.style.opacity = '1');
+            editBtn.addEventListener('mouseleave', () => editBtn.style.opacity = '0.5');
+            editBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                editPoint(pt.id);
+            });
+
             // FIX #2: Delete button
             const deleteBtn = document.createElement('span');
             deleteBtn.textContent = '✕';
@@ -583,6 +595,7 @@ document.addEventListener('DOMContentLoaded', () => {
             li.appendChild(badge);
             li.appendChild(info);
             li.appendChild(grids);
+            li.appendChild(editBtn);
             li.appendChild(deleteBtn);
 
             li.addEventListener('click', () => activatePoint(pt.id));
@@ -593,7 +606,48 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // ============================================================
-    // 11b. FIX #2: Delete point
+    // 11b. Edit point (position/count)
+    // ============================================================
+    function editPoint(pointId) {
+        const pt = fieldPoints.find(p => p.id === pointId);
+        if (!pt) return;
+        const num = fieldPoints.indexOf(pt) + 1;
+
+        const input = prompt(
+            `Redigera punkt #${num}\n\n` +
+            `Nuvarande: ${pt.lat}, ${pt.lng}, ${pt.count}\n` +
+            `Ruttilldelningar och övriga data bevaras.\n\n` +
+            `Ange nytt värde (lat, lng, antal):`,
+            `${pt.lat}, ${pt.lng}, ${pt.count}`
+        );
+        if (input === null) return;
+
+        const parts = input.split(',').map(s => s.trim());
+        if (parts.length < 2) { alert('Ogiltigt format. Använd: lat, lng, antal'); return; }
+
+        const newLat = parseFloat(parts[0]);
+        const newLng = parseFloat(parts[1]);
+        const newCount = parts.length >= 3 ? parseInt(parts[2], 10) : pt.count;
+
+        if (isNaN(newLat) || isNaN(newLng)) { alert('Ogiltiga koordinater.'); return; }
+
+        const oldLat = pt.lat, oldLng = pt.lng, oldCount = pt.count;
+        pt.lat = newLat;
+        pt.lng = newLng;
+        pt.count = isNaN(newCount) ? pt.count : newCount;
+
+        logAction('REDIGERING', `Punkt #${num}: ${oldLat},${oldLng}(${oldCount}) → ${pt.lat},${pt.lng}(${pt.count})`);
+
+        activePointId = pt.id;
+        renderFieldPoints();
+        renderPointList();
+        renderState();
+        updateStats();
+        map.flyTo([pt.lat, pt.lng], 15, { animate: true, duration: 0.5 });
+    }
+
+    // ============================================================
+    // 11c. FIX #2: Delete point
     // ============================================================
     function deletePoint(pointId) {
         const pt = fieldPoints.find(p => p.id === pointId);
