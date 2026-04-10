@@ -922,6 +922,15 @@ document.addEventListener('DOMContentLoaded', () => {
         if (elSessionBon) elSessionBon.innerText = sessionCount > 0 ? '+' + sessionCount : '0';
         if (elTotal) elTotal.innerText = dbCount + sessionCount;
         if (elKolonier) elKolonier.innerText = dbGroups + sessionGroups;
+
+        const statsEl = document.getElementById('export-legend-stats');
+        if (statsEl) {
+            statsEl.innerHTML = `<strong>${dbCount + sessionCount}</strong> bon i <strong>${dbGroups + sessionGroups}</strong> kolonier.`;
+        }
+        const dateEl = document.getElementById('export-legend-date');
+        if (dateEl) {
+            dateEl.innerText = "Status per: " + new Date().toISOString().split('T')[0];
+        }
     }
 
     // ============================================================
@@ -1011,18 +1020,6 @@ document.addEventListener('DOMContentLoaded', () => {
     // 15. Image export
     // ============================================================
     document.getElementById('btn-export-image').addEventListener('click', () => {
-        // Populate the legend before taking snapshot
-        const dbTotal = document.getElementById('stat-total') ? document.getElementById('stat-total').innerText : '0';
-        const dbGroups = document.getElementById('stat-kolonier') ? document.getElementById('stat-kolonier').innerText : '0';
-        const statsEl = document.getElementById('export-legend-stats');
-        if (statsEl) {
-            statsEl.innerHTML = `<strong>${dbTotal}</strong> bon i <strong>${dbGroups}</strong> kolonier.`;
-        }
-        const dateEl = document.getElementById('export-legend-date');
-        if (dateEl) {
-            dateEl.innerText = "Status per: " + new Date().toISOString().split('T')[0];
-        }
-
         document.body.classList.add('export-mode');
         
         // Let CSS apply completely before capture
