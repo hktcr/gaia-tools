@@ -23,7 +23,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 childCount += (m.options.nestCount || 0);
             });
             return L.divIcon({
-                html: `<div class="nest-label-container cluster-label" style="background:#d35400;border-color:#e67e22;">${childCount}</div>`,
+                html: `<div class="nest-label-container cluster-label">${childCount}</div>`,
                 className: 'nest-label-icon cluster-icon',
                 iconSize: [36, 36],
                 iconAnchor: [18, 18]
@@ -199,7 +199,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 markerCluster.addLayer(m);
                 
                 if (groupInfo && groupInfo.coordinate) {
-                    L.circleMarker(centerCoord, {radius: 2, color: 'red', fillColor: 'red', fillOpacity: 1, interactive: false}).addTo(groupLayer);
+                    L.circleMarker(centerCoord, {radius: 2, color: '#475569', fillColor: '#475569', fillOpacity: 1, interactive: false}).addTo(groupLayer);
                 }
             }
         }
