@@ -64,7 +64,9 @@ document.addEventListener('DOMContentLoaded', () => {
     let rawFieldText = "";          // Original text from field notes
     let nextPointId = 1;
     let emptyGrids = new Set();     // Grid cells marked as surveyed-empty
+    let recheckGrids = new Set();   // Grid cells marked as needs-recheck
     let emptyMode = false;          // Toggle for marking empty grids
+    let recheckMode = false;        // Toggle for marking recheck grids
 
     // Action log — captures every operation for the chronicle
     let actionLog = [];
@@ -170,6 +172,12 @@ document.addEventListener('DOMContentLoaded', () => {
             if (s && s.status === 'nest' && s.group) {
                 if (!cellsByGroup[s.group]) cellsByGroup[s.group] = [];
                 cellsByGroup[s.group].push(cellObj.polygon);
+            } else if (s && s.status === 'recheck') {
+                let layer = L.geoJSON(cellObj.polygon, {
+                    style: { fillColor: '#f59e0b', fillOpacity: 0.35, color: '#d97706', weight: 2 },
+                    interactive: true
+                }).addTo(cellsLayer);
+                layer.on('click', () => handleCellClick(id));
             } else if (s && s.status === 'empty') {
                 let layer = L.geoJSON(cellObj.polygon, {
                     style: { fillColor: '#ffffff', fillOpacity: 0.8, color: 'transparent', weight: 0 },
@@ -448,6 +456,24 @@ document.addEventListener('DOMContentLoaded', () => {
             }).on('click', () => handleCellClick(gridId))
               .addTo(highlightLayer);
         });
+
+        // Render recheck grids with orange
+        recheckGrids.forEach(gridId => {
+            const cellObj = allCells.find(c => c.id === gridId);
+            if (!cellObj) return;
+
+            L.geoJSON(cellObj.polygon, {
+                style: {
+                    fillColor: '#f59e0b',
+                    fillOpacity: 0.4,
+                    color: '#d97706',
+                    weight: 2,
+                    dashArray: '4,4'
+                },
+                interactive: true
+            }).on('click', () => handleCellClick(gridId))
+              .addTo(highlightLayer);
+        });
     }
 
     // ============================================================
@@ -466,9 +492,28 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function handleCellClick(gridId) {
+        // Recheck mode: toggle grid as needs-recheck
+        if (recheckMode) {
+            // Remove from empty and any point assignment first
+            emptyGrids.delete(gridId);
+            for (const pid in pointAssignments) {
+                pointAssignments[pid].delete(gridId);
+            }
+            if (recheckGrids.has(gridId)) {
+                recheckGrids.delete(gridId);
+                logAction('RECHECK_BORTTAGEN', `Ruta ${gridId} avmarkerad som "kollas igen"`);
+            } else {
+                recheckGrids.add(gridId);
+                logAction('RECHECK_MARKERAD', `Ruta ${gridId} markerad som "behöver kollas igen"`);
+            }
+            renderState();
+            renderPointList();
+            return;
+        }
         // Empty mode: toggle grid as surveyed-empty
         if (emptyMode) {
-            // Remove from any point assignment first
+            // Remove from recheck and any point assignment first
+            recheckGrids.delete(gridId);
             for (const pid in pointAssignments) {
                 pointAssignments[pid].delete(gridId);
             }
@@ -489,8 +534,9 @@ document.addEventListener('DOMContentLoaded', () => {
         const assignments = pointAssignments[activePointId];
         if (!assignments) return;
 
-        // Remove from empty set if it was there
+        // Remove from empty/recheck sets if it was there
         emptyGrids.delete(gridId);
+        recheckGrids.delete(gridId);
 
         // Check if this cell is assigned to another point
         for (const pid in pointAssignments) {
@@ -785,16 +831,53 @@ document.addEventListener('DOMContentLoaded', () => {
             pointAssignments[pid].clear();
         }
         emptyGrids.clear();
+        recheckGrids.clear();
         renderState();
         renderPointList();
     });
+
+    // Recheck mode toggle
+    const recheckBtn = document.getElementById('btn-recheck-mode');
+    if (recheckBtn) {
+        recheckBtn.addEventListener('click', () => {
+            recheckMode = !recheckMode;
+            if (recheckMode) {
+                emptyMode = false;
+                const emptyBtn = document.getElementById('btn-empty-mode');
+                emptyBtn.textContent = '⬜ Markera tomma rutor';
+                emptyBtn.style.background = '#f0f0f0';
+                emptyBtn.style.borderColor = '';
+                emptyBtn.style.color = '';
+
+                recheckBtn.textContent = '⚠️ Recheck AKTIVT (klicka rutor)';
+                recheckBtn.style.background = '#fef3c7';
+                recheckBtn.style.borderColor = '#f59e0b';
+                recheckBtn.style.color = '#92400e';
+                activePointId = null;
+                renderFieldPoints();
+                renderPointList();
+            } else {
+                recheckBtn.textContent = '⚠️ Kollas igen';
+                recheckBtn.style.background = '#f0f0f0';
+                recheckBtn.style.borderColor = '';
+                recheckBtn.style.color = '';
+            }
+        });
+    }
 
     // Empty mode toggle
     document.getElementById('btn-empty-mode').addEventListener('click', () => {
         emptyMode = !emptyMode;
         const btn = document.getElementById('btn-empty-mode');
         if (emptyMode) {
-            btn.textContent = '✅ Tomt-läge AKT IVT (klicka rutor)';
+            recheckMode = false;
+            if (recheckBtn) {
+                recheckBtn.textContent = '⚠️ Kollas igen';
+                recheckBtn.style.background = '#f0f0f0';
+                recheckBtn.style.borderColor = '';
+                recheckBtn.style.color = '';
+            }
+            btn.textContent = '✅ Tomt-läge AKTIVT (klicka rutor)';
             btn.style.background = '#d5f5e3';
             btn.style.borderColor = '#27ae60';
             btn.style.color = '#1e8449';
@@ -906,10 +989,16 @@ document.addEventListener('DOMContentLoaded', () => {
             txt += `  ${Array.from(emptyGrids).sort().join(', ')}\n`;
         }
 
+        // Recheck grids
+        if (recheckGrids.size > 0) {
+            txt += "\nBEHÖVER KOLLAS IGEN:\n";
+            txt += `  ${Array.from(recheckGrids).sort().join(', ')}\n`;
+        }
+
         // Summary
         const totalBon = fieldPoints.reduce((s, p) => s + p.count, 0);
         const withGrids = fieldPoints.filter(p => pointAssignments[p.id] && pointAssignments[p.id].size > 0).length;
-        txt += `\nSAMMANFATTNING: ${fieldPoints.length} punkter, ${totalBon} bon, ${withGrids}/${fieldPoints.length} med rutor, ${emptyGrids.size} tomma rutor\n`;
+        txt += `\nSAMMANFATTNING: ${fieldPoints.length} punkter, ${totalBon} bon, ${withGrids}/${fieldPoints.length} med rutor, ${emptyGrids.size} tomma rutor, ${recheckGrids.size} kollas-igen\n`;
 
         navigator.clipboard.writeText(txt).then(() => {
             alert(`Kopierat!\n\n${fieldPoints.length} punkter, ${totalBon} bon\n${emptyGrids.size} tomma rutor\nÅtgärdslogg: ${actionLog.length} poster\n\nKlistra in till gAIa i chatten.`);
@@ -959,6 +1048,7 @@ document.addEventListener('DOMContentLoaded', () => {
         fieldPoints,
         pointAssignments,
         emptyGrids,
+        recheckGrids,
         actionLog,
         renderFieldPoints,
         renderPointList,
