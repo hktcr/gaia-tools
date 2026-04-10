@@ -51,7 +51,32 @@
     
     <div id="map-container">
         <div id="app-container">
-            <div id="map"></div>
+            <div id="map">
+                <!-- Karta legend -->
+                <div class="export-legend" style="bottom: 20px; right: 20px; padding: 15px;">
+                    <div style="font-weight:bold; margin-bottom: 8px; font-size: 14px;">Symbolförklaring</div>
+                    <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px; font-size: 13px;">
+                        <div style="width: 20px; height: 14px; background: rgba(46, 204, 113, 0.15); border: 1px solid #27ae60;"></div>
+                        <span>Konstaterad koloni (rutnätsfärg)</span>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px; font-size: 13px;">
+                        <div style="width: 20px; height: 20px; background: #1e40af; border: 2px solid #60a5fa; border-radius: 4px;"></div>
+                        <span>Sammanlagda kolonier (vid utzoomning)</span>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px; font-size: 13px;">
+                        <div style="width: 20px; height: 14px; background: rgba(245, 158, 11, 0.35); border: 2px dashed #d97706;"></div>
+                        <span>Behöver kollas igen (orange)</span>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px; font-size: 13px;">
+                        <div style="width: 20px; height: 14px; background: transparent; border: 1px dashed rgba(148,163,184,0.5);"></div>
+                        <span>Inventerad ruta (utan bon)</span>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 8px; font-size: 13px;">
+                        <div style="width: 20px; height: 14px; background: rgba(255, 215, 0, 0.3); border: 1px solid #c2a300;"></div>
+                        <span>Ej inventerad ruta (gul)</span>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </div>
