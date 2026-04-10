@@ -124,17 +124,20 @@ document.addEventListener('DOMContentLoaded', () => {
                 // Collect for group rendering later
                 if (!cellsByGroup[s.group]) cellsByGroup[s.group] = [];
                 cellsByGroup[s.group].push(cellObj.polygon);
-            } else if (s && s.status === 'empty') {
-                // Inventoried but 0 nests (Invisible in viewer, drawn as white)
+            } else if (s && s.status === 'recheck') {
+                // Needs re-checking — orange
                 L.geoJSON(cellObj.polygon, {
-                    style: { fillColor: '#ffffff', fillOpacity: 0.8, color: 'transparent', weight: 0 },
+                    style: { fillColor: '#f59e0b', fillOpacity: 0.3, color: '#d97706', weight: 1.5, dashArray: '4,3' },
                     interactive: false
                 }).addTo(cellsLayer);
+            } else if (s && s.status === 'empty') {
+                // Inventoried but 0 nests — truly invisible (disappears)
+                // No rendering at all — the grid square simply doesn't appear
             } else {
-                // Default uninventoried
+                // Default uninventoried — subtle yellow
                 L.geoJSON(cellObj.polygon, {
                     style: {
-                        fillColor: '#FFD700', // Yellow
+                        fillColor: '#FFD700',
                         fillOpacity: 0.3,
                         color: '#c2a300',
                         weight: 1,
@@ -199,6 +202,44 @@ document.addEventListener('DOMContentLoaded', () => {
                     L.circleMarker(centerCoord, {radius: 2, color: 'red', fillColor: 'red', fillOpacity: 1, interactive: false}).addTo(groupLayer);
                 }
             }
+        }
+
+        // Summary stats
+        updateSummary();
+    }
+
+    function updateSummary() {
+        let totalNests = 0;
+        let clusterCount = 0;
+        let nestGrids = 0;
+        let emptyGrids = 0;
+        let recheckGrids = 0;
+
+        for (const gid in state.groups) {
+            clusterCount++;
+            const c = parseInt(state.groups[gid].count, 10);
+            if (!isNaN(c)) totalNests += c;
+        }
+        for (const gid in state.grids) {
+            const s = state.grids[gid].status;
+            if (s === 'nest') nestGrids++;
+            else if (s === 'empty') emptyGrids++;
+            else if (s === 'recheck') recheckGrids++;
+        }
+        const inventoried = nestGrids + emptyGrids;
+        const totalGrids = allCells.length;
+        const pct = totalGrids > 0 ? ((inventoried / totalGrids) * 100).toFixed(1) : '0';
+
+        const el = document.getElementById('summary-stats');
+        if (el) {
+            el.innerHTML = `
+                <span class="ss-item"><strong>${totalNests}</strong> bon</span>
+                <span class="ss-sep">·</span>
+                <span class="ss-item"><strong>${clusterCount}</strong> kolonier</span>
+                <span class="ss-sep">·</span>
+                <span class="ss-item"><strong>${inventoried}</strong>/${totalGrids} rutor inventerade (${pct}%)</span>
+                ${recheckGrids > 0 ? `<span class="ss-sep">·</span><span class="ss-item ss-recheck"><strong>${recheckGrids}</strong> kollas igen</span>` : ''}
+            `;
         }
     }
 });

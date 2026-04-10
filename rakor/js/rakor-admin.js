@@ -180,7 +180,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 layer.on('click', () => handleCellClick(id));
             } else if (s && s.status === 'empty') {
                 let layer = L.geoJSON(cellObj.polygon, {
-                    style: { fillColor: '#ffffff', fillOpacity: 0.8, color: 'transparent', weight: 0 },
+                    style: { fillColor: 'transparent', fillOpacity: 0, color: 'rgba(148,163,184,0.25)', weight: 0.5, dashArray: '3,3' },
                     interactive: true
                 }).addTo(cellsLayer);
                 layer.on('click', () => handleCellClick(id));
