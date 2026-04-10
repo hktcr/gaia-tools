@@ -928,8 +928,8 @@ document.addEventListener('DOMContentLoaded', () => {
     // 14. Export: Copy for gAIa (FIX #3: warning for unassigned)
     // ============================================================
     document.getElementById('btn-copy-session').addEventListener('click', () => {
-        if (fieldPoints.length === 0) {
-            alert("Ingen fältdata att exportera. Ladda fältdata först.");
+        if (fieldPoints.length === 0 && emptyGrids.size === 0 && recheckGrids.size === 0) {
+            alert("Ingen data att exportera. Ladda fältdata eller markera tomma/recheck-rutor först.");
             return;
         }
 
