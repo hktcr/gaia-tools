@@ -152,7 +152,32 @@
 <body>
 
 <div id="app-container">
-    <div id="map"></div>
+    <div id="map">
+        <!-- Export legend (hiddden mostly) -->
+        <div id="export-legend" class="export-legend">
+            <h2 style="margin:0 0 10px 0; color:#2b7a78; font-size: 24px;">Råkinventering Åstorp 2026</h2>
+            <div style="font-size: 16px; margin-bottom: 12px; color: #444;" id="export-legend-stats">
+                <strong>0</strong> bon i <strong>0</strong> kolonier.
+            </div>
+            <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
+                <div style="width: 24px; height: 16px; background: rgba(46, 204, 113, 0.15); border: 1px solid #27ae60;"></div>
+                <span>Konstaterad koloni (bon)</span>
+            </div>
+            <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
+                <div style="width: 24px; height: 16px; background: rgba(245, 158, 11, 0.35); border: 2px dashed #d97706;"></div>
+                <span>Behöver kollas igen (orange)</span>
+            </div>
+            <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
+                <div style="width: 24px; height: 16px; background: transparent; border: 1px dashed rgba(148,163,184,0.5);"></div>
+                <span>Inventerad, men tom ruta</span>
+            </div>
+            <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
+                <div style="width: 24px; height: 16px; background: rgba(255, 215, 0, 0.3); border: 1px solid #c2a300;"></div>
+                <span>Ej inventerad ännu (gul)</span>
+            </div>
+            <div style="margin-top: 15px; font-size: 12px; color: #888; text-align: right;" id="export-legend-date"></div>
+        </div>
+    </div>
     <div id="ui-panel">
         <div class="panel-header">
             <h2>Råkinventering</h2>
@@ -230,7 +255,7 @@
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script src="https://unpkg.com/leaflet.markercluster@1.4.1/dist/leaflet.markercluster.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@turf/turf@6/turf.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/dom-to-image-more/3.1.6/dom-to-image-more.min.js"></script>
 
 <!-- Config -->
 <script>

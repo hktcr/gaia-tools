@@ -194,10 +194,27 @@ body, html {
     text-shadow: 1px 1px 0 #fff, -1px -1px 0 #fff, 1px -1px 0 #fff, -1px 1px 0 #fff;
 }
 
-/* Print modifications for html2canvas */
+/* Print modifications for image export */
 .export-mode #ui-panel {
     display: none;
 }
 .export-mode .leaflet-control-container {
     display: none;
+}
+
+/* Export Legend */
+.export-legend {
+    position: absolute;
+    bottom: 40px;
+    right: 40px;
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    z-index: 9999;
+    font-family: sans-serif;
+    display: none; /* Only show when export-mode */
+}
+.export-mode .export-legend {
+    display: block !important;
 }

@@ -1011,21 +1011,36 @@ document.addEventListener('DOMContentLoaded', () => {
     // 15. Image export
     // ============================================================
     document.getElementById('btn-export-image').addEventListener('click', () => {
+        // Populate the legend before taking snapshot
+        const dbTotal = document.getElementById('stat-total') ? document.getElementById('stat-total').innerText : '0';
+        const dbGroups = document.getElementById('stat-kolonier') ? document.getElementById('stat-kolonier').innerText : '0';
+        const statsEl = document.getElementById('export-legend-stats');
+        if (statsEl) {
+            statsEl.innerHTML = `<strong>${dbTotal}</strong> bon i <strong>${dbGroups}</strong> kolonier.`;
+        }
+        const dateEl = document.getElementById('export-legend-date');
+        if (dateEl) {
+            dateEl.innerText = "Status per: " + new Date().toISOString().split('T')[0];
+        }
+
         document.body.classList.add('export-mode');
+        
+        // Let CSS apply completely before capture
         setTimeout(() => {
-            html2canvas(document.getElementById('map'), {
-                useCORS: true, allowTaint: false, backgroundColor: "#ffffff"
-            }).then(canvas => {
+            const node = document.getElementById('map');
+            domtoimage.toPng(node)
+            .then(dataUrl => {
                 document.body.classList.remove('export-mode');
                 const link = document.createElement('a');
-                link.download = `rakor-astorp-${new Date().toISOString().split('T')[0]}.png`;
-                link.href = canvas.toDataURL('image/png');
+                link.download = `rakor_astorp_karta_${new Date().toISOString().split('T')[0]}.png`;
+                link.href = dataUrl;
                 link.click();
             }).catch(err => {
-                document.body.classList.remove('export-mode');
+                console.error('Kunde inte exportera bild', err);
                 alert("Misslyckades att skapa bild: " + err);
+                document.body.classList.remove('export-mode');
             });
-        }, 100);
+        }, 500);
     });
 
     // ============================================================
