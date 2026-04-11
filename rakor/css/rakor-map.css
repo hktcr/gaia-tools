@@ -214,7 +214,7 @@ body, html {
     display: none;
 }
 
-/* Export Legend */
+/* Export Legend - Endast synlig på export-bilden */
 .export-legend {
     position: absolute;
     bottom: 40px;
@@ -225,6 +225,8 @@ body, html {
     box-shadow: 0 4px 15px rgba(0,0,0,0.2);
     z-index: 9999;
     font-family: sans-serif;
-    display: block; /* Alltid synlig nu */
-    pointer-events: none; /* Låt klick gå igenom till kartan */
+    display: none; /* Dold som standard */
+}
+.export-mode .export-legend {
+    display: block !important;
 }
