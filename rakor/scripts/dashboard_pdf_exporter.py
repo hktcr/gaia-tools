@@ -36,12 +36,12 @@ def create_grid_system_pdf(output_path):
     
     data = [["Ruta-ID", "Lat", "Lng", "Bounding Box", "Åstorp Status"]]
     
-    features.sort(key=lambda x: x.get('properties', {}).get('id', x.get('id', '')))
+    features.sort(key=lambda x: x.get('properties', {}).get('gridId') or x.get('properties', {}).get('id') or x.get('id', ''))
     
     for feat in features:
         geom = shape(feat['geometry'])
         props = feat.get('properties', {})
-        grid_id = props.get('id') or feat.get('id') or 'N/A'
+        grid_id = props.get('gridId') or props.get('id') or feat.get('id') or 'N/A'
         
         centroid = geom.centroid
         bounds = geom.bounds
