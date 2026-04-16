@@ -15,6 +15,12 @@
     <style>
         body, html { margin: 0; padding: 0; height: 100vh; overflow: hidden; display: flex; flex-direction: column; background: #eef2f5; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; }
         
+        @keyframes warningPulse {
+            0% { background-color: #fff3cd; }
+            50% { background-color: #ffe69c; }
+            100% { background-color: #fff3cd; }
+        }
+        
         .warning-banner {
             background: #fff3cd;
             color: #856404;
@@ -25,6 +31,7 @@
             z-index: 1000;
             flex-shrink: 0;
             position: relative;
+            animation: warningPulse 3s infinite ease-in-out;
         }
 
         .page-header { 
@@ -73,7 +80,7 @@
         <div class="page-content">
             <p style="margin-bottom: 5px;">Interaktiv karta över den pågående råkinventeringen i Åstorps kommun. 
             Resultatet är sammanställt i ett rutnätssystem (250×250 meter) där färgade rutor markerar de områden som inventerats. 
-            Siffran i cirklarna visar det totala antalet bon för det ihopsamlade området.</p>
+            Siffran i cirklarna visar det totala antalet bon inom de klustrade rutorna för området.</p>
             <div style="font-size: 0.85em; color: #64748b; font-style: italic;">
                 💡 Tips: Du kan zooma och panorera fritt i kartan med musen/pekskärmen, eller med knapparna uppe till höger.
             </div>
