@@ -235,7 +235,7 @@ document.addEventListener('DOMContentLoaded', () => {
             el.innerHTML = `
                 <span class="ss-item"><strong>${totalNests}</strong> bon</span>
                 <span class="ss-sep">·</span>
-                <span class="ss-item"><strong>${clusterCount}</strong> kolonier</span>
+                <span class="ss-item"><strong>${clusterCount}</strong> rutor</span>
                 <span class="ss-sep">·</span>
                 <span class="ss-item"><strong>${inventoried}</strong>/${totalGrids} rutor inventerade (${pct}%)</span>
                 ${recheckGrids > 0 ? `<span class="ss-sep">·</span><span class="ss-item ss-recheck"><strong>${recheckGrids}</strong> kollas igen</span>` : ''}

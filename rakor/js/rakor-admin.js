@@ -925,7 +925,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const statsEl = document.getElementById('export-legend-stats');
         if (statsEl) {
-            statsEl.innerHTML = `<strong>${dbCount + sessionCount}</strong> bon i <strong>${dbGroups + sessionGroups}</strong> kolonier.`;
+            statsEl.innerHTML = `<strong>${dbCount + sessionCount}</strong> bon i <strong>${dbGroups + sessionGroups}</strong> rutor.`;
         }
         const dateEl = document.getElementById('export-legend-date');
         if (dateEl) {

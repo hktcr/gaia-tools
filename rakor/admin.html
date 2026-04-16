@@ -157,15 +157,16 @@
         <div id="export-legend" class="export-legend">
             <h2 style="margin:0 0 15px 0; line-height: 1.2; color:#2b7a78; font-size: 22px;">Råkinventering Åstorp</h2>
             <div style="font-size: 16px; margin-bottom: 12px; color: #444;" id="export-legend-stats">
-                <strong>0</strong> bon i <strong>0</strong> kolonier.
+                <strong>0</strong> bon i <strong>0</strong> rutor.
             </div>
-            <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
-                <div style="width: 24px; height: 16px; background: rgba(46, 204, 113, 0.15); border: 1px solid #27ae60;"></div>
-                <span>Konstaterad koloni (bon)</span>
+            
+            <div class="legend-item">
+                <div style="width: 16px; height: 16px; background: rgba(46, 204, 113, 0.4); border: 2px solid #27ae60; border-radius: 50%;"></div>
+                <span>Konstaterad ruta (bon)</span>
             </div>
-            <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
-                <div style="width: 24px; height: 24px; background: #1e40af; border: 2px solid #60a5fa; border-radius: 4px;"></div>
-                <span>Sammanlagda kolonier (vid utzoomning)</span>
+            <div class="legend-item">
+                <div style="width: 24px; height: 24px; background: rgba(52, 152, 219, 0.6); border: 2px solid #2980b9; display: flex; align-items: center; justify-content: center; color: white; font-size: 10px; font-weight: bold; border-radius: 4px;">5</div>
+                <span>Sammanlagda rutor (vid utzoomning)</span>
             </div>
             <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
                 <div style="width: 24px; height: 16px; background: rgba(245, 158, 11, 0.35); border: 2px dashed #d97706;"></div>
@@ -201,18 +202,18 @@
                     <div class="stat-label">Ny session</div>
                 </div>
             </div>
-            <div style="text-align: center; margin-top: 6px; font-size: 0.8em; color: #666;">
-                Totalt: <strong id="stat-total">0</strong> bon i <strong id="stat-kolonier">0</strong> kolonier
+            <div style="font-size: 12px; margin-top: 10px; padding-top: 10px; border-top: 1px solid rgba(255,255,255,0.1);">
+                Totalt: <strong id="stat-total">0</strong> bon i <strong id="stat-kolonier">0</strong> rutor
             </div>
             <div style="margin-top: 15px; padding-top: 15px; border-top: 1px solid #ddd; font-size: 13px;">
                 <div style="font-weight:bold; margin-bottom:8px;">Symbolförklaring:</div>
                 <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px;">
-                    <div style="width: 20px; height: 14px; background: rgba(46, 204, 113, 0.15); border: 1px solid #27ae60;"></div>
-                    <span>Konstaterad koloni (rutnätsfärg)</span>
+                    <div style="width: 16px; height: 12px; background: rgba(46, 204, 113, 0.15); border: 1px solid #27ae60;"></div>
+                    <span>Konstaterad ruta (rutnätsfärg)</span>
                 </div>
-                <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px;">
-                    <div style="width: 20px; height: 20px; background: #1e40af; border: 2px solid #60a5fa; border-radius: 4px;"></div>
-                    <span>Sammanlagda kolonier (kluster)</span>
+                <div class="legend-item">
+                    <div style="width: 24px; height: 24px; background: rgba(52, 152, 219, 0.6); border: 2px solid #2980b9; border-radius: 4px; display: flex; align-items: center; justify-content: center; color: white; font-size: 10px; font-weight: bold;">3</div>
+                    <span>Sammanlagda rutor (kluster)</span>
                 </div>
                 <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px;">
                     <div style="width: 20px; height: 14px; background: rgba(245, 158, 11, 0.35); border: 2px dashed #d97706;"></div>
