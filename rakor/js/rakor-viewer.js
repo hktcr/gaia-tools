@@ -220,13 +220,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function updateSummary() {
         let totalNests = 0;
-        let clusterCount = 0;
+        let nestGroupCount = 0;
         let nestGrids = 0;
         let emptyGrids = 0;
         let recheckGrids = 0;
 
         for (const gid in state.groups) {
-            clusterCount++;
+            nestGroupCount++;
             const c = parseInt(state.groups[gid].count, 10);
             if (!isNaN(c)) totalNests += c;
         }
@@ -245,7 +245,7 @@ document.addEventListener('DOMContentLoaded', () => {
             el.innerHTML = `
                 <span class="ss-item"><strong>${totalNests}</strong> bon</span>
                 <span class="ss-sep">·</span>
-                <span class="ss-item"><strong>${clusterCount}</strong> rutor</span>
+                <span class="ss-item"><strong>${nestGrids}</strong> rutor med bon</span>
                 <span class="ss-sep">·</span>
                 <span class="ss-item"><strong>${inventoried}</strong>/${totalGrids} rutor inventerade (${pct}%)</span>
                 ${recheckGrids > 0 ? `<span class="ss-sep">·</span><span class="ss-item ss-recheck"><strong>${recheckGrids}</strong> kollas igen</span>` : ''}

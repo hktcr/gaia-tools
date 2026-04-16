@@ -897,21 +897,30 @@ document.addEventListener('DOMContentLoaded', () => {
     // ============================================================
     function updateStats() {
         let dbCount = 0;
-        let dbGroups = 0;
+        let dbNestGroupCount = 0;
         for (const k in state.groups) {
-            dbGroups++;
+            dbNestGroupCount++;
             let c = parseInt(state.groups[k].count, 10);
             if (!isNaN(c)) dbCount += c;
         }
 
         let sessionCount = 0;
-        let sessionGroups = 0;
+        let sessionNestGroupCount = 0;
         fieldPoints.forEach(pt => {
             if (pt.count > 0) {
                 sessionCount += pt.count;
-                sessionGroups++;
+                sessionNestGroupCount++;
             }
         });
+
+        // Räkna faktiska unika rutor (DB + session)
+        const uniqueNestGrids = new Set();
+        for (const gid in state.grids) {
+            if (state.grids[gid].status === 'nest') uniqueNestGrids.add(gid);
+        }
+        for (const pid in pointAssignments) {
+            pointAssignments[pid].forEach(gid => uniqueNestGrids.add(gid));
+        }
 
         const elDbBon = document.getElementById('stat-db-bon');
         const elSessionBon = document.getElementById('stat-session-bon');
@@ -921,11 +930,11 @@ document.addEventListener('DOMContentLoaded', () => {
         if (elDbBon) elDbBon.innerText = dbCount;
         if (elSessionBon) elSessionBon.innerText = sessionCount > 0 ? '+' + sessionCount : '0';
         if (elTotal) elTotal.innerText = dbCount + sessionCount;
-        if (elKolonier) elKolonier.innerText = dbGroups + sessionGroups;
+        if (elKolonier) elKolonier.innerText = uniqueNestGrids.size;
 
         const statsEl = document.getElementById('export-legend-stats');
         if (statsEl) {
-            statsEl.innerHTML = `<strong>${dbCount + sessionCount}</strong> bon i <strong>${dbGroups + sessionGroups}</strong> rutor.`;
+            statsEl.innerHTML = `<strong>${dbCount + sessionCount}</strong> bon i <strong>${uniqueNestGrids.size}</strong> rutor.`;
         }
         const dateEl = document.getElementById('export-legend-date');
         if (dateEl) {
