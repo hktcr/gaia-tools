@@ -102,8 +102,8 @@ document.addEventListener('DOMContentLoaded', () => {
             interactive: false
         }).addTo(maskLayer);
 
-        const bbox = turf.bbox(innerPolygon);
-        map.fitBounds([[bbox[1], bbox[0]], [bbox[3], bbox[2]]]);
+        // map.fitBounds([[bbox[1], bbox[0]], [bbox[3], bbox[2]]]); 
+        // fitBounds sker nu dynamiskt i slutet av renderState
     }
 
     // ----------------------------------------------------
@@ -206,6 +206,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Summary stats
         updateSummary();
+
+        // Responsiv, optimal inzoomningsgrad baserat på aktuell skärm och data
+        if (markerCluster.getLayers().length > 0) {
+            map.fitBounds(markerCluster.getBounds(), { padding: [40, 40], maxZoom: 14 });
+        } else if (cellsLayer.getLayers().length > 0) {
+            map.fitBounds(cellsLayer.getBounds(), { padding: [40, 40], maxZoom: 13 });
+        } else if (astorpPolygon) {
+            const bbox = turf.bbox(astorpPolygon);
+            map.fitBounds([[bbox[1], bbox[0]], [bbox[3], bbox[2]]], { padding: [20, 20] });
+        }
     }
 
     function updateSummary() {
