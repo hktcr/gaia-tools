@@ -57,6 +57,10 @@ document.addEventListener('DOMContentLoaded', () => {
     let allCells = [];
     let state = { grids: {}, groups: {} };
 
+    // Zoom control state
+    let currentZoomGridId = null;
+    let currentZoomPolygon = null;
+
     // Field-data-first state
     let fieldPoints = [];           // Array of { id, lat, lng, count, color, selected }
     let activePointId = null;       // Which point is being assigned grids
@@ -559,7 +563,43 @@ document.addEventListener('DOMContentLoaded', () => {
 
         renderState();
         renderPointList();
+
+        // Update zoom controls
+        const cellObj = allCells.find(c => c.id === gridId);
+        if (cellObj) {
+            currentZoomGridId = gridId;
+            currentZoomPolygon = cellObj.polygon;
+            document.getElementById('active-zoom-grid').textContent = gridId;
+            document.getElementById('grid-zoom-controls').style.display = 'flex';
+        }
     }
+
+    // ============================================================
+    // 10b. Grid Zoom Controls
+    // ============================================================
+    document.getElementById('btn-zoom-fit').addEventListener('click', () => {
+        if (!currentZoomPolygon) return;
+        const layer = L.geoJSON(currentZoomPolygon);
+        map.fitBounds(layer.getBounds(), { padding: [20, 20], maxZoom: 18 });
+    });
+
+    document.getElementById('btn-zoom-ring1').addEventListener('click', () => {
+        if (!currentZoomPolygon) return;
+        const centroid = turf.centroid(currentZoomPolygon);
+        // 1st ring = 3x3 grids (approx 750m wide box, radius 375m)
+        const buffered = turf.buffer(centroid, 0.40, { units: 'kilometers' });
+        const layer = L.geoJSON(buffered);
+        map.fitBounds(layer.getBounds(), { padding: [10, 10], maxZoom: 16 });
+    });
+
+    document.getElementById('btn-zoom-ring2').addEventListener('click', () => {
+        if (!currentZoomPolygon) return;
+        const centroid = turf.centroid(currentZoomPolygon);
+        // 2nd ring = 5x5 grids (approx 1250m wide box, radius 625m)
+        const buffered = turf.buffer(centroid, 0.65, { units: 'kilometers' });
+        const layer = L.geoJSON(buffered);
+        map.fitBounds(layer.getBounds(), { padding: [10, 10], maxZoom: 16 });
+    });
 
     // ============================================================
     // 11. Point list panel (FIX #1: checkboxes, FIX #2: delete)

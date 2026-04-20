@@ -37,6 +37,17 @@ document.addEventListener('DOMContentLoaded', () => {
     let allCells = []; // Array of { id, polygon }
     let state = { grids: {}, groups: {} };
 
+    // Zoom control state
+    let currentZoomGridId = null;
+    let currentZoomPolygon = null;
+
+    function setZoomGrid(gridId, polygon) {
+        currentZoomGridId = gridId || 'Grupp';
+        currentZoomPolygon = polygon;
+        document.getElementById('active-zoom-grid').textContent = currentZoomGridId;
+        document.getElementById('grid-zoom-controls').style.display = 'flex';
+    }
+
     // Load state from the centralized Database JSON
     function loadState() {
         return fetch(dbUrl + '?t=' + new Date().getTime(), { cache: "no-store" })
@@ -128,8 +139,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 // Needs re-checking — orange
                 L.geoJSON(cellObj.polygon, {
                     style: { fillColor: '#f59e0b', fillOpacity: 0.3, color: '#d97706', weight: 1.5, dashArray: '4,3' },
-                    interactive: false
-                }).addTo(cellsLayer);
+                    interactive: true
+                }).on('click', () => setZoomGrid(id, cellObj.polygon)).addTo(cellsLayer);
             } else if (s && s.status === 'empty') {
                 // Inventoried but 0 nests — truly invisible (disappears)
                 // No rendering at all — the grid square simply doesn't appear
@@ -143,8 +154,8 @@ document.addEventListener('DOMContentLoaded', () => {
                         weight: 1,
                         className: 'grid-cell default-cell'
                     },
-                    interactive: false
-                }).addTo(cellsLayer);
+                    interactive: true
+                }).on('click', () => setZoomGrid(id, cellObj.polygon)).addTo(cellsLayer);
             }
         });
 
@@ -167,8 +178,8 @@ document.addEventListener('DOMContentLoaded', () => {
                         color: '#27ae60', // Tunnare gräns
                         weight: 1
                     },
-                    interactive: false
-                }).addTo(groupLayer);
+                    interactive: true
+                }).on('click', () => setZoomGrid(null, merged)).addTo(groupLayer);
 
                 // Text Marker
                 let centerCoord = [turf.centroid(merged).geometry.coordinates[1], turf.centroid(merged).geometry.coordinates[0]];
@@ -252,4 +263,30 @@ document.addEventListener('DOMContentLoaded', () => {
             `;
         }
     }
+
+    // ============================================================
+    // Grid Zoom Controls
+    // ============================================================
+    document.getElementById('btn-zoom-fit').addEventListener('click', () => {
+        if (!currentZoomPolygon) return;
+        const layer = L.geoJSON(currentZoomPolygon);
+        map.fitBounds(layer.getBounds(), { padding: [20, 20], maxZoom: 18 });
+    });
+
+    document.getElementById('btn-zoom-ring1').addEventListener('click', () => {
+        if (!currentZoomPolygon) return;
+        const centroid = turf.centroid(currentZoomPolygon);
+        const buffered = turf.buffer(centroid, 0.40, { units: 'kilometers' });
+        const layer = L.geoJSON(buffered);
+        map.fitBounds(layer.getBounds(), { padding: [10, 10], maxZoom: 16 });
+    });
+
+    document.getElementById('btn-zoom-ring2').addEventListener('click', () => {
+        if (!currentZoomPolygon) return;
+        const centroid = turf.centroid(currentZoomPolygon);
+        const buffered = turf.buffer(centroid, 0.65, { units: 'kilometers' });
+        const layer = L.geoJSON(buffered);
+        map.fitBounds(layer.getBounds(), { padding: [10, 10], maxZoom: 16 });
+    });
+
 });
