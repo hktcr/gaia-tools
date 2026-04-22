@@ -246,10 +246,30 @@
             mix-blend-mode: screen;
         }
 
+        #waterCanvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: 100;
+            background-color: #020617;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.8s ease;
+        }
+
+        #waterCanvas.active {
+            opacity: 1;
+            pointer-events: auto;
+            cursor: none;
+        }
+
     </style>
 </head>
 <body>
 
+    <canvas id="waterCanvas"></canvas>
     <div class="ambient-glow" id="ambientGlow"></div>
 
     <div class="container">
@@ -305,6 +325,12 @@
                 </svg>
                 <span>Aktivera Mikrofon & Brus</span>
             </button>
+            <button class="action-btn" id="fullscreenBtn" style="margin-top: 0; background: rgba(255,255,255,0.05); color: var(--text-muted); border: 1px solid var(--border-color);">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"></path>
+                </svg>
+                <span style="font-size: 0.9rem;">Helskärm (Visuellt Vattenläge)</span>
+            </button>
         </div>
     </div>
 
@@ -322,8 +348,11 @@
         
         const typeBtns = document.querySelectorAll('.type-btn');
         const toggleBtn = document.getElementById('toggleBtn');
+        const fullscreenBtn = document.getElementById('fullscreenBtn');
         const levelBar = document.getElementById('levelBar');
         const ambientGlow = document.getElementById('ambientGlow');
+        const canvas = document.getElementById('waterCanvas');
+        const ctx = canvas.getContext('2d');
 
         // Audio State
         let audioContext;
@@ -378,6 +407,40 @@
                 await startSystem();
             } else {
                 stopSystem();
+            }
+        });
+
+        // Canvas & Fullscreen Logic
+        let isWaterMode = false;
+        let ripples = [];
+
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+
+        fullscreenBtn.addEventListener('click', async () => {
+            if (!isActive) {
+                await startSystem();
+            }
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen().catch(err => {
+                    console.log(`Kunde inte starta helskärm: ${err.message}`);
+                });
+            } else {
+                document.exitFullscreen();
+            }
+        });
+
+        document.addEventListener('fullscreenchange', () => {
+            if (document.fullscreenElement) {
+                isWaterMode = true;
+                canvas.classList.add('active');
+            } else {
+                isWaterMode = false;
+                canvas.classList.remove('active');
             }
         });
 
@@ -525,6 +588,44 @@
 
             // Ambient Glow UI mapping
             ambientGlow.style.opacity = targetNoiseGain * 0.5;
+
+            // DRAW WATER CANVAS
+            if (isWaterMode) {
+                ctx.fillStyle = 'rgba(2, 6, 23, 0.15)'; // Dark slate blue trail
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                
+                if (micLevel > 0.01) {
+                    let spawnProb = micLevel * 2; 
+                    if (Math.random() < spawnProb) {
+                        const isOver = micLevel > threshold;
+                        ripples.push({
+                            x: Math.random() * canvas.width,
+                            y: Math.random() * canvas.height,
+                            radius: 1,
+                            maxRadius: 50 + (micLevel * 400),
+                            speed: 1 + (micLevel * 4),
+                            alpha: isOver ? 0.8 : 0.4,
+                            color: isOver ? '244, 63, 94' : '56, 189, 248' // Red or Cyan
+                        });
+                    }
+                }
+                
+                for (let i = ripples.length - 1; i >= 0; i--) {
+                    let r = ripples[i];
+                    ctx.beginPath();
+                    ctx.arc(r.x, r.y, r.radius, 0, Math.PI * 2);
+                    ctx.strokeStyle = `rgba(${r.color}, ${r.alpha})`;
+                    ctx.lineWidth = 2 + (r.radius * 0.01);
+                    ctx.stroke();
+                    
+                    r.radius += r.speed;
+                    r.alpha -= (r.speed / r.maxRadius);
+                    
+                    if (r.alpha <= 0) {
+                        ripples.splice(i, 1);
+                    }
+                }
+            }
 
             animationFrameId = requestAnimationFrame(analyzeAudio);
         }
