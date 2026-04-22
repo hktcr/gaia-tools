@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Brusvakten - Akustisk Spegling</title>
+    <style>
+        :root {
+            --bg-color: #0f172a;
+            --surface-color: rgba(30, 41, 59, 0.7);
+            --border-color: rgba(255, 255, 255, 0.1);
+            --primary-color: #38bdf8;
+            --danger-color: #f43f5e;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --glass-blur: blur(12px);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            background-color: var(--bg-color);
+            background-image: 
+                radial-gradient(circle at 15% 50%, rgba(56, 189, 248, 0.05) 0%, transparent 50%),
+                radial-gradient(circle at 85% 30%, rgba(244, 63, 94, 0.05) 0%, transparent 50%);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 600px;
+            background: var(--surface-color);
+            backdrop-filter: var(--glass-blur);
+            -webkit-backdrop-filter: var(--glass-blur);
+            border: 1px solid var(--border-color);
+            border-radius: 24px;
+            padding: 40px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            position: relative;
+            z-index: 10;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            letter-spacing: -0.025em;
+            background: linear-gradient(135deg, #fff 0%, #cbd5e1 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 8px;
+        }
+
+        p.subtitle {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+            font-weight: 400;
+        }
+
+        .visualizer {
+            position: relative;
+            height: 120px;
+            background: rgba(15, 23, 42, 0.5);
+            border-radius: 16px;
+            border: 1px solid var(--border-color);
+            margin-bottom: 40px;
+            overflow: hidden;
+            display: flex;
+            align-items: flex-end;
+            padding: 0;
+        }
+
+        .level-bar {
+            width: 100%;
+            height: 0%;
+            background: linear-gradient(to top, var(--primary-color), var(--danger-color));
+            transition: height 0.1s ease-out;
+            opacity: 0.8;
+        }
+
+        .threshold-line {
+            position: absolute;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: rgba(255, 255, 255, 0.5);
+            border-bottom: 1px dashed rgba(255, 255, 255, 0.3);
+            transition: bottom 0.3s ease;
+            z-index: 2;
+        }
+
+        .threshold-line::after {
+            content: 'Tröskelvärde';
+            position: absolute;
+            right: 10px;
+            top: -20px;
+            font-size: 0.7rem;
+            color: rgba(255, 255, 255, 0.7);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .controls {
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+
+        .control-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .control-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        label {
+            font-size: 0.85rem;
+            font-weight: 500;
+            color: var(--text-main);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .value-display {
+            font-size: 0.85rem;
+            color: var(--primary-color);
+            font-weight: 600;
+            font-variant-numeric: tabular-nums;
+        }
+
+        input[type="range"] {
+            -webkit-appearance: none;
+            width: 100%;
+            height: 6px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 3px;
+            outline: none;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: #fff;
+            cursor: pointer;
+            box-shadow: 0 0 10px rgba(0,0,0,0.3);
+            transition: transform 0.1s;
+        }
+
+        input[type="range"]::-webkit-slider-thumb:hover {
+            transform: scale(1.2);
+        }
+
+        .type-selector {
+            display: flex;
+            gap: 10px;
+            margin-top: 5px;
+        }
+
+        .type-btn {
+            flex: 1;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border-color);
+            color: var(--text-muted);
+            padding: 10px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            font-weight: 500;
+            transition: all 0.2s ease;
+        }
+
+        .type-btn.active {
+            background: rgba(56, 189, 248, 0.15);
+            border-color: var(--primary-color);
+            color: var(--primary-color);
+        }
+
+        .action-btn {
+            margin-top: 20px;
+            background: var(--text-main);
+            color: var(--bg-color);
+            border: none;
+            padding: 16px;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .action-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px -10px rgba(255, 255, 255, 0.3);
+        }
+
+        .action-btn.active {
+            background: rgba(244, 63, 94, 0.15);
+            color: var(--danger-color);
+            border: 1px solid var(--danger-color);
+        }
+        
+        .action-btn.active:hover {
+            box-shadow: 0 10px 20px -10px rgba(244, 63, 94, 0.3);
+        }
+
+        /* Ambient glow effect based on noise volume */
+        .ambient-glow {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 100vw;
+            height: 100vh;
+            background: radial-gradient(circle, var(--primary-color) 0%, transparent 70%);
+            opacity: 0;
+            z-index: 1;
+            pointer-events: none;
+            transition: opacity 0.1s ease-out;
+            mix-blend-mode: screen;
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="ambient-glow" id="ambientGlow"></div>
+
+    <div class="container">
+        <header>
+            <h1>Brusvakten</h1>
+            <p class="subtitle">Akustisk spegling för klassrummet</p>
+        </header>
+
+        <div class="visualizer">
+            <div class="threshold-line" id="thresholdLine" style="bottom: 50%;"></div>
+            <div class="level-bar" id="levelBar"></div>
+        </div>
+
+        <div class="controls">
+            <div class="control-group">
+                <div class="control-header">
+                    <label for="thresholdSlider">Acceptabel Ljudnivå (Tröskel)</label>
+                    <span class="value-display" id="thresholdDisplay">50%</span>
+                </div>
+                <input type="range" id="thresholdSlider" min="1" max="100" value="50">
+            </div>
+
+            <div class="control-group">
+                <div class="control-header">
+                    <label for="maxVolumeSlider">Maximal Brusvolym</label>
+                    <span class="value-display" id="maxVolumeDisplay">70%</span>
+                </div>
+                <input type="range" id="maxVolumeSlider" min="0" max="100" value="70">
+            </div>
+
+            <div class="control-group">
+                <label>Bruskaraktär</label>
+                <div class="type-selector">
+                    <button class="type-btn active" data-type="brown">Brunt (Dovt)</button>
+                    <button class="type-btn" data-type="pink">Rosa (Mjukt)</button>
+                    <button class="type-btn" data-type="white">Vitt (Skarpt)</button>
+                </div>
+            </div>
+
+            <button class="action-btn" id="toggleBtn">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"></path>
+                    <path d="M19 10v2a7 7 0 0 1-14 0v-2"></path>
+                    <line x1="12" y1="19" x2="12" y2="22"></line>
+                </svg>
+                <span>Aktivera Mikrofon & Brus</span>
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // DOM Elements
+        const thresholdSlider = document.getElementById('thresholdSlider');
+        const thresholdDisplay = document.getElementById('thresholdDisplay');
+        const thresholdLine = document.getElementById('thresholdLine');
+        
+        const maxVolumeSlider = document.getElementById('maxVolumeSlider');
+        const maxVolumeDisplay = document.getElementById('maxVolumeDisplay');
+        
+        const typeBtns = document.querySelectorAll('.type-btn');
+        const toggleBtn = document.getElementById('toggleBtn');
+        const levelBar = document.getElementById('levelBar');
+        const ambientGlow = document.getElementById('ambientGlow');
+
+        // Audio State
+        let audioContext;
+        let micStream;
+        let analyser;
+        let noiseNode;
+        let gainNode;
+        let filterNode; // For pink/brown noise shaping
+        
+        let isActive = false;
+        let currentNoiseType = 'brown';
+        let animationFrameId;
+
+        // Settings (0.0 to 1.0)
+        let threshold = 0.5;
+        let maxNoiseVolume = 0.7;
+
+        // UI Updates
+        thresholdSlider.addEventListener('input', (e) => {
+            threshold = e.target.value / 100;
+            thresholdDisplay.textContent = e.target.value + '%';
+            thresholdLine.style.bottom = e.target.value + '%';
+        });
+
+        maxVolumeSlider.addEventListener('input', (e) => {
+            maxNoiseVolume = e.target.value / 100;
+            maxVolumeDisplay.textContent = e.target.value + '%';
+        });
+
+        typeBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                typeBtns.forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                currentNoiseType = btn.dataset.type;
+                if (isActive) {
+                    updateNoiseType();
+                }
+            });
+        });
+
+        toggleBtn.addEventListener('click', async () => {
+            if (!isActive) {
+                await startSystem();
+            } else {
+                stopSystem();
+            }
+        });
+
+        async function startSystem() {
+            try {
+                // Init Audio Context
+                audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                
+                // Get Mic Stream
+                micStream = await navigator.mediaDevices.getUserMedia({ audio: true, video: false });
+                const source = audioContext.createMediaStreamSource(micStream);
+                
+                // Setup Analyser
+                analyser = audioContext.createAnalyser();
+                analyser.fftSize = 256;
+                analyser.smoothingTimeConstant = 0.8; // Smooth out the readings
+                source.connect(analyser);
+
+                // Setup Noise Generator & Gain
+                createNoiseGenerator();
+
+                // UI Update
+                isActive = true;
+                toggleBtn.classList.add('active');
+                toggleBtn.querySelector('span').textContent = 'Inaktivera System';
+                
+                // Start Loop
+                analyzeAudio();
+
+            } catch (err) {
+                console.error('Kunde inte starta mikrofonen:', err);
+                alert('Behöver tillgång till mikrofonen för att fungera.');
+            }
+        }
+
+        function stopSystem() {
+            isActive = false;
+            cancelAnimationFrame(animationFrameId);
+            
+            if (micStream) {
+                micStream.getTracks().forEach(track => track.stop());
+            }
+            if (audioContext) {
+                audioContext.close();
+            }
+
+            // UI Update
+            toggleBtn.classList.remove('active');
+            toggleBtn.querySelector('span').textContent = 'Aktivera Mikrofon & Brus';
+            levelBar.style.height = '0%';
+            ambientGlow.style.opacity = '0';
+        }
+
+        function createNoiseGenerator() {
+            // Create an empty buffer (2 seconds of audio)
+            const bufferSize = audioContext.sampleRate * 2;
+            const buffer = audioContext.createBuffer(1, bufferSize, audioContext.sampleRate);
+            const data = buffer.getChannelData(0);
+
+            // Generate raw white noise
+            for (let i = 0; i < bufferSize; i++) {
+                data[i] = Math.random() * 2 - 1;
+            }
+
+            noiseNode = audioContext.createBufferSource();
+            noiseNode.buffer = buffer;
+            noiseNode.loop = true;
+
+            // Setup Filter for Brown/Pink noise simulation
+            filterNode = audioContext.createBiquadFilter();
+            updateNoiseType();
+
+            // Setup Gain Node (Volume control)
+            gainNode = audioContext.createGain();
+            gainNode.gain.value = 0; // Start silent
+
+            // Connect: Noise -> Filter -> Gain -> Destination
+            noiseNode.connect(filterNode);
+            filterNode.connect(gainNode);
+            gainNode.connect(audioContext.destination);
+
+            noiseNode.start();
+        }
+
+        function updateNoiseType() {
+            if (!filterNode) return;
+            
+            // Simple approximations using a BiquadFilter
+            switch (currentNoiseType) {
+                case 'white':
+                    filterNode.type = 'allpass';
+                    break;
+                case 'pink':
+                    filterNode.type = 'lowpass';
+                    filterNode.frequency.value = 800;
+                    break;
+                case 'brown':
+                    filterNode.type = 'lowpass';
+                    filterNode.frequency.value = 400;
+                    break;
+            }
+        }
+
+        function analyzeAudio() {
+            if (!isActive) return;
+
+            const dataArray = new Uint8Array(analyser.frequencyBinCount);
+            analyser.getByteFrequencyData(dataArray);
+
+            // Calculate RMS (average volume)
+            let sum = 0;
+            for (let i = 0; i < dataArray.length; i++) {
+                sum += dataArray[i];
+            }
+            let average = sum / dataArray.length;
+            
+            // Normalize to 0.0 - 1.0 (max byte value is 255)
+            let micLevel = average / 255;
+            
+            // Apply a slight exponential curve to make it feel more responsive to loud spikes
+            micLevel = Math.pow(micLevel, 1.2);
+
+            // Update UI Bar
+            levelBar.style.height = `${micLevel * 100}%`;
+            
+            // Change color if over threshold
+            if (micLevel > threshold) {
+                levelBar.style.background = 'linear-gradient(to top, var(--danger-color), #ef4444)';
+            } else {
+                levelBar.style.background = 'linear-gradient(to top, var(--primary-color), #8b5cf6)';
+            }
+
+            // Calculate Target Noise Volume
+            let targetNoiseGain = 0;
+            if (micLevel > threshold) {
+                // How far over the threshold are we? (0.0 to 1.0 relative to remaining space)
+                const overage = (micLevel - threshold) / (1 - threshold);
+                
+                // Map overage to noise volume (exponential ramp feels more natural)
+                targetNoiseGain = Math.pow(overage, 1.5) * maxNoiseVolume;
+            }
+
+            // Smoothly ramp the audio gain
+            gainNode.gain.setTargetAtTime(targetNoiseGain, audioContext.currentTime, 0.1);
+
+            // Ambient Glow UI mapping
+            ambientGlow.style.opacity = targetNoiseGain * 0.5;
+
+            animationFrameId = requestAnimationFrame(analyzeAudio);
+        }
+    </script>
+</body>
+</html>
