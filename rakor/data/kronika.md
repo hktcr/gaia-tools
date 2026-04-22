@@ -65,3 +65,10 @@ Inventerade utan bon. Se fullständig lista i exportfilen.
 - Täcker främst södra delen (Kvidinge) och norra (Rönnetorp)
 
 ---
+
+### 🪞 Clean Slate Insight — 2026-04-17
+**Objekt:** Råkdata-propagering mellan verktyg
+**The "Day One" Advice:** "Bygg in data-propageringen i själva export-steget direkt från början, eller använd en gemensam URL för alla verktyg."
+*— Ur konversation 9d7a6*
+
+---
