@@ -620,11 +620,16 @@
                 rawTargetGain = Math.pow(overage, responseExponent) * maxNoiseVolume;
             }
 
-            // Sustain logic (Peak hold and slow decay)
-            if (rawTargetGain > currentNoiseLevel) {
-                currentNoiseLevel = rawTargetGain;
-                peakHoldTimer = sustainTime * 60; // hold for N seconds (assuming ~60fps)
+            // Sustain logic: timer only ticks when mic is BELOW threshold.
+            // As long as the class is still loud, the hold timer is continuously reset.
+            if (micLevel > threshold) {
+                // Still noisy — update peak level upward, reset hold timer
+                if (rawTargetGain > currentNoiseLevel) {
+                    currentNoiseLevel = rawTargetGain;
+                }
+                peakHoldTimer = sustainTime * 60; // keep resetting as long as it's loud
             } else {
+                // Quiet now — start counting down the hold timer, then fade
                 if (peakHoldTimer > 0) {
                     peakHoldTimer--;
                 } else {
