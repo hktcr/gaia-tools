@@ -317,6 +317,14 @@
             </div>
 
             <div class="control-group">
+                <div class="control-header">
+                    <label for="fadeOutSlider">Utklingning (Fade-out)</label>
+                    <span class="value-display" id="fadeOutDisplay">2s</span>
+                </div>
+                <input type="range" id="fadeOutSlider" min="1" max="10" value="2">
+            </div>
+
+            <div class="control-group">
                 <label>Bruskaraktär</label>
                 <div class="type-selector">
                     <button class="type-btn active" data-type="brown">Brunt (Dovt)</button>
@@ -356,6 +364,9 @@
 
         const sustainSlider = document.getElementById('sustainSlider');
         const sustainDisplay = document.getElementById('sustainDisplay');
+
+        const fadeOutSlider = document.getElementById('fadeOutSlider');
+        const fadeOutDisplay = document.getElementById('fadeOutDisplay');
         
         const typeBtns = document.querySelectorAll('.type-btn');
         const toggleBtn = document.getElementById('toggleBtn');
@@ -382,6 +393,7 @@
         let maxNoiseVolume = 0.7;
         let responseExponent = 1.5; // High = slow ramp, Low = immediate
         let sustainTime = 5; // seconds
+        let fadeOutTime = 2; // seconds
         
         let currentNoiseLevel = 0;
         let peakHoldTimer = 0;
@@ -409,6 +421,11 @@
         sustainSlider.addEventListener('input', (e) => {
             sustainTime = parseInt(e.target.value);
             sustainDisplay.textContent = sustainTime + 's';
+        });
+
+        fadeOutSlider.addEventListener('input', (e) => {
+            fadeOutTime = parseInt(e.target.value);
+            fadeOutDisplay.textContent = fadeOutTime + 's';
         });
 
         typeBtns.forEach(btn => {
@@ -611,8 +628,8 @@
                 if (peakHoldTimer > 0) {
                     peakHoldTimer--;
                 } else {
-                    // Fade out smoothly over 2 seconds after the hold time
-                    let decayAmount = maxNoiseVolume / 120; // 2 secs * 60 fps
+                    // Fade out smoothly over fadeOutTime seconds after the hold time
+                    let decayAmount = maxNoiseVolume / (fadeOutTime * 60); // N secs * 60 fps
                     currentNoiseLevel -= decayAmount;
                     if (currentNoiseLevel < 0) currentNoiseLevel = 0;
                 }
