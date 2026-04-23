@@ -309,6 +309,14 @@
             </div>
 
             <div class="control-group">
+                <div class="control-header">
+                    <label for="sustainSlider">Efterklang (Hålltid)</label>
+                    <span class="value-display" id="sustainDisplay">5s</span>
+                </div>
+                <input type="range" id="sustainSlider" min="0" max="15" value="5">
+            </div>
+
+            <div class="control-group">
                 <label>Bruskaraktär</label>
                 <div class="type-selector">
                     <button class="type-btn active" data-type="brown">Brunt (Dovt)</button>
@@ -345,6 +353,9 @@
 
         const sensitivitySlider = document.getElementById('sensitivitySlider');
         const sensitivityDisplay = document.getElementById('sensitivityDisplay');
+
+        const sustainSlider = document.getElementById('sustainSlider');
+        const sustainDisplay = document.getElementById('sustainDisplay');
         
         const typeBtns = document.querySelectorAll('.type-btn');
         const toggleBtn = document.getElementById('toggleBtn');
@@ -370,6 +381,10 @@
         let threshold = 0.5;
         let maxNoiseVolume = 0.7;
         let responseExponent = 1.5; // High = slow ramp, Low = immediate
+        let sustainTime = 5; // seconds
+        
+        let currentNoiseLevel = 0;
+        let peakHoldTimer = 0;
 
         // UI Updates
         thresholdSlider.addEventListener('input', (e) => {
@@ -389,6 +404,11 @@
             // Map 1–10 → exponent 3.5 → 0.3 (inverted: high sensitivity = low exponent)
             responseExponent = 3.5 - (val - 1) * (3.2 / 9);
             sensitivityDisplay.textContent = sensitivityLabels[val];
+        });
+
+        sustainSlider.addEventListener('input', (e) => {
+            sustainTime = parseInt(e.target.value);
+            sustainDisplay.textContent = sustainTime + 's';
         });
 
         typeBtns.forEach(btn => {
@@ -574,20 +594,35 @@
             }
 
             // Calculate Target Noise Volume
-            let targetNoiseGain = 0;
+            let rawTargetGain = 0;
             if (micLevel > threshold) {
                 // How far over the threshold are we? (0.0 to 1.0 relative to remaining space)
                 const overage = (micLevel - threshold) / (1 - threshold);
                 
                 // Map overage to noise volume (curve controlled by Ökningstakt slider)
-                targetNoiseGain = Math.pow(overage, responseExponent) * maxNoiseVolume;
+                rawTargetGain = Math.pow(overage, responseExponent) * maxNoiseVolume;
+            }
+
+            // Sustain logic (Peak hold and slow decay)
+            if (rawTargetGain > currentNoiseLevel) {
+                currentNoiseLevel = rawTargetGain;
+                peakHoldTimer = sustainTime * 60; // hold for N seconds (assuming ~60fps)
+            } else {
+                if (peakHoldTimer > 0) {
+                    peakHoldTimer--;
+                } else {
+                    // Fade out smoothly over 2 seconds after the hold time
+                    let decayAmount = maxNoiseVolume / 120; // 2 secs * 60 fps
+                    currentNoiseLevel -= decayAmount;
+                    if (currentNoiseLevel < 0) currentNoiseLevel = 0;
+                }
             }
 
             // Smoothly ramp the audio gain
-            gainNode.gain.setTargetAtTime(targetNoiseGain, audioContext.currentTime, 0.1);
+            gainNode.gain.setTargetAtTime(currentNoiseLevel, audioContext.currentTime, 0.1);
 
             // Ambient Glow UI mapping
-            ambientGlow.style.opacity = targetNoiseGain * 0.5;
+            ambientGlow.style.opacity = currentNoiseLevel * 0.5;
 
             // DRAW WATER CANVAS
             if (isWaterMode) {
