@@ -625,11 +625,9 @@
             // Below threshold: hold for sustainTime, then fade out
             if (micLevel > threshold) {
                 if (rawTargetGain > currentNoiseLevel) {
-                    currentNoiseLevel = rawTargetGain; // instant attack
-                } else {
-                    // Gently follow downward (not fully locked — prevents "stuck at peak")
-                    currentNoiseLevel += (rawTargetGain - currentNoiseLevel) * 0.015;
+                    currentNoiseLevel = rawTargetGain; // instant attack, never goes down here
                 }
+                // While above threshold: level only moves up. Nollställ-knapp för manuell reset.
                 peakHoldTimer = Math.round(sustainTime * 60);
             } else {
                 if (peakHoldTimer > 0) {
