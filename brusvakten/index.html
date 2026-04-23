@@ -621,8 +621,6 @@
             }
 
             // Asymmetric envelope:
-            // Above threshold: jump UP instantly, track DOWN very slowly (handles speech dynamics)
-            // Below threshold: hold for sustainTime, then fade out
             if (micLevel > threshold) {
                 if (rawTargetGain > currentNoiseLevel) {
                     currentNoiseLevel = rawTargetGain; // instant attack, never goes down here
@@ -633,7 +631,8 @@
                 if (peakHoldTimer > 0) {
                     peakHoldTimer--;
                 } else {
-                    const decayPerFrame = currentNoiseLevel / Math.max(1, fadeOutTime * 60);
+                    // Linear decay based on max volume (avoids Zeno's paradox / infinite tail)
+                    const decayPerFrame = maxNoiseVolume / Math.max(1, fadeOutTime * 60);
                     currentNoiseLevel = Math.max(0, currentNoiseLevel - decayPerFrame);
                 }
             }
@@ -643,29 +642,45 @@
 
             // WATER CANVAS
             if (isWaterMode) {
-                ctx.fillStyle = 'rgba(2, 6, 23, 0.12)';
+                ctx.fillStyle = 'rgba(2, 6, 23, 0.08)'; // Slightly longer trails for smoother water effect
                 ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-                // Use max of raw mic and sustained noise level for stable visual
-                const effectiveLevel = Math.max(micLevel, currentNoiseLevel * 0.6);
-                const isOver = effectiveLevel > threshold;
+                // Determine visual state
+                let visualState = 'quiet';
+                if (micLevel > threshold) visualState = 'loud';
+                else if (currentNoiseLevel > 0.01) visualState = 'sustaining';
 
-                if (effectiveLevel > 0.02) {
-                    // More drops when louder, guaranteed at least 1 per frame when loud
-                    const numDrops = Math.ceil(effectiveLevel * 3);
-                    for (let d = 0; d < numDrops; d++) {
-                        if (Math.random() < effectiveLevel * 1.5) {
-                            ripples.push({
-                                x: Math.random() * canvas.width,
-                                y: Math.random() * canvas.height,
-                                radius: 1,
-                                maxRadius: 40 + effectiveLevel * 450,
-                                speed: 0.6 + effectiveLevel * 4.5,
-                                alpha: isOver ? 0.75 : 0.35,
-                                color: isOver ? '244, 63, 94' : '56, 189, 248'
-                            });
-                        }
+                // Spawn logic: Base spawn rate on mic level + baseline if noise is sustaining
+                let spawnProb = micLevel * 2.5;
+                if (visualState === 'loud') spawnProb += 1; // Guarantee at least 1 drop per frame when loud
+                else if (visualState === 'sustaining') spawnProb += 0.3; // Keep drops active while noise plays
+
+                let dropsToSpawn = Math.floor(spawnProb);
+                if (Math.random() < (spawnProb - dropsToSpawn)) dropsToSpawn++;
+
+                for (let d = 0; d < dropsToSpawn; d++) {
+                    let color = '56, 189, 248'; // Cyan
+                    let alpha = 0.4;
+                    if (visualState === 'loud') {
+                        color = '244, 63, 94'; // Red
+                        alpha = 0.8;
+                    } else if (visualState === 'sustaining') {
+                        color = '251, 191, 36'; // Amber
+                        alpha = 0.6;
                     }
+
+                    // Intensity affects size and speed
+                    let intensity = Math.max(micLevel, currentNoiseLevel * 0.5);
+
+                    ripples.push({
+                        x: Math.random() * canvas.width,
+                        y: Math.random() * canvas.height,
+                        radius: 1,
+                        maxRadius: 30 + intensity * 400,
+                        speed: 0.5 + intensity * 5,
+                        alpha: alpha,
+                        color: color
+                    });
                 }
 
                 for (let i = ripples.length - 1; i >= 0; i--) {
@@ -676,12 +691,13 @@
                     ctx.lineWidth = Math.max(0.5, 2 - (r.radius / r.maxRadius));
                     ctx.stroke();
                     r.radius += r.speed;
-                    r.alpha -= (r.speed / r.maxRadius) * 0.7;
+                    // Linear fade based on radius progress
+                    r.alpha -= (r.speed / r.maxRadius) * 0.8;
                     if (r.alpha <= 0 || r.radius > r.maxRadius) ripples.splice(i, 1);
                 }
 
-                // Safety cap — prevent memory leak on very loud sustained noise
-                if (ripples.length > 300) ripples.splice(0, ripples.length - 300);
+                // Safety cap to prevent memory leak
+                if (ripples.length > 400) ripples.splice(0, ripples.length - 400);
             }
 
             animationFrameId = requestAnimationFrame(analyzeAudio);
