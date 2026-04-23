@@ -507,7 +507,7 @@
                 // Setup Analyser
                 analyser = audioContext.createAnalyser();
                 analyser.fftSize = 256;
-                analyser.smoothingTimeConstant = 0.8; // Smooth out the readings
+                analyser.smoothingTimeConstant = 0.6; // Less sluggish than 0.8
                 source.connect(analyser);
 
                 // Setup Noise Generator & Gain
@@ -601,101 +601,89 @@
             const dataArray = new Uint8Array(analyser.frequencyBinCount);
             analyser.getByteFrequencyData(dataArray);
 
-            // Calculate RMS (average volume)
-            let sum = 0;
-            for (let i = 0; i < dataArray.length; i++) {
-                sum += dataArray[i];
-            }
-            let average = sum / dataArray.length;
-            
-            // Normalize to 0.0 - 1.0 (max byte value is 255)
-            let micLevel = average / 255;
-            
-            // Apply a slight exponential curve to make it feel more responsive to loud spikes
-            micLevel = Math.pow(micLevel, 1.2);
+            // True RMS for perceptual loudness
+            let sumSq = 0;
+            for (let i = 0; i < dataArray.length; i++) sumSq += dataArray[i] * dataArray[i];
+            let micLevel = Math.sqrt(sumSq / dataArray.length) / 255;
+            micLevel = Math.min(1, Math.pow(micLevel, 0.7)); // gentle compression
 
-            // Update UI Bar
+            // UI Bar
             levelBar.style.height = `${micLevel * 100}%`;
-            
-            // Change color if over threshold
-            if (micLevel > threshold) {
-                levelBar.style.background = 'linear-gradient(to top, var(--danger-color), #ef4444)';
-            } else {
-                levelBar.style.background = 'linear-gradient(to top, var(--primary-color), #8b5cf6)';
-            }
+            levelBar.style.background = micLevel > threshold
+                ? 'linear-gradient(to top, var(--danger-color), #ef4444)'
+                : 'linear-gradient(to top, var(--primary-color), #8b5cf6)';
 
-            // Calculate Target Noise Volume
+            // Raw desired gain from current mic
             let rawTargetGain = 0;
             if (micLevel > threshold) {
-                // How far over the threshold are we? (0.0 to 1.0 relative to remaining space)
                 const overage = (micLevel - threshold) / (1 - threshold);
-                
-                // Map overage to noise volume (curve controlled by Ökningstakt slider)
                 rawTargetGain = Math.pow(overage, responseExponent) * maxNoiseVolume;
             }
 
-            // Sustain logic: timer only ticks when mic is BELOW threshold.
-            // As long as the class is still loud, the hold timer is continuously reset.
+            // Asymmetric envelope:
+            // Above threshold: jump UP instantly, track DOWN very slowly (handles speech dynamics)
+            // Below threshold: hold for sustainTime, then fade out
             if (micLevel > threshold) {
-                // Still noisy — update peak level upward, reset hold timer
                 if (rawTargetGain > currentNoiseLevel) {
-                    currentNoiseLevel = rawTargetGain;
+                    currentNoiseLevel = rawTargetGain; // instant attack
+                } else {
+                    // Gently follow downward (not fully locked — prevents "stuck at peak")
+                    currentNoiseLevel += (rawTargetGain - currentNoiseLevel) * 0.015;
                 }
-                peakHoldTimer = sustainTime * 60; // keep resetting as long as it's loud
+                peakHoldTimer = Math.round(sustainTime * 60);
             } else {
-                // Quiet now — start counting down the hold timer, then fade
                 if (peakHoldTimer > 0) {
                     peakHoldTimer--;
                 } else {
-                    // Fade out smoothly over fadeOutTime seconds after the hold time
-                    let decayAmount = maxNoiseVolume / (fadeOutTime * 60); // N secs * 60 fps
-                    currentNoiseLevel -= decayAmount;
-                    if (currentNoiseLevel < 0) currentNoiseLevel = 0;
+                    const decayPerFrame = currentNoiseLevel / Math.max(1, fadeOutTime * 60);
+                    currentNoiseLevel = Math.max(0, currentNoiseLevel - decayPerFrame);
                 }
             }
 
-            // Smoothly ramp the audio gain
-            gainNode.gain.setTargetAtTime(currentNoiseLevel, audioContext.currentTime, 0.1);
-
-            // Ambient Glow UI mapping
+            gainNode.gain.setTargetAtTime(currentNoiseLevel, audioContext.currentTime, 0.05);
             ambientGlow.style.opacity = currentNoiseLevel * 0.5;
 
-            // DRAW WATER CANVAS
+            // WATER CANVAS
             if (isWaterMode) {
-                ctx.fillStyle = 'rgba(2, 6, 23, 0.15)'; // Dark slate blue trail
+                ctx.fillStyle = 'rgba(2, 6, 23, 0.12)';
                 ctx.fillRect(0, 0, canvas.width, canvas.height);
-                
-                if (micLevel > 0.01) {
-                    let spawnProb = micLevel * 2; 
-                    if (Math.random() < spawnProb) {
-                        const isOver = micLevel > threshold;
-                        ripples.push({
-                            x: Math.random() * canvas.width,
-                            y: Math.random() * canvas.height,
-                            radius: 1,
-                            maxRadius: 50 + (micLevel * 400),
-                            speed: 1 + (micLevel * 4),
-                            alpha: isOver ? 0.8 : 0.4,
-                            color: isOver ? '244, 63, 94' : '56, 189, 248' // Red or Cyan
-                        });
+
+                // Use max of raw mic and sustained noise level for stable visual
+                const effectiveLevel = Math.max(micLevel, currentNoiseLevel * 0.6);
+                const isOver = effectiveLevel > threshold;
+
+                if (effectiveLevel > 0.02) {
+                    // More drops when louder, guaranteed at least 1 per frame when loud
+                    const numDrops = Math.ceil(effectiveLevel * 3);
+                    for (let d = 0; d < numDrops; d++) {
+                        if (Math.random() < effectiveLevel * 1.5) {
+                            ripples.push({
+                                x: Math.random() * canvas.width,
+                                y: Math.random() * canvas.height,
+                                radius: 1,
+                                maxRadius: 40 + effectiveLevel * 450,
+                                speed: 0.6 + effectiveLevel * 4.5,
+                                alpha: isOver ? 0.75 : 0.35,
+                                color: isOver ? '244, 63, 94' : '56, 189, 248'
+                            });
+                        }
                     }
                 }
-                
+
                 for (let i = ripples.length - 1; i >= 0; i--) {
-                    let r = ripples[i];
+                    const r = ripples[i];
                     ctx.beginPath();
                     ctx.arc(r.x, r.y, r.radius, 0, Math.PI * 2);
                     ctx.strokeStyle = `rgba(${r.color}, ${r.alpha})`;
-                    ctx.lineWidth = 2 + (r.radius * 0.01);
+                    ctx.lineWidth = Math.max(0.5, 2 - (r.radius / r.maxRadius));
                     ctx.stroke();
-                    
                     r.radius += r.speed;
-                    r.alpha -= (r.speed / r.maxRadius);
-                    
-                    if (r.alpha <= 0) {
-                        ripples.splice(i, 1);
-                    }
+                    r.alpha -= (r.speed / r.maxRadius) * 0.7;
+                    if (r.alpha <= 0 || r.radius > r.maxRadius) ripples.splice(i, 1);
                 }
+
+                // Safety cap — prevent memory leak on very loud sustained noise
+                if (ripples.length > 300) ripples.splice(0, ripples.length - 300);
             }
 
             animationFrameId = requestAnimationFrame(analyzeAudio);
