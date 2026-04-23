@@ -500,8 +500,15 @@
                 // Init Audio Context
                 audioContext = new (window.AudioContext || window.webkitAudioContext)();
                 
-                // Get Mic Stream
-                micStream = await navigator.mediaDevices.getUserMedia({ audio: true, video: false });
+                // Get Mic Stream (MUST disable browser audio processing to avoid muting constant noise)
+                micStream = await navigator.mediaDevices.getUserMedia({ 
+                    audio: {
+                        echoCancellation: false,
+                        autoGainControl: false,
+                        noiseSuppression: false
+                    }, 
+                    video: false 
+                });
                 const source = audioContext.createMediaStreamSource(micStream);
                 
                 // Setup Analyser
