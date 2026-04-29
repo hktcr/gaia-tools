@@ -66,6 +66,35 @@ Inventerade utan bon. Se fullständig lista i exportfilen.
 
 ---
 
+## Session 4: 2026-04-28
+
+### Originalfältdata (rå, från admin-export)
+```
+Inga nya bon. 134 rutor markerade som inventerade-tomma.
+Tre inventeringsområden:
+  (1) AI33–AU37 (centralt, väster om Rönnetorp)
+  (2) AY10–BD13 (östra kommunen)
+  (3) BI7–BM11 (sydöstra kommunen)
+```
+
+### Korrigeringar
+Inga korrigeringar behövdes.
+
+### Nya kluster
+Inga nya kluster identifierade.
+
+### Tomma rutor (134 st)
+AI33, AI34, AI35, AJ33, AJ34, AJ35, AJ36, AK33, AK34, AK35, AK36, AK37, AL32, AL33, AL34, AL35, AL36, AL37, AL38, AM32, AM33, AM34, AM35, AM36, AM37, AM38, AM39, AM40, AM41, AN32, AN33, AN34, AN35, AN36, AN37, AN38, AN39, AN40, AN41, AO32, AO33, AO34, AO35, AO36, AO37, AO38, AO39, AO40, AO41, AP32, AP33, AP34, AP35, AP36, AP37, AP38, AP39, AP40, AQ31, AQ32, AQ33, AQ34, AQ35, AQ36, AQ37, AQ38, AQ39, AQ40, AR31, AR32, AR33, AR34, AR35, AR36, AR37, AR38, AR39, AR40, AS31, AS32, AS33, AS34, AS35, AS36, AS37, AS38, AS39, AS40, AT36, AT37, AU36, AU37, AY10, AY11, AY12, AY13, AZ10, AZ11, AZ12, AZ13, BA10, BA11, BA12, BA13, BB11, BB12, BC11, BC12, BD11, BD12, BD13, BI7, BI8, BI9, BJ6, BJ7, BJ8, BJ9, BJ10, BJ11, BK6, BK7, BK8, BK9, BK10, BK11, BL6, BL7, BL8, BL9, BL10, BL11, BM10, BM11
+
+### Sammanfattning
+- **0 bon** (inga nya kluster)
+- **134 tomma rutor** inventerade
+- Totalt **1596 av 1647 rutor** inventerade (**96,9%**)
+- **75 rutor** med nest-status, **1517 tomma** (4 fieldnotes)
+- Återstår: **51 rutor** oinventerade
+
+---
+
 ### 🪞 Clean Slate Insight — 2026-04-17
 **Objekt:** Råkdata-propagering mellan verktyg
 **The "Day One" Advice:** "Bygg in data-propageringen i själva export-steget direkt från början, eller använd en gemensam URL för alla verktyg."

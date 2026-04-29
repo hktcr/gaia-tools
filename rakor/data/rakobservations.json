@@ -4460,11 +4460,413 @@
     },
     "BN12": {
       "status": "empty"
+    },
+    "AI33": {
+      "status": "empty"
+    },
+    "AI34": {
+      "status": "empty"
+    },
+    "AI35": {
+      "status": "empty"
+    },
+    "AJ33": {
+      "status": "empty"
+    },
+    "AJ34": {
+      "status": "empty"
+    },
+    "AJ35": {
+      "status": "empty"
+    },
+    "AJ36": {
+      "status": "empty"
+    },
+    "AK33": {
+      "status": "empty"
+    },
+    "AK34": {
+      "status": "empty"
+    },
+    "AK35": {
+      "status": "empty"
+    },
+    "AK36": {
+      "status": "empty"
+    },
+    "AK37": {
+      "status": "empty"
+    },
+    "AL32": {
+      "status": "empty"
+    },
+    "AL33": {
+      "status": "empty"
+    },
+    "AL34": {
+      "status": "empty"
+    },
+    "AL35": {
+      "status": "empty"
+    },
+    "AL36": {
+      "status": "empty"
+    },
+    "AL37": {
+      "status": "empty"
+    },
+    "AL38": {
+      "status": "empty"
+    },
+    "AM32": {
+      "status": "empty"
+    },
+    "AM33": {
+      "status": "empty"
+    },
+    "AM34": {
+      "status": "empty"
+    },
+    "AM35": {
+      "status": "empty"
+    },
+    "AM36": {
+      "status": "empty"
+    },
+    "AM37": {
+      "status": "empty"
+    },
+    "AM38": {
+      "status": "empty"
+    },
+    "AM39": {
+      "status": "empty"
+    },
+    "AM40": {
+      "status": "empty"
+    },
+    "AM41": {
+      "status": "empty"
+    },
+    "AN32": {
+      "status": "empty"
+    },
+    "AN33": {
+      "status": "empty"
+    },
+    "AN34": {
+      "status": "empty"
+    },
+    "AN35": {
+      "status": "empty"
+    },
+    "AN36": {
+      "status": "empty"
+    },
+    "AN37": {
+      "status": "empty"
+    },
+    "AN38": {
+      "status": "empty"
+    },
+    "AN39": {
+      "status": "empty"
+    },
+    "AN40": {
+      "status": "empty"
+    },
+    "AN41": {
+      "status": "empty"
+    },
+    "AO32": {
+      "status": "empty"
+    },
+    "AO33": {
+      "status": "empty"
+    },
+    "AO34": {
+      "status": "empty"
+    },
+    "AO35": {
+      "status": "empty"
+    },
+    "AO36": {
+      "status": "empty"
+    },
+    "AO37": {
+      "status": "empty"
+    },
+    "AO38": {
+      "status": "empty"
+    },
+    "AO39": {
+      "status": "empty"
+    },
+    "AO40": {
+      "status": "empty"
+    },
+    "AO41": {
+      "status": "empty"
+    },
+    "AP32": {
+      "status": "empty"
+    },
+    "AP33": {
+      "status": "empty"
+    },
+    "AP34": {
+      "status": "empty"
+    },
+    "AP35": {
+      "status": "empty"
+    },
+    "AP36": {
+      "status": "empty"
+    },
+    "AP37": {
+      "status": "empty"
+    },
+    "AP38": {
+      "status": "empty"
+    },
+    "AP39": {
+      "status": "empty"
+    },
+    "AP40": {
+      "status": "empty"
+    },
+    "AQ31": {
+      "status": "empty"
+    },
+    "AQ32": {
+      "status": "empty"
+    },
+    "AQ33": {
+      "status": "empty"
+    },
+    "AQ34": {
+      "status": "empty"
+    },
+    "AQ35": {
+      "status": "empty"
+    },
+    "AQ36": {
+      "status": "empty"
+    },
+    "AQ37": {
+      "status": "empty"
+    },
+    "AQ38": {
+      "status": "empty"
+    },
+    "AQ39": {
+      "status": "empty"
+    },
+    "AQ40": {
+      "status": "empty"
+    },
+    "AR31": {
+      "status": "empty"
+    },
+    "AR32": {
+      "status": "empty"
+    },
+    "AR33": {
+      "status": "empty"
+    },
+    "AR34": {
+      "status": "empty"
+    },
+    "AR35": {
+      "status": "empty"
+    },
+    "AR36": {
+      "status": "empty"
+    },
+    "AR37": {
+      "status": "empty"
+    },
+    "AR38": {
+      "status": "empty"
+    },
+    "AR39": {
+      "status": "empty"
+    },
+    "AR40": {
+      "status": "empty"
+    },
+    "AS31": {
+      "status": "empty"
+    },
+    "AS32": {
+      "status": "empty"
+    },
+    "AS33": {
+      "status": "empty"
+    },
+    "AS34": {
+      "status": "empty"
+    },
+    "AS35": {
+      "status": "empty"
+    },
+    "AS36": {
+      "status": "empty"
+    },
+    "AS37": {
+      "status": "empty"
+    },
+    "AS38": {
+      "status": "empty"
+    },
+    "AS39": {
+      "status": "empty"
+    },
+    "AS40": {
+      "status": "empty"
+    },
+    "AT36": {
+      "status": "empty"
+    },
+    "AT37": {
+      "status": "empty"
+    },
+    "AU36": {
+      "status": "empty"
+    },
+    "AU37": {
+      "status": "empty"
+    },
+    "AY10": {
+      "status": "empty"
+    },
+    "AY11": {
+      "status": "empty"
+    },
+    "AY12": {
+      "status": "empty"
+    },
+    "AY13": {
+      "status": "empty"
+    },
+    "AZ10": {
+      "status": "empty"
+    },
+    "AZ11": {
+      "status": "empty"
+    },
+    "AZ12": {
+      "status": "empty"
+    },
+    "AZ13": {
+      "status": "empty"
+    },
+    "BA10": {
+      "status": "empty"
+    },
+    "BA11": {
+      "status": "empty"
+    },
+    "BA12": {
+      "status": "empty"
+    },
+    "BA13": {
+      "status": "empty"
+    },
+    "BB11": {
+      "status": "empty"
+    },
+    "BB12": {
+      "status": "empty"
+    },
+    "BC11": {
+      "status": "empty"
+    },
+    "BC12": {
+      "status": "empty"
+    },
+    "BD11": {
+      "status": "empty"
+    },
+    "BD12": {
+      "status": "empty"
+    },
+    "BD13": {
+      "status": "empty"
+    },
+    "BI7": {
+      "status": "empty"
+    },
+    "BI8": {
+      "status": "empty"
+    },
+    "BI9": {
+      "status": "empty"
+    },
+    "BJ10": {
+      "status": "empty"
+    },
+    "BJ11": {
+      "status": "empty"
+    },
+    "BJ6": {
+      "status": "empty"
+    },
+    "BJ7": {
+      "status": "empty"
+    },
+    "BJ8": {
+      "status": "empty"
+    },
+    "BJ9": {
+      "status": "empty"
+    },
+    "BK10": {
+      "status": "empty"
+    },
+    "BK11": {
+      "status": "empty"
+    },
+    "BK6": {
+      "status": "empty"
+    },
+    "BK7": {
+      "status": "empty"
+    },
+    "BK8": {
+      "status": "empty"
+    },
+    "BK9": {
+      "status": "empty"
+    },
+    "BL10": {
+      "status": "empty"
+    },
+    "BL11": {
+      "status": "empty"
+    },
+    "BL6": {
+      "status": "empty"
+    },
+    "BL7": {
+      "status": "empty"
+    },
+    "BL8": {
+      "status": "empty"
+    },
+    "BL9": {
+      "status": "empty"
+    },
+    "BM10": {
+      "status": "empty"
+    },
+    "BM11": {
+      "status": "empty"
     }
   },
   "groups": {
     "G1": {
-      "label": "R\u00f6nnetorp",
+      "label": "Rönnetorp",
       "count": 174,
       "lat": 56.17861,
       "lng": 13.01625,
@@ -4491,7 +4893,7 @@
       "session": "2026-04-03"
     },
     "G4": {
-      "label": "B\u00e4ls\u00e5kra",
+      "label": "Bälsåkra",
       "count": 26,
       "lat": 56.1447,
       "lng": 12.94217,
@@ -4505,7 +4907,7 @@
       "session": "2026-04-03"
     },
     "G6": {
-      "label": "Kvidinge-\u00d6",
+      "label": "Kvidinge-Ö",
       "count": 16,
       "lat": 56.10173,
       "lng": 12.87385,
@@ -4537,7 +4939,7 @@
       "session": "2026-04-03"
     },
     "G10": {
-      "label": "Kvidinge-N\u00d6",
+      "label": "Kvidinge-NÖ",
       "count": 13,
       "lat": 56.10402,
       "lng": 12.87812,
@@ -4630,7 +5032,7 @@
       "label": "Y23",
       "count": 20,
       "session": "2026-04-13",
-      "note": "SV\u00c5RINVENTERAD PGA AV BON L\u00c5GT I MYCKET T\u00c4T V\u00c4XTLIGHET/TR\u00c4D"
+      "note": "SVÅRINVENTERAD PGA AV BON LÅGT I MYCKET TÄT VÄXTLIGHET/TRÄD"
     },
     "G29": {
       "label": "AB29",
@@ -4736,7 +5138,7 @@
   "fieldnotes": [
     {
       "session": "2026-04-03",
-      "note": "Inventering av r\u00e5kbon 3 april 2026. Enbart \u00c5storps kommun. Punkt 9 korrigerad fr\u00e5n 56.10521,12.88395 till 56.10173,12.87385 (utanf\u00f6r kommunen). Punkter 10+11 (42+141) sammanslagna till 183 bon (Kvidinge-Kyrka).",
+      "note": "Inventering av råkbon 3 april 2026. Enbart Åstorps kommun. Punkt 9 korrigerad från 56.10521,12.88395 till 56.10173,12.87385 (utanför kommunen). Punkter 10+11 (42+141) sammanslagna till 183 bon (Kvidinge-Kyrka).",
       "points": [
         {
           "lat": 56.17965,
@@ -4816,17 +5218,24 @@
     },
     {
       "session": "2026-04-10",
-      "note": "Inventering av r\u00e5kbon 10 april 2026. Centrala/sydv\u00e4stra omr\u00e5det. 9 kluster identifierade: K19 (1), K24 (24), J26+K26 (32), L23 (5), N20 (61), O22+P22 (49), S24 (19), P26+P27 (24), S29+T29+U29 (30). Tomma rutor markerade i admin: 426 nya.",
+      "note": "Inventering av råkbon 10 april 2026. Centrala/sydvästra området. 9 kluster identifierade: K19 (1), K24 (24), J26+K26 (32), L23 (5), N20 (61), O22+P22 (49), S24 (19), P26+P27 (24), S29+T29+U29 (30). Tomma rutor markerade i admin: 426 nya.",
       "total_nests": 245,
       "total_clusters": 9,
       "empty_grids_added": 426
     },
     {
       "session": "2026-04-15",
-      "note": "Inventering av r\u00e5kbon 2026-04-15. 11 rutor inrapporterade. Originaldata: Ruta AU28: 9 BON;AT29:63;AY28:7+19;AY27:5;BA27:36+3;BB26:3;BB27:19+8+28;BC26:15;BD26:7;BC28:3;BB28:23+10+18+6 Tillagda 76 tomma rutor markerade i admin.",
+      "note": "Inventering av råkbon 2026-04-15. 11 rutor inrapporterade. Originaldata: Ruta AU28: 9 BON;AT29:63;AY28:7+19;AY27:5;BA27:36+3;BB26:3;BB27:19+8+28;BC26:15;BD26:7;BC28:3;BB28:23+10+18+6 Tillagda 76 tomma rutor markerade i admin.",
       "total_nests": 282,
       "total_clusters": 11,
       "empty_grids_added": 76
+    },
+    {
+      "session": "2026-04-28",
+      "note": "Inventering av råkbon 2026-04-28. Inga nya kluster. 134 tomma rutor markerade i tre områden: (1) AI-AU/31-41 centralt, (2) AY-BD/10-13 öst, (3) BI-BM/6-11 sydöst.",
+      "total_nests": 0,
+      "total_clusters": 0,
+      "empty_grids_added": 134
     }
   ]
 }
