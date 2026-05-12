@@ -268,32 +268,37 @@
       "id": "stat-kompression",
       "section": "insikt",
       "type": "progress-ring",
-      "title": "Automatisering av tidsåtgång",
-      "value": 91,
-      "max": 100,
-      "unit": "%",
+      "title": "Var går gränsen idag?",
+      "value": 719,
+      "max": 1440,
+      "unit": " min",
       "color": "#ea580c",
-      "subtitle": "Av alla AI-genererade uppgifter utförs idag 91% av uppgifter som tar mindre än 1h (Källa: SWE-bench)"
+      "subtitle": "Claude 4.6 klarar autonomt uppgifter som tar en människa nästan 12 timmar. Gränsen flyttas varje månad. (Källa: METR Task Horizon 1.1)"
     },
     {
-      "id": "agent-timeline",
+      "id": "agent-idag",
       "section": "agenter",
-      "type": "line-chart",
-      "title": "Tidskomprimering: Människa vs AI",
-      "labels": ["<15 min", "1-3 h", ">4 h"],
-      "yLabel": "Minuter",
-      "series": [
-        {
-          "name": "Mänsklig tidsåtgång",
-          "color": "#ea580c",
-          "points": [10, 120, 300]
-        },
-        {
-          "name": "AI-agentens exekvering",
-          "color": "#15803d",
-          "points": [1, 7, 250]
-        }
-      ]
+      "type": "comparison",
+      "title": "Vad gör en autonom agent redan idag?",
+      "left": {
+        "label": "Människa (manuellt)",
+        "items": [
+          "Söker i 5 olika system, kopierar data",
+          "Skriver rapport, formaterar, skickar",
+          "Läser 40 sidor policy, sammanfattar",
+          "Jämför tre leverantörsofferter"
+        ]
+      },
+      "right": {
+        "label": "AI-agent (autonomt)",
+        "items": [
+          "Navigerar systemen, sammanställer automatiskt",
+          "Genererar utkast, formaterar, distribuerar",
+          "Analyserar dokumentet, flaggar avvikelser",
+          "Strukturerar jämförelse med rekommendation"
+        ]
+      },
+      "highlights": [0, 2]
     },
     {
       "id": "agent-cases",
