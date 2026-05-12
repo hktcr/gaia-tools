@@ -42,7 +42,16 @@
       "image": "assets/presenter_avatar.png",
       "text": "Jag är kommunlektor i Åstorp och gymnasielärare i biologi/matematik, med vetenskaplig bakgrund i beräkningsbiologi och evolutionär ekologi.",
       "attribution": "Håkan Karlsson",
-      "context": "hakan.karlsson@edu.astorp.se"
+      "context": "hakan.karlsson@edu.astorp.se",
+      "animation": "slide-left"
+    },
+    {
+      "id": "dialog-first",
+      "section": "start",
+      "type": "quote",
+      "text": "*Dialog* före monolog. Avbryt mig. Ställ frågor. *Vi lär av varandra.*",
+      "author": "",
+      "style": "typewriter"
     },
     {
       "id": "llm-mekanik",
@@ -149,22 +158,10 @@
       "caption": "Hastigheten i AI-utvecklingen har underskattats med ~20 %. Kapaciteten fördubblas nu var 131:a dag."
     },
     {
-      "id": "dialog-first",
-      "section": "start",
-      "type": "quote",
-      "text": "*Dialog* före monolog. Avbryt mig. Ställ frågor. *Vi lär av varandra.*",
-      "author": "",
-      "style": "typewriter"
-    },
-    {
       "id": "tank-om-progression",
       "section": "start",
       "type": "rewrite-progression",
       "template": "Tänk om jag skulle kunna göra {quality}, på {time}?",
-      "prefix": [
-        "Den professionella förstärkaren",
-        "Det kognitiva språnget"
-      ],
       "steps": [
         {
           "quality": "samma arbete, minst lika bra",
@@ -189,29 +186,29 @@
       "section": "start",
       "type": "map-progression",
       "title": "Var finns motorerna?",
-      "mapImage": "ASSETS/dark_topographic_map.png",
+      "mapImage": "assets/dark_topographic_map.png",
       "labs": [
         {
           "id": "openai",
           "name": "OpenAI",
           "location": "San Francisco, USA",
-          "meta": "GPT-4 / SORA",
-          "desc": "Branschens pionjärer, skapare av ChatGPT. Leder kapplöpningen men möter ökad konkurrens.",
+          "meta": "GPT-5 / o3",
+          "desc": "Branschens pionjärer. Ledde kapplöpningen med GPT-4, nu pressar de gränsen med GPT-5-familjen.",
           "x": 15, "y": 35
         },
         {
           "id": "anthropic",
           "name": "Anthropic",
           "location": "San Francisco, USA",
-          "meta": "CLAUDE 3",
-          "desc": "Grundat av avhoppare från OpenAI. Fokuserar starkt på säkerhet och företagsnytta.",
+          "meta": "CLAUDE 4.6",
+          "desc": "Grundat av avhoppare från OpenAI. Deras Claude 4.6 håller TH-rekordet med 719 minuter.",
           "x": 14.5, "y": 38
         },
         {
           "id": "google-deepmind",
           "name": "Google DeepMind",
           "location": "London, UK",
-          "meta": "GEMINI / ALPHAFOLD",
+          "meta": "GEMINI 3.1 / ALPHAFOLD",
           "desc": "Googles AI-spjutspets. Ligger bakom AlphaFold och den multimodala Gemini-familjen.",
           "x": 46, "y": 25
         },
@@ -227,7 +224,7 @@
           "id": "meta",
           "name": "Meta FAIR",
           "location": "Menlo Park, USA",
-          "meta": "LLAMA 3",
+          "meta": "LLAMA 4",
           "desc": "Katalysatorn för den öppna AI-rörelsen. De gör mångmiljard-investeringar tillgängliga öppet.",
           "x": 16, "y": 36
         },
@@ -235,7 +232,7 @@
           "id": "alibaba",
           "name": "Alibaba Cloud",
           "location": "Hangzhou, Kina",
-          "meta": "QWEN 1.5",
+          "meta": "QWEN 3",
           "desc": "Den asiatiska jätten vars modeller idag matchar västvärldens toppmodeller.",
           "x": 83, "y": 40
         },
@@ -243,15 +240,15 @@
           "id": "xai",
           "name": "xAI",
           "location": "Memphis, USA",
-          "meta": "GROK / COLOSSUS",
-          "desc": "Elon Musks satsning. Kända för att bygga världens största träningskluster, Colossus.",
+          "meta": "GROK 4 / COLOSSUS",
+          "desc": "Elon Musks satsning. Grok 4 nådde TH 1.0 på 105 minuter. Kända för världens största träningskluster.",
           "x": 23, "y": 38
         },
         {
           "id": "cohere",
           "name": "Cohere",
           "location": "Toronto, Kanada",
-          "meta": "COMMAND R+",
+          "meta": "COMMAND A",
           "desc": "Ledande inom företags-AI och RAG (Retrieval-Augmented Generation).",
           "x": 25, "y": 30
         }

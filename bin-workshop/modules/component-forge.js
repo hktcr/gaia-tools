@@ -239,6 +239,14 @@
         .slide-line-chart .lc-dot:hover {
             filter: brightness(1.5);
         }
+        .slide-line-chart .lc-point-label {
+            fill: var(--text, rgba(255,255,255,0.9));
+            font-size: 11px;
+            font-family: 'Inter', sans-serif;
+            font-weight: 600;
+            opacity: 0;
+            animation: wordDrop 0.4s ease forwards;
+        }
         @keyframes dotAppear {
             0% { opacity: 0; r: 0; }
             60% { opacity: 1; r: 7; }
@@ -248,27 +256,27 @@
             position: absolute;
             background: rgba(15, 23, 42, 0.95);
             border: 1px solid var(--accent, #f97316);
-            padding: 1rem 1.2rem;
-            border-radius: 8px;
+            padding: 1.2rem 1.5rem;
+            border-radius: 10px;
             color: #fff;
-            font-size: 1.1rem;
+            font-size: 1.25rem;
             pointer-events: none;
             opacity: 0;
             transform: translate(-50%, -100%) translateY(-10px);
             transition: opacity 0.2s, transform 0.2s;
             z-index: 100;
             white-space: nowrap;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.6);
+            box-shadow: 0 8px 30px rgba(0,0,0,0.7);
         }
         .lc-tooltip.visible {
             opacity: 1;
-            transform: translate(-50%, -100%) translateY(-15px);
+            transform: translate(-50%, -100%) translateY(-18px);
         }
         .lc-tooltip-title {
             font-weight: bold;
             color: var(--accent, #f97316);
-            margin-bottom: 0.4rem;
-            font-size: 1.3rem;
+            margin-bottom: 0.5rem;
+            font-size: 1.5rem;
         }
         .slide-line-chart .lc-legend {
             display: flex;
@@ -1155,6 +1163,13 @@
             color: var(--accent, #f97316); margin-top: 0.2rem;
             animation: pqFadeIn 0.6s ease-out 0.4s both;
         }
+        @keyframes pqSlideLeft {
+            0% { opacity: 0; transform: translateX(-120px) perspective(800px) rotateY(8deg); }
+            100% { opacity: 1; transform: translateX(0) perspective(800px) rotateY(0deg); }
+        }
+        .slide-portrait-quote.pq-slide-left {
+            animation: pqSlideLeft 0.7s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+        }
 
         /* ===== SPRINT 6: REFLECTION ===== */
         @keyframes refQuestionIn {
@@ -1794,6 +1809,18 @@
                 dotsHTML += `<circle class="lc-dot" cx="${xScale(p)}" cy="${yScale(p.y)}" r="0" fill="${sr.color || '#6366f1'}" 
                     ${labelAttr} ${infoAttr} ${valAttr}
                     style="animation:dotAppear 0.4s ease ${dotDelay}s forwards; pointer-events:all;"/>`;
+                
+                // Permanent label next to dot
+                if (p.label) {
+                    const labelDelay = dotDelay + 0.2;
+                    const lx = xScale(p);
+                    const ly = yScale(p.y);
+                    // Alternate above/below to avoid overlap on dense points
+                    const above = (i % 2 === 0);
+                    const labelX = lx + 8;
+                    const labelY = above ? ly - 12 : ly + 18;
+                    dotsHTML += `<text class="lc-point-label" x="${labelX}" y="${labelY}" text-anchor="start" style="animation-delay:${labelDelay}s">${p.label}</text>`;
+                }
             });
         });
 
@@ -1817,8 +1844,8 @@
                     if (!label && !info) return;
                     
                     tooltip.innerHTML = (label ? '<div class="lc-tooltip-title">' + label + '</div>' : '') +
-                                      (info ? '<div style="white-space:normal; max-width:220px; line-height:1.4;">' + info + '</div>' : '') +
-                                      '<div style="margin-top:0.4rem; opacity:0.8; font-family:monospace; color:var(--accent, #f97316);">' + val + ' minuter</div>';
+                                      (info ? '<div style="white-space:normal; max-width:320px; line-height:1.5; font-size:1.15rem;">' + info + '</div>' : '') +
+                                      '<div style="margin-top:0.5rem; opacity:0.8; font-family:monospace; font-size:1.2rem; color:var(--accent, #f97316);">' + val + ' minuter</div>';
                     
                     const rect = chartEl.querySelector('.lc-chart').getBoundingClientRect();
                     const dotRect = dot.getBoundingClientRect();
@@ -2444,8 +2471,9 @@
      */
     function renderPortraitQuote(s) {
         const pos = s.imagePosition === 'right' ? 'row-reverse' : 'row';
+        const animClass = s.animation === 'slide-left' ? ' pq-slide-left' : '';
         return `
-            <div class="slide-portrait-quote" style="flex-direction:${pos}">
+            <div class="slide-portrait-quote${animClass}" style="flex-direction:${pos}">
                 ${s.image ? `<img class="pq-image" src="${s.image}" alt="${s.attribution || ''}">` : ''}
                 <div class="pq-content">
                     <div class="pq-mark">“</div>
@@ -3505,6 +3533,34 @@
                 }
             });
 
+            // PERIPHERAL clusters — far off at the edges, rarely targeted
+            const peripherals = [
+                { theme: 'poesi', hue: 350, words: ['metafor', 'rytm', 'vers', 'klang', 'bild', 'stämning'], anchorX: -1100, anchorY: 0 },
+                { theme: 'humor', hue: 55, words: ['ironi', 'timing', 'absurd', 'vits', 'parodi', 'satir'], anchorX: 1100, anchorY: -150 },
+                { theme: 'musik', hue: 170, words: ['harmoni', 'ackord', 'tonart', 'resonans', 'melodi', 'tempo'], anchorX: 900, anchorY: 400 }
+            ];
+            
+            peripherals.forEach((pc, pci) => {
+                const numInGroup = 3 + Math.floor(Math.random() * 2);
+                for (let i = 0; i < numInGroup; i++) {
+                    clusters.push({
+                        origX: pc.anchorX + (Math.random() - 0.5) * 180,
+                        origY: pc.anchorY + (Math.random() - 0.5) * 180,
+                        origZ: 300 + Math.random() * 2000,
+                        hue: pc.hue + (Math.random() - 0.5) * 20,
+                        radius: 40 + Math.random() * 50,
+                        superCluster: 5 + pci, // separate from main 0-4
+                        isPeripheral: true,
+                        words: Array(3 + Math.floor(Math.random() * 3)).fill(0).map(() => ({
+                            dx: (Math.random() - 0.5) * 2.5,
+                            dy: (Math.random() - 0.5) * 2.5,
+                            txt: pc.words[Math.floor(Math.random() * pc.words.length)]
+                        })),
+                        pulse: 0
+                    });
+                }
+            });
+
             // Rays and Particles
             let activeRay = null;
             let lastTarget = null;
@@ -3630,10 +3686,25 @@
                 if (!activeRay && rayWait <= 0) {
                     let nextTarget;
                     let attempts = 0;
-                    do {
-                        nextTarget = clusters[Math.floor(Math.random() * clusters.length)];
-                        attempts++;
-                    } while ((nextTarget === lastTarget || nextTarget.dz < 200) && attempts < 10);
+                    
+                    // ~12% chance to target a peripheral cluster (long-range association)
+                    const goPeripheral = Math.random() < 0.12;
+                    const candidates = goPeripheral 
+                        ? clusters.filter(c => c.isPeripheral && c.visible)
+                        : clusters.filter(c => !c.isPeripheral && c.visible);
+                    
+                    if (candidates.length > 0) {
+                        do {
+                            nextTarget = candidates[Math.floor(Math.random() * candidates.length)];
+                            attempts++;
+                        } while (nextTarget === lastTarget && attempts < 10);
+                    } else {
+                        // Fallback to any visible cluster
+                        do {
+                            nextTarget = clusters[Math.floor(Math.random() * clusters.length)];
+                            attempts++;
+                        } while ((nextTarget === lastTarget || nextTarget.dz < 200) && attempts < 10);
+                    }
 
                     activeRay = {
                         target: nextTarget,
