@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI för BINs chefer — 21 maj 2026</title>
+    <meta name="description" content="Showcase av 9 animerade slide-typer i SlideCraft Component Forge. All data är fiktiv/demo.">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #000000; --surface: #1a1a1a; --card-bg: #2a2a2a; --card-bg-hover: #333333;
+            --text: #f1f5f9; --text-muted: rgba(255,255,255,0.7);
+            --accent: #f97316; --accent2: #a855f7;
+            --green: #22c55e; --yellow: #eab308; --red: #ef4444;
+            --border: rgba(255,255,255,0.15); --border-hover: rgba(255,255,255,0.3);
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+
+        /* === HEADER === */
+        .showcase-header {
+            text-align: center; padding: 2.5rem 1rem 1rem;
+            border-bottom: 1px solid var(--border);
+            position: relative;
+        }
+        .showcase-header h1 { font-size: clamp(1.4rem, 3vw, 2.2rem); font-weight: 900; }
+        .showcase-header h1 span { color: var(--accent); }
+        .showcase-header p { color: var(--text-muted); font-size: 0.85rem; margin-top: 0.4rem; }
+        .demo-badge {
+            display: inline-block; background: rgba(239,68,68,0.15); color: #ef4444;
+            padding: 0.3rem 0.8rem; border-radius: 999px; font-size: 0.7rem; font-weight: 700;
+            margin-top: 0.6rem; letter-spacing: 0.08em; border: 1px solid rgba(239,68,68,0.3);
+        }
+
+        /* === THEME SWITCHER === */
+        .theme-row {
+            display: flex; justify-content: center; gap: 0.4rem;
+            padding: 0.8rem 0; flex-wrap: wrap;
+        }
+        .theme-pill {
+            padding: 0.25rem 0.6rem; border-radius: 999px; font-size: 0.65rem;
+            border: 1px solid var(--border); background: transparent; color: var(--text-muted);
+            cursor: pointer; transition: all 0.2s;
+        }
+        .theme-pill:hover { border-color: var(--text-muted); color: var(--text); }
+        .theme-pill.active { background: var(--accent); color: #fff; border-color: var(--accent); }
+
+        /* === CARD GRID === */
+        .card-view {
+            padding: 1.5rem; display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            gap: 1rem; max-width: 1200px; margin: 0 auto;
+        }
+        .card-view.hidden { display: none; }
+        .slide-card {
+            aspect-ratio: 16/10; background: var(--card-bg); border-radius: 14px;
+            border: 2px solid var(--border); cursor: pointer; transition: all 0.3s;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            text-align: center; padding: 1rem; position: relative; overflow: hidden;
+        }
+        .slide-card:hover { border-color: var(--accent); transform: translateY(-4px); box-shadow: 0 10px 30px rgba(0,0,0,0.4); }
+        .slide-card .card-icon { font-size: 2rem; margin-bottom: 0.5rem; }
+        .slide-card .card-title { font-weight: 700; font-size: 0.9rem; }
+        .slide-card .card-subtitle { font-size: 0.7rem; color: var(--text-muted); margin-top: 0.25rem; }
+        .slide-card .card-type {
+            position: absolute; top: 0.4rem; right: 0.4rem; font-size: 0.55rem;
+            font-family: 'JetBrains Mono', monospace; background: rgba(0,0,0,0.5);
+            padding: 0.15rem 0.4rem; border-radius: 4px; color: var(--accent); opacity: 0.8;
+        }
+        .slide-card .card-demo-tag {
+            position: absolute; bottom: 0.4rem; left: 0.4rem; font-size: 0.5rem;
+            background: rgba(239,68,68,0.2); color: #fca5a5; padding: 0.1rem 0.4rem;
+            border-radius: 4px; font-weight: 600;
+        }
+
+        /* === FULLSCREEN VIEW === */
+        .slide-view {
+            position: fixed; inset: 0; background: var(--bg);
+            display: none; flex-direction: column; z-index: 100;
+        }
+        .slide-view.active { display: flex; }
+        .slide-content {
+            flex: 1; display: flex; flex-direction: column;
+            align-items: center; justify-content: center;
+            padding: 2rem; overflow-y: auto;
+        }
+        .close-btn {
+            position: fixed; top: 1rem; right: 1rem;
+            background: rgba(255,255,255,0.1); border: none; color: white;
+            width: 44px; height: 44px; border-radius: 50%; font-size: 1.3rem;
+            cursor: pointer; z-index: 101; transition: all 0.2s;
+        }
+        .close-btn:hover { background: rgba(255,255,255,0.2); }
+
+        .slide-counter {
+            position: fixed; bottom: 1.5rem; right: 1.5rem; font-size: 0.7rem;
+            color: var(--text-muted); font-family: 'JetBrains Mono', monospace; z-index: 101;
+        }
+        .demo-watermark {
+            position: fixed; top: 0.8rem; left: 1rem; font-size: 0.6rem; color: rgba(239,68,68,0.4);
+            font-weight: 700; letter-spacing: 0.1em; z-index: 101;
+        }
+
+        /* === TITLE SLIDE (manual) === */
+        .slide-title-custom { text-align: center; padding: 2rem; }
+        .slide-title-custom h1 { font-size: clamp(2rem, 5vw, 4rem); font-weight: 900; line-height: 1.1; }
+        .slide-title-custom h1 span { color: var(--accent); }
+        .slide-title-custom .subtitle { font-size: clamp(1rem, 2vw, 1.4rem); color: var(--text-muted); margin-top: 1rem; }
+        .slide-title-custom .note { font-size: 0.8rem; color: rgba(239,68,68,0.6); margin-top: 2rem; }
+
+        /* Rewrite progression */
+        .slide-rewrite { text-align: center; max-width: 900px; margin: 0 auto; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 24px; cursor: pointer; }
+        .rewrite-prefix { font-size: clamp(1.4rem, 2vw, 1.8rem); font-weight: 300; color: var(--accent); opacity: 0; transition: opacity 0.6s ease; font-style: italic; }
+        .rewrite-prefix.visible { opacity: 1; }
+        .rewrite-main { font-size: clamp(2rem, 4vw, 3rem); font-weight: 300; line-height: 1.5; color: var(--text); }
+        .rewrite-main .rw-slot { display: inline; color: var(--text-muted); transition: color 0.4s ease; }
+        .rewrite-main .rw-slot.active { border-right: 2px solid var(--accent); animation: blink-border 0.8s step-end infinite; color: var(--accent); }
+        .rewrite-main .rw-slot.changed { color: var(--accent); }
+
+        @keyframes blink-border { 50% { border-color: transparent; } }
+        @keyframes blink-block { 50% { opacity: 0; } }
+        .cursor { font-weight: 300; color: var(--accent); animation: blink-block 1s step-end infinite; }
+
+        /* Auditorium scaling */
+        @media (min-width: 1200px) {
+            .card-view { grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 1.2rem; }
+        /* === AUDITORIUM SCALING OVERRIDES (Gäller alla slides) === */
+        /* Intelligent dynamisk skalning: Vi sätter en bra bas-nivå, men tillåter sedan specifika 
+           modifierare beroende på hur mycket innehåll sliden har. */
+        html.presentation-mode {
+            font-size: clamp(14px, 2vmin, 28px); /* Normal text-slide */
+        }
+        
+        /* För data-tunga slides (grafer, kartor, jämförelser) */
+        html.presentation-mode.scale-dense {
+            font-size: clamp(11px, 1.4vmin, 22px); 
+        }
+        
+        /* För kort, slagkraftig text (citat, rubriker, rewrite-progression) */
+        html.presentation-mode.scale-large {
+            font-size: clamp(18px, 2.8vmin, 42px); 
+        }
+        
+        /* Tvinga alla slide-containrar att ta upp yta, men ALDRIG bli bredare än 160vh. 
+           Detta garanterar att de aldrig växer sig ur skärmens höjd (eftersom max-bredden då stryps)! */
+        #slideContent > div[class^="slide-"] {
+            width: 100% !important;
+            max-width: min(1600px, 95vw, 160vh) !important;
+        }
+        
+        /* Undantag: Kartsliden (som har flex/full-bleed) måste tvingas ta upp ytan utan de strikta max-bredd-spärrarna för att slippa svarta fält på sidorna */
+        #slideContent > div.slide-map-progression {
+            min-height: 100vh !important;
+            height: 100vh !important;
+            max-width: 100% !important;
+        }
+        
+        #fullscreenBtn:hover { opacity: 1 !important; color: var(--text) !important; }
+    </style>
+</head>
+<body id="appBody">
+    <div class="showcase-header" id="showcaseHeader">
+        <h1>AI för <span>BINs chefer</span></h1>
+        <p>21 maj 2026</p>
+        <div class="theme-row" id="themeRow" style="display: none;"></div>
+    </div>
+
+    <div class="card-view" id="cardView"></div>
+
+    <div class="slide-view" id="slideView">
+        <button class="close-btn" id="closeBtn" title="Tillbaka (Esc)">✕</button>
+        <button class="fullscreen-btn" id="fullscreenBtn" title="Helskärm (F)" style="position:absolute; top:1.5rem; right:4.5rem; background:none; border:none; color:var(--text-muted); font-size:1.4rem; cursor:pointer; opacity:0.6; transition: opacity 0.2s; z-index: 200;">⛶</button>
+        
+        <div class="slide-content" id="slideContent"></div>
+
+        <div class="slide-counter" id="slideCounter"></div>
+    </div>
+
+    <script>
+    // ===== COMPONENT FORGE — INLINED (Sprint 1+2+3) =====
+    // Injecting CSS + all 9 renderers inline for zero-dependency deploy.
+    </script>
+    <script src="modules/component-forge.js?v=8"></script>
+
+    <script>
+    (function() {
+        'use strict';
+
+        let slidesData = [];
+        let currentIdx = 0;
+
+        // === THEMES (subset for showcase) ===
+        const themes = {
+            'Auditorium Dark': {"--bg":"#000","--surface":"#1a1a1a","--card-bg":"#2a2a2a","--card-bg-hover":"#333","--text":"#f1f5f9","--text-muted":"rgba(255,255,255,0.7)","--accent":"#f97316","--accent2":"#a855f7","--border":"rgba(255,255,255,0.15)","--border-hover":"rgba(255,255,255,0.3)"},
+            'Midnight Indigo': {"--bg":"#0f0b25","--surface":"#1a1440","--card-bg":"#241e54","--card-bg-hover":"#2e2668","--text":"#e8e4f8","--text-muted":"rgba(232,228,248,0.65)","--accent":"#a78bfa","--accent2":"#c084fc","--border":"rgba(167,139,250,0.2)","--border-hover":"rgba(167,139,250,0.4)"},
+            'Ember': {"--bg":"#0d0d0d","--surface":"#1c1210","--card-bg":"#2a1a15","--card-bg-hover":"#3a2520","--text":"#fde8d8","--text-muted":"rgba(253,232,216,0.65)","--accent":"#ff6b35","--accent2":"#ef4444","--border":"rgba(255,107,53,0.2)","--border-hover":"rgba(255,107,53,0.4)"},
+            'Cosmos': {"--bg":"#000005","--surface":"#0a0a1a","--card-bg":"#111128","--card-bg-hover":"#1a1a38","--text":"#e0f2fe","--text-muted":"rgba(224,242,254,0.6)","--accent":"#22d3ee","--accent2":"#06b6d4","--border":"rgba(34,211,238,0.2)","--border-hover":"rgba(34,211,238,0.4)"},
+            'Paper': {"--bg":"#faf7f2","--surface":"#f5f0e8","--card-bg":"#ede7db","--card-bg-hover":"#e2d9ca","--text":"#44403c","--text-muted":"rgba(68,64,60,0.65)","--accent":"#c2410c","--accent2":"#9a3412","--border":"rgba(68,64,60,0.15)","--border-hover":"rgba(68,64,60,0.3)"},
+            'Arctic': {"--bg":"#f0f9ff","--surface":"#e0f2fe","--card-bg":"#bae6fd","--card-bg-hover":"#7dd3fc","--text":"#0c4a6e","--text-muted":"rgba(12,74,110,0.65)","--accent":"#0ea5e9","--accent2":"#38bdf8","--border":"rgba(14,165,233,0.2)","--border-hover":"rgba(14,165,233,0.4)"},
+            'Meadow': {"--bg":"#f0fdf4","--surface":"#dcfce7","--card-bg":"#bbf7d0","--card-bg-hover":"#86efac","--text":"#14532d","--text-muted":"rgba(20,83,45,0.65)","--accent":"#16a34a","--accent2":"#15803d","--border":"rgba(22,163,74,0.2)","--border-hover":"rgba(22,163,74,0.4)"},
+            'Retro Terminal': {"--bg":"#000","--surface":"#0a0a0a","--card-bg":"#111","--card-bg-hover":"#1a1a1a","--text":"#00ff41","--text-muted":"rgba(0,255,65,0.5)","--accent":"#00ff41","--accent2":"#39ff14","--border":"rgba(0,255,65,0.15)","--border-hover":"rgba(0,255,65,0.35)"},
+            'Åstorp': {"--bg":"#fff","--surface":"#f1f5f9","--card-bg":"#e8eef6","--card-bg-hover":"#d0ddef","--text":"#1e293b","--text-muted":"rgba(30,41,59,0.7)","--accent":"#1e40af","--accent2":"#1d4ed8","--border":"rgba(30,64,175,0.15)","--border-hover":"rgba(30,64,175,0.3)"},
+            'Neon': {"--bg":"#0a0a0a","--surface":"#141414","--card-bg":"#1e1e1e","--card-bg-hover":"#2a2a2a","--text":"#fff","--text-muted":"rgba(255,255,255,0.6)","--accent":"#ff00ff","--accent2":"#00ffff","--border":"rgba(255,0,255,0.2)","--border-hover":"rgba(255,0,255,0.4)"}
+        };
+
+        let activeTheme = 'Auditorium Dark';
+
+        // Build theme pills
+        const themeRow = document.getElementById('themeRow');
+        Object.keys(themes).forEach(name => {
+            const pill = document.createElement('button');
+            pill.className = 'theme-pill' + (name === activeTheme ? ' active' : '');
+            pill.textContent = name;
+            pill.onclick = () => applyTheme(name);
+            themeRow.appendChild(pill);
+        });
+
+        function applyTheme(name) {
+            const vars = themes[name]; if (!vars) return;
+            activeTheme = name;
+            Object.entries(vars).forEach(([k, v]) => document.documentElement.style.setProperty(k, v));
+            document.querySelectorAll('.theme-pill').forEach(p => p.classList.toggle('active', p.textContent === name));
+        }
+
+        // === TITLE SLIDE RENDERER ===
+        window.slideTypeRegistry = window.slideTypeRegistry || {};
+        window.slideTypeRegistry['title'] = function(s) {
+            const parts = (s.title || '').split(' ');
+            const last = parts.pop();
+            return `<div class="slide-title-custom">
+                <h1>${parts.join(' ')} <span>${last}</span></h1>
+                <div class="subtitle">${s.subtitle || ''}</div>
+                ${s.note ? `<div class="note">${s.note}</div>` : ''}
+            </div>`;
+        };
+
+        // === RENDER CARD GRID ===
+        function renderCards() {
+            const grid = document.getElementById('cardView');
+            grid.innerHTML = '';
+            slidesData.forEach((s, i) => {
+                const card = document.createElement('div');
+                card.className = 'slide-card';
+                card.innerHTML = `
+                    <span class="card-type">${s.type}</span>
+                    <span class="card-title" style="font-size: 1.2rem; margin-top: 0.5rem; font-weight: 600;">${s.cardTitle || s.title || s.type}</span>
+                    ${s.cardSubtitle ? `<span class="card-subtitle">${s.cardSubtitle}</span>` : ''}
+                `;
+                card.onclick = () => openSlide(i);
+                grid.appendChild(card);
+            });
+        }
+
+        // === SLIDE NAVIGATION ===
+        function openSlide(idx) {
+            window.handleNextStep = null;
+            currentIdx = idx;
+            const s = slidesData[idx];
+            const renderer = window.slideTypeRegistry[s.type];
+            const content = renderer ? renderer(s) : `<div style="text-align:center"><h2>${s.title || s.type}</h2><p>Typ "${s.type}" — ingen renderer registrerad</p></div>`;
+
+            document.getElementById('slideContent').innerHTML = content;
+            document.getElementById('slideView').classList.add('active');
+            document.getElementById('cardView').classList.add('hidden');
+            document.getElementById('showcaseHeader').style.display = 'none';
+            document.getElementById('slideCounter').textContent = `${idx + 1} / ${slidesData.length}`;
+            
+            // --- Slide Content Optimizer ---
+            // Utvärdera sliden och applicera rätt skalnings-klass
+            const denseTypes = ['line-chart', 'comparison', 'map-progression', 'bar-race', 'stat-compare', 'process-chain', 'timeline-vertical'];
+            const largeTypes = ['title', 'quote', 'giant-text', 'rewrite-progression', 'letter-morph', 'box-reveal', 'portrait-quote', 'roles-diagram', 'warning-pulse'];
+            
+            document.documentElement.classList.remove('scale-dense', 'scale-large');
+            if (s.size === 'large' || largeTypes.includes(s.type)) {
+                document.documentElement.classList.add('scale-large');
+            } else if (s.size === 'dense' || denseTypes.includes(s.type)) {
+                document.documentElement.classList.add('scale-dense');
+            }
+            // -------------------------------
+            
+            // Switch to auditorium scaling
+            document.documentElement.classList.add('presentation-mode');
+        }
+
+        function closeSlide() {
+            document.getElementById('slideView').classList.remove('active');
+            document.getElementById('cardView').classList.remove('hidden');
+            document.getElementById('showcaseHeader').style.display = '';
+            
+            // Revert back to desktop showcase scaling
+            document.documentElement.classList.remove('presentation-mode');
+        }
+
+        window.nextSlide = function() {
+            if (currentIdx < slidesData.length - 1) openSlide(currentIdx + 1);
+        };
+        window.prevSlide = function() {
+            if (currentIdx > 0) openSlide(currentIdx - 1);
+        };
+
+        document.getElementById('closeBtn').onclick = closeSlide;
+
+        document.getElementById('slideView').addEventListener('click', (e) => {
+            if (e.target.tagName === 'BUTTON' || e.target.tagName === 'A' || e.target.closest('.no-click-advance')) return;
+            if (window.handleNextStep && window.handleNextStep()) return;
+            window.nextSlide();
+        });
+        
+        // === FULLSCREEN LOGIC ===
+        function toggleFullScreen() {
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen().catch(err => {
+                    console.log(`Error attempting to enable fullscreen: ${err.message}`);
+                });
+            } else {
+                if (document.exitFullscreen) {
+                    document.exitFullscreen();
+                }
+            }
+        }
+        document.getElementById('fullscreenBtn').onclick = toggleFullScreen;
+
+        document.addEventListener('keydown', e => {
+            if (e.key === 'Escape') closeSlide();
+            if (e.key === 'f' || e.key === 'F') toggleFullScreen();
+            if (document.getElementById('slideView').classList.contains('active')) {
+                if (e.key === ' ' || e.key === 'Enter') { 
+                    e.preventDefault(); 
+                    if (window.handleNextStep && window.handleNextStep()) return;
+                    window.nextSlide(); 
+                }
+                if (e.key === 'ArrowRight') { e.preventDefault(); window.nextSlide(); }
+                if (e.key === 'ArrowLeft') { e.preventDefault(); window.prevSlide(); }
+            }
+        });
+
+        // === LOAD SLIDES ===
+        function loadSlides() {
+            // fetch fails on file:// protocol, use XMLHttpRequest as fallback
+            if (window.location.protocol === 'file:') {
+                const xhr = new XMLHttpRequest();
+                xhr.open('GET', 'slides.json', true);
+                xhr.onload = function() {
+                    if (xhr.status === 200 || xhr.status === 0) {
+                        try {
+                            const data = JSON.parse(xhr.responseText);
+                            slidesData = data.slides || [];
+                            // Update header with meta info
+                            const headerP = document.querySelector('.showcase-header p');
+                            if (headerP && data.meta) headerP.textContent = data.meta.subtitle || '';
+                            renderCards();
+                        } catch(e) {
+                            console.error('JSON parse error:', e);
+                            document.getElementById('cardView').innerHTML = '<p style="text-align:center;padding:4rem;color:var(--red)">JSON-syntaxfel: ' + e.message + '</p>';
+                        }
+                    }
+                };
+                xhr.onerror = function() {
+                    document.getElementById('cardView').innerHTML = '<p style="text-align:center;padding:4rem;color:var(--red)">Kunde inte ladda slides.json (kontrollera att filen finns)</p>';
+                };
+                xhr.send();
+            } else {
+                fetch('slides.json')
+                    .then(r => r.json())
+                    .then(data => {
+                        slidesData = data.slides || [];
+                        const headerP = document.querySelector('.showcase-header p');
+                        if (headerP && data.meta) headerP.textContent = data.meta.subtitle || '';
+                        renderCards();
+                    })
+                    .catch(err => {
+                        console.error('Failed to load slides.json:', err);
+                        document.getElementById('cardView').innerHTML = '<p style="text-align:center;padding:4rem;color:var(--red)">Kunde inte ladda slides.json</p>';
+                    });
+            }
+        }
+        loadSlides();
+    })();
+    </script>
+</body>
+</html>

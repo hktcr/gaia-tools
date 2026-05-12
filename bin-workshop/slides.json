@@ -1,0 +1,332 @@
+{
+  "meta": {
+    "project": "Chefsgrupp BIN",
+    "event": "Workshop",
+    "date": "2026-05-21",
+    "presenter": {
+      "name": "Håkan Karlsson",
+      "title": "Kommunlektor",
+      "org": "Åstorps kommun"
+    }
+  },
+  "sections": [
+    {
+      "id": "start",
+      "label": "Start",
+      "color": "#15803d"
+    },
+    {
+      "id": "insikt",
+      "label": "Insikt",
+      "color": "#ea580c"
+    },
+    {
+      "id": "agenter",
+      "label": "Autonoma Agenter",
+      "color": "#7e22ce"
+    }
+  ],
+  "slides": [
+    {
+      "id": "title",
+      "section": "start",
+      "type": "title",
+      "title": "AI för BINs chefer",
+      "subtitle": "Från chattbottar till autonoma agenter",
+      "note": "21 maj 2026"
+    },
+    {
+      "id": "presenter",
+      "section": "start",
+      "type": "portrait-quote",
+      "image": "assets/presenter_avatar.png",
+      "text": "Jag är kommunlektor i Åstorp och gymnasielärare i biologi/matematik, med vetenskaplig bakgrund i beräkningsbiologi och evolutionär ekologi.",
+      "attribution": "Håkan Karlsson",
+      "context": "hakan.karlsson@edu.astorp.se"
+    },
+    {
+      "id": "llm-mekanik",
+      "section": "start",
+      "type": "token-spinner",
+      "text": "En stor språkmodell är i grunden en avancerad autokorrigering som gissar nästa ord. Eller?"
+    },
+    {
+      "id": "llm-latent-rymd",
+      "section": "start",
+      "type": "semantic-nebula",
+      "sentences": [
+        "AI söker inte i en databas.",
+        "Den navigerar i ett oändligt hav av mening.",
+        "Varje begrepp har en position i rymden.",
+        "Närliggande ord dras till varandra.",
+        "Strålar av uppmärksamhet söker kopplingar.",
+        "Fakta, mönster och toner kondenseras...",
+        "...tills ett nytt svar dröms fram."
+      ]
+    },
+    {
+      "id": "syntes-kognition",
+      "section": "start",
+      "type": "comparison",
+      "title": "Samma mönster, olika substrat",
+      "left": {
+        "label": "Mänsklig Biologi",
+        "items": [
+          "Synapser avfyrar i nätverk",
+          "Känslor och minnen associeras",
+          "Arbetsminnet kondenserar information",
+          "Ett ord formas på tungan"
+        ]
+      },
+      "right": {
+        "label": "Transformer-arkitektur",
+        "items": [
+          "Attention-strålar söker i latenta rymden",
+          "Semantiska vektorkluster aktiveras",
+          "Kontextfönstret sammanställer parametrar",
+          "Nästa token predikteras och stelnar"
+        ]
+      },
+      "highlights": [3]
+    },
+    {
+      "id": "syntes-motor-insikt",
+      "section": "start",
+      "type": "callout",
+      "variant": "insight",
+      "pulsate": true,
+      "tag": "PEDAGOGISK FÄLLA",
+      "title": "Sluta se AI som ett IT-verktyg",
+      "body": "När vi behandlar LLM:er som databaser (sökmotorer) reducerar vi deras förmåga. De hämtar inte svar åt oss – de <strong>drömmer fram dem</strong> (syntetiserar) precis som vår egen biologi. Förstår vi det, förstår vi också vikten av hur vi formulerar vår prompt."
+    },
+    {
+      "id": "ai-task-horizon",
+      "section": "start",
+      "type": "line-chart",
+      "title": "Autonom tidshorisont förklarar allt (METR)",
+      "xLabel": "Tid (År/Månad)",
+      "yLabel": "Mänsklig tid (Minuter)",
+      "series": [
+        {
+          "name": "Klarar uppgiften med 50% sannolikhet",
+          "color": "#10b981",
+          "points": [
+            { "x": "2023-03-14", "y": 6, "label": "GPT-4", "info": "Tidig milstolpe. Klarar enklare sekvenser." },
+            { "x": "2024-09-12", "y": 42, "label": "o1", "info": "Introducerar 'chain-of-thought' som bryter igenom till nya nivåer." },
+            { "x": "2025-02-20", "y": 55, "label": "Claude 3.7", "info": "Avancerad kodning och multimodala resonemang." },
+            { "x": "2025-04-15", "y": 74, "label": "Claude 4", "info": "Helt ny arkitektur maximerar kontext." },
+            { "x": "2025-07-01", "y": 77, "label": "o4-mini", "info": "Små, snabba modeller blir extremt kapabla." },
+            { "x": "2025-09-10", "y": 91, "label": "o3", "info": "Höstsläpp med enorma slutledningsförmågor." },
+            { "x": "2025-10-05", "y": 105, "label": "Grok 4", "info": "Stort hopp i ostrukturerad datahantering." },
+            { "x": "2025-11-20", "y": 131, "label": "GPT-5", "info": "Nästa generations frontier-modell." },
+            { "x": "2025-12-15", "y": 162, "label": "GPT-5.1", "info": "Motsvarar nästan tre timmars självständigt arbete. Här nås max för TH 1.0 testet." }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "th11-ceiling",
+      "section": "start",
+      "type": "number-wall",
+      "title": "Januari 2026: Taket sprängs",
+      "numbers": [
+        { "value": 342, "label": "GPT-5.4 (minuter)", "icon": "🚀" },
+        { "value": 384, "label": "Gemini 3.1 Pro (minuter)", "icon": "🔥" },
+        { "value": 719, "label": "Claude 4.6 (minuter)", "icon": "⚡" }
+      ]
+    },
+    {
+      "id": "th11-acceleration",
+      "section": "start",
+      "type": "stat-compare",
+      "title": "Accelerationen accelererar",
+      "from": 7,
+      "fromSuffix": " mån",
+      "fromLabel": "Fördubblingstid (TH 1.0)",
+      "to": 4,
+      "toSuffix": " mån",
+      "toLabel": "Fördubblingstid (TH 1.1)",
+      "caption": "Hastigheten i AI-utvecklingen har underskattats med ~20 %. Kapaciteten fördubblas nu var 131:a dag."
+    },
+    {
+      "id": "dialog-first",
+      "section": "start",
+      "type": "quote",
+      "text": "*Dialog* före monolog. Avbryt mig. Ställ frågor. *Vi lär av varandra.*",
+      "author": "",
+      "style": "typewriter"
+    },
+    {
+      "id": "tank-om-progression",
+      "section": "start",
+      "type": "rewrite-progression",
+      "template": "Tänk om jag skulle kunna göra {quality}, på {time}?",
+      "prefix": [
+        "Den professionella förstärkaren",
+        "Det kognitiva språnget"
+      ],
+      "steps": [
+        {
+          "quality": "samma arbete, minst lika bra",
+          "time": "hälften så lång tid"
+        },
+        {
+          "quality": "dubbelt så mycket, minst lika bra",
+          "time": "hälften så lång tid"
+        },
+        {
+          "quality": "dubbelt så mycket, dubbelt så bra",
+          "time": "lika lång tid"
+        },
+        {
+          "quality": "dubbelt så mycket, dubbelt så bra",
+          "time": "hälften så lång tid"
+        }
+      ]
+    },
+    {
+      "id": "ai-laboratorier-karta",
+      "section": "start",
+      "type": "map-progression",
+      "title": "Var finns motorerna?",
+      "mapImage": "ASSETS/dark_topographic_map.png",
+      "labs": [
+        {
+          "id": "openai",
+          "name": "OpenAI",
+          "location": "San Francisco, USA",
+          "meta": "GPT-4 / SORA",
+          "desc": "Branschens pionjärer, skapare av ChatGPT. Leder kapplöpningen men möter ökad konkurrens.",
+          "x": 15, "y": 35
+        },
+        {
+          "id": "anthropic",
+          "name": "Anthropic",
+          "location": "San Francisco, USA",
+          "meta": "CLAUDE 3",
+          "desc": "Grundat av avhoppare från OpenAI. Fokuserar starkt på säkerhet och företagsnytta.",
+          "x": 14.5, "y": 38
+        },
+        {
+          "id": "google-deepmind",
+          "name": "Google DeepMind",
+          "location": "London, UK",
+          "meta": "GEMINI / ALPHAFOLD",
+          "desc": "Googles AI-spjutspets. Ligger bakom AlphaFold och den multimodala Gemini-familjen.",
+          "x": 46, "y": 25
+        },
+        {
+          "id": "mistral",
+          "name": "Mistral AI",
+          "location": "Paris, Frankrike",
+          "meta": "MISTRAL LARGE / OPEN SOURCE",
+          "desc": "Den europeiska utmanaren. Driver utvecklingen av kraftfulla öppna modeller.",
+          "x": 48, "y": 28
+        },
+        {
+          "id": "meta",
+          "name": "Meta FAIR",
+          "location": "Menlo Park, USA",
+          "meta": "LLAMA 3",
+          "desc": "Katalysatorn för den öppna AI-rörelsen. De gör mångmiljard-investeringar tillgängliga öppet.",
+          "x": 16, "y": 36
+        },
+        {
+          "id": "alibaba",
+          "name": "Alibaba Cloud",
+          "location": "Hangzhou, Kina",
+          "meta": "QWEN 1.5",
+          "desc": "Den asiatiska jätten vars modeller idag matchar västvärldens toppmodeller.",
+          "x": 83, "y": 40
+        },
+        {
+          "id": "xai",
+          "name": "xAI",
+          "location": "Memphis, USA",
+          "meta": "GROK / COLOSSUS",
+          "desc": "Elon Musks satsning. Kända för att bygga världens största träningskluster, Colossus.",
+          "x": 23, "y": 38
+        },
+        {
+          "id": "cohere",
+          "name": "Cohere",
+          "location": "Toronto, Kanada",
+          "meta": "COMMAND R+",
+          "desc": "Ledande inom företags-AI och RAG (Retrieval-Augmented Generation).",
+          "x": 25, "y": 30
+        }
+      ]
+    },
+    {
+      "id": "tids-citat",
+      "section": "insikt",
+      "type": "letter-morph",
+      "phrases": [
+        "Vi går från prompter som ger svar på sekunder...",
+        "...till uppdrag som tar timmar att utföra.",
+        "Ett paradigmskifte."
+      ]
+    },
+    {
+      "id": "stat-kompression",
+      "section": "insikt",
+      "type": "progress-ring",
+      "title": "Automatisering av tidsåtgång",
+      "value": 91,
+      "max": 100,
+      "unit": "%",
+      "color": "#ea580c",
+      "subtitle": "Av alla AI-genererade uppgifter utförs idag 91% av uppgifter som tar mindre än 1h (Källa: SWE-bench)"
+    },
+    {
+      "id": "agent-timeline",
+      "section": "agenter",
+      "type": "line-chart",
+      "title": "Tidskomprimering: Människa vs AI",
+      "labels": ["<15 min", "1-3 h", ">4 h"],
+      "yLabel": "Minuter",
+      "series": [
+        {
+          "name": "Mänsklig tidsåtgång",
+          "color": "#ea580c",
+          "points": [10, 120, 300]
+        },
+        {
+          "name": "AI-agentens exekvering",
+          "color": "#15803d",
+          "points": [1, 7, 250]
+        }
+      ]
+    },
+    {
+      "id": "agent-cases",
+      "section": "agenter",
+      "type": "timeline-vertical",
+      "title": "De autonoma agenternas evolution",
+      "nodes": [
+        {
+          "year": "Våren 2024",
+          "text": "Cognition Devin",
+          "sub": "Den första autonoma kod-agenten. Etablerade 'Tre-timmarsregeln' (löser problem autonoma över 3h)."
+        },
+        {
+          "year": "Hösten 2024",
+          "text": "Claude 3.5 Computer Use",
+          "sub": "Tar över skärm, mus och tangentbord. Automatisering rakt över stängda kommunsystem."
+        },
+        {
+          "year": "Början 2025",
+          "text": "OpenAI Operator",
+          "sub": "Sitter som bakgrundsprocess i OS och exekverar asynkrona uppgifter över dussintals flikar."
+        }
+      ]
+    },
+    {
+      "id": "gdpr-varning",
+      "section": "agenter",
+      "type": "warning-pulse",
+      "title": "Avpersonifiering",
+      "subtitle": "Inga personuppgifter. Inga utpekande detaljer."
+    }
+  ]
+}
