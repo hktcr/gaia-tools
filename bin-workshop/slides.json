@@ -134,6 +134,34 @@
       ]
     },
     {
+      "id": "ai-task-horizon-2",
+      "section": "start",
+      "type": "line-chart",
+      "title": "Autonom tidshorisont förklarar allt (METR)",
+      "xLabel": "Tid (År/Månad)",
+      "yLabel": "Mänsklig tid (Minuter)",
+      "series": [
+        {
+          "name": "Klarar uppgiften med 50% sannolikhet",
+          "color": "#ea580c",
+          "points": [
+            { "x": "2023-03-14", "y": 6, "label": "GPT-4" },
+            { "x": "2024-09-12", "y": 42, "label": "o1" },
+            { "x": "2025-02-20", "y": 55, "label": "Claude 3.7" },
+            { "x": "2025-04-15", "y": 74, "label": "Claude 4" },
+            { "x": "2025-07-01", "y": 77, "label": "o4-mini" },
+            { "x": "2025-09-10", "y": 91, "label": "o3" },
+            { "x": "2025-10-05", "y": 105, "label": "Grok 4" },
+            { "x": "2025-11-20", "y": 131, "label": "GPT-5" },
+            { "x": "2025-12-15", "y": 162, "label": "GPT-5.1" },
+            { "x": "2026-01-10", "y": 342, "label": "GPT-5.4", "info": "TH 1.1 introduceras." },
+            { "x": "2026-01-15", "y": 384, "label": "Gemini 3.1 Pro", "info": "Google kontrar." },
+            { "x": "2026-02-05", "y": 719, "label": "Claude 4.6", "info": "Taket sprängs fullständigt. Nästan 12 timmars oavbrutet autonomt arbete." }
+          ]
+        }
+      ]
+    },
+    {
       "id": "th11-ceiling",
       "section": "start",
       "type": "number-wall",
