@@ -156,7 +156,7 @@
             { "x": "2025-12-15", "y": 162, "label": "GPT-5.1" },
             { "x": "2026-01-10", "y": 342, "label": "GPT-5.4", "info": "TH 1.1 introduceras." },
             { "x": "2026-01-15", "y": 384, "label": "Gemini 3.1 Pro", "info": "Google kontrar." },
-            { "x": "2026-02-05", "y": 719, "label": "Claude 4.6", "info": "Taket sprängs fullständigt. Nästan 12 timmars oavbrutet autonomt arbete." }
+            { "x": "2026-02-05", "y": 870, "label": "Claude Opus 4.6", "info": "METR:s testsviter slår i taket. Över 14,5 timmars autonomt arbete." }
           ]
         }
       ]
@@ -169,7 +169,7 @@
       "numbers": [
         { "value": 342, "label": "GPT-5.4 (minuter)", "icon": "🚀" },
         { "value": 384, "label": "Gemini 3.1 Pro (minuter)", "icon": "🔥" },
-        { "value": 719, "label": "Claude 4.6 (minuter)", "icon": "⚡" }
+        { "value": 870, "label": "Claude Opus 4.6 (min)", "icon": "⚡" }
       ]
     },
     {
@@ -297,11 +297,11 @@
       "section": "insikt",
       "type": "progress-ring",
       "title": "Var går gränsen idag?",
-      "value": 719,
+      "value": 870,
       "max": 1440,
       "unit": " min",
       "color": "#ea580c",
-      "subtitle": "Claude 4.6 klarar autonomt uppgifter som tar en människa nästan 12 timmar. Gränsen flyttas varje månad. (Källa: METR Task Horizon 1.1)"
+      "subtitle": "Claude Opus 4.6 klarar autonomt uppgifter som tar en människa 14,5 timmar. Gränsen mäts nu i dagar. (Källa: METR TH 1.1)"
     },
     {
       "id": "agent-idag",
