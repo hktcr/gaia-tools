@@ -147,6 +147,7 @@
       "section": "start",
       "type": "line-chart",
       "title": "Autonom tidshorisont förklarar allt (METR)",
+      "pauseIndex": 9,
       "xLabel": "Tid (År/Månad)",
       "yLabel": "Mänsklig tid (Minuter)",
       "series": [

@@ -248,6 +248,14 @@
             opacity: 0;
             animation: wordDrop 0.4s ease forwards;
         }
+        .slide-line-chart .lc-paused-stage {
+            animation-play-state: paused !important;
+            opacity: 0 !important;
+        }
+        .slide-line-chart .lc-reveal-stage {
+            animation-play-state: running !important;
+            opacity: 1 !important;
+        }
         .slide-line-chart.lc-paused h2,
         .slide-line-chart.lc-paused .lc-data-line,
         .slide-line-chart.lc-paused .lc-dot,
@@ -1803,36 +1811,50 @@
         let linesHTML = '';
         let dotsHTML = '';
         series.forEach((sr, si) => {
-            const ptsHTML = (sr.normPoints || []).map(p => `${xScale(p)},${yScale(p.y)}`).join(' ');
+            const delay = 0.5 + si * 0.8;
             
-            let pathLen = 0;
-            for (let i = 1; i < sr.normPoints.length; i++) {
-                pathLen += Math.hypot(xScale(sr.normPoints[i]) - xScale(sr.normPoints[i-1]), yScale(sr.normPoints[i].y) - yScale(sr.normPoints[i-1].y));
+            if (s.pauseIndex && s.pauseIndex > 0 && s.pauseIndex < sr.normPoints.length) {
+                const pts1 = sr.normPoints.slice(0, s.pauseIndex);
+                const pts2 = sr.normPoints.slice(s.pauseIndex - 1);
+                
+                const ptsHTML1 = pts1.map(p => `${xScale(p)},${yScale(p.y)}`).join(' ');
+                let pathLen1 = 0;
+                for (let i = 1; i < pts1.length; i++) pathLen1 += Math.hypot(xScale(pts1[i]) - xScale(pts1[i-1]), yScale(pts1[i].y) - yScale(pts1[i-1].y));
+                
+                const ptsHTML2 = pts2.map(p => `${xScale(p)},${yScale(p.y)}`).join(' ');
+                let pathLen2 = 0;
+                for (let i = 1; i < pts2.length; i++) pathLen2 += Math.hypot(xScale(pts2[i]) - xScale(pts2[i-1]), yScale(pts2[i].y) - yScale(pts2[i-1].y));
+                
+                linesHTML += `<polyline class="lc-data-line" points="${ptsHTML1}" stroke="${sr.color || '#6366f1'}" 
+                    style="stroke-dasharray:${pathLen1};stroke-dashoffset:${pathLen1};animation:drawLine 2s ease ${delay}s forwards"/>`;
+                linesHTML += `<polyline class="lc-data-line lc-paused-stage" points="${ptsHTML2}" stroke="${sr.color || '#6366f1'}" 
+                    style="stroke-dasharray:${pathLen2};stroke-dashoffset:${pathLen2};animation:drawLine 2s ease ${delay}s forwards"/>`;
+            } else {
+                const ptsHTML = (sr.normPoints || []).map(p => `${xScale(p)},${yScale(p.y)}`).join(' ');
+                let pathLen = 0;
+                for (let i = 1; i < sr.normPoints.length; i++) pathLen += Math.hypot(xScale(sr.normPoints[i]) - xScale(sr.normPoints[i-1]), yScale(sr.normPoints[i].y) - yScale(sr.normPoints[i-1].y));
+                linesHTML += `<polyline class="lc-data-line" points="${ptsHTML}" stroke="${sr.color || '#6366f1'}" 
+                    style="stroke-dasharray:${pathLen};stroke-dashoffset:${pathLen};animation:drawLine 2s ease ${delay}s forwards"/>`;
             }
 
-            const delay = 0.5 + si * 0.8;
-            linesHTML += `<polyline class="lc-data-line" points="${ptsHTML}" stroke="${sr.color || '#6366f1'}" 
-                style="stroke-dasharray:${pathLen};stroke-dashoffset:${pathLen};animation:drawLine 2s ease ${delay}s forwards"/>`;
-
             (sr.normPoints || []).forEach((p, i) => {
+                const isPaused = (s.pauseIndex && i >= s.pauseIndex) ? ' lc-paused-stage' : '';
                 const dotDelay = delay + 0.3 + i * 0.15;
                 const labelAttr = p.label ? `data-label="${p.label}"` : '';
                 const infoAttr = p.info ? `data-info="${p.info}"` : '';
                 const valAttr = `data-val="${p.y}"`;
-                dotsHTML += `<circle class="lc-dot" cx="${xScale(p)}" cy="${yScale(p.y)}" r="0" fill="${sr.color || '#6366f1'}" 
+                dotsHTML += `<circle class="lc-dot${isPaused}" cx="${xScale(p)}" cy="${yScale(p.y)}" r="0" fill="${sr.color || '#6366f1'}" 
                     ${labelAttr} ${infoAttr} ${valAttr}
                     style="animation:dotAppear 0.4s ease ${dotDelay}s forwards; pointer-events:all;"/>`;
                 
-                // Permanent label next to dot
                 if (p.label) {
                     const labelDelay = dotDelay + 0.2;
                     const lx = xScale(p);
                     const ly = yScale(p.y);
-                    // Alternate above/below to avoid overlap on dense points
                     const above = (i % 2 === 0);
                     const labelX = lx + 8;
                     const labelY = above ? ly - 12 : ly + 18;
-                    dotsHTML += `<text class="lc-point-label" x="${labelX}" y="${labelY}" text-anchor="start" style="animation-delay:${labelDelay}s">${p.label}</text>`;
+                    dotsHTML += `<text class="lc-point-label${isPaused}" x="${labelX}" y="${labelY}" text-anchor="start" style="animation-delay:${labelDelay}s">${p.label}</text>`;
                 }
             });
         });
@@ -1919,11 +1941,28 @@
                 </button>
             `;
         }
+        
+        let revealStageBtnHTML = '';
+        if (s.pauseIndex) {
+            revealStageBtnHTML = `
+                <button class="lc-reveal-btn" onclick="
+                    this.style.opacity = '0';
+                    this.style.pointerEvents = 'none';
+                    document.querySelectorAll('#${id} .lc-paused-stage').forEach(el => {
+                        el.classList.add('lc-reveal-stage');
+                        el.classList.remove('lc-paused-stage');
+                    });
+                " style="position: absolute; bottom: clamp(1rem, 3vw, 2rem); right: clamp(1rem, 3vw, 2rem); padding: clamp(0.5rem, 1vw, 0.8rem) clamp(1rem, 2vw, 1.5rem); font-size: clamp(0.9rem, 1.5vw, 1.2rem); font-weight: bold; background: var(--accent, #f97316); color: white; border: none; border-radius: 6px; cursor: pointer; z-index: 10; box-shadow: 0 4px 15px rgba(249,115,22,0.3); transition: transform 0.2s;">
+                    Visa 2026 →
+                </button>
+            `;
+        }
 
         return `
             <div class="slide-line-chart${pausedClass}" id="${id}">
                 ${introOverlayHTML}
                 ${morphBtnHTML}
+                ${revealStageBtnHTML}
                 <h2>${s.title || ''}</h2>
                 <div class="lc-chart">
                     <svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="xMidYMid meet" style="overflow: visible;">
