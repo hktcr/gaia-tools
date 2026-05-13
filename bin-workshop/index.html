@@ -172,7 +172,12 @@
 
     <div class="slide-view" id="slideView">
         <button class="close-btn" id="closeBtn" title="Tillbaka (Esc)">✕</button>
-        <button class="fullscreen-btn" id="fullscreenBtn" title="Helskärm (F)" style="position:absolute; top:1.5rem; right:4.5rem; background:none; border:none; color:var(--text-muted); font-size:1.4rem; cursor:pointer; opacity:0.6; transition: opacity 0.2s; z-index: 200;">⛶</button>
+        
+        <!-- NY KONTROLLPANEL FÖR SLIDE VIEW -->
+        <div class="slide-controls" id="slideControls" style="position: absolute; top: 1.5rem; right: 4.5rem; display: flex; align-items: center; gap: 1rem; z-index: 200;">
+            <div class="theme-row" id="slideThemeRow" style="display: flex;"></div>
+            <button class="fullscreen-btn" id="fullscreenBtn" title="Helskärm (F)" style="background: rgba(255,255,255,0.1); border: 1px solid var(--border); border-radius: 6px; padding: 0.3rem 0.6rem; color: var(--text); font-size: 1.2rem; cursor: pointer; transition: all 0.2s;">⛶</button>
+        </div>
         
         <div class="slide-content" id="slideContent"></div>
 
@@ -192,31 +197,33 @@
         let slidesData = [];
         let currentIdx = 0;
 
-        // === THEMES (subset for showcase) ===
+        // === THEMES (optimerade för BIN-workshopen) ===
         const themes = {
             'EHT Midnight': {"--bg":"radial-gradient(circle at center, #1e1b4b 0%, #000000 100%)","--surface":"rgba(30,27,75,0.5)","--card-bg":"rgba(30,27,75,0.8)","--card-bg-hover":"rgba(49,46,129,0.8)","--text":"#f1f5f9","--text-muted":"rgba(255,255,255,0.7)","--accent":"#38bdf8","--accent2":"#818cf8","--border":"rgba(255,255,255,0.15)","--border-hover":"rgba(255,255,255,0.3)"},
             'Auditorium Dark': {"--bg":"#000","--surface":"#1a1a1a","--card-bg":"#2a2a2a","--card-bg-hover":"#333","--text":"#f1f5f9","--text-muted":"rgba(255,255,255,0.7)","--accent":"#f97316","--accent2":"#a855f7","--border":"rgba(255,255,255,0.15)","--border-hover":"rgba(255,255,255,0.3)"},
-            'Midnight Indigo': {"--bg":"#0f0b25","--surface":"#1a1440","--card-bg":"#241e54","--card-bg-hover":"#2e2668","--text":"#e8e4f8","--text-muted":"rgba(232,228,248,0.65)","--accent":"#a78bfa","--accent2":"#c084fc","--border":"rgba(167,139,250,0.2)","--border-hover":"rgba(167,139,250,0.4)"},
-            'Ember': {"--bg":"#0d0d0d","--surface":"#1c1210","--card-bg":"#2a1a15","--card-bg-hover":"#3a2520","--text":"#fde8d8","--text-muted":"rgba(253,232,216,0.65)","--accent":"#ff6b35","--accent2":"#ef4444","--border":"rgba(255,107,53,0.2)","--border-hover":"rgba(255,107,53,0.4)"},
-            'Cosmos': {"--bg":"#000005","--surface":"#0a0a1a","--card-bg":"#111128","--card-bg-hover":"#1a1a38","--text":"#e0f2fe","--text-muted":"rgba(224,242,254,0.6)","--accent":"#22d3ee","--accent2":"#06b6d4","--border":"rgba(34,211,238,0.2)","--border-hover":"rgba(34,211,238,0.4)"},
-            'Paper': {"--bg":"#faf7f2","--surface":"#f5f0e8","--card-bg":"#ede7db","--card-bg-hover":"#e2d9ca","--text":"#44403c","--text-muted":"rgba(68,64,60,0.65)","--accent":"#c2410c","--accent2":"#9a3412","--border":"rgba(68,64,60,0.15)","--border-hover":"rgba(68,64,60,0.3)"},
-            'Arctic': {"--bg":"#f0f9ff","--surface":"#e0f2fe","--card-bg":"#bae6fd","--card-bg-hover":"#7dd3fc","--text":"#0c4a6e","--text-muted":"rgba(12,74,110,0.65)","--accent":"#0ea5e9","--accent2":"#38bdf8","--border":"rgba(14,165,233,0.2)","--border-hover":"rgba(14,165,233,0.4)"},
-            'Meadow': {"--bg":"#f0fdf4","--surface":"#dcfce7","--card-bg":"#bbf7d0","--card-bg-hover":"#86efac","--text":"#14532d","--text-muted":"rgba(20,83,45,0.65)","--accent":"#16a34a","--accent2":"#15803d","--border":"rgba(22,163,74,0.2)","--border-hover":"rgba(22,163,74,0.4)"},
-            'Retro Terminal': {"--bg":"#000","--surface":"#0a0a0a","--card-bg":"#111","--card-bg-hover":"#1a1a1a","--text":"#00ff41","--text-muted":"rgba(0,255,65,0.5)","--accent":"#00ff41","--accent2":"#39ff14","--border":"rgba(0,255,65,0.15)","--border-hover":"rgba(0,255,65,0.35)"},
-            'Åstorp': {"--bg":"#fff","--surface":"#f1f5f9","--card-bg":"#e8eef6","--card-bg-hover":"#d0ddef","--text":"#1e293b","--text-muted":"rgba(30,41,59,0.7)","--accent":"#1e40af","--accent2":"#1d4ed8","--border":"rgba(30,64,175,0.15)","--border-hover":"rgba(30,64,175,0.3)"},
-            'Neon': {"--bg":"#0a0a0a","--surface":"#141414","--card-bg":"#1e1e1e","--card-bg-hover":"#2a2a2a","--text":"#fff","--text-muted":"rgba(255,255,255,0.6)","--accent":"#ff00ff","--accent2":"#00ffff","--border":"rgba(255,0,255,0.2)","--border-hover":"rgba(255,0,255,0.4)"}
+            'Åstorp Ljust': {"--bg":"#f8fafc","--surface":"#f1f5f9","--card-bg":"#e2e8f0","--card-bg-hover":"#cbd5e1","--text":"#0f172a","--text-muted":"rgba(15,23,42,0.7)","--accent":"#ea580c","--accent2":"#4f46e5","--border":"rgba(15,23,42,0.15)","--border-hover":"rgba(15,23,42,0.3)"}
         };
 
         let activeTheme = 'EHT Midnight';
 
-        // Build theme pills
+        // Build theme pills for both views
         const themeRow = document.getElementById('themeRow');
+        const slideThemeRow = document.getElementById('slideThemeRow');
+        
         Object.keys(themes).forEach(name => {
-            const pill = document.createElement('button');
-            pill.className = 'theme-pill' + (name === activeTheme ? ' active' : '');
-            pill.textContent = name;
-            pill.onclick = () => applyTheme(name);
-            themeRow.appendChild(pill);
+            // Main menu pill
+            const pill1 = document.createElement('button');
+            pill1.className = 'theme-pill' + (name === activeTheme ? ' active' : '');
+            pill1.textContent = name;
+            pill1.onclick = () => applyTheme(name);
+            themeRow.appendChild(pill1);
+            
+            // Slide view pill
+            const pill2 = document.createElement('button');
+            pill2.className = 'theme-pill' + (name === activeTheme ? ' active' : '');
+            pill2.textContent = name;
+            pill2.onclick = () => applyTheme(name);
+            slideThemeRow.appendChild(pill2);
         });
 
         function applyTheme(name) {
