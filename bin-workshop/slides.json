@@ -120,6 +120,10 @@
         "text": "Hur mäter man egentligen hur smart en AI är? Inte genom hur snabbt den skriver en dikt, utan genom <strong>hur länge den kan arbeta helt självständigt utan mänsklig inblandning</strong> (Autonom Tidshorisont). Låt oss titta på data från METR.",
         "button": "Visa METR Data"
       },
+      "morph": {
+        "button": "Vad hände sen under 2026? →",
+        "scale": 0.18
+      },
       "series": [
         {
           "name": "Klarar uppgiften med 50% sannolikhet",

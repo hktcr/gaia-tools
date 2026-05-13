@@ -1899,10 +1899,31 @@
                 </div>
             `;
         }
+        
+        let morphBtnHTML = '';
+        if (s.morph) {
+            morphBtnHTML = `
+                <button class="lc-morph-btn" onclick="
+                    this.style.opacity = '0';
+                    this.style.pointerEvents = 'none';
+                    const chart = document.getElementById('${id}').querySelector('svg');
+                    chart.style.transition = 'transform 1.2s cubic-bezier(0.4, 0, 0.2, 1), opacity 1.2s ease-in';
+                    chart.style.transformOrigin = 'bottom';
+                    chart.style.transform = 'scaleY(${s.morph.scale || 0.2})';
+                    chart.style.opacity = '0';
+                    setTimeout(() => {
+                        if(window.nextSlide) window.nextSlide();
+                    }, 1100);
+                " style="position: absolute; bottom: clamp(1rem, 3vw, 2rem); right: clamp(1rem, 3vw, 2rem); padding: clamp(0.5rem, 1vw, 0.8rem) clamp(1rem, 2vw, 1.5rem); font-size: clamp(0.9rem, 1.5vw, 1.2rem); font-weight: bold; background: var(--accent, #f97316); color: white; border: none; border-radius: 6px; cursor: pointer; z-index: 10; box-shadow: 0 4px 15px rgba(249,115,22,0.3); transition: transform 0.2s;">
+                    ${s.morph.button || 'Gå vidare →'}
+                </button>
+            `;
+        }
 
         return `
             <div class="slide-line-chart${pausedClass}" id="${id}">
                 ${introOverlayHTML}
+                ${morphBtnHTML}
                 <h2>${s.title || ''}</h2>
                 <div class="lc-chart">
                     <svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="xMidYMid meet" style="overflow: visible;">
