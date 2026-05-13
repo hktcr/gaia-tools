@@ -163,21 +163,16 @@
 </head>
 <body id="appBody">
     <div class="showcase-header" id="showcaseHeader">
+        <button class="fullscreen-btn" id="deckFullscreenBtn" title="Helskärm (F)" style="position: absolute; top: 1.5rem; right: 1.5rem; background: rgba(255,255,255,0.05); border: 1px solid var(--border); border-radius: 6px; padding: 0.4rem 0.8rem; color: var(--text-muted); font-size: 1.2rem; cursor: pointer; transition: all 0.2s;">⛶ Helskärm</button>
         <h1>AI för <span>BINs chefer</span></h1>
         <p>21 maj 2026</p>
-        <div class="theme-row" id="themeRow" style="display: none;"></div>
+        <div class="theme-row" id="themeRow"></div>
     </div>
 
     <div class="card-view" id="cardView"></div>
 
     <div class="slide-view" id="slideView">
         <button class="close-btn" id="closeBtn" title="Tillbaka (Esc)">✕</button>
-        
-        <!-- NY KONTROLLPANEL FÖR SLIDE VIEW -->
-        <div class="slide-controls" id="slideControls" style="position: absolute; top: 1.5rem; right: 4.5rem; display: flex; align-items: center; gap: 1rem; z-index: 200;">
-            <div class="theme-row" id="slideThemeRow" style="display: flex;"></div>
-            <button class="fullscreen-btn" id="fullscreenBtn" title="Helskärm (F)" style="background: rgba(255,255,255,0.1); border: 1px solid var(--border); border-radius: 6px; padding: 0.3rem 0.6rem; color: var(--text); font-size: 1.2rem; cursor: pointer; transition: all 0.2s;">⛶</button>
-        </div>
         
         <div class="slide-content" id="slideContent"></div>
 
@@ -206,24 +201,15 @@
 
         let activeTheme = 'EHT Midnight';
 
-        // Build theme pills for both views
+        // Build theme pills for main menu
         const themeRow = document.getElementById('themeRow');
-        const slideThemeRow = document.getElementById('slideThemeRow');
         
         Object.keys(themes).forEach(name => {
-            // Main menu pill
-            const pill1 = document.createElement('button');
-            pill1.className = 'theme-pill' + (name === activeTheme ? ' active' : '');
-            pill1.textContent = name;
-            pill1.onclick = () => applyTheme(name);
-            themeRow.appendChild(pill1);
-            
-            // Slide view pill
-            const pill2 = document.createElement('button');
-            pill2.className = 'theme-pill' + (name === activeTheme ? ' active' : '');
-            pill2.textContent = name;
-            pill2.onclick = () => applyTheme(name);
-            slideThemeRow.appendChild(pill2);
+            const pill = document.createElement('button');
+            pill.className = 'theme-pill' + (name === activeTheme ? ' active' : '');
+            pill.textContent = name;
+            pill.onclick = () => applyTheme(name);
+            themeRow.appendChild(pill);
         });
 
         function applyTheme(name) {
@@ -329,7 +315,7 @@
                 }
             }
         }
-        document.getElementById('fullscreenBtn').onclick = toggleFullScreen;
+        document.getElementById('deckFullscreenBtn').onclick = toggleFullScreen;
 
         document.addEventListener('keydown', e => {
             if (e.key === 'Escape') closeSlide();
