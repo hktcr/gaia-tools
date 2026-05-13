@@ -569,6 +569,10 @@
             color: var(--text-muted, rgba(255,255,255,0.6));
             margin-top: 0.3rem;
         }
+        .slide-number-wall.nw-paused h2,
+        .slide-number-wall.nw-paused .nw-cell {
+            animation-play-state: paused !important;
+        }
 
         /* ===== BAR RACE ===== */
         @keyframes barGrow {
@@ -2110,6 +2114,7 @@
      *         numbers: [{ value: 268, label: "Slides", icon: "📊" }, ...] }
      */
     function renderNumberWall(s) {
+        const id = 'nw-container-' + Math.random().toString(36).slice(2, 8);
         const nums = s.numbers || [];
         const cells = nums.map((n, i) => {
             const uid = 'nw-' + Math.random().toString(36).slice(2, 8);
@@ -2117,19 +2122,31 @@
 
             // Schedule countUp
             setTimeout(() => {
-                const el = document.getElementById(uid);
-                if (!el) return;
-                const target = n.value || 0;
-                const duration = 1800;
-                const start = performance.now();
-                function tick(now) {
-                    const t = Math.min((now - start) / duration, 1);
-                    const eased = 1 - Math.pow(1 - t, 4);
-                    el.textContent = Math.round(eased * target);
-                    if (t < 1) requestAnimationFrame(tick);
+                function startCounter() {
+                    const el = document.getElementById(uid);
+                    if (!el) return;
+                    const target = n.value || 0;
+                    const duration = 1800;
+                    const start = performance.now();
+                    function tick(now) {
+                        const t = Math.min((now - start) / duration, 1);
+                        const eased = 1 - Math.pow(1 - t, 4);
+                        el.textContent = Math.round(eased * target);
+                        if (t < 1) requestAnimationFrame(tick);
+                    }
+                    requestAnimationFrame(tick);
                 }
-                requestAnimationFrame(tick);
-            }, delay + 400);
+                function checkUnpause() {
+                    const el = document.getElementById(uid);
+                    if (!el) return;
+                    if (el.closest('.nw-paused')) {
+                        setTimeout(checkUnpause, 100);
+                    } else {
+                        setTimeout(startCounter, delay + 400);
+                    }
+                }
+                checkUnpause();
+            }, 50);
 
             let iconHTML = '';
             if (n.iconSrc) {
@@ -2147,8 +2164,22 @@
             `;
         }).join('');
 
+        let introOverlayHTML = '';
+        let pausedClass = '';
+        if (s.intro) {
+            pausedClass = ' nw-paused';
+            introOverlayHTML = `
+                <div class="lc-intro-overlay">
+                    <h3 style="font-size: clamp(1.8rem, 4vw, 3rem); margin-bottom: 1.5rem; color: var(--accent, #f97316); text-align: center;">${s.intro.title || s.title}</h3>
+                    <p style="font-size: clamp(1.1rem, 2vw, 1.8rem); max-width: 85%; text-align: center; color: var(--text); margin-bottom: 2.5rem; line-height: 1.5;">${s.intro.text}</p>
+                    <button class="lc-intro-btn" onclick="this.parentElement.style.opacity='0'; this.parentElement.style.pointerEvents='none'; document.getElementById('${id}').classList.remove('nw-paused');" style="padding: clamp(0.6rem, 1.5vw, 1rem) clamp(1.5rem, 3vw, 2.5rem); font-size: clamp(1rem, 1.8vw, 1.5rem); font-weight: bold; background: var(--accent, #f97316); color: #fff; border: none; border-radius: 8px; cursor: pointer; transition: all 0.3s; box-shadow: 0 4px 15px rgba(249,115,22,0.4);">${s.intro.button || 'Visa data'}</button>
+                </div>
+            `;
+        }
+
         return `
-            <div class="slide-number-wall">
+            <div class="slide-number-wall${pausedClass}" id="${id}">
+                ${introOverlayHTML}
                 <h2>${s.title || ''}</h2>
                 <div class="nw-grid">${cells}</div>
             </div>

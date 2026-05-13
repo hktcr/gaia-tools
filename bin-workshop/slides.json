@@ -176,6 +176,10 @@
       "section": "start",
       "type": "number-wall",
       "title": "Januari 2026: Taket sprängs",
+      "intro": {
+        "text": "Efter att ha legat runt 1-3 timmar under hösten 2025, hände plötsligt tre gigantiska kliv på loppet av ynka 30 dagar. Kolla in dessa siffror från början av 2026...",
+        "button": "Visa siffrorna"
+      },
       "numbers": [
         { "value": 342, "label": "GPT-5.4 (minuter)", "icon": "🚀" },
         { "value": 384, "label": "Gemini 3.1 Pro (minuter)", "icon": "🔥" },
