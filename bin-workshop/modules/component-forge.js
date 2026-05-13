@@ -248,6 +248,18 @@
             opacity: 0;
             animation: wordDrop 0.4s ease forwards;
         }
+        .slide-line-chart.lc-paused h2,
+        .slide-line-chart.lc-paused .lc-data-line,
+        .slide-line-chart.lc-paused .lc-dot,
+        .slide-line-chart.lc-paused .lc-point-label {
+            animation-play-state: paused !important;
+        }
+        .lc-intro-overlay {
+            position: absolute; inset: 0; z-index: 50; 
+            display: flex; flex-direction: column; align-items: center; justify-content: center; 
+            background: var(--bg); border-radius: 12px;
+            transition: opacity 0.5s ease;
+        }
         @keyframes dotAppear {
             0% { opacity: 0; r: 0; }
             60% { opacity: 1; r: 7; }
@@ -1875,8 +1887,22 @@
             });
         }, 100);
 
+        let introOverlayHTML = '';
+        let pausedClass = '';
+        if (s.intro) {
+            pausedClass = ' lc-paused';
+            introOverlayHTML = `
+                <div class="lc-intro-overlay">
+                    <h3 style="font-size:2rem; margin-bottom:1rem; color:var(--accent, #f97316);">${s.intro.title}</h3>
+                    <p style="font-size:1.2rem; max-width:80%; text-align:center; color:var(--text); margin-bottom:2rem; line-height:1.6;">${s.intro.text}</p>
+                    <button class="lc-intro-btn" onclick="this.parentElement.style.opacity='0'; this.parentElement.style.pointerEvents='none'; document.getElementById('${id}').classList.remove('lc-paused');" style="padding:0.8rem 2rem; font-size:1.2rem; font-weight:bold; background:var(--accent, #f97316); color:#fff; border:none; border-radius:8px; cursor:pointer; transition:all 0.3s; box-shadow: 0 4px 15px rgba(249,115,22,0.4);">${s.intro.button || 'Visa diagram'}</button>
+                </div>
+            `;
+        }
+
         return `
-            <div class="slide-line-chart" id="${id}">
+            <div class="slide-line-chart${pausedClass}" id="${id}">
+                ${introOverlayHTML}
                 <h2>${s.title || ''}</h2>
                 <div class="lc-chart">
                     <svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="xMidYMid meet" style="overflow: visible;">
