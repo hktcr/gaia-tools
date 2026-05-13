@@ -376,6 +376,16 @@
       "type": "warning-pulse",
       "title": "Avpersonifiering",
       "subtitle": "Inga personuppgifter. Inga utpekande detaljer."
+    },
+    {
+      "id": "vep-prompt",
+      "section": "agenter",
+      "type": "prompt-card",
+      "eyebrow": "🧪 Prova det nu",
+      "title": "Tillsätt en virtuell expertpanel",
+      "prompt": "Tillsätt en virtuell expertpanel som ska hjälpa mig identifiera konkreta AI-tillämpningar i min vardag som skolchef.\n\nPanelen ska bestå av:\n• En digital strateg som fokuserar på effektivisering\n• En HR-specialist som ser till personalens perspektiv\n• En juridisk rådgivare med fokus på GDPR och säkerhet\n\nMin vardagssituation:\n[Beskriv din typiska arbetsdag — vilka möten, dokument och beslut tar mest tid?]\n\nFråga till panelen:\nVilka tre uppgifter i min vardag kan AI avlasta mest — och vad behöver jag tänka på innan jag börjar?",
+      "hint": "Klistra in i ChatGPT, Claude eller Copilot och se vad panelen säger!",
+      "audience_content_auto": "{\"status\": \"prompt\", \"title\": \"Din tur!\", \"prompt\": \"Tillsätt en virtuell expertpanel...\", \"emoji\": \"🧪\"}"
     }
   ]
 }

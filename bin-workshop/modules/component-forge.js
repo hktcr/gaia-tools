@@ -574,6 +574,52 @@
             animation-play-state: paused !important;
         }
 
+        /* ===== PROMPT CARD ===== */
+        .slide-prompt-card {
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            padding: clamp(1rem, 3vw, 3rem); max-width: 1000px; margin: 0 auto; width: 100%;
+            text-align: center;
+        }
+        .slide-prompt-card .pc-eyebrow {
+            font-size: clamp(0.75rem, 1.2vw, 1rem); font-weight: 700; letter-spacing: 0.15em;
+            text-transform: uppercase; color: var(--accent, #f97316);
+            opacity: 0; animation: wordDrop 0.5s ease 0.1s forwards;
+        }
+        .slide-prompt-card .pc-title {
+            font-size: clamp(1.4rem, 3vw, 2.2rem); font-weight: 900;
+            margin: 0.8rem 0 1.5rem; line-height: 1.2;
+            opacity: 0; animation: wordDrop 0.5s ease 0.3s forwards;
+        }
+        .slide-prompt-card .pc-box {
+            width: 100%; background: rgba(255,255,255,0.04);
+            border: 1.5px solid rgba(249,115,22,0.35);
+            border-radius: 16px; padding: clamp(1.2rem, 3vw, 2.5rem);
+            text-align: left; position: relative;
+            box-shadow: 0 0 40px rgba(249,115,22,0.08), inset 0 0 30px rgba(255,255,255,0.02);
+            opacity: 0; animation: wordDrop 0.6s ease 0.5s forwards;
+        }
+        .slide-prompt-card .pc-prompt {
+            font-size: clamp(1.05rem, 1.8vw, 1.5rem); line-height: 1.75;
+            color: var(--text, #f1f5f9); font-family: 'JetBrains Mono', monospace;
+            white-space: pre-wrap; word-break: break-word;
+        }
+        .slide-prompt-card .pc-copy-btn {
+            position: absolute; top: 1rem; right: 1rem;
+            background: var(--accent, #f97316); color: white;
+            border: none; border-radius: 8px;
+            padding: clamp(0.4rem, 0.8vw, 0.6rem) clamp(0.8rem, 1.5vw, 1.2rem);
+            font-size: clamp(0.8rem, 1.2vw, 1rem); font-weight: 700;
+            cursor: pointer; transition: all 0.2s; display: flex; align-items: center; gap: 0.4rem;
+            box-shadow: 0 4px 15px rgba(249,115,22,0.3);
+        }
+        .slide-prompt-card .pc-copy-btn:hover { transform: scale(1.05); box-shadow: 0 6px 20px rgba(249,115,22,0.45); }
+        .slide-prompt-card .pc-copy-btn.copied { background: var(--green, #22c55e); box-shadow: 0 4px 15px rgba(34,197,94,0.4); }
+        .slide-prompt-card .pc-hint {
+            font-size: clamp(0.75rem, 1.1vw, 0.95rem); color: var(--text-muted, rgba(255,255,255,0.5));
+            margin-top: 1.2rem; font-style: italic;
+            opacity: 0; animation: wordDrop 0.5s ease 0.9s forwards;
+        }
+
         /* ===== BAR RACE ===== */
         @keyframes barGrow {
             from { width: 0; }
@@ -4033,6 +4079,55 @@
     }
 
     // ===== MONKEY-PATCH REGISTRY =====
+    /**
+     * prompt-card: A large readable prompt with a copy button.
+     * JSON: { type: "prompt-card", eyebrow: "Prova själv", title: "...", prompt: "...", hint: "..." }
+     */
+    function renderPromptCard(s) {
+        const uid = 'pc-' + Math.random().toString(36).slice(2, 8);
+        const promptText = s.prompt || '';
+        
+        // Inject copy logic after render
+        setTimeout(() => {
+            const btn = document.getElementById(uid + '-btn');
+            if (!btn) return;
+            btn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                navigator.clipboard.writeText(promptText).then(() => {
+                    btn.innerHTML = '✅ Kopierat!';
+                    btn.classList.add('copied');
+                    setTimeout(() => {
+                        btn.innerHTML = '📋 Kopiera prompt';
+                        btn.classList.remove('copied');
+                    }, 2500);
+                }).catch(() => {
+                    // Fallback for non-HTTPS/restricted environments
+                    const ta = document.createElement('textarea');
+                    ta.value = promptText;
+                    ta.style.position = 'fixed'; ta.style.opacity = '0';
+                    document.body.appendChild(ta);
+                    ta.select(); document.execCommand('copy');
+                    document.body.removeChild(ta);
+                    btn.innerHTML = '✅ Kopierat!';
+                    btn.classList.add('copied');
+                    setTimeout(() => { btn.innerHTML = '📋 Kopiera prompt'; btn.classList.remove('copied'); }, 2500);
+                });
+            });
+        }, 100);
+
+        return `
+            <div class="slide-prompt-card no-click-advance">
+                ${s.eyebrow ? `<div class="pc-eyebrow">${s.eyebrow}</div>` : ''}
+                <div class="pc-title">${s.title || ''}</div>
+                <div class="pc-box">
+                    <button class="pc-copy-btn" id="${uid}-btn">📋 Kopiera prompt</button>
+                    <div class="pc-prompt">${promptText}</div>
+                </div>
+                ${s.hint ? `<div class="pc-hint">💡 ${s.hint}</div>` : ''}
+            </div>
+        `;
+    }
+
     const allTypes = {
         'semantic-nebula': renderSemanticNebula,
         'word-cascade': renderWordCascade,
@@ -4074,7 +4169,9 @@
         'warning-pulse': renderWarningPulse,
         'token-spinner': renderTokenSpinner,
         // Signature
-        'letter-morph': renderLetterMorph
+        'letter-morph': renderLetterMorph,
+        // Audience
+        'prompt-card': renderPromptCard
     };
 
     function registerTypes() {
