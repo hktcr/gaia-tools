@@ -8,9 +8,12 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg: #000000; --surface: #1a1a1a; --card-bg: #2a2a2a; --card-bg-hover: #333333;
+            --bg: radial-gradient(circle at center, #1e1b4b 0%, #000000 100%);
+            --surface: rgba(30,27,75,0.5);
+            --card-bg: rgba(30,27,75,0.8);
+            --card-bg-hover: rgba(49,46,129,0.8);
             --text: #f1f5f9; --text-muted: rgba(255,255,255,0.7);
-            --accent: #f97316; --accent2: #a855f7;
+            --accent: #38bdf8; --accent2: #818cf8;
             --green: #22c55e; --yellow: #eab308; --red: #ef4444;
             --border: rgba(255,255,255,0.15); --border-hover: rgba(255,255,255,0.3);
         }
@@ -191,6 +194,7 @@
 
         // === THEMES (subset for showcase) ===
         const themes = {
+            'EHT Midnight': {"--bg":"radial-gradient(circle at center, #1e1b4b 0%, #000000 100%)","--surface":"rgba(30,27,75,0.5)","--card-bg":"rgba(30,27,75,0.8)","--card-bg-hover":"rgba(49,46,129,0.8)","--text":"#f1f5f9","--text-muted":"rgba(255,255,255,0.7)","--accent":"#38bdf8","--accent2":"#818cf8","--border":"rgba(255,255,255,0.15)","--border-hover":"rgba(255,255,255,0.3)"},
             'Auditorium Dark': {"--bg":"#000","--surface":"#1a1a1a","--card-bg":"#2a2a2a","--card-bg-hover":"#333","--text":"#f1f5f9","--text-muted":"rgba(255,255,255,0.7)","--accent":"#f97316","--accent2":"#a855f7","--border":"rgba(255,255,255,0.15)","--border-hover":"rgba(255,255,255,0.3)"},
             'Midnight Indigo': {"--bg":"#0f0b25","--surface":"#1a1440","--card-bg":"#241e54","--card-bg-hover":"#2e2668","--text":"#e8e4f8","--text-muted":"rgba(232,228,248,0.65)","--accent":"#a78bfa","--accent2":"#c084fc","--border":"rgba(167,139,250,0.2)","--border-hover":"rgba(167,139,250,0.4)"},
             'Ember': {"--bg":"#0d0d0d","--surface":"#1c1210","--card-bg":"#2a1a15","--card-bg-hover":"#3a2520","--text":"#fde8d8","--text-muted":"rgba(253,232,216,0.65)","--accent":"#ff6b35","--accent2":"#ef4444","--border":"rgba(255,107,53,0.2)","--border-hover":"rgba(255,107,53,0.4)"},
@@ -203,7 +207,7 @@
             'Neon': {"--bg":"#0a0a0a","--surface":"#141414","--card-bg":"#1e1e1e","--card-bg-hover":"#2a2a2a","--text":"#fff","--text-muted":"rgba(255,255,255,0.6)","--accent":"#ff00ff","--accent2":"#00ffff","--border":"rgba(255,0,255,0.2)","--border-hover":"rgba(255,0,255,0.4)"}
         };
 
-        let activeTheme = 'Auditorium Dark';
+        let activeTheme = 'EHT Midnight';
 
         // Build theme pills
         const themeRow = document.getElementById('themeRow');
