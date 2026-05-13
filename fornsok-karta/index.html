@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Fornsök Explorer - Riksantikvarieämbetet</title>
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="map"></div>
+    
+    <div class="ui-panel top-panel glassmorphism">
+        <div class="header">
+            <h1>Fornsök Explorer</h1>
+            <span class="badge">Kulturmiljöregistret API</span>
+        </div>
+        <p class="subtitle">Visar fornlämningar i det synliga kartutsnittet</p>
+        
+        <div class="stats-container">
+            <div class="stat-box">
+                <span id="hit-count">0</span>
+                <span class="stat-label">Hittade</span>
+            </div>
+            <button id="search-btn" class="primary-btn">
+                <span class="btn-text">Sök om i området</span>
+                <div class="spinner hidden" id="loading-spinner"></div>
+            </button>
+        </div>
+        
+        <div id="error-message" class="error-msg hidden"></div>
+    </div>
+
+    <div id="item-panel" class="ui-panel side-panel glassmorphism hidden">
+        <button id="close-panel" class="close-btn">&times;</button>
+        <div class="panel-content" id="item-details">
+            <!-- Details loaded here -->
+        </div>
+    </div>
+
+    <!-- Leaflet JS -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+    <script src="script.js"></script>
+</body>
+</html>
