@@ -7,12 +7,31 @@ L.control.zoom({
     position: 'bottomright'
 }).addTo(map);
 
-// Add a premium basemap (CartoDB Positron)
-L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
-    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
+const positron = L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+    attribution: '&copy; OpenStreetMap contributors &copy; CARTO',
     subdomains: 'abcd',
     maxZoom: 19
-}).addTo(map);
+});
+
+const satellite = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+    attribution: '&copy; Esri',
+    maxZoom: 19
+});
+
+const topo = L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', {
+    attribution: '&copy; OpenTopoMap',
+    maxZoom: 17
+});
+
+const baseMaps = {
+    "Standardkarta": positron,
+    "Topografisk karta": topo,
+    "Satellitbild": satellite
+};
+
+positron.addTo(map);
+
+L.control.layers(baseMaps, null, { position: 'bottomleft' }).addTo(map);
 
 // Determine marker color based on type
 function getMarkerColor(type) {
@@ -258,3 +277,45 @@ map.on('moveend', () => {
 setTimeout(() => {
     searchBtn.click();
 }, 500);
+
+// --- GPS Tracking ---
+const gpsBtn = document.getElementById('gps-btn');
+let userMarker = null;
+let isTracking = false;
+
+gpsBtn.addEventListener('click', () => {
+    if (!isTracking) {
+        map.locate({setView: true, maxZoom: 16, watch: true, enableHighAccuracy: true});
+        isTracking = true;
+        gpsBtn.classList.add('active');
+    } else {
+        map.stopLocate();
+        isTracking = false;
+        gpsBtn.classList.remove('active');
+        if (userMarker) {
+            map.removeLayer(userMarker);
+            userMarker = null;
+        }
+    }
+});
+
+map.on('locationfound', (e) => {
+    if (!userMarker) {
+        userMarker = L.circleMarker(e.latlng, {
+            color: '#ffffff',
+            fillColor: '#3b82f6',
+            fillOpacity: 1,
+            radius: 8,
+            weight: 3,
+            zIndexOffset: 1000
+        }).addTo(map);
+    } else {
+        userMarker.setLatLng(e.latlng);
+    }
+});
+
+map.on('locationerror', (e) => {
+    alert("Kunde inte hämta din position. Tillåt platsåtkomst i din webbläsare.");
+    isTracking = false;
+    gpsBtn.classList.remove('active');
+});

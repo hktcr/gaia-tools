@@ -248,6 +248,69 @@ body, html {
     to { transform: rotate(360deg); }
 }
 
+/* GPS Button */
+.gps-btn {
+    position: absolute;
+    bottom: 20px;
+    right: 20px;
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid var(--border-glass);
+    color: var(--text-main);
+    cursor: pointer;
+    z-index: 1000;
+    transition: all 0.2s ease;
+}
+
+.gps-btn:hover {
+    background: rgba(255,255,255,0.95);
+    color: var(--primary);
+}
+
+.gps-btn.active {
+    background: var(--primary);
+    color: white;
+    border-color: var(--primary);
+    box-shadow: 0 0 15px rgba(217, 72, 15, 0.4);
+}
+
+.gps-btn.active svg {
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+    100% { transform: scale(1); }
+}
+
+/* Leaflet Overrides */
+.leaflet-control-layers {
+    border-radius: 12px !important;
+    border: 1px solid var(--border-glass) !important;
+    background: var(--bg-glass) !important;
+    backdrop-filter: blur(12px) !important;
+    -webkit-backdrop-filter: blur(12px) !important;
+    box-shadow: var(--shadow-glass) !important;
+    font-family: var(--font-stack) !important;
+    padding: 6px !important;
+}
+
+.leaflet-control-zoom {
+    border: none !important;
+    box-shadow: var(--shadow-glass) !important;
+}
+
+.leaflet-control-zoom a {
+    background: var(--bg-glass) !important;
+    color: var(--text-main) !important;
+    backdrop-filter: blur(12px) !important;
+}
+
 /* Custom Marker CSS */
 .fornlamning-marker {
     background: none;
@@ -264,20 +327,32 @@ body, html {
 /* Responsive */
 @media (max-width: 768px) {
     .top-panel {
-        top: auto;
-        bottom: 20px;
+        top: 10px;
+        bottom: auto;
         left: 50%;
         transform: translateX(-50%);
-        width: calc(100vw - 40px);
+        width: calc(100vw - 20px);
+        padding: 16px;
     }
     .side-panel {
         top: auto;
-        bottom: 20px;
+        bottom: 80px;
         right: auto;
-        left: 20px;
-        width: calc(100vw - 40px);
+        left: 10px;
+        width: calc(100vw - 20px);
         transform: translateY(120%);
-        max-height: 50vh;
+        max-height: 45vh;
+    }
+    .gps-btn {
+        bottom: 90px;
+        right: 10px;
+    }
+    .leaflet-control-zoom {
+        margin-bottom: 80px !important;
+    }
+    .leaflet-control-layers {
+        margin-bottom: 20px !important;
+        margin-left: 10px !important;
     }
     .side-panel.open {
         transform: translateY(0);
