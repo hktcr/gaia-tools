@@ -1718,7 +1718,7 @@
     function renderLineChart(s) {
         const id = 'lc-' + Math.random().toString(36).slice(2, 8);
         const W = 800, H = 400;
-        const pad = { top: 30, right: 30, bottom: 50, left: 55 };
+        const pad = { top: 30, right: 100, bottom: 50, left: 55 };
         const chartW = W - pad.left - pad.right;
         const chartH = H - pad.top - pad.bottom;
         const labels = s.labels || [];
@@ -1879,7 +1879,7 @@
             <div class="slide-line-chart" id="${id}">
                 <h2>${s.title || ''}</h2>
                 <div class="lc-chart">
-                    <svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="xMidYMid meet">
+                    <svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="xMidYMid meet" style="overflow: visible;">
                         ${gridLines}
                         ${xLabels}
                         ${yAxisLabel}
