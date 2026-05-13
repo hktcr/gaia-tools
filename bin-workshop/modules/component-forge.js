@@ -1893,9 +1893,9 @@
             pausedClass = ' lc-paused';
             introOverlayHTML = `
                 <div class="lc-intro-overlay">
-                    <h3 style="font-size:2rem; margin-bottom:1rem; color:var(--accent, #f97316);">${s.intro.title}</h3>
-                    <p style="font-size:1.2rem; max-width:80%; text-align:center; color:var(--text); margin-bottom:2rem; line-height:1.6;">${s.intro.text}</p>
-                    <button class="lc-intro-btn" onclick="this.parentElement.style.opacity='0'; this.parentElement.style.pointerEvents='none'; document.getElementById('${id}').classList.remove('lc-paused');" style="padding:0.8rem 2rem; font-size:1.2rem; font-weight:bold; background:var(--accent, #f97316); color:#fff; border:none; border-radius:8px; cursor:pointer; transition:all 0.3s; box-shadow: 0 4px 15px rgba(249,115,22,0.4);">${s.intro.button || 'Visa diagram'}</button>
+                    <h3 style="font-size: clamp(1.8rem, 4vw, 3rem); margin-bottom: 1.5rem; color: var(--accent, #f97316); text-align: center;">${s.intro.title}</h3>
+                    <p style="font-size: clamp(1.1rem, 2vw, 1.8rem); max-width: 85%; text-align: center; color: var(--text); margin-bottom: 2.5rem; line-height: 1.5;">${s.intro.text}</p>
+                    <button class="lc-intro-btn" onclick="this.parentElement.style.opacity='0'; this.parentElement.style.pointerEvents='none'; document.getElementById('${id}').classList.remove('lc-paused');" style="padding: clamp(0.6rem, 1.5vw, 1rem) clamp(1.5rem, 3vw, 2.5rem); font-size: clamp(1rem, 1.8vw, 1.5rem); font-weight: bold; background: var(--accent, #f97316); color: #fff; border: none; border-radius: 8px; cursor: pointer; transition: all 0.3s; box-shadow: 0 4px 15px rgba(249,115,22,0.4);">${s.intro.button || 'Visa graf'}</button>
                 </div>
             `;
         }
