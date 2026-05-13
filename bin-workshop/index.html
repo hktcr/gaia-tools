@@ -13,7 +13,7 @@
             --card-bg: rgba(30,27,75,0.8);
             --card-bg-hover: rgba(49,46,129,0.8);
             --text: #f1f5f9; --text-muted: rgba(255,255,255,0.7);
-            --accent: #38bdf8; --accent2: #818cf8;
+            --accent: #f97316; --accent2: #fb923c;
             --green: #22c55e; --yellow: #eab308; --red: #ef4444;
             --border: rgba(255,255,255,0.15); --border-hover: rgba(255,255,255,0.3);
         }
@@ -194,12 +194,13 @@
 
         // === THEMES (optimerade för BIN-workshopen) ===
         const themes = {
-            'EHT Midnight': {"--bg":"radial-gradient(circle at center, #1e1b4b 0%, #000000 100%)","--surface":"rgba(30,27,75,0.5)","--card-bg":"rgba(30,27,75,0.8)","--card-bg-hover":"rgba(49,46,129,0.8)","--text":"#f1f5f9","--text-muted":"rgba(255,255,255,0.7)","--accent":"#f97316","--accent2":"#fb923c","--border":"rgba(255,255,255,0.15)","--border-hover":"rgba(255,255,255,0.3)"},
+            'EHT Midnight (Orange)': {"--bg":"radial-gradient(circle at center, #1e1b4b 0%, #000000 100%)","--surface":"rgba(30,27,75,0.5)","--card-bg":"rgba(30,27,75,0.8)","--card-bg-hover":"rgba(49,46,129,0.8)","--text":"#f1f5f9","--text-muted":"rgba(255,255,255,0.7)","--accent":"#f97316","--accent2":"#fb923c","--border":"rgba(255,255,255,0.15)","--border-hover":"rgba(255,255,255,0.3)"},
+            'EHT Midnight (Blå)': {"--bg":"radial-gradient(circle at center, #1e1b4b 0%, #000000 100%)","--surface":"rgba(30,27,75,0.5)","--card-bg":"rgba(30,27,75,0.8)","--card-bg-hover":"rgba(49,46,129,0.8)","--text":"#f1f5f9","--text-muted":"rgba(255,255,255,0.7)","--accent":"#38bdf8","--accent2":"#818cf8","--border":"rgba(255,255,255,0.15)","--border-hover":"rgba(255,255,255,0.3)"},
             'Auditorium Dark': {"--bg":"#000","--surface":"#1a1a1a","--card-bg":"#2a2a2a","--card-bg-hover":"#333","--text":"#f1f5f9","--text-muted":"rgba(255,255,255,0.7)","--accent":"#f97316","--accent2":"#a855f7","--border":"rgba(255,255,255,0.15)","--border-hover":"rgba(255,255,255,0.3)"},
             'Åstorp Ljust': {"--bg":"#f8fafc","--surface":"#f1f5f9","--card-bg":"#e2e8f0","--card-bg-hover":"#cbd5e1","--text":"#0f172a","--text-muted":"rgba(15,23,42,0.7)","--accent":"#ea580c","--accent2":"#4f46e5","--border":"rgba(15,23,42,0.15)","--border-hover":"rgba(15,23,42,0.3)"}
         };
 
-        let activeTheme = 'EHT Midnight';
+        let activeTheme = 'EHT Midnight (Orange)';
 
         // Build theme pills for main menu
         const themeRow = document.getElementById('themeRow');
