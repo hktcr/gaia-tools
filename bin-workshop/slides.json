@@ -228,8 +228,8 @@
           "id": "anthropic",
           "name": "Anthropic",
           "location": "San Francisco, USA",
-          "meta": "CLAUDE 4.6",
-          "desc": "Grundat av avhoppare från OpenAI. Deras Claude 4.6 håller TH-rekordet med 719 minuter.",
+          "meta": "CLAUDE OPUS 4.6",
+          "desc": "Grundat av avhoppare från OpenAI. Deras Claude Opus 4.6 håller TH-rekordet med över 14,5 timmar (870 minuter).",
           "x": 14.5, "y": 38
         },
         {
@@ -287,9 +287,9 @@
       "section": "insikt",
       "type": "letter-morph",
       "phrases": [
-        "Vi går från prompter som ger svar på sekunder...",
-        "...till uppdrag som tar timmar att utföra.",
-        "Ett paradigmskifte."
+        "AI är inte längre en avancerad sökmotor...",
+        "...det är en självkörande kognitiv motor.",
+        "Redo att driva era tyngsta processer."
       ]
     },
     {
@@ -348,6 +348,11 @@
           "year": "Början 2025",
           "text": "OpenAI Operator",
           "sub": "Sitter som bakgrundsprocess i OS och exekverar asynkrona uppgifter över dussintals flikar."
+        },
+        {
+          "year": "Våren 2026",
+          "text": "Multi-Agent Ekosystem",
+          "sub": "Agenter pratar med agenter. System som löser komplexa infrastrukturuppgifter över flera dagar."
         }
       ]
     },
