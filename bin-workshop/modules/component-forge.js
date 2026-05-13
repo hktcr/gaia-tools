@@ -241,9 +241,10 @@
         }
         .slide-line-chart .lc-point-label {
             fill: var(--text, rgba(255,255,255,0.9));
-            font-size: 11px;
+            font-size: 0.75rem;
             font-family: 'Inter', sans-serif;
             font-weight: 600;
+            pointer-events: none;
             opacity: 0;
             animation: wordDrop 0.4s ease forwards;
         }
@@ -270,7 +271,7 @@
         }
         .lc-tooltip.visible {
             opacity: 1;
-            transform: translate(-50%, -100%) translateY(-18px);
+            /* Transform styrs numera dynamiskt i JS för att hantera taket */
         }
         .lc-tooltip-title {
             font-weight: bold;
@@ -1853,6 +1854,13 @@
                     const top = dotRect.top - rect.top;
                     const left = dotRect.left - rect.left + (dotRect.width/2);
                     
+                    // Prevent tooltip from overflowing the top of the chart container
+                    if (top < 120) {
+                        tooltip.style.transform = 'translate(-50%, 0) translateY(18px)';
+                    } else {
+                        tooltip.style.transform = 'translate(-50%, -100%) translateY(-18px)';
+                    }
+                    
                     tooltip.style.left = left + 'px';
                     tooltip.style.top = top + 'px';
                     tooltip.classList.add('visible');
@@ -2925,9 +2933,6 @@
                         height: rect.height
                     };
                 });
-                
-                el.removeChild(layout);
-
                 el.removeChild(layout);
 
                 // STEG 1: Alla bokstäver sprids som ett moln över hela skärmen
