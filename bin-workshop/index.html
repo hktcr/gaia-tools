@@ -127,33 +127,38 @@
         /* Auditorium scaling */
         @media (min-width: 1200px) {
             .card-view { grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 1.2rem; }
-        }
-
         /* === AUDITORIUM SCALING OVERRIDES (Gäller alla slides) === */
+        /* Intelligent dynamisk skalning: Vi sätter en bra bas-nivå, men tillåter sedan specifika 
+           modifierare beroende på hur mycket innehåll sliden har. */
         html.presentation-mode {
-            font-size: clamp(14px, 2vmin, 28px);
+            font-size: clamp(14px, 2vmin, 28px); /* Normal text-slide */
         }
         
+        /* För data-tunga slides (grafer, kartor, jämförelser) */
         html.presentation-mode.scale-dense {
             font-size: clamp(11px, 1.4vmin, 22px); 
         }
         
+        /* För kort, slagkraftig text (citat, rubriker, rewrite-progression) */
         html.presentation-mode.scale-large {
             font-size: clamp(18px, 2.8vmin, 42px); 
         }
         
+        /* Tvinga alla slide-containrar att ta upp yta, men ALDRIG bli bredare än 160vh. 
+           Detta garanterar att de aldrig växer sig ur skärmens höjd (eftersom max-bredden då stryps)! */
         #slideContent > div[class^="slide-"] {
             width: 100% !important;
             max-width: min(1600px, 95vw, 160vh) !important;
         }
         
+        /* Undantag: Kartsliden (som har flex/full-bleed) måste tvingas ta upp ytan utan de strikta max-bredd-spärrarna för att slippa svarta fält på sidorna */
         #slideContent > div.slide-map-progression {
             min-height: 100vh !important;
             height: 100vh !important;
             max-width: 100% !important;
         }
         
-        #deckFullscreenBtn:hover { opacity: 1 !important; color: var(--text) !important; }
+        #fullscreenBtn:hover { opacity: 1 !important; color: var(--text) !important; }
     </style>
 </head>
 <body id="appBody">
@@ -300,28 +305,18 @@
         });
         
         // === FULLSCREEN LOGIC ===
-        const fsBtn = document.getElementById('deckFullscreenBtn');
-        
         function toggleFullScreen() {
             if (!document.fullscreenElement) {
-                document.documentElement.requestFullscreen()
-                    .then(() => { fsBtn.textContent = '⛶ Avsluta'; })
-                    .catch(() => {
-                        // Fallback: visa F11-hint
-                        fsBtn.textContent = '⛶ Tryck F11';
-                        setTimeout(() => { fsBtn.textContent = '⛶ Helskärm'; }, 2500);
-                    });
+                document.documentElement.requestFullscreen().catch(err => {
+                    console.log(`Error attempting to enable fullscreen: ${err.message}`);
+                });
             } else {
-                document.exitFullscreen()
-                    .then(() => { fsBtn.textContent = '⛶ Helskärm'; });
+                if (document.exitFullscreen) {
+                    document.exitFullscreen();
+                }
             }
         }
-
-        document.addEventListener('fullscreenchange', () => {
-            if (!document.fullscreenElement) fsBtn.textContent = '⛶ Helskärm';
-        });
-        
-        fsBtn.onclick = toggleFullScreen;
+        document.getElementById('deckFullscreenBtn').onclick = toggleFullScreen;
 
         document.addEventListener('keydown', e => {
             if (e.key === 'Escape') closeSlide();
