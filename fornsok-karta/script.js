@@ -1,7 +1,7 @@
 // Init map
 const map = L.map('map', {
-    zoomControl: false // We will add it to the bottom right
-}).setView([56.08, 12.98], 10); // Center around Åstorp/Skåne as default
+    zoomControl: false 
+}).setView([56.13, 13.00], 11); // Center around Åstorp as default
 
 L.control.zoom({
     position: 'bottomright'
@@ -14,16 +14,47 @@ L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r
     maxZoom: 19
 }).addTo(map);
 
-// Custom SVG icon for "Fornlämning" (Ruin / Monument style)
-const fornlamningIcon = L.divIcon({
-    className: 'fornlamning-marker',
-    html: `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <path d="M12 2C8.13 2 5 5.13 5 9C5 14.25 12 22 12 22C12 22 19 14.25 19 9C19 5.13 15.87 2 12 2Z" fill="#d9480f" stroke="#fff" stroke-width="2"/>
-        <circle cx="12" cy="9" r="3" fill="#fff"/>
-    </svg>`,
-    iconSize: [24, 24],
-    iconAnchor: [12, 24]
-});
+// Determine marker color based on type
+function getMarkerColor(type) {
+    if (!type) return '#d9480f'; // Default Orange
+    const t = type.toLowerCase();
+    
+    // Gravar och Gravfält
+    if(t.includes('grav') || t.includes('hög')) return '#8b5cf6'; // Purple
+    
+    // Jordbruk och Odling
+    if(t.includes('odling') || t.includes('åker') || t.includes('hägnad') || t.includes('terrass')) return '#10b981'; // Green
+    
+    // Boplatser och Husgrunder
+    if(t.includes('boplats') || t.includes('husgrund') || t.includes('grund') || t.includes('gård') || t.includes('torp')) return '#f59e0b'; // Amber
+    
+    // Stenar, Rösen, Hällristningar
+    if(t.includes('stensättning') || t.includes('röse') || t.includes('ristning') || t.includes('stenkrets')) return '#64748b'; // Slate
+    
+    // Runstenar, milstenar
+    if(t.includes('run') || t.includes('milst')) return '#ef4444'; // Red
+    
+    // Försvar, Slott, Borg
+    if(t.includes('slott') || t.includes('fästning') || t.includes('borg') || t.includes('skans') || t.includes('värn')) return '#3b82f6'; // Blue
+    
+    // Industri, Gruva, Grop
+    if(t.includes('gruva') || t.includes('hytta') || t.includes('grop') || t.includes('brott')) return '#78350f'; // Brown
+    
+    return '#d9480f'; // Default Orange
+}
+
+// Custom SVG icon generator
+function createIcon(color) {
+    return L.divIcon({
+        className: 'fornlamning-marker',
+        html: `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12 2C8.13 2 5 5.13 5 9C5 14.25 12 22 12 22C12 22 19 14.25 19 9C19 5.13 15.87 2 12 2Z" fill="${color}" stroke="#fff" stroke-width="2"/>
+            <circle cx="12" cy="9" r="3" fill="#fff"/>
+        </svg>`,
+        iconSize: [24, 24],
+        iconAnchor: [12, 24]
+    });
+}
 
 // State
 let markers = [];
@@ -59,10 +90,9 @@ searchBtn.addEventListener('click', async () => {
     const e = bounds.getEast();
     const n = bounds.getNorth();
     
-    // K-Samsök Query
-    // Use text="fornlämning" to catch records, then we filter by type in JS.
-    const queryStr = `text="fornlämning" AND boundingBox=/WGS84"${w} ${s} ${e} ${n}"`;
-    const url = `https://kulturarvsdata.se/ksamsok/api?method=search&query=${encodeURIComponent(queryStr)}&hitsPerPage=300`;
+    // K-Samsök Query: Använd serviceName=kmr_lamningar för att hämta ALLT från Kulturmiljöregistret
+    const queryStr = `serviceName=kmr_lamningar AND boundingBox=/WGS84"${w} ${s} ${e} ${n}"`;
+    const url = `https://kulturarvsdata.se/ksamsok/api?method=search&query=${encodeURIComponent(queryStr)}&hitsPerPage=500`;
     
     try {
         const response = await fetch(url, {
@@ -85,12 +115,10 @@ searchBtn.addEventListener('click', async () => {
             const graph = r.record["@graph"];
             if(!graph) return;
             
-            // Find main entity (must be monument)
-            const entity = graph.find(node => node["ksam:itemType"]);
+            // Leta efter huvudobjektet (har ksam:itemClassName och URL)
+            const entity = graph.find(node => node["ksam:itemClassName"] && node["ksam:url"]);
             
-            // Allow both "monument" (Fornlämningar) and historical environments if found
-            if(entity && entity["ksam:itemType"] && entity["ksam:itemType"]["@id"].includes("EntityType#monument")) {
-                
+            if(entity) {
                 // Find Context to get coordinates
                 const contextRef = entity["ksam:context"];
                 if(!contextRef) return;
@@ -130,14 +158,23 @@ searchBtn.addEventListener('click', async () => {
 });
 
 function createMarker(lat, lon, entity, graph) {
-    const marker = L.marker([lat, lon], { icon: fornlamningIcon }).addTo(markersLayer);
+    // Determine type for color coding
+    let itemClass = "Okänd typ";
+    if(entity["ksam:itemClassName"]) {
+        itemClass = typeof entity["ksam:itemClassName"] === 'object' ? entity["ksam:itemClassName"]["@value"] : entity["ksam:itemClassName"];
+    }
+    
+    const color = getMarkerColor(itemClass);
+    const icon = createIcon(color);
+    
+    const marker = L.marker([lat, lon], { icon: icon }).addTo(markersLayer);
     
     marker.on('click', () => {
-        showDetails(entity, graph);
+        showDetails(entity, graph, color);
     });
 }
 
-function showDetails(entity, graph) {
+function showDetails(entity, graph, color) {
     // Extract data from JSON-LD
     
     // Type/Class
@@ -158,16 +195,17 @@ function showDetails(entity, graph) {
     
     graph.forEach(node => {
         // Item Number (RAÄ-nummer)
-        if(node["@type"] === "ksam:ItemNumber" && node["ksam:type"] && node["ksam:type"]["@value"] === "RAÄ-nummer") {
-            if(node["ksam:number"]) {
-                raaNumber = node["ksam:number"]["@value"];
+        if(node["@type"] === "ksam:ItemNumber" && node["ksam:type"]) {
+            const typeValue = typeof node["ksam:type"] === 'object' ? node["ksam:type"]["@value"] : node["ksam:type"];
+            if (typeValue === "RAÄ-nummer" && node["ksam:number"]) {
+                raaNumber = typeof node["ksam:number"] === 'object' ? node["ksam:number"]["@value"] : node["ksam:number"];
             }
         }
         
         // Item Descriptions
         if(node["@type"] === "ksam:ItemDescription" && node["ksam:desc"]) {
-            const type = node["ksam:type"] ? node["ksam:type"]["@value"] : "Beskrivning";
-            const desc = node["ksam:desc"]["@value"];
+            const type = node["ksam:type"] ? (typeof node["ksam:type"] === 'object' ? node["ksam:type"]["@value"] : node["ksam:type"]) : "Beskrivning";
+            const desc = typeof node["ksam:desc"] === 'object' ? node["ksam:desc"]["@value"] : node["ksam:desc"];
             descriptions.push({ type, desc });
         }
     });
@@ -177,7 +215,7 @@ function showDetails(entity, graph) {
     // Build HTML
     let html = `
         <h2 class="item-title">${raaNumber !== "Saknas" ? raaNumber : itemTitle}</h2>
-        <span class="item-type">${itemClass}</span>
+        <span class="item-type" style="color: ${color};">${itemClass}</span>
     `;
     
     if(descriptions.length > 0) {
@@ -197,14 +235,24 @@ function showDetails(entity, graph) {
     }
     
     if(url) {
-        html += `<a href="${url}" target="_blank" class="item-link">Visa i Riksantikvarieämbetets Fornsök &rarr;</a>`;
+        html += `<a href="${url}" target="_blank" class="item-link" style="color: ${color};">Visa i Riksantikvarieämbetets Fornsök &rarr;</a>`;
     }
     
     itemDetails.innerHTML = html;
     
-    // Open panel
+    // Open panel (CSS transition will slide it in)
     sidePanel.classList.add('open');
 }
+
+// Update search when map stops moving (with debounce)
+let moveTimeout;
+map.on('moveend', () => {
+    clearTimeout(moveTimeout);
+    moveTimeout = setTimeout(() => {
+        // Auto search feature (optional, user can still click)
+        searchBtn.click();
+    }, 800);
+});
 
 // Initial fetch
 setTimeout(() => {
