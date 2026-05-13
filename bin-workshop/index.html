@@ -300,15 +300,33 @@
         });
         
         // === FULLSCREEN LOGIC ===
+        // NOTE: requestFullscreen() blockeras av GitHub Pages Permissions Policy.
+        // Vi simulerar fullscreen med CSS istället — identisk visuell effekt.
+        let isFakeFullscreen = false;
+        const fsStyle = document.createElement('style');
+        fsStyle.id = 'fake-fs-style';
+        fsStyle.textContent = `
+            body.fake-fullscreen {
+                position: fixed !important;
+                inset: 0 !important;
+                width: 100vw !important;
+                height: 100vh !important;
+                overflow: hidden !important;
+                z-index: 9999 !important;
+                margin: 0 !important;
+            }
+        `;
+        document.head.appendChild(fsStyle);
+
         function toggleFullScreen() {
+            isFakeFullscreen = !isFakeFullscreen;
+            document.body.classList.toggle('fake-fullscreen', isFakeFullscreen);
+            document.getElementById('deckFullscreenBtn').textContent = isFakeFullscreen ? '⛶ Avsluta' : '⛶ Helskärm';
+            // Försök även native fullscreen (fungerar på localhost/Teams-skärm)
             if (!document.fullscreenElement) {
-                document.documentElement.requestFullscreen().catch(err => {
-                    console.log(`Error attempting to enable fullscreen: ${err.message}`);
-                });
+                document.documentElement.requestFullscreen().catch(() => {/* Ignorera om blocked */});
             } else {
-                if (document.exitFullscreen) {
-                    document.exitFullscreen();
-                }
+                document.exitFullscreen().catch(() => {});
             }
         }
         document.getElementById('deckFullscreenBtn').onclick = toggleFullScreen;
