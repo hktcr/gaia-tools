@@ -300,36 +300,28 @@
         });
         
         // === FULLSCREEN LOGIC ===
-        // NOTE: requestFullscreen() blockeras av GitHub Pages Permissions Policy.
-        // Vi simulerar fullscreen med CSS istället — identisk visuell effekt.
-        let isFakeFullscreen = false;
-        const fsStyle = document.createElement('style');
-        fsStyle.id = 'fake-fs-style';
-        fsStyle.textContent = `
-            body.fake-fullscreen {
-                position: fixed !important;
-                inset: 0 !important;
-                width: 100vw !important;
-                height: 100vh !important;
-                overflow: hidden !important;
-                z-index: 9999 !important;
-                margin: 0 !important;
-            }
-        `;
-        document.head.appendChild(fsStyle);
-
+        const fsBtn = document.getElementById('deckFullscreenBtn');
+        
         function toggleFullScreen() {
-            isFakeFullscreen = !isFakeFullscreen;
-            document.body.classList.toggle('fake-fullscreen', isFakeFullscreen);
-            document.getElementById('deckFullscreenBtn').textContent = isFakeFullscreen ? '⛶ Avsluta' : '⛶ Helskärm';
-            // Försök även native fullscreen (fungerar på localhost/Teams-skärm)
             if (!document.fullscreenElement) {
-                document.documentElement.requestFullscreen().catch(() => {/* Ignorera om blocked */});
+                document.documentElement.requestFullscreen()
+                    .then(() => { fsBtn.textContent = '⛶ Avsluta'; })
+                    .catch(() => {
+                        // Fallback: visa F11-hint
+                        fsBtn.textContent = '⛶ Tryck F11';
+                        setTimeout(() => { fsBtn.textContent = '⛶ Helskärm'; }, 2500);
+                    });
             } else {
-                document.exitFullscreen().catch(() => {});
+                document.exitFullscreen()
+                    .then(() => { fsBtn.textContent = '⛶ Helskärm'; });
             }
         }
-        document.getElementById('deckFullscreenBtn').onclick = toggleFullScreen;
+
+        document.addEventListener('fullscreenchange', () => {
+            if (!document.fullscreenElement) fsBtn.textContent = '⛶ Helskärm';
+        });
+        
+        fsBtn.onclick = toggleFullScreen;
 
         document.addEventListener('keydown', e => {
             if (e.key === 'Escape') closeSlide();
