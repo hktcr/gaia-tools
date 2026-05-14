@@ -159,6 +159,40 @@
         }
         
         #fullscreenBtn:hover { opacity: 1 !important; color: var(--text) !important; }
+
+        /* === PRESENTER LINK BAR === */
+        .presenter-links {
+            display: flex; flex-wrap: wrap; justify-content: center; gap: 0.6rem;
+            padding: 0.7rem 1rem; background: rgba(0,0,0,0.25);
+            border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);
+            font-size: 0.72rem;
+        }
+        .presenter-links .pl-group {
+            display: flex; align-items: center; gap: 0.4rem;
+            border-right: 1px solid var(--border); padding-right: 0.8rem;
+        }
+        .presenter-links .pl-group:last-child { border-right: none; padding-right: 0; }
+        .presenter-links .pl-label {
+            font-weight: 700; color: var(--text-muted); letter-spacing: 0.05em; text-transform: uppercase;
+        }
+        .presenter-links a.pl-link, .presenter-links button.pl-copy {
+            font-family: 'JetBrains Mono', monospace; font-size: 0.68rem;
+            color: var(--accent); background: rgba(249,115,22,0.1);
+            border: 1px solid rgba(249,115,22,0.3); border-radius: 5px;
+            padding: 0.25rem 0.5rem; cursor: pointer; text-decoration: none;
+            transition: all 0.2s; white-space: nowrap;
+        }
+        .presenter-links a.pl-link:hover, .presenter-links button.pl-copy:hover {
+            background: rgba(249,115,22,0.25); border-color: var(--accent);
+        }
+        .presenter-links button.pl-copy.ok { color: var(--green); border-color: var(--green); background: rgba(34,197,94,0.15); }
+        .presenter-links .pl-tag {
+            font-size: 0.6rem; padding: 0.1rem 0.4rem; border-radius: 999px; font-weight: 700;
+        }
+        .pl-tag.speaker { background: rgba(139,92,246,0.2); color: #c084fc; border: 1px solid rgba(139,92,246,0.4); }
+        .pl-tag.audience { background: rgba(34,197,94,0.15); color: #4ade80; border: 1px solid rgba(34,197,94,0.35); }
+        .pl-tag.public { background: rgba(249,115,22,0.15); color: var(--accent); border: 1px solid rgba(249,115,22,0.35); }
+        .pl-tag.todo { background: rgba(234,179,8,0.15); color: #facc15; border: 1px solid rgba(234,179,8,0.35); }
     </style>
 </head>
 <body id="appBody">
@@ -167,6 +201,26 @@
         <h1>AI för <span>BINs chefer</span></h1>
         <p>21 maj 2026</p>
         <div class="theme-row" id="themeRow"></div>
+    </div>
+    <div class="presenter-links" id="presenterLinks">
+        <div class="pl-group">
+            <span class="pl-label">Du</span>
+            <span class="pl-tag speaker">SPEAKER</span>
+            <a class="pl-link" href="?mode=speaker" target="_blank">?mode=speaker</a>
+            <button class="pl-copy" onclick="copyUrl(this, window.location.origin + window.location.pathname + '?mode=speaker')">📋</button>
+        </div>
+        <div class="pl-group">
+            <span class="pl-label">Live-publik</span>
+            <span class="pl-tag audience">UNDER WORKSHOP</span>
+            <a class="pl-link" href="audience.html" target="_blank">audience.html</a>
+            <button class="pl-copy" onclick="copyUrl(this, window.location.origin + window.location.pathname.replace('index.html','').replace(/\/$/, '') + '/audience.html')">📋</button>
+        </div>
+        <div class="pl-group">
+            <span class="pl-label">Dela efter workshop</span>
+            <span class="pl-tag public">PUBLIK</span>
+            <span class="pl-link" style="opacity:0.5; cursor:default;">Skapa neutral URL →</span>
+            <span class="pl-tag todo">ATT GÖRA</span>
+        </div>
     </div>
 
     <div class="card-view" id="cardView"></div>
@@ -191,6 +245,47 @@
 
         let slidesData = [];
         let currentIdx = 0;
+
+        // === GLOBAL UTILS ===
+        window.copyUrl = function(btn, url) {
+            navigator.clipboard.writeText(url).catch(() => {
+                const ta = document.createElement('textarea');
+                ta.value = url; ta.style.position = 'fixed'; ta.style.opacity = '0';
+                document.body.appendChild(ta); ta.select(); document.execCommand('copy');
+                document.body.removeChild(ta);
+            });
+            btn.classList.add('ok'); btn.textContent = '✅';
+            setTimeout(() => { btn.classList.remove('ok'); btn.textContent = '📋'; }, 2000);
+        };
+
+        // === LIVE SYNC & SPEAKER MODE ===
+        const urlParams = new URLSearchParams(window.location.search);
+        const isSpeakerMode = urlParams.get('mode') === 'speaker';
+        const kvKey = 'HakanBIN2026_LiveSync'; 
+        const IM_URL = 'https://keyvalue.immanuel.co/api/KeyVal/UpdateValue/' + kvKey + '/';
+
+        function pushLiveState(slideIdx, contentType) {
+            const s = slidesData[slideIdx];
+            if (!s) return;
+            
+            let contentToPush = '';
+            if (contentType === 'auto') {
+                contentToPush = s.audience_content_auto || JSON.stringify({status: 'focus', message: 'Lyssna på Håkan', emoji: '👀'});
+            } else if (contentType === 'manual') {
+                contentToPush = s.audience_content_manual || s.audience_content_auto || JSON.stringify({status: 'focus', message: 'Lyssna på Håkan', emoji: '👀'});
+            }
+            
+            // Hex encode to bypass URL and CORS character issues
+            let hexStr = '';
+            const encoder = new TextEncoder();
+            const bytes = encoder.encode(contentToPush);
+            for (let i = 0; i < bytes.length; i++) {
+                hexStr += bytes[i].toString(16).padStart(2, '0');
+            }
+            
+            const payload = slideIdx + '_' + contentType + '_' + hexStr;
+            fetch(IM_URL + payload, { method: 'POST', mode: 'no-cors' }).catch(console.error);
+        }
 
         // === THEMES (optimerade för BIN-workshopen) ===
         const themes = {
@@ -278,12 +373,17 @@
             
             // Switch to auditorium scaling
             document.documentElement.classList.add('presentation-mode');
+            document.getElementById('presenterLinks').style.display = 'none';
+
+            // Auto-push live state to audience when slide opens
+            pushLiveState(idx, 'auto');
         }
 
         function closeSlide() {
             document.getElementById('slideView').classList.remove('active');
             document.getElementById('cardView').classList.remove('hidden');
             document.getElementById('showcaseHeader').style.display = '';
+            document.getElementById('presenterLinks').style.display = '';
             
             // Revert back to desktop showcase scaling
             document.documentElement.classList.remove('presentation-mode');
@@ -322,6 +422,24 @@
             if (e.key === 'Escape') closeSlide();
             if (e.key === 'f' || e.key === 'F') toggleFullScreen();
             if (document.getElementById('slideView').classList.contains('active')) {
+                // Manuell Push via M-tangenten (Alternativ 1)
+                if (e.key === 'm' || e.key === 'M') {
+                    e.preventDefault();
+                    pushLiveState(currentIdx, 'manual');
+                    // Visuell feedback
+                    const counter = document.getElementById('slideCounter');
+                    const orig = counter.textContent;
+                    counter.textContent = '🚀 MATERIAL PUSHAT';
+                    counter.style.color = 'var(--accent)';
+                    counter.style.fontWeight = 'bold';
+                    setTimeout(() => { 
+                        counter.textContent = orig; 
+                        counter.style.color = 'var(--text-muted)'; 
+                        counter.style.fontWeight = 'normal';
+                    }, 2000);
+                    return;
+                }
+                
                 if (e.key === ' ' || e.key === 'Enter') { 
                     e.preventDefault(); 
                     if (window.handleNextStep && window.handleNextStep()) return;
@@ -331,6 +449,29 @@
                 if (e.key === 'ArrowLeft') { e.preventDefault(); window.prevSlide(); }
             }
         });
+
+        // === SPEAKER DASHBOARD (Alternativ 2) ===
+        if (isSpeakerMode) {
+            const speakerPanel = document.createElement('div');
+            speakerPanel.style.cssText = 'position: fixed; bottom: 0; left: 0; right: 0; background: #111; border-top: 2px solid var(--accent); padding: 1rem; display: flex; justify-content: center; z-index: 1000;';
+            speakerPanel.innerHTML = '<button id="speakerPushBtn" style="background: var(--green); color: white; border: none; padding: 1rem 2rem; font-size: 1.2rem; font-weight: bold; border-radius: 8px; cursor: pointer; box-shadow: 0 4px 15px rgba(34, 197, 94, 0.4);">🚀 Skicka specialmaterial till publiken</button>';
+            document.body.appendChild(speakerPanel);
+            
+            document.getElementById('speakerPushBtn').addEventListener('click', (e) => {
+                e.stopPropagation(); // förhindra att klicket byter slide
+                pushLiveState(currentIdx, 'manual');
+                const btn = document.getElementById('speakerPushBtn');
+                btn.textContent = '✅ MATERIAL PUSHAT!';
+                btn.style.background = '#059669';
+                setTimeout(() => { 
+                    btn.textContent = '🚀 Skicka specialmaterial till publiken'; 
+                    btn.style.background = 'var(--green)'; 
+                }, 2000);
+            });
+            
+            // Se till att presentationen inte hamnar bakom panelen
+            document.getElementById('slideView').style.paddingBottom = '80px';
+        }
 
         // === LOAD SLIDES ===
         function loadSlides() {
