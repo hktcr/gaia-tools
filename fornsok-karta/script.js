@@ -273,10 +273,7 @@ map.on('moveend', () => {
     }, 800);
 });
 
-// Initial fetch
-setTimeout(() => {
-    searchBtn.click();
-}, 500);
+
 
 // --- GPS Tracking ---
 const gpsBtn = document.getElementById('gps-btn');
@@ -315,7 +312,14 @@ map.on('locationfound', (e) => {
 });
 
 map.on('locationerror', (e) => {
-    alert("Kunde inte hämta din position. Tillåt platsåtkomst i din webbläsare.");
+    console.warn("Platsåtkomst nekades eller misslyckades:", e.message);
     isTracking = false;
     gpsBtn.classList.remove('active');
+    // Fallback: Sök på startpositionen om GPS nekas
+    searchBtn.click();
 });
+
+// Starta spårning och zooma in automatiskt vid sidladdning
+setTimeout(() => {
+    gpsBtn.click();
+}, 500);

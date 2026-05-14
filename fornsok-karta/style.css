@@ -25,7 +25,7 @@ body, html {
 
 /* Map Container */
 #map {
-    height: 100vh;
+    height: 100dvh;
     width: 100vw;
     z-index: 1;
 }
@@ -297,7 +297,6 @@ body, html {
     -webkit-backdrop-filter: blur(12px) !important;
     box-shadow: var(--shadow-glass) !important;
     font-family: var(--font-stack) !important;
-    padding: 6px !important;
 }
 
 .leaflet-control-zoom {
@@ -351,7 +350,7 @@ body, html {
         margin-bottom: 80px !important;
     }
     .leaflet-control-layers {
-        margin-bottom: 20px !important;
+        margin-bottom: 40px !important;
         margin-left: 10px !important;
     }
     .side-panel.open {
