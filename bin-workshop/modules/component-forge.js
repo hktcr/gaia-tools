@@ -3740,7 +3740,7 @@
      */
     function renderBentoGrid(s) {
         const id = 'bento-' + Math.random().toString(36).slice(2, 8);
-        let html = `<div class="slide-bento-grid" id="${id}">`;
+        let html = `<div class="slide-bento-grid no-click-advance" id="${id}">`;
         if (s.title) html += `<h2 class="bento-title">${s.title}</h2>`;
         html += `<div class="bento-container">`;
         (s.items || []).forEach((item, i) => {
@@ -3769,8 +3769,9 @@
                 currentStep = 1;
             }, 500);
 
-            container.addEventListener('click', () => {
+            container.addEventListener('click', (e) => {
                 if (currentStep < items.length) {
+                    e.stopPropagation();
                     items[currentStep].classList.remove('step-hidden');
                     currentStep++;
                 }
@@ -3785,7 +3786,7 @@
      */
     function renderGlitchWarning(s) {
         const id = 'glitch-' + Math.random().toString(36).slice(2, 8);
-        let html = `<div class="slide-glitch-warning" id="${id}">`;
+        let html = `<div class="slide-glitch-warning no-click-advance" id="${id}">`;
         html += `<div class="glitch-wrapper">`;
         if (s.glitchText) html += `<h1 class="glitch" data-text="${s.glitchText}">${s.glitchText}</h1>`;
         if (s.subtitle) html += `<div class="glitch-subtitle">${s.subtitle}</div>`;
@@ -3807,8 +3808,9 @@
             const items = container.querySelectorAll('.glitch-list-item');
             let currentStep = 0;
 
-            container.addEventListener('click', () => {
+            container.addEventListener('click', (e) => {
                 if (currentStep < items.length) {
+                    e.stopPropagation();
                     items[currentStep].classList.remove('step-hidden');
                     currentStep++;
                 }
