@@ -371,6 +371,41 @@
       ]
     },
     {
+      "id": "ai-tidsraddare",
+      "section": "agenter",
+      "size": "large",
+      "type": "bento-grid",
+      "title": "Den nya arbetsveckan",
+      "items": [
+        { "title": "Sparringpartnern", "text": "Generera första utkastet till utvecklingsplaner och rapporter baserat på lokala data.", "icon": "🥊", "colSpan": 2 },
+        { "title": "Kommunikatören", "text": "Omvandla stökiga anteckningar till diplomatiska föräldrabrev.", "icon": "✉️", "colSpan": 1 },
+        { "title": "Perspektiv-simulatorn", "text": "\"Hur uppfattar facket eller elevkåren detta förslag?\" Hitta dina blinda fläckar innan beslutet fattas.", "icon": "🎭", "colSpan": 3 }
+      ]
+    },
+    {
+      "id": "ai-krisen",
+      "section": "agenter",
+      "size": "large",
+      "type": "glitch-warning",
+      "glitchText": "TILLITSKRISEN",
+      "subtitle": "Den svarta svanen i skolan",
+      "warnings": [
+        "IMY-larm Våren 2026: Oreglerad AI hotar barns integritet",
+        "Hallucinationer göder extremt trovärdig desinformation",
+        "AI som sätter betyg urholkar lärarkårens legitimitet"
+      ]
+    },
+    {
+      "id": "ai-raddningen",
+      "section": "agenter",
+      "size": "large",
+      "type": "milestone-reveal",
+      "date": "1 JUNI 2026",
+      "eyebrow": "Sveriges Kommuner och Regioner",
+      "title": "Nationellt Scenarioverktyg lanseras",
+      "features": ["Styra & Leda", "Etik & Juridik", "Teknikanskaffning"]
+    },
+    {
       "id": "gdpr-varning",
       "section": "agenter",
       "type": "warning-pulse",

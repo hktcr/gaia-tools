@@ -620,6 +620,99 @@
             opacity: 0; animation: wordDrop 0.5s ease 0.9s forwards;
         }
 
+        /* ===== BENTO GRID ===== */
+        .slide-bento-grid {
+            display: flex; flex-direction: column; align-items: center; width: 100%; max-width: 1200px;
+        }
+        .bento-title {
+            font-size: clamp(2rem, 4vw, 3rem); font-weight: 900; margin-bottom: 2rem;
+            text-align: center; color: var(--text);
+            opacity: 0; animation: wordDrop 0.5s forwards;
+        }
+        .bento-container {
+            display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; width: 100%;
+        }
+        .bento-item {
+            background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 24px; padding: 2rem; display: flex; flex-direction: column;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            opacity: 0; animation: fadeUp 0.6s forwards;
+        }
+        .bento-item:hover {
+            transform: translateY(-5px); border-color: var(--accent); background: rgba(255,255,255,0.06);
+            box-shadow: 0 15px 40px rgba(var(--accent-rgb, 249,115,22), 0.15);
+        }
+        .bento-icon { font-size: 3rem; margin-bottom: 1rem; }
+        .bento-item h3 { font-size: 1.4rem; font-weight: 800; color: var(--accent); margin-bottom: 0.5rem; }
+        .bento-item p { font-size: 1.1rem; color: var(--text-muted); line-height: 1.5; }
+        @media(max-width: 800px) { .bento-container { grid-template-columns: 1fr; } .bento-item { grid-column: span 1 !important; } }
+
+        /* ===== GLITCH WARNING ===== */
+        .slide-glitch {
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            height: 100%; text-align: center; position: relative;
+        }
+        .glitch-wrapper {
+            position: relative; font-size: clamp(3rem, 8vw, 6rem); font-weight: 900; text-transform: uppercase;
+            color: #ef4444; letter-spacing: -0.02em; margin-bottom: 1rem;
+        }
+        .glitch-wrapper::before, .glitch-wrapper::after {
+            content: attr(data-text); position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: transparent;
+        }
+        .glitch-wrapper::before {
+            left: 2px; text-shadow: -2px 0 #00ffff; clip: rect(24px, 550px, 90px, 0);
+            animation: glitch-anim 3s infinite linear alternate-reverse;
+        }
+        .glitch-wrapper::after {
+            left: -2px; text-shadow: -2px 0 #ff00ff; clip: rect(85px, 550px, 140px, 0);
+            animation: glitch-anim 2.5s infinite linear alternate-reverse;
+        }
+        @keyframes glitch-anim {
+            0% { clip: rect(10px, 9999px, 44px, 0); }
+            20% { clip: rect(80px, 9999px, 90px, 0); }
+            40% { clip: rect(20px, 9999px, 50px, 0); }
+            60% { clip: rect(60px, 9999px, 20px, 0); }
+            80% { clip: rect(15px, 9999px, 80px, 0); }
+            100% { clip: rect(40px, 9999px, 50px, 0); }
+        }
+        .glitch-sub { font-size: 1.5rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.2em; margin-bottom: 3rem; }
+        .glitch-list { display: flex; flex-direction: column; gap: 1.2rem; text-align: left; max-width: 800px; }
+        .glitch-list-item { 
+            background: rgba(239,68,68,0.1); border-left: 4px solid #ef4444; padding: 1rem 1.5rem;
+            font-size: 1.2rem; color: #fca5a5; font-weight: 600;
+            opacity: 0; transform: translateX(-20px); animation: slideIn 0.5s forwards;
+        }
+
+        /* ===== MILESTONE REVEAL ===== */
+        .slide-milestone {
+            display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%;
+        }
+        .ms-date-btn {
+            background: transparent; border: 2px solid var(--text-muted); color: var(--text);
+            font-size: clamp(3rem, 6vw, 5rem); font-weight: 900; font-family: 'JetBrains Mono', monospace;
+            padding: 1rem 3rem; border-radius: 100px; cursor: pointer; transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 0 0 rgba(249,115,22,0); position: relative; overflow: hidden;
+        }
+        .ms-date-btn:hover { border-color: var(--accent); color: var(--accent); transform: scale(1.05); }
+        .ms-date-btn.revealed {
+            border-color: var(--accent); background: var(--accent); color: white;
+            font-size: 2rem; padding: 0.5rem 2rem; transform: translateY(-50px);
+            box-shadow: 0 10px 40px rgba(249,115,22,0.4); pointer-events: none;
+        }
+        .ms-content {
+            opacity: 0; transform: translateY(30px); transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+            text-align: center; margin-top: 2rem; pointer-events: none; position: absolute; top: 50%;
+        }
+        .ms-date-btn.revealed + .ms-content {
+            opacity: 1; transform: translateY(10px); pointer-events: auto; position: relative; top: auto;
+        }
+        .ms-eyebrow { color: var(--accent); font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 0.5rem; }
+        .ms-title { font-size: 3rem; font-weight: 900; margin-bottom: 2rem; }
+        .ms-features { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; }
+        .ms-feature { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); padding: 1rem 2rem; border-radius: 12px; font-weight: 700; font-size: 1.2rem; }
+
         /* ===== BAR RACE ===== */
         @keyframes barGrow {
             from { width: 0; }
@@ -4128,6 +4221,76 @@
         `;
     }
 
+    /**
+     * bento-grid: A modern CSS grid for features
+     */
+    function renderBentoGrid(s) {
+        let html = `<div class="slide-bento-grid">`;
+        if (s.title) html += `<h2 class="bento-title">${s.title}</h2>`;
+        html += `<div class="bento-container">`;
+        (s.items || []).forEach((item, i) => {
+            const delay = 0.2 + (i * 0.1);
+            html += `
+                <div class="bento-item" style="grid-column: span ${item.colSpan || 1}; animation-delay: ${delay}s;">
+                    ${item.icon ? `<div class="bento-icon">${item.icon}</div>` : ''}
+                    <h3>${item.title}</h3>
+                    <p>${item.text}</p>
+                </div>
+            `;
+        });
+        html += `</div></div>`;
+        return html;
+    }
+
+    /**
+     * glitch-warning: Severe warning slide with CSS glitch effect
+     */
+    function renderGlitchWarning(s) {
+        let html = `<div class="slide-glitch">`;
+        html += `<div class="glitch-wrapper" data-text="${s.glitchText}">${s.glitchText}</div>`;
+        if (s.subtitle) html += `<div class="glitch-sub">${s.subtitle}</div>`;
+        if (s.warnings && s.warnings.length > 0) {
+            html += `<div class="glitch-list">`;
+            s.warnings.forEach((w, i) => {
+                html += `<div class="glitch-list-item" style="animation-delay: ${1 + (i * 0.3)}s">${w}</div>`;
+            });
+            html += `</div>`;
+        }
+        html += `</div>`;
+        return html;
+    }
+
+    /**
+     * milestone-reveal: Interactive date reveal button
+     */
+    function renderMilestoneReveal(s) {
+        const uid = 'ms-' + Math.random().toString(36).slice(2,8);
+        setTimeout(() => {
+            const btn = document.getElementById(uid);
+            if(btn) {
+                btn.onclick = (e) => {
+                    e.stopPropagation(); // prevent slide advance
+                    btn.classList.add('revealed');
+                };
+            }
+        }, 100);
+
+        let html = `<div class="slide-milestone">`;
+        html += `<button id="${uid}" class="ms-date-btn">${s.date}</button>`;
+        html += `<div class="ms-content">`;
+        if (s.eyebrow) html += `<div class="ms-eyebrow">${s.eyebrow}</div>`;
+        if (s.title) html += `<div class="ms-title">${s.title}</div>`;
+        if (s.features) {
+            html += `<div class="ms-features">`;
+            s.features.forEach(f => {
+                html += `<div class="ms-feature">${f}</div>`;
+            });
+            html += `</div>`;
+        }
+        html += `</div></div>`;
+        return html;
+    }
+
     const allTypes = {
         'semantic-nebula': renderSemanticNebula,
         'word-cascade': renderWordCascade,
@@ -4171,7 +4334,11 @@
         // Signature
         'letter-morph': renderLetterMorph,
         // Audience
-        'prompt-card': renderPromptCard
+        'prompt-card': renderPromptCard,
+        // Insights
+        'bento-grid': renderBentoGrid,
+        'glitch-warning': renderGlitchWarning,
+        'milestone-reveal': renderMilestoneReveal
     };
 
     function registerTypes() {
