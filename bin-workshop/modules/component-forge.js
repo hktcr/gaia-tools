@@ -663,67 +663,49 @@
 
         /* ===== BENTO GRID ===== */
         .slide-bento-grid {
-            display: flex; flex-direction: column; align-items: center; width: 100%; max-width: 1200px;
+            display: flex; flex-direction: column; height: 100%; width: 100%;
+            padding: 4rem; box-sizing: border-box; justify-content: center;
         }
-        .bento-title {
-            font-size: clamp(2rem, 4vw, 3rem); font-weight: 900; margin-bottom: 2rem;
-            text-align: center; color: var(--text);
-            opacity: 0; animation: wordDrop 0.5s forwards;
-        }
+        .bento-title { font-size: 3rem; margin-bottom: 2rem; font-weight: 700; color: var(--text); }
         .bento-container {
-            display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; width: 100%;
+            display: grid; grid-template-columns: repeat(3, 1fr);
+            gap: 1.5rem; width: 100%; max-width: 1200px; margin: 0 auto;
         }
         .bento-item {
             background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1);
             border-radius: 24px; padding: 2rem; display: flex; flex-direction: column;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-            opacity: 0; animation: fadeUp 0.6s forwards;
+            backdrop-filter: blur(10px); transition: all 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
+            opacity: 1; transform: translateY(0);
         }
-        .bento-item:hover {
-            transform: translateY(-5px); border-color: var(--accent); background: rgba(255,255,255,0.06);
-            box-shadow: 0 15px 40px rgba(var(--accent-rgb, 249,115,22), 0.15);
+        .bento-item.step-hidden {
+            opacity: 0; transform: translateY(30px);
         }
-        .bento-icon { font-size: 3rem; margin-bottom: 1rem; }
-        .bento-item h3 { font-size: 1.4rem; font-weight: 800; color: var(--accent); margin-bottom: 0.5rem; }
-        .bento-item p { font-size: 1.1rem; color: var(--text-muted); line-height: 1.5; }
-        @media(max-width: 800px) { .bento-container { grid-template-columns: 1fr; } .bento-item { grid-column: span 1 !important; } }
+        .bento-icon { font-size: 2.5rem; margin-bottom: 1rem; }
+        .bento-item-title { font-size: 1.5rem; margin-bottom: 0.5rem; color: white; font-weight: 600; }
+        .bento-item-text { font-size: 1.1rem; color: var(--text-muted); line-height: 1.5; }
 
         /* ===== GLITCH WARNING ===== */
-        .slide-glitch {
-            display: flex; flex-direction: column; align-items: center; justify-content: center;
-            height: 100%; text-align: center; position: relative;
+        .slide-glitch-warning {
+            display: flex; flex-direction: column; height: 100%; width: 100%;
+            justify-content: center; align-items: center; background: radial-gradient(circle at center, #1a0505 0%, #000 100%);
         }
-        .glitch-wrapper {
-            position: relative; font-size: clamp(3rem, 8vw, 6rem); font-weight: 900; text-transform: uppercase;
-            color: #ef4444; letter-spacing: -0.02em; margin-bottom: 1rem;
+        .glitch-wrapper { text-align: center; max-width: 800px; }
+        .glitch {
+            font-size: 6rem; font-weight: 900; text-transform: uppercase;
+            position: relative; color: white; margin-bottom: 1rem;
+            text-shadow: 0.05em 0 0 rgba(255,0,0,0.75), -0.025em -0.05em 0 rgba(0,255,0,0.75), 0.025em 0.05em 0 rgba(0,0,255,0.75);
+            animation: glitch 500ms infinite;
         }
-        .glitch-wrapper::before, .glitch-wrapper::after {
-            content: attr(data-text); position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            background: transparent;
+        .glitch span { position: absolute; top: 0; left: 0; }
+        .glitch-subtitle { font-size: 1.5rem; color: #ff6b6b; margin-bottom: 3rem; font-weight: 600; text-transform: uppercase; letter-spacing: 2px; }
+        .glitch-list { display: flex; flex-direction: column; gap: 1.5rem; text-align: left; }
+        .glitch-list-item {
+            font-size: 1.3rem; color: #e2e8f0; background: rgba(255,0,0,0.1);
+            padding: 1.5rem; border-left: 4px solid #ff4444; border-radius: 0 8px 8px 0;
+            opacity: 1; transform: translateX(0); transition: all 0.4s ease-out;
         }
-        .glitch-wrapper::before {
-            left: 2px; text-shadow: -2px 0 #00ffff; clip: rect(24px, 550px, 90px, 0);
-            animation: glitch-anim 3s infinite linear alternate-reverse;
-        }
-        .glitch-wrapper::after {
-            left: -2px; text-shadow: -2px 0 #ff00ff; clip: rect(85px, 550px, 140px, 0);
-            animation: glitch-anim 2.5s infinite linear alternate-reverse;
-        }
-        @keyframes glitch-anim {
-            0% { clip: rect(10px, 9999px, 44px, 0); }
-            20% { clip: rect(80px, 9999px, 90px, 0); }
-            40% { clip: rect(20px, 9999px, 50px, 0); }
-            60% { clip: rect(60px, 9999px, 20px, 0); }
-            80% { clip: rect(15px, 9999px, 80px, 0); }
-            100% { clip: rect(40px, 9999px, 50px, 0); }
-        }
-        .glitch-sub { font-size: 1.5rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.2em; margin-bottom: 3rem; }
-        .glitch-list { display: flex; flex-direction: column; gap: 1.2rem; text-align: left; max-width: 800px; }
-        .glitch-list-item { 
-            background: rgba(239,68,68,0.1); border-left: 4px solid #ef4444; padding: 1rem 1.5rem;
-            font-size: 1.2rem; color: #fca5a5; font-weight: 600;
-            opacity: 0; transform: translateX(-20px); animation: slideIn 0.5s forwards;
+        .glitch-list-item.step-hidden {
+            opacity: 0; transform: translateX(-40px);
         }
 
         /* ===== MILESTONE REVEAL ===== */
@@ -3143,14 +3125,12 @@
      * letter-morph — Scattered letters form words, unused become elliptical frame.
      * Props: phrases[] (array of strings)
      * Click to cycle through phrases.
-     * Uses setTimeout post-render pattern (no embedded script tags).
      */
     function renderLetterMorph(s) {
         const id = 'lm-' + Math.random().toString(36).slice(2, 8);
         const phrases = s.phrases || ['Hej världen'];
-        const totalLetters = 150; // Ökad från 80 för att klara längre meningar och bygga ett fylligare moln
+        const totalLetters = 150; 
 
-        // Schedule initialization after DOM insertion via setTimeout
         setTimeout(() => {
             const el = document.getElementById(id);
             if (!el) return;
@@ -3171,7 +3151,7 @@
                     span.className = 'lm-letter';
                     span.textContent = alphabet[Math.floor(rng() * alphabet.length)];
                     span.style.fontSize = (14 + rng() * 20) + 'px';
-                span.style.left = (rng() * 90 + 5) + '%';
+                    span.style.left = (rng() * 90 + 5) + '%';
                     span.style.top = (rng() * 85 + 5) + '%';
                     span.style.opacity = '0.08';
                     span.style.transform = 'rotate(' + (rng() * 60 - 30) + 'deg)';
@@ -3181,7 +3161,6 @@
             }
 
             function morphTo(phrase) {
-                // Skapa en osynlig layout-container för att räkna ut perfekta pixel-koordinater
                 const layout = document.createElement('div');
                 layout.style.position = 'absolute';
                 layout.style.inset = '0';
@@ -3191,10 +3170,9 @@
                 layout.style.alignItems = 'center';
                 layout.style.alignContent = 'center';
                 layout.style.padding = '10%';
-                layout.style.gap = '1.5rem'; // Mellanrum mellan ord
+                layout.style.gap = '1.5rem';
                 layout.style.visibility = 'hidden';
                 
-                // Om meningen är extremt lång, krymp fonten något. Annars använd den stora, ståtliga rubrikfonten.
                 const charsCount = phrase.replace(/\s+/g, '').length;
                 const fontClamp = charsCount > 40 ? 'clamp(1.5rem, 4vmin, 3.5rem)' : 'clamp(2rem, 6vmin, 5rem)';
                 layout.style.fontSize = fontClamp;
@@ -3218,23 +3196,27 @@
                 
                 el.appendChild(layout);
                 
-                // Läs av de exakta koordinaterna i relation till containern (el)
-                const elRect = el.getBoundingClientRect();
+                // Use offsetLeft/Top traversal
                 const targetCoords = targetSpans.map(t => {
-                    const rect = t.span.getBoundingClientRect();
+                    let x = t.span.offsetLeft;
+                    let y = t.span.offsetTop;
+                    let p = t.span.offsetParent;
+                    while(p && p !== el) {
+                        x += p.offsetLeft;
+                        y += p.offsetTop;
+                        p = p.offsetParent;
+                    }
                     return {
                         char: t.char,
-                        x: rect.left - elRect.left,
-                        y: rect.top - elRect.top,
-                        width: rect.width,
-                        height: rect.height
+                        x: x,
+                        y: y,
+                        width: t.span.offsetWidth,
+                        height: t.span.offsetHeight
                     };
                 });
                 el.removeChild(layout);
 
-                // STEG 1: Alla bokstäver sprids som ett moln över hela skärmen
                 letters.forEach((l, i) => {
-                    // Sätt rätt tecken för de som ska användas
                     if (i < targetCoords.length) {
                         l.el.textContent = targetCoords[i].char;
                     } else {
@@ -3244,7 +3226,6 @@
                     l.el.style.fontSize = (1 + Math.abs(Math.sin(i * 2.1)) * 1.5) + 'rem';
                     l.el.style.opacity = '0.04';
                     l.el.style.transform = 'translate(-50%, -50%) rotate(' + Math.round(Math.sin(i * 3.4) * 45) + 'deg)';
-                    
                     const rx = (Math.abs(Math.sin(i * 12.3 + phraseIdx)) * 90 + 5);
                     const ry = (Math.abs(Math.cos(i * 18.1 + phraseIdx)) * 90 + 5);
                     l.el.style.left = rx + '%';
@@ -3253,7 +3234,6 @@
 
                 document.getElementById(`${id}-counter`).textContent = (phraseIdx + 1) + ' / ' + phrases.length;
 
-                // Om det är allra första initieringen, montera direkt utan scatter/highlight delay
                 if (!el.dataset.firstRunDone) {
                     el.dataset.firstRunDone = "true";
                     targetCoords.forEach((t, i) => {
@@ -3269,7 +3249,6 @@
                     return;
                 }
 
-                // STEG 2: Rätt bokstäver identifieras och lyser upp i orange (efter att scatter startat)
                 setTimeout(() => {
                     targetCoords.forEach((t, i) => {
                         const l = letters[i];
@@ -3277,7 +3256,6 @@
                     });
                 }, 800);
 
-                // STEG 3: De upplysta bokstäverna flyger samman och bildar orden
                 setTimeout(() => {
                     targetCoords.forEach((t, i) => {
                         const l = letters[i];
@@ -3288,17 +3266,14 @@
                         l.el.style.left = (t.x + t.width/2) + 'px';
                         l.el.style.top = (t.y + t.height/2) + 'px';
                     });
-                    
-                    setTimeout(() => { isMorphing = false; }, 1200); // Lås upp för nästa klick
+                    setTimeout(() => { isMorphing = false; }, 1200);
                 }, 1800);
             }
 
             createLetters();
-
             const observer = new IntersectionObserver((entries) => {
                 if (entries[0].isIntersecting && !el.dataset.initialized) {
                     el.dataset.initialized = "true";
-                    // Initial load is instant (handled inside morphTo)
                     isMorphing = true;
                     setTimeout(() => morphTo(phrases[phraseIdx]), 50);
                 }
@@ -3312,12 +3287,12 @@
                     morphTo(phrases[phraseIdx]);
                 }
             });
-        }, 100); // 100ms delay ensures DOM is ready after innerHTML
+        }, 100);
 
         return `
             <div class="slide-letter-morph" id="${id}">
                 <div class="lm-hint">Klicka för nästa</div>
-                <div class="lm-counter"></div>
+                <div class="lm-counter" id="${id}-counter"></div>
             </div>
         `;
     }
@@ -3722,6 +3697,89 @@
                 <div class="ts-content" id="${id}-content"></div>
             </div>
         `;
+    }
+
+    /**
+     * bento-grid: A modern CSS grid for features
+     */
+    function renderBentoGrid(s) {
+        const id = 'bento-' + Math.random().toString(36).slice(2, 8);
+        let html = `<div class="slide-bento-grid" id="${id}">`;
+        if (s.title) html += `<h2 class="bento-title">${s.title}</h2>`;
+        html += `<div class="bento-container">`;
+        (s.items || []).forEach((item, i) => {
+            html += `
+                <div class="bento-item step-hidden" style="grid-column: span ${item.colSpan || 1};">
+                    <div class="bento-icon">${item.icon || '✨'}</div>
+                    <h3 class="bento-item-title">${item.title}</h3>
+                    <div class="bento-item-text">${item.text}</div>
+                </div>
+            `;
+        });
+        html += `</div>`;
+        html += renderSourcesPopup(s.sources);
+        html += `</div>`;
+
+        // Click to reveal logic
+        setTimeout(() => {
+            const container = document.getElementById(id);
+            if (!container) return;
+            const items = container.querySelectorAll('.bento-item');
+            let currentStep = 0;
+            
+            // Show first item automatically after a short delay
+            setTimeout(() => {
+                if(items.length > 0) items[0].classList.remove('step-hidden');
+                currentStep = 1;
+            }, 500);
+
+            container.addEventListener('click', () => {
+                if (currentStep < items.length) {
+                    items[currentStep].classList.remove('step-hidden');
+                    currentStep++;
+                }
+            });
+        }, 100);
+
+        return html;
+    }
+
+    /**
+     * glitch-warning: A high-impact warning slide
+     */
+    function renderGlitchWarning(s) {
+        const id = 'glitch-' + Math.random().toString(36).slice(2, 8);
+        let html = `<div class="slide-glitch-warning" id="${id}">`;
+        html += `<div class="glitch-wrapper">`;
+        if (s.glitchText) html += `<h1 class="glitch" data-text="${s.glitchText}">${s.glitchText}</h1>`;
+        if (s.subtitle) html += `<div class="glitch-subtitle">${s.subtitle}</div>`;
+        if (s.warnings && s.warnings.length > 0) {
+            html += `<div class="glitch-list">`;
+            s.warnings.forEach((w, i) => {
+                html += `<div class="glitch-list-item step-hidden">⚠️ ${w}</div>`;
+            });
+            html += `</div>`;
+        }
+        html += `</div>`;
+        html += renderSourcesPopup(s.sources);
+        html += `</div>`;
+
+        // Click to reveal logic
+        setTimeout(() => {
+            const container = document.getElementById(id);
+            if (!container) return;
+            const items = container.querySelectorAll('.glitch-list-item');
+            let currentStep = 0;
+
+            container.addEventListener('click', () => {
+                if (currentStep < items.length) {
+                    items[currentStep].classList.remove('step-hidden');
+                    currentStep++;
+                }
+            });
+        }, 100);
+
+        return html;
     }
 
     // ===== SEMANTIC NEBULA =====
@@ -4286,49 +4344,7 @@
             </div>
         `;
     }
-
-    /**
-     * bento-grid: A modern CSS grid for features
-     */
-    function renderBentoGrid(s) {
-        let html = `<div class="slide-bento-grid">`;
-        if (s.title) html += `<h2 class="bento-title">${s.title}</h2>`;
-        html += `<div class="bento-container">`;
-        (s.items || []).forEach((item, i) => {
-            const delay = 0.2 + (i * 0.1);
-            html += `
-                <div class="bento-item" style="grid-column: span ${item.colSpan || 1}; animation-delay: ${delay}s;">
-                    ${item.icon ? `<div class="bento-icon">${item.icon}</div>` : ''}
-                    <h3>${item.title}</h3>
-                    <p>${item.text}</p>
-                </div>
-            `;
-        });
-        html += `</div>`;
-        html += renderSourcesPopup(s.sources);
-        html += `</div>`;
-        return html;
-    }
-
-    /**
-     * glitch-warning: Severe warning slide with CSS glitch effect
-     */
-    function renderGlitchWarning(s) {
-        let html = `<div class="slide-glitch">`;
-        html += `<div class="glitch-wrapper" data-text="${s.glitchText}">${s.glitchText}</div>`;
-        if (s.subtitle) html += `<div class="glitch-sub">${s.subtitle}</div>`;
-        if (s.warnings && s.warnings.length > 0) {
-            html += `<div class="glitch-list">`;
-            s.warnings.forEach((w, i) => {
-                html += `<div class="glitch-list-item" style="animation-delay: ${1 + (i * 0.3)}s">${w}</div>`;
-            });
-            html += `</div>`;
-        }
-        html += renderSourcesPopup(s.sources);
-        html += `</div>`;
-        return html;
-    }
-
+    
     /**
      * milestone-reveal: Interactive date reveal button
      */
