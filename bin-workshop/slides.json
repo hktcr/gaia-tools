@@ -414,6 +414,6 @@
         { "text": "GAIA Ecosystem (2026): VEP Deliberation Framework", "url": "https://hktcr.github.io/ai-for-ledare/" }
       ],
       "audience_content_auto": "{\"status\": \"prompt\", \"title\": \"Vardags-VEP:en\", \"prompt\": \"Du är min virtuella expertpanel...\", \"emoji\": \"🛠️\"}"
-    },
+    }
   ]
 }
