@@ -25,12 +25,6 @@
       "label": "Autonoma Agenter",
       "color": "#7e22ce"
     }
-    ,
-    {
-      "id": "extramaterial",
-      "label": "Deep Dives (Extramaterial)",
-      "color": "#475569"
-    }
   ],
   "slides": [
     {
@@ -102,7 +96,9 @@
           "Nästa token predikteras och stelnar"
         ]
       },
-      "highlights": [3]
+      "highlights": [
+        3
+      ]
     },
     {
       "id": "syntes-motor-insikt",
@@ -135,15 +131,60 @@
           "name": "Klarar uppgiften med 50% sannolikhet",
           "color": "#10b981",
           "points": [
-            { "x": "2023-03-14", "y": 6, "label": "GPT-4", "info": "Tidig milstolpe. Klarar enklare sekvenser." },
-            { "x": "2024-09-12", "y": 42, "label": "o1", "info": "Introducerar 'chain-of-thought' som bryter igenom till nya nivåer." },
-            { "x": "2025-02-20", "y": 55, "label": "Claude 3.7", "info": "Avancerad kodning och multimodala resonemang." },
-            { "x": "2025-04-15", "y": 74, "label": "Claude 4", "info": "Helt ny arkitektur maximerar kontext." },
-            { "x": "2025-07-01", "y": 77, "label": "o4-mini", "info": "Små, snabba modeller blir extremt kapabla." },
-            { "x": "2025-09-10", "y": 91, "label": "o3", "info": "Höstsläpp med enorma slutledningsförmågor." },
-            { "x": "2025-10-05", "y": 105, "label": "Grok 4", "info": "Stort hopp i ostrukturerad datahantering." },
-            { "x": "2025-11-20", "y": 131, "label": "GPT-5", "info": "Nästa generations frontier-modell." },
-            { "x": "2025-12-15", "y": 162, "label": "GPT-5.1", "info": "Motsvarar nästan tre timmars självständigt arbete. Här nås max för TH 1.0 testet." }
+            {
+              "x": "2023-03-14",
+              "y": 6,
+              "label": "GPT-4",
+              "info": "Tidig milstolpe. Klarar enklare sekvenser."
+            },
+            {
+              "x": "2024-09-12",
+              "y": 42,
+              "label": "o1",
+              "info": "Introducerar 'chain-of-thought' som bryter igenom till nya nivåer."
+            },
+            {
+              "x": "2025-02-20",
+              "y": 55,
+              "label": "Claude 3.7",
+              "info": "Avancerad kodning och multimodala resonemang."
+            },
+            {
+              "x": "2025-04-15",
+              "y": 74,
+              "label": "Claude 4",
+              "info": "Helt ny arkitektur maximerar kontext."
+            },
+            {
+              "x": "2025-07-01",
+              "y": 77,
+              "label": "o4-mini",
+              "info": "Små, snabba modeller blir extremt kapabla."
+            },
+            {
+              "x": "2025-09-10",
+              "y": 91,
+              "label": "o3",
+              "info": "Höstsläpp med enorma slutledningsförmågor."
+            },
+            {
+              "x": "2025-10-05",
+              "y": 105,
+              "label": "Grok 4",
+              "info": "Stort hopp i ostrukturerad datahantering."
+            },
+            {
+              "x": "2025-11-20",
+              "y": 131,
+              "label": "GPT-5",
+              "info": "Nästa generations frontier-modell."
+            },
+            {
+              "x": "2025-12-15",
+              "y": 162,
+              "label": "GPT-5.1",
+              "info": "Motsvarar nästan tre timmars självständigt arbete. Här nås max för TH 1.0 testet."
+            }
           ]
         }
       ]
@@ -161,18 +202,69 @@
           "name": "Klarar uppgiften med 50% sannolikhet",
           "color": "#ea580c",
           "points": [
-            { "x": "2023-03-14", "y": 6, "label": "GPT-4" },
-            { "x": "2024-09-12", "y": 42, "label": "o1" },
-            { "x": "2025-02-20", "y": 55, "label": "Claude 3.7" },
-            { "x": "2025-04-15", "y": 74, "label": "Claude 4" },
-            { "x": "2025-07-01", "y": 77, "label": "o4-mini" },
-            { "x": "2025-09-10", "y": 91, "label": "o3" },
-            { "x": "2025-10-05", "y": 105, "label": "Grok 4" },
-            { "x": "2025-11-20", "y": 131, "label": "GPT-5" },
-            { "x": "2025-12-15", "y": 162, "label": "GPT-5.1" },
-            { "x": "2026-01-10", "y": 342, "label": "GPT-5.4", "info": "TH 1.1 introduceras." },
-            { "x": "2026-01-15", "y": 384, "label": "Gemini 3.1 Pro", "info": "Google kontrar." },
-            { "x": "2026-02-05", "y": 870, "label": "Claude Opus 4.6", "info": "METR:s testsviter slår i taket. Över 14,5 timmars autonomt arbete." }
+            {
+              "x": "2023-03-14",
+              "y": 6,
+              "label": "GPT-4"
+            },
+            {
+              "x": "2024-09-12",
+              "y": 42,
+              "label": "o1"
+            },
+            {
+              "x": "2025-02-20",
+              "y": 55,
+              "label": "Claude 3.7"
+            },
+            {
+              "x": "2025-04-15",
+              "y": 74,
+              "label": "Claude 4"
+            },
+            {
+              "x": "2025-07-01",
+              "y": 77,
+              "label": "o4-mini"
+            },
+            {
+              "x": "2025-09-10",
+              "y": 91,
+              "label": "o3"
+            },
+            {
+              "x": "2025-10-05",
+              "y": 105,
+              "label": "Grok 4"
+            },
+            {
+              "x": "2025-11-20",
+              "y": 131,
+              "label": "GPT-5"
+            },
+            {
+              "x": "2025-12-15",
+              "y": 162,
+              "label": "GPT-5.1"
+            },
+            {
+              "x": "2026-01-10",
+              "y": 342,
+              "label": "GPT-5.4",
+              "info": "TH 1.1 introduceras."
+            },
+            {
+              "x": "2026-01-15",
+              "y": 384,
+              "label": "Gemini 3.1 Pro",
+              "info": "Google kontrar."
+            },
+            {
+              "x": "2026-02-05",
+              "y": 870,
+              "label": "Claude Opus 4.6",
+              "info": "METR:s testsviter slår i taket. Över 14,5 timmars autonomt arbete."
+            }
           ]
         }
       ]
@@ -187,9 +279,21 @@
         "button": "Visa siffrorna"
       },
       "numbers": [
-        { "value": 342, "label": "GPT-5.4 (minuter)", "icon": "🚀" },
-        { "value": 384, "label": "Gemini 3.1 Pro (minuter)", "icon": "🔥" },
-        { "value": 870, "label": "Claude Opus 4.6 (min)", "icon": "⚡" }
+        {
+          "value": 342,
+          "label": "GPT-5.4 (minuter)",
+          "icon": "🚀"
+        },
+        {
+          "value": 384,
+          "label": "Gemini 3.1 Pro (minuter)",
+          "icon": "🔥"
+        },
+        {
+          "value": 870,
+          "label": "Claude Opus 4.6 (min)",
+          "icon": "⚡"
+        }
       ]
     },
     {
@@ -242,7 +346,8 @@
           "location": "San Francisco, USA",
           "meta": "GPT-5 / o3",
           "desc": "Branschens pionjärer. Ledde kapplöpningen med GPT-4, nu pressar de gränsen med GPT-5-familjen.",
-          "x": 15, "y": 35
+          "x": 15,
+          "y": 35
         },
         {
           "id": "anthropic",
@@ -250,7 +355,8 @@
           "location": "San Francisco, USA",
           "meta": "CLAUDE OPUS 4.6",
           "desc": "Grundat av avhoppare från OpenAI. Deras Claude Opus 4.6 håller TH-rekordet med över 14,5 timmar (870 minuter).",
-          "x": 14.5, "y": 38
+          "x": 14.5,
+          "y": 38
         },
         {
           "id": "google-deepmind",
@@ -258,7 +364,8 @@
           "location": "London, UK",
           "meta": "GEMINI 3.1 / ALPHAFOLD",
           "desc": "Googles AI-spjutspets. Ligger bakom AlphaFold och den multimodala Gemini-familjen.",
-          "x": 46, "y": 25
+          "x": 46,
+          "y": 25
         },
         {
           "id": "mistral",
@@ -266,7 +373,8 @@
           "location": "Paris, Frankrike",
           "meta": "MISTRAL LARGE / OPEN SOURCE",
           "desc": "Den europeiska utmanaren. Driver utvecklingen av kraftfulla öppna modeller.",
-          "x": 48, "y": 28
+          "x": 48,
+          "y": 28
         },
         {
           "id": "meta",
@@ -274,7 +382,8 @@
           "location": "Menlo Park, USA",
           "meta": "LLAMA 4",
           "desc": "Katalysatorn för den öppna AI-rörelsen. De gör mångmiljard-investeringar tillgängliga öppet.",
-          "x": 16, "y": 36
+          "x": 16,
+          "y": 36
         },
         {
           "id": "alibaba",
@@ -282,7 +391,8 @@
           "location": "Hangzhou, Kina",
           "meta": "QWEN 3",
           "desc": "Den asiatiska jätten vars modeller idag matchar västvärldens toppmodeller.",
-          "x": 83, "y": 40
+          "x": 83,
+          "y": 40
         },
         {
           "id": "xai",
@@ -290,7 +400,8 @@
           "location": "Memphis, USA",
           "meta": "GROK 4 / COLOSSUS",
           "desc": "Elon Musks satsning. Grok 4 nådde TH 1.0 på 105 minuter. Kända för världens största träningskluster.",
-          "x": 23, "y": 38
+          "x": 23,
+          "y": 38
         },
         {
           "id": "cohere",
@@ -298,7 +409,8 @@
           "location": "Toronto, Kanada",
           "meta": "COMMAND A",
           "desc": "Ledande inom företags-AI och RAG (Retrieval-Augmented Generation).",
-          "x": 25, "y": 30
+          "x": 25,
+          "y": 30
         }
       ]
     },
@@ -346,7 +458,10 @@
           "Strukturerar jämförelse med rekommendation"
         ]
       },
-      "highlights": [0, 2]
+      "highlights": [
+        0,
+        2
+      ]
     },
     {
       "id": "agent-cases",
@@ -383,13 +498,34 @@
       "type": "bento-grid",
       "title": "Delegations-matrisen",
       "items": [
-        { "title": "KÖR (Låg risk)", "text": "Sammanfatta 40 sidor fackliga protokoll. Skapa mallar för incidentrapporter.", "icon": "🟢", "colSpan": 1 },
-        { "title": "SPARRING (Medel)", "text": "Trycktesta argument inför svåra föräldramöten. Kräver avpersonifiering.", "icon": "🟡", "colSpan": 1 },
-        { "title": "STOPP (Hög risk)", "text": "Skriva individuella elevomdömen eller sätta betyg. (IMY-larm & Lagbrott)", "icon": "🔴", "colSpan": 1 }
+        {
+          "title": "KÖR (Låg risk)",
+          "text": "Sammanfatta 40 sidor fackliga protokoll. Skapa mallar för incidentrapporter.",
+          "icon": "🟢",
+          "colSpan": 1
+        },
+        {
+          "title": "SPARRING (Medel)",
+          "text": "Trycktesta argument inför svåra föräldramöten. Kräver avpersonifiering.",
+          "icon": "🟡",
+          "colSpan": 1
+        },
+        {
+          "title": "STOPP (Hög risk)",
+          "text": "Skriva individuella elevomdömen eller sätta betyg. (IMY-larm & Lagbrott)",
+          "icon": "🔴",
+          "colSpan": 1
+        }
       ],
       "sources": [
-        { "text": "Skolverket (2026): Riktlinjer för AI-användning", "url": "https://www.skolverket.se/skolutveckling/inspiration-och-stod-i-arbetet/stod-i-arbetet/artificiell-intelligens-ai-i-skolan" },
-        { "text": "Sveriges Kommuner och Regioner & Ifous (2026)", "url": "https://www.ifous.se/ai/" }
+        {
+          "text": "Skolverket (2026): Riktlinjer för AI-användning",
+          "url": "https://www.skolverket.se/skolutveckling/inspiration-och-stod-i-arbetet/stod-i-arbetet/artificiell-intelligens-ai-i-skolan"
+        },
+        {
+          "text": "Sveriges Kommuner och Regioner & Ifous (2026)",
+          "url": "https://www.ifous.se/ai/"
+        }
       ]
     },
     {
@@ -405,7 +541,10 @@
         "Transparensavtalet: Vi smyger inte med AI, vi diskuterar det"
       ],
       "sources": [
-        { "text": "IMY (2026): AI och barns integritet", "url": "https://www.imy.se/verksamhet/dataskydd/det-har-galler-enligt-gdpr/ai-och-dataskydd/" }
+        {
+          "text": "IMY (2026): AI och barns integritet",
+          "url": "https://www.imy.se/verksamhet/dataskydd/det-har-galler-enligt-gdpr/ai-och-dataskydd/"
+        }
       ]
     },
     {
@@ -417,103 +556,12 @@
       "prompt": "Du är min virtuella expertpanel (VEP) bestående av en strateg, en HR-specialist och en skoljurist.\n\n[Klistra in ett luddigt problem, en föräldrakonflikt eller ett schema-förslag här]\n\nGe mig:\n1. De tre största riskerna med detta.\n2. Två konkreta nästa steg.\n3. Ett alternativt perspektiv vi helt missat.",
       "hint": "Prova det idag. Vänta inte på nationella riktlinjer.",
       "sources": [
-        { "text": "GAIA Ecosystem (2026): VEP Deliberation Framework", "url": "https://hktcr.github.io/ai-for-ledare/" }
+        {
+          "text": "GAIA Ecosystem (2026): VEP Deliberation Framework",
+          "url": "https://hktcr.github.io/ai-for-ledare/"
+        }
       ],
       "audience_content_auto": "{\"status\": \"prompt\", \"title\": \"Vardags-VEP:en\", \"prompt\": \"Du är min virtuella expertpanel...\", \"emoji\": \"🛠️\"}"
-    },
-    {
-      "id": "extramaterial-titel",
-      "section": "extramaterial",
-      "type": "title",
-      "title": "Deep Dives",
-      "subtitle": "Extramaterial vid frågor",
-      "note": "Juridik & Styrning"
-    },
-    {
-      "id": "skolinspektionen-tillsyn",
-      "section": "extramaterial",
-      "type": "number-wall",
-      "title": "Granskningen pågår",
-      "intro": {
-        "text": "Skolinspektionen genomför just nu en tematisk kvalitetsgranskning kring hur skolor hanterar AI-fusk och upprätthåller rättssäkra betyg.",
-        "button": "Visa omfattningen"
-      },
-      "numbers": [
-        { "value": 30, "label": "Gymnasieskolor djupgranskas nu", "icon": "🏫" },
-        { "value": 2027, "label": "April: Slutrapport till regeringen", "icon": "📅" }
-      ],
-      "sources": [
-        { "text": "Skolinspektionen (2026): Tillsyn av AI & bedömning", "url": "https://www.skolinspektionen.se/" }
-      ]
-    },
-    {
-      "id": "skolverket-process",
-      "section": "extramaterial",
-      "type": "bento-grid",
-      "title": "Skolverkets riktlinjer (2026)",
-      "items": [
-        {
-          "colSpan": 1,
-          "icon": "🛑",
-          "title": "Betygsunderlaget",
-          "text": "Myndigheten avråder nu från heminlämningar som betygsunderlag om läraren inte kan verifiera elevens prestation."
-        },
-        {
-          "colSpan": 1,
-          "icon": "🔄",
-          "title": "Processbevis",
-          "text": "Fokus flyttas från slutprodukt till process. Lärarna måste övervaka HUR texten blir till (klassrumsarbete, historik)."
-        },
-        {
-          "colSpan": 1,
-          "icon": "📝",
-          "title": "Lokala Riktlinjer",
-          "text": "Huvudmannen rekommenderas starkt att ha skriftliga riktlinjer. AI-policyn kan inte delegeras till enskilda lärare."
-        }
-      ],
-      "sources": [
-        { "text": "Skolverket (2026): Betyg & Bedömning i AI-eran", "url": "https://www.skolverket.se/skolutveckling/inspiration-och-stod-i-arbetet/stod-i-arbetet/artificiell-intelligens-ai-i-skolan" }
-      ]
-    },
-    {
-      "id": "imy-shadow-ai",
-      "section": "extramaterial",
-      "type": "bento-grid",
-      "title": "GDPR & Shadow AI",
-      "items": [
-        {
-          "colSpan": 2,
-          "icon": "🛡️",
-          "title": "Elevtexter = Personuppgifter",
-          "text": "Att klistra in elevers unika texter i publika LLM:er (som oskyddad ChatGPT) utan biträdesavtal är ett brott mot GDPR."
-        },
-        {
-          "colSpan": 1,
-          "icon": "🔍",
-          "title": "AI-detektorer",
-          "text": "Många detektorer lagrar elevers skrivstil. IMY varnar för olovlig datainsamling."
-        }
-      ],
-      "sources": [
-        { "text": "IMY (2026): Dataskydd & AI i skolmiljö", "url": "https://www.imy.se/verksamhet/dataskydd/det-har-galler-enligt-gdpr/ai-och-dataskydd/" }
-      ]
-    },
-    {
-      "id": "ai-act-2026",
-      "section": "extramaterial",
-      "type": "milestone-reveal",
-      "eyebrow": "När träder EU:s AI Act i full kraft för skolan?",
-      "date": "2 Augusti 2026",
-      "title": "Utbildning är 'Högrisk-AI'",
-      "features": [
-        "Skolan pekas explicit ut som högrisk.",
-        "Kräver lagstadgad AI-kompetens för personal.",
-        "Automatiska betygssystem kräver 'Mänsklig Tillsyn'.",
-        "Ansvaret ligger på huvudmannen (deployer)."
-      ],
-      "sources": [
-        { "text": "EU AI Act: Artikel 4 & Högrisk (2026)", "url": "https://artificialintelligenceact.eu/" }
-      ]
     }
   ]
 }
