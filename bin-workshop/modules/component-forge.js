@@ -698,7 +698,7 @@
         /* ===== BENTO GRID ===== */
         .slide-bento-grid {
             display: flex; flex-direction: column; height: 100%; width: 100%;
-            padding: 4rem; box-sizing: border-box; justify-content: center;
+            padding: 4rem; box-sizing: border-box; justify-content: center; position: relative;
         }
         .bento-title { font-size: 3rem; margin-bottom: 2rem; font-weight: 700; color: var(--text); }
         .bento-container {
@@ -721,7 +721,7 @@
         /* ===== GLITCH WARNING ===== */
         .slide-glitch-warning {
             display: flex; flex-direction: column; height: 100%; width: 100%;
-            justify-content: center; align-items: center; background: radial-gradient(circle at center, #1a0505 0%, #000 100%);
+            justify-content: center; align-items: center; background: radial-gradient(circle at center, #1a0505 0%, #000 100%); position: relative;
         }
         .glitch-wrapper { text-align: center; max-width: 800px; }
         .glitch {
@@ -744,7 +744,7 @@
 
         /* ===== MILESTONE REVEAL ===== */
         .slide-milestone {
-            display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%;
+            display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; position: relative;
         }
         .ms-date-btn {
             background: transparent; border: 2px solid var(--text-muted); color: var(--text);
@@ -839,6 +839,7 @@
             flex-direction: column;
             justify-content: center;
             min-height: 70vh;
+            position: relative;
         }
         .slide-word-cascade {
             flex-direction: row;
@@ -4367,7 +4368,7 @@
         }, 100);
 
         return `
-            <div class="slide-prompt-card no-click-advance">
+            <div class="slide-prompt-card no-click-advance" style="position: relative;">
                 ${s.eyebrow ? `<div class="pc-eyebrow">${s.eyebrow}</div>` : ''}
                 <div class="pc-title">${s.title || ''}</div>
                 <div class="pc-box">
