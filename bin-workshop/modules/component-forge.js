@@ -714,9 +714,9 @@
         .bento-item.step-hidden {
             opacity: 0; transform: translateY(30px);
         }
-        .bento-icon { font-size: 2.5rem; margin-bottom: 1rem; }
-        .bento-item-title { font-size: 1.5rem; margin-bottom: 0.5rem; color: white; font-weight: 600; }
-        .bento-item-text { font-size: 1.1rem; color: var(--text-muted); line-height: 1.5; }
+        .bento-icon { font-size: clamp(2rem, 4vw, 3rem); margin-bottom: 1rem; }
+        .bento-item-title { font-size: clamp(1.5rem, 2.5vw, 2.2rem); margin-bottom: 0.5rem; color: white; font-weight: 600; }
+        .bento-item-text { font-size: clamp(1.1rem, 2vw, 1.5rem); color: var(--text-muted); line-height: 1.5; }
 
         /* ===== GLITCH WARNING ===== */
         .slide-glitch-warning {
@@ -725,16 +725,16 @@
         }
         .glitch-wrapper { text-align: center; max-width: 800px; }
         .glitch {
-            font-size: 6rem; font-weight: 900; text-transform: uppercase;
+            font-size: clamp(4rem, 8vw, 8rem); font-weight: 900; text-transform: uppercase;
             position: relative; color: white; margin-bottom: 1rem;
             text-shadow: 0.05em 0 0 rgba(255,0,0,0.75), -0.025em -0.05em 0 rgba(0,255,0,0.75), 0.025em 0.05em 0 rgba(0,0,255,0.75);
             animation: glitch 500ms infinite;
         }
         .glitch span { position: absolute; top: 0; left: 0; }
-        .glitch-subtitle { font-size: 1.5rem; color: #ff6b6b; margin-bottom: 3rem; font-weight: 600; text-transform: uppercase; letter-spacing: 2px; }
+        .glitch-subtitle { font-size: clamp(1.2rem, 3vw, 2rem); color: #ff6b6b; margin-bottom: 3rem; font-weight: 600; text-transform: uppercase; letter-spacing: 2px; }
         .glitch-list { display: flex; flex-direction: column; gap: 1.5rem; text-align: left; }
         .glitch-list-item {
-            font-size: 1.3rem; color: #e2e8f0; background: rgba(255,0,0,0.1);
+            font-size: clamp(1.3rem, 2.5vw, 1.8rem); color: #e2e8f0; background: rgba(255,0,0,0.1);
             padding: 1.5rem; border-left: 4px solid #ff4444; border-radius: 0 8px 8px 0;
             opacity: 1; transform: translateX(0); transition: all 0.4s ease-out;
         }
@@ -765,10 +765,10 @@
         .ms-date-btn.revealed + .ms-content {
             opacity: 1; transform: translateY(10px); pointer-events: auto; position: relative; top: auto;
         }
-        .ms-eyebrow { color: var(--accent); font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 0.5rem; }
-        .ms-title { font-size: 3rem; font-weight: 900; margin-bottom: 2rem; }
+        .ms-eyebrow { color: var(--accent); font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 0.5rem; font-size: clamp(1.2rem, 2vw, 1.8rem); }
+        .ms-title { font-size: clamp(2.5rem, 5vw, 4rem); font-weight: 900; margin-bottom: 2rem; }
         .ms-features { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; }
-        .ms-feature { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); padding: 1rem 2rem; border-radius: 12px; font-weight: 700; font-size: 1.2rem; }
+        .ms-feature { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); padding: 1.5rem 2rem; border-radius: 12px; font-weight: 700; font-size: clamp(1.2rem, 2vw, 1.8rem); max-width: 400px; text-align: left; }
 
         /* ===== BAR RACE ===== */
         @keyframes barGrow {
