@@ -2344,6 +2344,7 @@
                 ${introOverlayHTML}
                 <h2>${s.title || ''}</h2>
                 <div class="nw-grid">${cells}</div>
+                ${renderSourcesPopup(s.sources)}
             </div>
         `;
     }
