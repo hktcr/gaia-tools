@@ -414,6 +414,69 @@
         { "text": "GAIA Ecosystem (2026): VEP Deliberation Framework", "url": "https://hktcr.github.io/ai-for-ledare/" }
       ],
       "audience_content_auto": "{\"status\": \"prompt\", \"title\": \"Vardags-VEP:en\", \"prompt\": \"Du är min virtuella expertpanel...\", \"emoji\": \"🛠️\"}"
+    },
+    {
+      "id": "ai-act-2026",
+      "section": "deep-dive",
+      "type": "milestone-reveal",
+      "eyebrow": "När träder EU:s AI Act i full kraft för skolan?",
+      "date": "2 Augusti 2026",
+      "title": "Utbildning klassas som 'Högrisk-AI'",
+      "features": [
+        "Utbildningssektorn pekas explicit ut som högrisk.",
+        "Artikel 4 kräver lagstadgad AI-kompetens för personal.",
+        "Automatiska betygssystem och elevprofilering kräver rigorös 'Mänsklig Tillsyn'.",
+        "Det juridiska ansvaret övergår nu helt till huvudmannen som 'deployer'."
+      ],
+      "sources": [
+        { "text": "EU AI Act: Artikel 4 & Högrisk-klassificering (2026)", "url": "https://artificialintelligenceact.eu/" },
+        { "text": "Edwall Zackariasson: AI Act & Skolan", "url": "https://edwallzackariassonutbildning.com/" }
+      ]
+    },
+    {
+      "id": "skolverket-process",
+      "section": "deep-dive",
+      "type": "bento-grid",
+      "title": "Skolverkets krassa verklighet (2026)",
+      "items": [
+        {
+          "colSpan": 1,
+          "icon": "🛑",
+          "title": "Betygsunderlaget",
+          "text": "Myndigheten avråder nu starkt från heminlämningar som betygsunderlag om läraren inte till 100% kan verifiera elevens prestation och utesluta otillåten AI."
+        },
+        {
+          "colSpan": 1,
+          "icon": "🔄",
+          "title": "Processbevis",
+          "text": "Fokus måste omedelbart flyttas från slutprodukt till process. Lärarna måste övervaka HUR texten blir till (klassrumsarbete, historik)."
+        },
+        {
+          "colSpan": 1,
+          "icon": "📝",
+          "title": "Lokala Riktlinjer",
+          "text": "Huvudmannen rekommenderas starkt att ha skriftliga riktlinjer. Det går inte längre att delegera AI-policyn till den enskilda lärarens magkänsla."
+        }
+      ],
+      "sources": [
+        { "text": "Skolverket (2026): Betyg & Bedömning i AI-eran", "url": "https://www.skolverket.se/skolutveckling/inspiration-och-stod-i-arbetet/stod-i-arbetet/artificiell-intelligens-ai-i-skolan" }
+      ]
+    },
+    {
+      "id": "imy-shadow-ai",
+      "section": "deep-dive",
+      "type": "glitch-warning",
+      "glitchText": "SHADOW AI",
+      "subtitle": "IMY:s nolltolerans 2026",
+      "warnings": [
+        "Inga privata konton. Olovlig användning av t.ex. oskyddad ChatGPT för skoluppgifter är ett direkt lagbrott.",
+        "Elevtexter = Personuppgifter. Att klistra in elevers unika texter i publika LLM:er sker idag dagligen – utan biträdesavtal.",
+        "AI-detektorer läcker data. Många plattformar lagrar elevers skrivstil otillåtet."
+      ],
+      "sources": [
+        { "text": "IMY (2026): Dataskydd & AI i skolmiljö", "url": "https://www.imy.se/verksamhet/dataskydd/det-har-galler-enligt-gdpr/ai-och-dataskydd/" },
+        { "text": "Bedöma.se: Juridiken kring AI-detektorer", "url": "https://bedoma.se/" }
+      ]
     }
   ]
 }
