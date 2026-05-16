@@ -3774,6 +3774,8 @@
                     e.stopPropagation();
                     items[currentStep].classList.remove('step-hidden');
                     currentStep++;
+                } else {
+                    container.classList.remove('no-click-advance');
                 }
             });
         }, 100);
@@ -3813,6 +3815,8 @@
                     e.stopPropagation();
                     items[currentStep].classList.remove('step-hidden');
                     currentStep++;
+                } else {
+                    container.classList.remove('no-click-advance');
                 }
             });
         }, 100);
@@ -4417,7 +4421,7 @@
     }
     // --- CHAOS TO CLARITY ---
     function renderChaosToClarity(slide) {
-        return `
+        let html = `
         <style>
             .chaos-container {
                 position: relative;
@@ -4620,31 +4624,30 @@
                 </div>
             </div>
         </div>
-        <script>
-            (function() {
-                const el = document.getElementById('cc-${slide.id}');
-                if(!el) return;
-                
-                el.addEventListener('click', (e) => {
-                    e.stopPropagation();
-                    const state = el.getAttribute('data-state');
-                    if (state === 'idle') {
-                        el.setAttribute('data-state', 'scanning');
-                        el.querySelector('.chaos-container').classList.add('scanning');
-                        
-                        // After scan finishes, show result
-                        setTimeout(() => {
-                            el.setAttribute('data-state', 'resolved');
-                            el.querySelector('.chaos-container').classList.add('resolved');
-                        }, 2000);
-                    } else if (state === 'resolved') {
-                        // Allow slide advance on final click
-                        el.classList.remove('no-click-advance');
-                    }
-                });
-            })();
-        </script>
         `;
+
+        setTimeout(() => {
+            const el = document.getElementById(`cc-${slide.id}`);
+            if(!el) return;
+            
+            el.addEventListener('click', (e) => {
+                const state = el.getAttribute('data-state');
+                if (state === 'idle') {
+                    e.stopPropagation();
+                    el.setAttribute('data-state', 'scanning');
+                    el.querySelector('.chaos-container').classList.add('scanning');
+                    
+                    setTimeout(() => {
+                        el.setAttribute('data-state', 'resolved');
+                        el.querySelector('.chaos-container').classList.add('resolved');
+                    }, 2000);
+                } else if (state === 'resolved') {
+                    el.classList.remove('no-click-advance');
+                }
+            });
+        }, 100);
+
+        return html;
     }
 
 
