@@ -371,59 +371,49 @@
       ]
     },
     {
-      "id": "ai-tidsraddare",
+      "id": "ai-delegation",
       "section": "agenter",
       "size": "large",
       "type": "bento-grid",
-      "title": "Den nya arbetsveckan",
+      "title": "Delegations-matrisen",
       "items": [
-        { "title": "Sparringpartnern", "text": "Generera första utkastet till utvecklingsplaner och rapporter baserat på lokala data.", "icon": "🥊", "colSpan": 2 },
-        { "title": "Kommunikatören", "text": "Omvandla stökiga anteckningar till diplomatiska föräldrabrev.", "icon": "✉️", "colSpan": 1 },
-        { "title": "Perspektiv-simulatorn", "text": "\"Hur uppfattar facket eller elevkåren detta förslag?\" Hitta dina blinda fläckar innan beslutet fattas.", "icon": "🎭", "colSpan": 3 }
+        { "title": "KÖR (Låg risk)", "text": "Sammanfatta 40 sidor fackliga protokoll. Skapa mallar för incidentrapporter.", "icon": "🟢", "colSpan": 1 },
+        { "title": "SPARRING (Medel)", "text": "Trycktesta argument inför svåra föräldramöten. Kräver avpersonifiering.", "icon": "🟡", "colSpan": 1 },
+        { "title": "STOPP (Hög risk)", "text": "Skriva individuella elevomdömen eller sätta betyg. (IMY-larm & Lagbrott)", "icon": "🔴", "colSpan": 1 }
       ],
-      "source": "Sammanställda fallstudier & rektorsrapporter (Våren 2026)"
+      "sources": [
+        { "text": "Skolverket (2026): Riktlinjer för AI-användning", "url": "https://www.skolverket.se/skolutveckling/inspiration-och-stod-i-arbetet/stod-i-arbetet/artificiell-intelligens-ai-i-skolan" },
+        { "text": "Sveriges Kommuner och Regioner & Ifous (2026)", "url": "https://www.ifous.se/ai/" }
+      ]
     },
     {
-      "id": "ai-krisen",
+      "id": "ai-skyddsnat",
       "section": "agenter",
       "size": "large",
       "type": "glitch-warning",
-      "glitchText": "TILLITSKRISEN",
-      "subtitle": "Den svarta svanen i skolan",
+      "glitchText": "AI-SKYDDSNÄTET",
+      "subtitle": "Rektors 3 förhållningsregler",
       "warnings": [
-        "IMY-larm Våren 2026: Oreglerad AI hotar barns integritet",
-        "Hallucinationer göder extremt trovärdig desinformation",
-        "AI som sätter betyg urholkar lärarkårens legitimitet"
+        "Nolltolerans för personuppgifter i AI-tjänster",
+        "AI är en kollega, aldrig en dömande instans",
+        "Transparensavtalet: Vi smyger inte med AI, vi diskuterar det"
       ],
-      "source": "Integritetsskyddsmyndigheten (IMY) & Skolinspektionen (2026)"
+      "sources": [
+        { "text": "IMY (2026): AI och barns integritet", "url": "https://www.imy.se/verksamhet/dataskydd/det-har-galler-enligt-gdpr/ai-och-dataskydd/" }
+      ]
     },
     {
-      "id": "ai-raddningen",
-      "section": "agenter",
-      "size": "large",
-      "type": "milestone-reveal",
-      "date": "1 JUNI 2026",
-      "eyebrow": "Sveriges Kommuner och Regioner",
-      "title": "Nationellt Scenarioverktyg lanseras",
-      "features": ["Styra & Leda", "Etik & Juridik", "Teknikanskaffning"],
-      "source": "Sveriges Kommuner och Regioner (SKR) & Ifous"
-    },
-    {
-      "id": "gdpr-varning",
-      "section": "agenter",
-      "type": "warning-pulse",
-      "title": "Avpersonifiering",
-      "subtitle": "Inga personuppgifter. Inga utpekande detaljer."
-    },
-    {
-      "id": "vep-prompt",
+      "id": "vardags-vep",
       "section": "agenter",
       "type": "prompt-card",
-      "eyebrow": "🧪 Prova det nu",
-      "title": "Tillsätt en virtuell expertpanel",
-      "prompt": "Tillsätt en virtuell expertpanel som ska hjälpa mig identifiera konkreta AI-tillämpningar i min vardag som skolchef.\n\nPanelen ska bestå av:\n• En digital strateg som fokuserar på effektivisering\n• En HR-specialist som ser till personalens perspektiv\n• En juridisk rådgivare med fokus på GDPR och säkerhet\n\nMin vardagssituation:\n[Beskriv din typiska arbetsdag — vilka möten, dokument och beslut tar mest tid?]\n\nFråga till panelen:\nVilka tre uppgifter i min vardag kan AI avlasta mest — och vad behöver jag tänka på innan jag börjar?",
-      "hint": "Klistra in i ChatGPT, Claude eller Copilot och se vad panelen säger!",
-      "audience_content_auto": "{\"status\": \"prompt\", \"title\": \"Din tur!\", \"prompt\": \"Tillsätt en virtuell expertpanel...\", \"emoji\": \"🧪\"}"
+      "eyebrow": "🛠️ Vardagsverktyget",
+      "title": "Vardags-VEP:en",
+      "prompt": "Du är min virtuella expertpanel (VEP) bestående av en strateg, en HR-specialist och en skoljurist.\n\n[Klistra in ett luddigt problem, en föräldrakonflikt eller ett schema-förslag här]\n\nGe mig:\n1. De tre största riskerna med detta.\n2. Två konkreta nästa steg.\n3. Ett alternativt perspektiv vi helt missat.",
+      "hint": "Prova det idag. Vänta inte på nationella riktlinjer.",
+      "sources": [
+        { "text": "GAIA Ecosystem (2026): VEP Deliberation Framework", "url": "https://hktcr.github.io/ai-for-ledare/" }
+      ],
+      "audience_content_auto": "{\"status\": \"prompt\", \"title\": \"Vardags-VEP:en\", \"prompt\": \"Du är min virtuella expertpanel...\", \"emoji\": \"🛠️\"}"
     }
   ]
 }

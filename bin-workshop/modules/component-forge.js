@@ -620,13 +620,46 @@
             opacity: 0; animation: wordDrop 0.5s ease 0.9s forwards;
         }
 
-        /* ===== SOURCE CITATION ===== */
-        .slide-source {
+        /* ===== SOURCE CITATION POPUP ===== */
+        .source-toggle-btn {
             position: absolute; bottom: 1.5rem; right: 2rem;
-            font-size: 0.8rem; font-family: 'Inter', sans-serif;
-            color: rgba(255,255,255,0.4); text-align: right;
-            opacity: 0; animation: fadeUp 1s forwards 1.5s;
+            background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2);
+            color: var(--text-muted); padding: 0.5rem 1rem; border-radius: 20px;
+            font-size: 0.8rem; font-family: 'Inter', sans-serif; cursor: pointer;
+            transition: all 0.2s; display: flex; align-items: center; gap: 0.4rem;
+            opacity: 0; animation: fadeUp 0.5s forwards 1.2s; z-index: 10;
         }
+        .source-toggle-btn:hover { background: rgba(255,255,255,0.2); color: white; transform: scale(1.05); }
+        .source-popup {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.6); backdrop-filter: blur(5px);
+            display: flex; align-items: center; justify-content: center;
+            opacity: 0; pointer-events: none; transition: opacity 0.3s; z-index: 50;
+        }
+        .source-popup.active { opacity: 1; pointer-events: auto; }
+        .source-popup-content {
+            background: rgba(15, 23, 42, 0.95); border: 1px solid var(--accent);
+            padding: 2rem 3rem; border-radius: 16px; max-width: 600px; width: 90%;
+            transform: scale(0.95); opacity: 0;
+            box-shadow: 0 0 0 0 rgba(249,115,22,0);
+        }
+        .source-popup.active .source-popup-content {
+            animation: pulseIn 0.6s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+        }
+        @keyframes pulseIn {
+            0% { transform: scale(0.9); opacity: 0; box-shadow: 0 0 0 0 rgba(249,115,22, 0); }
+            50% { transform: scale(1.02); opacity: 1; box-shadow: 0 0 40px 15px rgba(249,115,22, 0.4); }
+            100% { transform: scale(1); opacity: 1; box-shadow: 0 0 20px 0 rgba(249,115,22, 0.2); }
+        }
+        .source-popup h4 { color: var(--accent); margin-bottom: 1rem; font-size: 1.2rem; display:flex; align-items:center; gap:0.5rem; }
+        .source-popup ul { list-style: none; padding: 0; margin: 0 0 1.5rem 0; display:flex; flex-direction:column; gap:0.8rem; }
+        .source-popup a { color: var(--text); text-decoration: none; border-bottom: 1px solid rgba(255,255,255,0.2); transition: all 0.2s; display:inline-block; }
+        .source-popup a:hover { color: white; border-bottom-color: white; }
+        .source-close-btn {
+            background: transparent; border: 1px solid var(--text-muted); color: var(--text-muted);
+            padding: 0.4rem 1.2rem; border-radius: 8px; cursor: pointer; transition: all 0.2s;
+        }
+        .source-close-btn:hover { background: rgba(255,255,255,0.1); color: white; }
 
         /* ===== BENTO GRID ===== */
         .slide-bento-grid {
@@ -4179,6 +4212,30 @@
         `;
     }
 
+    /**
+     * Helper function to render the interactive source popup
+     */
+    function renderSourcesPopup(sources) {
+        if (!sources || sources.length === 0) return '';
+        let html = `
+            <button class="source-toggle-btn" onclick="this.nextElementSibling.classList.toggle('active'); event.stopPropagation();">📚 Källor</button>
+            <div class="source-popup" onclick="this.classList.remove('active'); event.stopPropagation();">
+                <div class="source-popup-content" onclick="event.stopPropagation();">
+                    <h4><span style="font-size:1.5rem">🔗</span> Verifierade Källor</h4>
+                    <ul>
+        `;
+        sources.forEach(src => {
+            html += `<li><a href="${src.url}" target="_blank" title="Öppna källan i ny flik">↗ ${src.text}</a></li>`;
+        });
+        html += `
+                    </ul>
+                    <button class="source-close-btn" onclick="this.parentElement.parentElement.classList.remove('active')">Stäng</button>
+                </div>
+            </div>
+        `;
+        return html;
+    }
+
     // ===== MONKEY-PATCH REGISTRY =====
     /**
      * prompt-card: A large readable prompt with a copy button.
@@ -4225,6 +4282,7 @@
                     <div class="pc-prompt">${promptText}</div>
                 </div>
                 ${s.hint ? `<div class="pc-hint">💡 ${s.hint}</div>` : ''}
+                ${renderSourcesPopup(s.sources)}
             </div>
         `;
     }
@@ -4247,7 +4305,7 @@
             `;
         });
         html += `</div>`;
-        if (s.source) html += `<div class="slide-source">Källa: ${s.source}</div>`;
+        html += renderSourcesPopup(s.sources);
         html += `</div>`;
         return html;
     }
@@ -4266,7 +4324,7 @@
             });
             html += `</div>`;
         }
-        if (s.source) html += `<div class="slide-source">Källa: ${s.source}</div>`;
+        html += renderSourcesPopup(s.sources);
         html += `</div>`;
         return html;
     }
@@ -4299,7 +4357,7 @@
             html += `</div>`;
         }
         html += `</div>`;
-        if (s.source) html += `<div class="slide-source">Källa: ${s.source}</div>`;
+        html += renderSourcesPopup(s.sources);
         html += `</div>`;
         return html;
     }
