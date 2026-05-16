@@ -380,7 +380,8 @@
         { "title": "Sparringpartnern", "text": "Generera första utkastet till utvecklingsplaner och rapporter baserat på lokala data.", "icon": "🥊", "colSpan": 2 },
         { "title": "Kommunikatören", "text": "Omvandla stökiga anteckningar till diplomatiska föräldrabrev.", "icon": "✉️", "colSpan": 1 },
         { "title": "Perspektiv-simulatorn", "text": "\"Hur uppfattar facket eller elevkåren detta förslag?\" Hitta dina blinda fläckar innan beslutet fattas.", "icon": "🎭", "colSpan": 3 }
-      ]
+      ],
+      "source": "Sammanställda fallstudier & rektorsrapporter (Våren 2026)"
     },
     {
       "id": "ai-krisen",
@@ -393,7 +394,8 @@
         "IMY-larm Våren 2026: Oreglerad AI hotar barns integritet",
         "Hallucinationer göder extremt trovärdig desinformation",
         "AI som sätter betyg urholkar lärarkårens legitimitet"
-      ]
+      ],
+      "source": "Integritetsskyddsmyndigheten (IMY) & Skolinspektionen (2026)"
     },
     {
       "id": "ai-raddningen",
@@ -403,7 +405,8 @@
       "date": "1 JUNI 2026",
       "eyebrow": "Sveriges Kommuner och Regioner",
       "title": "Nationellt Scenarioverktyg lanseras",
-      "features": ["Styra & Leda", "Etik & Juridik", "Teknikanskaffning"]
+      "features": ["Styra & Leda", "Etik & Juridik", "Teknikanskaffning"],
+      "source": "Sveriges Kommuner och Regioner (SKR) & Ifous"
     },
     {
       "id": "gdpr-varning",

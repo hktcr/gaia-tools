@@ -620,6 +620,14 @@
             opacity: 0; animation: wordDrop 0.5s ease 0.9s forwards;
         }
 
+        /* ===== SOURCE CITATION ===== */
+        .slide-source {
+            position: absolute; bottom: 1.5rem; right: 2rem;
+            font-size: 0.8rem; font-family: 'Inter', sans-serif;
+            color: rgba(255,255,255,0.4); text-align: right;
+            opacity: 0; animation: fadeUp 1s forwards 1.5s;
+        }
+
         /* ===== BENTO GRID ===== */
         .slide-bento-grid {
             display: flex; flex-direction: column; align-items: center; width: 100%; max-width: 1200px;
@@ -4238,7 +4246,9 @@
                 </div>
             `;
         });
-        html += `</div></div>`;
+        html += `</div>`;
+        if (s.source) html += `<div class="slide-source">Källa: ${s.source}</div>`;
+        html += `</div>`;
         return html;
     }
 
@@ -4256,6 +4266,7 @@
             });
             html += `</div>`;
         }
+        if (s.source) html += `<div class="slide-source">Källa: ${s.source}</div>`;
         html += `</div>`;
         return html;
     }
@@ -4287,7 +4298,9 @@
             });
             html += `</div>`;
         }
-        html += `</div></div>`;
+        html += `</div>`;
+        if (s.source) html += `<div class="slide-source">Källa: ${s.source}</div>`;
+        html += `</div>`;
         return html;
     }
 
