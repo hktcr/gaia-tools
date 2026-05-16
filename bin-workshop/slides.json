@@ -529,6 +529,37 @@
       ]
     },
     {
+      "id": "admin-till-klassrum",
+      "section": "agenter",
+      "size": "large",
+      "type": "bento-grid",
+      "title": "Från Admin till Klassrum",
+      "items": [
+        {
+          "colSpan": 1,
+          "icon": "📥",
+          "title": "1. Rådata in",
+          "text": "3 timmar av röriga mötesanteckningar, EHT-loggar och föräldramejl."
+        },
+        {
+          "colSpan": 1,
+          "icon": "⚙️",
+          "title": "2. AI-Filtret",
+          "text": "Din 'Vardags-VEP' strukturerar, mappar mot lagrum och bygger utkast. Tar 5 minuter."
+        },
+        {
+          "colSpan": 1,
+          "icon": "🏫",
+          "title": "3. Pedagogisk vinst",
+          "text": "Tidsvinsten: 90 minuter. Tiden schemaläggs omedelbart för klassrumsbesök."
+        }
+      ],
+      "sources": [
+        { "text": "Docent Susanne Kjällander, SU (2025-2026): AI & Rektorers pedagogiska ledarskap", "url": "https://www.su.se/forskning/forskningsprojekt/ai-i-forskolan" },
+        { "text": "RISE EdTechLab (2026): Projekt EduAssist", "url": "https://www.ri.se/sv/vad-vi-gor/projekt/eduassist" }
+      ]
+    },
+    {
       "id": "ai-skyddsnat",
       "section": "agenter",
       "size": "large",
