@@ -34,6 +34,40 @@
             70% { transform: translateY(-2px) scale(1.02); }
             100% { opacity: 1; transform: translateY(0) scale(1); text-shadow: 0 0 30px var(--accent, #f97316); }
         }
+
+        /* ===== SOURCE POPUP ===== */
+        .source-toggle-btn {
+            position: absolute; bottom: 20px; right: 20px;
+            background: rgba(255,255,255,0.05); color: #888;
+            border: 1px solid rgba(255,255,255,0.1); border-radius: 8px;
+            padding: 8px 16px; font-size: 14px; cursor: pointer;
+            transition: all 0.2s; z-index: 100;
+        }
+        .source-toggle-btn:hover { background: rgba(255,255,255,0.1); color: #fff; }
+        .source-popup {
+            position: absolute; inset: 0; background: rgba(0,0,0,0.8);
+            display: flex; justify-content: center; align-items: center;
+            opacity: 0; pointer-events: none; transition: opacity 0.3s;
+            z-index: 1000; backdrop-filter: blur(5px);
+        }
+        .source-popup.active { opacity: 1; pointer-events: auto; }
+        .source-popup-content {
+            background: #1a1a1a; border: 1px solid #333; border-radius: 12px;
+            padding: 2rem; max-width: 600px; width: 90%; text-align: left;
+            transform: translateY(20px); transition: transform 0.3s;
+        }
+        .source-popup.active .source-popup-content { transform: translateY(0); }
+        .source-popup-content h4 { color: #fff; margin-bottom: 1rem; border-bottom: 1px solid #333; padding-bottom: 0.5rem; }
+        .source-popup-content ul { list-style: none; padding: 0; margin: 0 0 1.5rem 0; }
+        .source-popup-content li { margin-bottom: 0.8rem; }
+        .source-popup-content a { color: var(--accent, #f97316); text-decoration: none; font-size: 1.1rem; }
+        .source-popup-content a:hover { text-decoration: underline; }
+        .source-close-btn {
+            background: #333; color: #fff; border: none; padding: 8px 16px;
+            border-radius: 6px; cursor: pointer; float: right;
+        }
+        .source-close-btn:hover { background: #444; }
+
         .slide-word-cascade {
             display: flex;
             flex-wrap: wrap;
