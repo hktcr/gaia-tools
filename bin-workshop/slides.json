@@ -25,6 +25,12 @@
       "label": "Autonoma Agenter",
       "color": "#7e22ce"
     }
+    ,
+    {
+      "id": "extramaterial",
+      "label": "Deep Dives (Extramaterial)",
+      "color": "#475569"
+    }
   ],
   "slides": [
     {
@@ -414,6 +420,100 @@
         { "text": "GAIA Ecosystem (2026): VEP Deliberation Framework", "url": "https://hktcr.github.io/ai-for-ledare/" }
       ],
       "audience_content_auto": "{\"status\": \"prompt\", \"title\": \"Vardags-VEP:en\", \"prompt\": \"Du är min virtuella expertpanel...\", \"emoji\": \"🛠️\"}"
+    },
+    {
+      "id": "extramaterial-titel",
+      "section": "extramaterial",
+      "type": "title",
+      "title": "Deep Dives",
+      "subtitle": "Extramaterial vid frågor",
+      "note": "Juridik & Styrning"
+    },
+    {
+      "id": "skolinspektionen-tillsyn",
+      "section": "extramaterial",
+      "type": "number-wall",
+      "title": "Granskningen pågår",
+      "intro": {
+        "text": "Skolinspektionen genomför just nu en tematisk kvalitetsgranskning kring hur skolor hanterar AI-fusk och upprätthåller rättssäkra betyg.",
+        "button": "Visa omfattningen"
+      },
+      "numbers": [
+        { "value": 30, "label": "Gymnasieskolor djupgranskas nu", "icon": "🏫" },
+        { "value": 2027, "label": "April: Slutrapport till regeringen", "icon": "📅" }
+      ],
+      "sources": [
+        { "text": "Skolinspektionen (2026): Tillsyn av AI & bedömning", "url": "https://www.skolinspektionen.se/" }
+      ]
+    },
+    {
+      "id": "skolverket-process",
+      "section": "extramaterial",
+      "type": "bento-grid",
+      "title": "Skolverkets riktlinjer (2026)",
+      "items": [
+        {
+          "colSpan": 1,
+          "icon": "🛑",
+          "title": "Betygsunderlaget",
+          "text": "Myndigheten avråder nu från heminlämningar som betygsunderlag om läraren inte kan verifiera elevens prestation."
+        },
+        {
+          "colSpan": 1,
+          "icon": "🔄",
+          "title": "Processbevis",
+          "text": "Fokus flyttas från slutprodukt till process. Lärarna måste övervaka HUR texten blir till (klassrumsarbete, historik)."
+        },
+        {
+          "colSpan": 1,
+          "icon": "📝",
+          "title": "Lokala Riktlinjer",
+          "text": "Huvudmannen rekommenderas starkt att ha skriftliga riktlinjer. AI-policyn kan inte delegeras till enskilda lärare."
+        }
+      ],
+      "sources": [
+        { "text": "Skolverket (2026): Betyg & Bedömning i AI-eran", "url": "https://www.skolverket.se/skolutveckling/inspiration-och-stod-i-arbetet/stod-i-arbetet/artificiell-intelligens-ai-i-skolan" }
+      ]
+    },
+    {
+      "id": "imy-shadow-ai",
+      "section": "extramaterial",
+      "type": "bento-grid",
+      "title": "GDPR & Shadow AI",
+      "items": [
+        {
+          "colSpan": 2,
+          "icon": "🛡️",
+          "title": "Elevtexter = Personuppgifter",
+          "text": "Att klistra in elevers unika texter i publika LLM:er (som oskyddad ChatGPT) utan biträdesavtal är ett brott mot GDPR."
+        },
+        {
+          "colSpan": 1,
+          "icon": "🔍",
+          "title": "AI-detektorer",
+          "text": "Många detektorer lagrar elevers skrivstil. IMY varnar för olovlig datainsamling."
+        }
+      ],
+      "sources": [
+        { "text": "IMY (2026): Dataskydd & AI i skolmiljö", "url": "https://www.imy.se/verksamhet/dataskydd/det-har-galler-enligt-gdpr/ai-och-dataskydd/" }
+      ]
+    },
+    {
+      "id": "ai-act-2026",
+      "section": "extramaterial",
+      "type": "milestone-reveal",
+      "eyebrow": "När träder EU:s AI Act i full kraft för skolan?",
+      "date": "2 Augusti 2026",
+      "title": "Utbildning är 'Högrisk-AI'",
+      "features": [
+        "Skolan pekas explicit ut som högrisk.",
+        "Kräver lagstadgad AI-kompetens för personal.",
+        "Automatiska betygssystem kräver 'Mänsklig Tillsyn'.",
+        "Ansvaret ligger på huvudmannen (deployer)."
+      ],
+      "sources": [
+        { "text": "EU AI Act: Artikel 4 & Högrisk (2026)", "url": "https://artificialintelligenceact.eu/" }
+      ]
     }
   ]
 }
