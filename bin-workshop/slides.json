@@ -463,6 +463,24 @@
       ]
     },
     {
+      "id": "skolinspektionen-tillsyn",
+      "section": "deep-dive",
+      "type": "number-wall",
+      "title": "Granskningen pågår",
+      "intro": {
+        "text": "Medan vi sitter här, genomför Skolinspektionen sin största tematiska kvalitetsgranskning hittills kring hur skolor hanterar AI-fusk och upprätthåller rättssäkra betyg. Blicken är riktad mot er.",
+        "button": "Visa omfattningen"
+      },
+      "numbers": [
+        { "value": 30, "label": "Gymnasieskolor djupgranskas nu", "icon": "🏫" },
+        { "value": 2027, "label": "April: Slutrapport till regeringen", "icon": "📅" }
+      ],
+      "sources": [
+        { "text": "Skolinspektionen (2026): Tillsyn av AI & bedömning", "url": "https://www.skolinspektionen.se/" },
+        { "text": "Regeringen.se: Uppdrag till Skolinspektionen", "url": "https://www.regeringen.se/" }
+      ]
+    },
+    {
       "id": "imy-shadow-ai",
       "section": "deep-dive",
       "type": "glitch-warning",
