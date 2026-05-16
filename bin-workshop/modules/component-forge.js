@@ -4415,6 +4415,238 @@
         html += `</div>`;
         return html;
     }
+    // --- CHAOS TO CLARITY ---
+    function renderChaosToClarity(slide) {
+        return `
+        <style>
+            .chaos-container {
+                position: relative;
+                width: 100%;
+                height: 100%;
+                min-height: 600px;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                overflow: hidden;
+                font-family: var(--font-main);
+                background: var(--bg-dark);
+                border-radius: 12px;
+                border: 1px solid rgba(255,255,255,0.05);
+            }
+
+            .chaos-item {
+                position: absolute;
+                background: rgba(255,255,255,0.05);
+                backdrop-filter: blur(10px);
+                border: 1px solid rgba(255,255,255,0.1);
+                padding: 1.5rem;
+                border-radius: 8px;
+                color: rgba(255,255,255,0.7);
+                font-family: 'Courier New', monospace;
+                font-size: 0.9rem;
+                max-width: 300px;
+                box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+                transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+                z-index: 2;
+            }
+
+            /* Initial messy positions */
+            .c-1 { top: 10%; left: 5%; transform: rotate(-5deg); }
+            .c-2 { top: 20%; right: 10%; transform: rotate(8deg); }
+            .c-3 { bottom: 15%; left: 15%; transform: rotate(3deg); }
+            .c-4 { bottom: 25%; right: 5%; transform: rotate(-7deg); }
+            .c-5 { top: 40%; left: 30%; transform: rotate(2deg); z-index: 1; opacity: 0.5; }
+
+            .ai-scanner {
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 4px;
+                background: var(--accent);
+                box-shadow: 0 0 30px 10px rgba(var(--accent-rgb), 0.5);
+                z-index: 10;
+                transform: translateY(-20px);
+                opacity: 0;
+                transition: transform 2s ease-in-out, opacity 0.3s;
+            }
+
+            .clarity-result {
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%) scale(0.9);
+                opacity: 0;
+                background: rgba(15, 15, 18, 0.95);
+                border: 1px solid var(--accent);
+                padding: 2.5rem;
+                border-radius: 12px;
+                z-index: 20;
+                width: 80%;
+                max-width: 700px;
+                box-shadow: 0 20px 50px rgba(0,0,0,0.8), 0 0 0 1px rgba(var(--accent-rgb), 0.2) inset;
+                transition: all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) 1.5s;
+                text-align: left;
+            }
+
+            .clarity-header {
+                color: var(--accent);
+                font-size: 1.2rem;
+                text-transform: uppercase;
+                letter-spacing: 2px;
+                margin-bottom: 1rem;
+                display: flex;
+                align-items: center;
+                gap: 0.5rem;
+            }
+
+            .clarity-title {
+                font-size: 2.5rem;
+                font-weight: 700;
+                color: #fff;
+                margin-bottom: 1.5rem;
+            }
+
+            .clarity-list {
+                list-style: none;
+                padding: 0;
+                margin: 0 0 2rem 0;
+            }
+            .clarity-list li {
+                color: rgba(255,255,255,0.9);
+                padding: 0.8rem 0;
+                border-bottom: 1px solid rgba(255,255,255,0.05);
+                display: flex;
+                align-items: flex-start;
+                gap: 1rem;
+            }
+            .clarity-list li::before {
+                content: '✓';
+                color: var(--accent);
+                font-weight: bold;
+            }
+
+            .clarity-badge {
+                display: inline-flex;
+                align-items: center;
+                gap: 0.8rem;
+                background: rgba(var(--accent-rgb), 0.1);
+                color: var(--accent);
+                padding: 1rem 1.5rem;
+                border-radius: 50px;
+                font-size: 1.1rem;
+                font-weight: 600;
+                border: 1px solid rgba(var(--accent-rgb), 0.3);
+                box-shadow: 0 0 20px rgba(var(--accent-rgb), 0.2);
+            }
+
+            /* State: Scanning */
+            .scanning .ai-scanner {
+                opacity: 1;
+                transform: translateY(1200px);
+            }
+            .scanning .chaos-item {
+                transform: scale(0.5) translateY(100px) rotate(0deg);
+                opacity: 0;
+                filter: blur(10px);
+            }
+            .scanning .c-1 { transition-delay: 0.2s; }
+            .scanning .c-2 { transition-delay: 0.4s; }
+            .scanning .c-5 { transition-delay: 0.6s; }
+            .scanning .c-3 { transition-delay: 0.8s; }
+            .scanning .c-4 { transition-delay: 1.0s; }
+
+            /* State: Resolved */
+            .resolved .clarity-result {
+                opacity: 1;
+                transform: translate(-50%, -50%) scale(1);
+            }
+            
+            /* Add source link inside the card */
+            .clarity-source {
+                margin-top: 1.5rem;
+                font-size: 0.85rem;
+                color: rgba(255,255,255,0.4);
+                text-align: right;
+            }
+        </style>
+        <div class="component chaos-to-clarity no-click-advance" id="cc-${slide.id}" data-state="idle">
+            <div class="chaos-container">
+                <!-- Chaos Elements -->
+                <div class="chaos-item c-1">
+                    <strong>[23:14] Föräldramejl:</strong><br/>
+                    "Det här är helt oacceptabelt!! Ni har inte lyssnat på ett ord jag sagt om rasterna..."
+                </div>
+                <div class="chaos-item c-2">
+                    <strong>[EHT-anteckning]:</strong><br/>
+                    Skolan: orolig. Åtgärd? Måste kolla kap 5. Kanske anpassad studiegång? Vem gör vad?
+                </div>
+                <div class="chaos-item c-3">
+                    <strong>[Skollagen 5 kap 3§]:</strong><br/>
+                    "Utbildningen ska utformas så att alla elever tillförsäkras en skolmiljö som är präglad av trygghet..."
+                </div>
+                <div class="chaos-item c-4">
+                    <strong>[Lärarrapport]:</strong><br/>
+                    Eleven vägrar gå ut på rast. Kastade suddgummi. Vi behöver en plan direkt!
+                </div>
+                <div class="chaos-item c-5">
+                    "Blankt papper-ångest"
+                </div>
+
+                <!-- The Scanner -->
+                <div class="ai-scanner"></div>
+
+                <!-- The Clarity Result -->
+                <div class="clarity-result">
+                    <div class="clarity-header">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+                        Vardags-VEP:en
+                    </div>
+                    <div class="clarity-title">Strukturerat & Förberett</div>
+                    <ul class="clarity-list">
+                        <li><strong>Sammanfattning:</strong> Konfliktmönster identifierat under raster (vecka 19-20).</li>
+                        <li><strong>Juridiskt ramverk:</strong> Mappat mot 5 kap. Skollagen (Trygghet och studiero).</li>
+                        <li><strong>Förslag till åtgärd:</strong> Formellt utkast till kränkningsutredning samt professionellt svarsmejl till vårdnadshavare.</li>
+                    </ul>
+                    <div class="clarity-badge">
+                        <span>⏳ Tidsvinst: 90 minuter</span>
+                        <span>➔</span>
+                        <span>Omstyrd till lektionsobservation</span>
+                    </div>
+                    <div class="clarity-source">
+                        Baserat på: SU (Susanne Kjällander) & RISE EduAssist (2025-2026)
+                    </div>
+                </div>
+            </div>
+        </div>
+        <script>
+            (function() {
+                const el = document.getElementById('cc-${slide.id}');
+                if(!el) return;
+                
+                el.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    const state = el.getAttribute('data-state');
+                    if (state === 'idle') {
+                        el.setAttribute('data-state', 'scanning');
+                        el.querySelector('.chaos-container').classList.add('scanning');
+                        
+                        // After scan finishes, show result
+                        setTimeout(() => {
+                            el.setAttribute('data-state', 'resolved');
+                            el.querySelector('.chaos-container').classList.add('resolved');
+                        }, 2000);
+                    } else if (state === 'resolved') {
+                        // Allow slide advance on final click
+                        el.classList.remove('no-click-advance');
+                    }
+                });
+            })();
+        </script>
+        `;
+    }
+
 
     const allTypes = {
         'semantic-nebula': renderSemanticNebula,
@@ -4463,7 +4695,8 @@
         // Insights
         'bento-grid': renderBentoGrid,
         'glitch-warning': renderGlitchWarning,
-        'milestone-reveal': renderMilestoneReveal
+        'milestone-reveal': renderMilestoneReveal,
+        'chaos-to-clarity': renderChaosToClarity
     };
 
     function registerTypes() {
