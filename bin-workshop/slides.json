@@ -535,6 +535,12 @@
       "type": "chaos-to-clarity"
     },
     {
+      "id": "gdpr-ai-mindmap",
+      "section": "agenter",
+      "title": "GDPR × Generativ AI",
+      "type": "gdpr-mindmap"
+    },
+    {
       "id": "ai-skyddsnat",
       "section": "agenter",
       "title": "AI-Skyddsnätet",

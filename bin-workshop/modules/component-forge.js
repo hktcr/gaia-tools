@@ -4682,8 +4682,106 @@
         'bento-grid': renderBentoGrid,
         'glitch-warning': renderGlitchWarning,
         'milestone-reveal': renderMilestoneReveal,
-        'chaos-to-clarity': renderChaosToClarity
+        'chaos-to-clarity': renderChaosToClarity,
+        'gdpr-mindmap': renderGdprMindmap
     };
+
+    // --- GDPR × GENERATIV AI MINDMAP ---
+    function renderGdprMindmap(slide) {
+        const tree = {
+            label: 'GDPR × Generativ AI', icon: '🔐', children: [
+                { label: 'Rättslig grund', icon: '⚖️', children: [
+                    { label: 'Berättigat intresse (Art. 6.1f)', detail: 'Kräver dokumenterat balanseringstest. EDPB Opinion 28/2024 ställer höga krav.' },
+                    { label: 'Samtycke (Art. 6.1a)', detail: 'Sällan tillämpbart — kräver frivilligt, specifikt och informerat samtycke. Svårt vid storskalig AI-träning.' },
+                    { label: 'Avtal (Art. 6.1b)', detail: 'Möjligt om behandlingen är strikt nödvändig för att fullgöra ett avtal med den registrerade.' },
+                    { label: 'Allmänt intresse (Art. 6.1e)', detail: 'Relevant för offentlig förvaltning. Kräver stöd i lag eller författning.' }
+                ]},
+                { label: 'Personuppgifter i AI', icon: '👤', children: [
+                    { label: 'Prompter som personuppgifter', detail: 'Allt du skriver i prompten kan vara en personuppgift. EDPB: "Elev X fick F i matte" = personuppgift om identifierbar.' },
+                    { label: 'Träningsdata', detail: 'LLM:er tränade på webben innehåller personuppgifter. EDPB: modellen är inte "anonym" om den kan rekonstruera data.' },
+                    { label: 'Output som personuppgift', detail: 'AI-genererade texter om individer (omdömen, sammanfattningar) är personuppgifter enligt GDPR.' }
+                ]},
+                { label: 'Skola & Kommun', icon: '🏫', children: [
+                    { label: 'IMY + Digg riktlinjer', detail: 'Gemensam vägledning 2024: DPIA krävs. Mänsklig kontroll. Inga personuppgifter i publika AI-tjänster.' },
+                    { label: 'Huvudmannens ansvar', detail: 'Kommunen/friskolan ansvarar för vilka verktyg som används. PUB-avtal krävs med leverantören.' },
+                    { label: 'Praktisk tumregel', detail: 'Aldrig namn, personnummer eller identifierbar info i ChatGPT/Claude. Använd "Elev X", anonymisera.' }
+                ]},
+                { label: 'EU AI Act + GDPR', icon: '🇪🇺', children: [
+                    { label: 'Kompletterande regelverk', detail: 'AI Act ersätter inte GDPR — båda gäller parallellt. GDPR = dataskydd, AI Act = produktsäkerhet.' },
+                    { label: 'DPIA ↔ FRIA', detail: 'Konsekvensbedömning (DPIA) under GDPR överlappar med Fundamental Rights Impact Assessment under AI Act.' },
+                    { label: 'Bias-undantag (Art. 10)', detail: 'AI Act tillåter känsliga data för biasdetektion under strikta villkor (pseudonymisering, ej överföring).' }
+                ]},
+                { label: 'Praktiska åtgärder', icon: '🛡️', children: [
+                    { label: 'Enterprise vs. gratis', detail: 'Gratisversioner saknar DPA och använder input för träning. Enterprise/API: DPA, zero-retention möjligt.' },
+                    { label: 'Anonymisering', detail: 'Pseudonymisera INNAN du promptar. Ta bort namn, personnr, skola. AI:n behöver inte veta vem.' },
+                    { label: 'Dokumentera allt', detail: 'Register (Art. 30), DPIA (Art. 35), informationsplikt (Art. 13/14). Visa att ni tänkt innan ni kör.' }
+                ]}
+            ]
+        };
+        const uid = 'gm-' + Math.random().toString(36).slice(2,8);
+        // Build HTML recursively
+        function renderNode(node, depth) {
+            const hasKids = node.children && node.children.length;
+            const cls = depth === 0 ? 'gm-root' : (hasKids ? 'gm-branch' : 'gm-leaf');
+            let h = '<div class="gm-node '+cls+'" data-depth="'+depth+'">';
+            h += '<div class="gm-label" tabindex="0">';
+            if (node.icon) h += '<span class="gm-icon">'+node.icon+'</span>';
+            h += '<span class="gm-text">'+node.label+'</span>';
+            if (hasKids) h += '<span class="gm-toggle">▸</span>';
+            h += '</div>';
+            if (node.detail) h += '<div class="gm-detail">'+node.detail+'</div>';
+            if (hasKids) {
+                h += '<div class="gm-children">';
+                node.children.forEach(c => { h += renderNode(c, depth+1); });
+                h += '</div>';
+            }
+            h += '</div>';
+            return h;
+        }
+        let html = `
+        <style>
+            .slide-gdpr-mindmap { width:100%; min-height:75vh; display:flex; align-items:center; justify-content:center; padding:clamp(1rem,2vw,2rem); }
+            .gm-container { width:100%; max-width:900px; }
+            .gm-node { margin:0; }
+            .gm-root > .gm-label { font-size:clamp(1.1rem,2vw,1.5rem); color:var(--accent); font-weight:700; padding:0.8rem 0; border-bottom:2px solid rgba(249,115,22,0.3); margin-bottom:0.8rem; cursor:default; }
+            .gm-branch { margin-left:clamp(0.8rem,2vw,1.5rem); margin-top:0.4rem; }
+            .gm-branch > .gm-label { font-size:clamp(0.9rem,1.4vw,1.1rem); color:rgba(255,255,255,0.9); font-weight:600; padding:0.6rem 0.8rem; background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.08); border-radius:8px; cursor:pointer; transition:all 0.2s; display:flex; align-items:center; gap:0.5rem; }
+            .gm-branch > .gm-label:hover { background:rgba(249,115,22,0.08); border-color:rgba(249,115,22,0.3); }
+            .gm-branch.open > .gm-label { border-color:var(--accent); background:rgba(249,115,22,0.06); }
+            .gm-leaf { margin-left:clamp(1rem,2.5vw,2rem); margin-top:0.3rem; }
+            .gm-leaf > .gm-label { font-size:clamp(0.8rem,1.2vw,0.95rem); color:rgba(255,255,255,0.7); padding:0.5rem 0.8rem; background:rgba(255,255,255,0.02); border:1px solid rgba(255,255,255,0.05); border-radius:6px; cursor:pointer; transition:all 0.2s; display:flex; align-items:center; gap:0.4rem; }
+            .gm-leaf > .gm-label:hover { background:rgba(99,102,241,0.08); border-color:rgba(99,102,241,0.3); }
+            .gm-leaf.open > .gm-label { border-color:rgba(99,102,241,0.4); }
+            .gm-icon { font-size:1.1em; }
+            .gm-toggle { margin-left:auto; font-size:0.8em; color:rgba(255,255,255,0.3); transition:transform 0.3s; }
+            .gm-node.open > .gm-label .gm-toggle { transform:rotate(90deg); color:var(--accent); }
+            .gm-children { overflow:hidden; max-height:0; opacity:0; transition:max-height 0.4s ease, opacity 0.3s ease; }
+            .gm-node.open > .gm-children { max-height:2000px; opacity:1; }
+            .gm-detail { max-height:0; overflow:hidden; opacity:0; transition:all 0.3s ease; padding:0 0.8rem; margin-left:clamp(1rem,2.5vw,2rem); color:rgba(255,255,255,0.6); font-size:clamp(0.78rem,1.1vw,0.9rem); line-height:1.6; border-left:2px solid rgba(99,102,241,0.3); }
+            .gm-node.open > .gm-detail { max-height:200px; opacity:1; padding:0.5rem 0.8rem; margin-top:0.3rem; margin-bottom:0.3rem; }
+            .gm-root > .gm-children { max-height:none; opacity:1; }
+        </style>
+        <div class="slide-gdpr-mindmap component no-click-advance" id="${uid}">
+            <div class="gm-container">${renderNode(tree, 0)}</div>
+        </div>`;
+        setTimeout(() => {
+            const root = document.getElementById(uid);
+            if (!root) return;
+            root.querySelectorAll('.gm-label').forEach(label => {
+                label.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    const node = label.parentElement;
+                    if (node.classList.contains('gm-root')) return;
+                    node.classList.toggle('open');
+                });
+            });
+            root.querySelector('.gm-container').addEventListener('click', (e) => {
+                if (!e.target.closest('.gm-label')) { root.classList.remove('no-click-advance'); }
+            });
+        }, 150);
+        return html;
+    }
+
 
     function registerTypes() {
         if (typeof window.slideTypeRegistry === 'object') {
