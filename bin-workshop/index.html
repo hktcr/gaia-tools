@@ -131,17 +131,17 @@
         /* Intelligent dynamisk skalning: Vi sätter en bra bas-nivå, men tillåter sedan specifika 
            modifierare beroende på hur mycket innehåll sliden har. */
         html.presentation-mode {
-            font-size: clamp(14px, 2vmin, 28px); /* Normal text-slide */
+            font-size: clamp(18px, 3.5vmin, 48px); /* Normal text-slide */
         }
         
         /* För data-tunga slides (grafer, kartor, jämförelser) */
         html.presentation-mode.scale-dense {
-            font-size: clamp(11px, 1.4vmin, 22px); 
+            font-size: clamp(14px, 2.5vmin, 36px); 
         }
         
         /* För kort, slagkraftig text (citat, rubriker, rewrite-progression) */
         html.presentation-mode.scale-large {
-            font-size: clamp(18px, 2.8vmin, 42px); 
+            font-size: clamp(24px, 4.5vmin, 64px); 
         }
         
         /* Tvinga alla slide-containrar att ta upp yta, men ALDRIG bli bredare än 160vh. 
@@ -244,7 +244,7 @@
     // ===== COMPONENT FORGE — INLINED (Sprint 1+2+3) =====
     // Injecting CSS + all 9 renderers inline for zero-dependency deploy.
     </script>
-    <script src="modules/component-forge.js?v=8"></script>
+    <script src="modules/component-forge.js?v=10"></script>
 
     <script>
     (function() {

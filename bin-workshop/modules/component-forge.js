@@ -3809,6 +3809,11 @@
             if (!container) return;
             const items = container.querySelectorAll('.glitch-list-item');
             let currentStep = 0;
+            // Show first item automatically after a short delay
+            setTimeout(() => {
+                if(items.length > 0) items[0].classList.remove('step-hidden');
+                currentStep = 1;
+            }, 500);
 
             container.addEventListener('click', (e) => {
                 if (currentStep < items.length) {
