@@ -4428,6 +4428,11 @@
     function renderChaosToClarity(slide) {
         let html = `
         <style>
+            .slide-chaos-to-clarity {
+                width: 100%;
+                min-height: 70vh;
+                display: flex;
+            }
             .chaos-container {
                 position: relative;
                 width: 100%;
