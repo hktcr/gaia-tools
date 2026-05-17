@@ -531,12 +531,13 @@
     {
       "id": "admin-till-klassrum",
       "section": "agenter",
+      "title": "Från Admin till Klassrum",
       "type": "chaos-to-clarity"
     },
     {
       "id": "ai-skyddsnat",
       "section": "agenter",
-      "size": "large",
+      "title": "AI-Skyddsnätet",
       "type": "glitch-warning",
       "glitchText": "AI-SKYDDSNÄTET",
       "subtitle": "Rektors 3 förhållningsregler",
