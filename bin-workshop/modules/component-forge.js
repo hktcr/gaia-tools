@@ -4580,7 +4580,7 @@
                 text-align: right;
             }
         </style>
-        <div class="component chaos-to-clarity no-click-advance" id="cc-${slide.id}" data-state="idle">
+        <div class="slide-chaos-to-clarity component no-click-advance" id="cc-${slide.id}" data-state="idle">
             <div class="chaos-container">
                 <!-- Chaos Elements -->
                 <div class="chaos-item c-1">
