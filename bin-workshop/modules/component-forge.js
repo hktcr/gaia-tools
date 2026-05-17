@@ -4424,238 +4424,183 @@
         html += `</div>`;
         return html;
     }
-    // --- CHAOS TO CLARITY ---
+    // --- CHAOS TO CLARITY (v2 — Interactive Popup Edition) ---
     function renderChaosToClarity(slide) {
+        const allScenarios = [
+            { id: 'krankning', icon: '🏫', role: 'Rektor', label: '[23:14] Föräldramejl:', text: '"Det här är helt oacceptabelt!! Ni har inte lyssnat på ett ord jag sagt om rasterna..."', summary: 'Konfliktmönster identifierat under raster (vecka 19\u201320). Eskalerande föräldrakontakt.', law: '6 kap. Skollagen \u2014 skyndsamhetskrav (10§). Anmälningsplikt till huvudman.', action: 'Professionellt svarsmejl till vårdnadshavare + formellt utkast till kränkningsutredning.', time: '90 min', redirect: 'Lektionsobservation', srcText: 'Skollagen 6 kap. 10§ · SOU 2026:4', srcUrl: 'https://www.riksdagen.se/sv/dokument-och-lagar/dokument/svensk-forfattningssamling/skollag-2010800_sfs-2010-800/' },
+            { id: 'eht', icon: '🏫', role: 'Rektor', label: '[EHT-anteckning]:', text: 'Eleven orolig. Åtgärd? Måste kolla kap 3. Kanske anpassad studiegång? Vem gör vad?', summary: 'EHT-ärendet saknar tydlig åtgärdsplan. Tre möjliga spår identifierade.', law: 'Skollagen 3 kap (Särskilt stöd) \u2014 utredningsplikt. Skillnad extra anpassning vs. särskilt stöd.', action: 'Strukturerad åtgärdsplan med roller, tidsaxel och uppföljningsdatum.', time: '60 min', redirect: 'Samtal med lärarlaget', srcText: 'Skolverket: Stödinsatser i utbildningen', srcUrl: 'https://www.skolverket.se/regler-och-ansvar/ansvar-i-skolfragor/stodinsatser-i-utbildningen' },
+            { id: 'vikarie', icon: '👶', role: 'Förskolechef', label: '[07:02] SMS:', text: 'Tre VAB idag. Avd. Nyckelpigan utan personal. Stänga eller slå ihop?', summary: 'Akut personalbrist (3 VAB). Barngruppsstorlek överskrider riktmärke vid ihopslagning.', law: 'Skolverkets riktmärken: max 12 barn (1\u20133 år), max 15 (4\u20135 år). Arbetsmiljölagen.', action: 'Tre alternativ med konsekvensanalys + föräldrakommunikation (SMS-utkast till 25 familjer).', time: '45 min', redirect: 'Pedagogisk handledning', srcText: 'Skolverket: Barngrupper i förskolan', srcUrl: 'https://www.skolverket.se/regler-och-ansvar/ansvar-i-skolfragor/barngrupper-i-forskolan' },
+            { id: 'ska', icon: '🏛️', role: 'Förvaltningschef', label: '[Deadline fredag]:', text: 'SKA-rapporten till nämnden. 14 rektorer har lämnat in. 6 saknas. Sammandrag?', summary: 'Systematiskt kvalitetsarbete: 14/20 enheter rapporterade. Gap-analys med 3 trender.', law: 'Skollagen 4 kap. Huvudmannens uppföljningsansvar. SOU 2026:4 föreslår utökad SKA.', action: 'Aggregerad analys av 14 rapporter med tematiska trender och nämndspresentation.', time: '3 timmar', redirect: 'Rektorscoachning', srcText: 'Skolverket: Systematiskt kvalitetsarbete', srcUrl: 'https://www.skolverket.se/skolutveckling/leda-och-organisera-skolan/systematiskt-kvalitetsarbete' },
+            { id: 'delegering', icon: '🏫', role: 'Bitr. rektor', label: '[Mejl: Delegering]:', text: '"Kan du ta schemaomläggningen, medarbetarsamtalen OCH rastvakterna? Jag har nämndsmöte."', summary: 'Tre parallella uppdrag utan mandat eller prioriteringsordning. Risk för kvalitetsbrister.', law: 'AFS 2015:4 (Org. arbetsmiljö): krav på tydliga befogenheter vid delegation.', action: 'Prioriteringsmatris med tidsuppskattning + förslag på delegationsdokument.', time: '75 min', redirect: 'Klassrumsnärvaro', srcText: 'Arbetsmiljöverket: AFS 2015:4', srcUrl: 'https://www.av.se/arbetsmiljoarbete-och-inspektioner/publikationer/foreskrifter/organisatorisk-och-social-arbetsmiljo-afs-20154/' },
+            { id: 'medarb', icon: '🏫', role: 'Rektor', label: '[Lönerevisionen]:', text: '42 medarbetarsamtal. 60-90 min/st. Lönekriterier, dokumentation. Allt före 15 april.', summary: 'Uppskattad total tidsåtgång: ~80h (samtal + för-/efterarbete). 3 veckor effektiv arbetstid.', law: 'Kollektivavtal (HÖK/ÖLA). Lönesättande samtal kräver dokumenterat underlag.', action: 'Individuella förberedelsepromemoria per medarbetare baserat på fjolårets mål och resultat.', time: '2 timmar/dag', redirect: 'Undervisningsbesök', srcText: 'Sveriges Skolledare: Löneprocessen', srcUrl: 'https://www.skolledaren.se/' },
+            { id: 'peddok', icon: '👶', role: 'Förskolechef', label: '[Pedagogisk dok.]:', text: 'Avd. Ekorren har inte hunnit dokumentera Lpfö-målen på 3 veckor. Skolverket vill ha SKA-underlag.', summary: 'Dokumentationseftersläpning på 2 av 4 avdelningar. Avsaknad av strukturerad analysrutin.', law: 'Lpfö 18: Rektorns ansvar att systematiskt följa upp. Skollagen 4 kap.', action: 'Mall för veckovis reflektion (15 min/arbetslag) + SKA-sammandrag genererat från anteckningar.', time: '50 min', redirect: 'Kollegial handledning', srcText: 'Skolverket: Lpfö 18', srcUrl: 'https://www.skolverket.se/undervisning/forskolan/laroplan-for-forskolan' },
+            { id: 'budget', icon: '🏫', role: 'Rektor', label: '[Budget -8%]:', text: 'Elevtapp: 23 elever. Skolpengen minskar 1.8 Mkr. Vad skär vi i? Elevhälsa? Läromedel? Tjänster?', summary: 'Skolkostymen oförändrad trots 8% intäktsminskning. 3 scenarier med olika konsekvenskedjor.', law: 'Skollagen 2 kap 8a§: Rektors ansvar för inre organisation. Kommunens utbudsansvar.', action: 'Konsekvensanalys per scenario + dokumenterat underlag till huvudman om kvalitetsrisker.', time: '4 timmar', redirect: 'Pedagogisk utvecklingsdag', srcText: 'Riksrevisionen: Skolpengens effekter', srcUrl: 'https://www.riksrevisionen.se/' },
+            { id: 'rekrytering', icon: '🏛️', role: 'Skolchef', label: '[Rekryteringsläget]:', text: 'Ma/NO-lärare: 3 sökande (0 behöriga). 4 skolor behöver. Löneläge? Alternativa vägar?', summary: 'Strukturell lärarbrist: nationell prognos visar underskott till 2035. Lokalt: 67% behörighet.', law: 'Skollagen 2 kap 13§: krav på legitimerade lärare. Undantag max 1 år utan legitimation.', action: 'Kompetensförsörjningsplan med 3 spår: rekrytering, VFU-samverkan, behörighetsutbildning.', time: '2 timmar', redirect: 'Rektorsnätverksträff', srcText: 'Skolverket: Lärarprognos 2025', srcUrl: 'https://www.skolverket.se/skolutveckling/forskning-och-utvarderingar/skolverkets-aktuella-analyser/laget-i-skolan' },
+            { id: 'incident', icon: '🏫', role: 'Rektor', label: '[Incidentrapport]:', text: 'Hot mot personal i tamburen. Förälder vägrar lämna. Polis tillkallad. Vad säger lagen? Vem informeras?', summary: 'Säkerhetsincident med extern aktör. Arbetsmiljöansvar + orosanmälan + personalstöd parallellt.', law: 'AML 3 kap 2§: arbetsgivarens utredningsskyldighet. Socialtjänstlagen 14 kap 1§ vid oro.', action: 'Incidentprotokoll + kommunikationsplan (personal, föräldrar, huvudman) + anmälan Arbetsmiljöverket.', time: '2 timmar', redirect: 'Trygghetsarbete med eleverna', srcText: 'Arbetsmiljöverket: Hot och våld', srcUrl: 'https://www.av.se/halsa-och-sakerhet/hot-och-vald/' }
+        ];
+        // Show 5 per sub-slide, mixed roles. positions are assigned dynamically.
+        const positions = [
+            'top:8%;left:4%;transform:rotate(-5deg)',
+            'top:16%;right:7%;transform:rotate(6deg)',
+            'bottom:14%;left:10%;transform:rotate(3deg)',
+            'bottom:24%;right:5%;transform:rotate(-6deg)',
+            'top:40%;left:30%;transform:rotate(2deg)'
+        ];
+        const pageSize = 5;
+        const totalPages = Math.ceil(allScenarios.length / pageSize);
+        let currentPage = 0;
+        const uid = 'cc2-' + Math.random().toString(36).slice(2,8);
+
+        function buildCards(page) {
+            const start = page * pageSize;
+            const items = allScenarios.slice(start, start + pageSize);
+            let h = '';
+            items.forEach((s,i) => {
+                h += `<div class="cc2-card" data-idx="${start + i}" style="${positions[i]}">`;
+                h += `<span class="cc2-card-role">${s.icon} ${s.role}</span>`;
+                h += `<strong>${s.label}</strong><br/>${s.text}</div>`;
+            });
+            return h;
+        }
+
         let html = `
         <style>
-            .slide-chaos-to-clarity {
-                width: 100%;
-                min-height: 70vh;
-                display: flex;
-            }
-            .chaos-container {
-                position: relative;
-                width: 100%;
-                height: 100%;
-                
-                display: flex;
-                flex-direction: column;
-                align-items: center;
-                justify-content: center;
-                overflow: hidden;
-                font-family: var(--font-main);
-                background: var(--bg-dark);
-                border-radius: 12px;
-                border: 1px solid rgba(255,255,255,0.05);
-            }
+            .slide-chaos-to-clarity { width:100%; min-height:75vh; display:flex; }
+            .cc2-stage { position:relative; width:100%; height:100%; min-height:75vh; overflow:hidden; background:radial-gradient(ellipse at 30% 40%, rgba(30,27,75,0.6) 0%, #0a0a0f 100%); border-radius:12px; border:1px solid rgba(255,255,255,0.06); }
+            .cc2-title { position:absolute; top:1.2rem; left:50%; transform:translateX(-50%); color:rgba(255,255,255,0.25); font-size:clamp(0.7rem,1.2vw,0.9rem); text-transform:uppercase; letter-spacing:3px; z-index:1; pointer-events:none; }
+            .cc2-card { position:absolute; background:rgba(255,255,255,0.04); backdrop-filter:blur(12px); border:1px solid rgba(255,255,255,0.1); padding:clamp(0.8rem,1.5vw,1.4rem); border-radius:10px; color:rgba(255,255,255,0.75); font-family:'Courier New',monospace; font-size:clamp(0.65rem,1.1vw,0.85rem); max-width:clamp(180px,22vw,300px); box-shadow:0 8px 30px rgba(0,0,0,0.5); cursor:pointer; transition:all 0.3s ease; z-index:2; }
+            .cc2-card:hover { border-color:var(--accent); transform:rotate(0deg) scale(1.05) !important; box-shadow:0 12px 40px rgba(249,115,22,0.2); z-index:5; }
+            .cc2-card-role { display:block; font-size:0.6rem; color:var(--accent); text-transform:uppercase; letter-spacing:1.5px; margin-bottom:0.3rem; font-family:'Inter',sans-serif; }
+            .cc2-hint { position:absolute; bottom:1.5rem; left:50%; transform:translateX(-50%); color:rgba(255,255,255,0.2); font-size:0.75rem; z-index:1; pointer-events:none; animation:cc2pulse 2s ease-in-out infinite; }
+            .cc2-pager { position:absolute; bottom:1.5rem; display:flex; gap:0.5rem; z-index:6; }
+            .cc2-pager.left { left:1.5rem; }
+            .cc2-pager.right { right:1.5rem; }
+            .cc2-pager button { background:rgba(255,255,255,0.08); border:1px solid rgba(255,255,255,0.15); color:rgba(255,255,255,0.5); width:34px; height:34px; border-radius:50%; font-size:1rem; cursor:pointer; transition:all 0.2s; display:flex; align-items:center; justify-content:center; }
+            .cc2-pager button:hover { background:rgba(255,255,255,0.18); color:var(--accent); }
+            .cc2-page-indicator { position:absolute; bottom:1.5rem; left:50%; transform:translateX(-50%); color:rgba(255,255,255,0.2); font-size:0.65rem; font-family:'JetBrains Mono',monospace; z-index:6; }
+            @keyframes cc2pulse { 0%,100%{opacity:0.2} 50%{opacity:0.5} }
 
-            .chaos-item {
-                position: absolute;
-                background: rgba(255,255,255,0.05);
-                backdrop-filter: blur(10px);
-                border: 1px solid rgba(255,255,255,0.1);
-                padding: 1.5rem;
-                border-radius: 8px;
-                color: rgba(255,255,255,0.7);
-                font-family: 'Courier New', monospace;
-                font-size: 0.9rem;
-                max-width: 300px;
-                box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-                transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
-                z-index: 2;
-            }
+            /* === POPUP OVERLAY === */
+            .cc2-overlay { position:fixed; inset:0; background:rgba(0,0,0,0.85); backdrop-filter:blur(8px); z-index:300; display:flex; align-items:center; justify-content:center; opacity:0; pointer-events:none; transition:opacity 0.3s ease; }
+            .cc2-overlay.open { opacity:1; pointer-events:auto; }
+            .cc2-popup { width:min(90vw,720px); max-height:85vh; overflow-y:auto; background:rgba(12,12,18,0.98); border:1px solid var(--accent); border-radius:16px; box-shadow:0 30px 80px rgba(0,0,0,0.9),0 0 0 1px rgba(249,115,22,0.15) inset; padding:0; position:relative; transform:scale(0.92); transition:transform 0.4s cubic-bezier(0.34,1.56,0.64,1); }
+            .cc2-overlay.open .cc2-popup { transform:scale(1); }
+            .cc2-popup-close { position:absolute; top:1rem; right:1rem; background:rgba(255,255,255,0.08); border:1px solid rgba(255,255,255,0.15); color:#fff; width:36px; height:36px; border-radius:50%; font-size:1.1rem; cursor:pointer; z-index:10; display:flex; align-items:center; justify-content:center; transition:background 0.2s; }
+            .cc2-popup-close:hover { background:rgba(255,255,255,0.18); }
 
-            /* Initial messy positions */
-            .c-1 { top: 10%; left: 5%; transform: rotate(-5deg); }
-            .c-2 { top: 20%; right: 10%; transform: rotate(8deg); }
-            .c-3 { bottom: 15%; left: 15%; transform: rotate(3deg); }
-            .c-4 { bottom: 25%; right: 5%; transform: rotate(-7deg); }
-            .c-5 { top: 40%; left: 30%; transform: rotate(2deg); z-index: 1; opacity: 0.5; }
+            /* Popup: Input section */
+            .cc2-input { padding:2rem 2rem 1.2rem; border-bottom:1px solid rgba(255,255,255,0.06); position:relative; }
+            .cc2-input-role { display:inline-flex; align-items:center; gap:0.4rem; font-size:0.75rem; color:var(--accent); text-transform:uppercase; letter-spacing:2px; margin-bottom:0.6rem; font-weight:600; }
+            .cc2-input-text { font-family:'Courier New',monospace; color:rgba(255,255,255,0.6); font-size:clamp(0.8rem,1.3vw,0.95rem); line-height:1.6; }
 
-            .ai-scanner {
-                position: absolute;
-                top: 0;
-                left: 0;
-                width: 100%;
-                height: 4px;
-                background: var(--accent);
-                box-shadow: 0 0 30px 10px rgba(var(--accent-rgb), 0.5);
-                z-index: 10;
-                transform: translateY(-20px);
-                opacity: 0;
-                transition: transform 2s ease-in-out, opacity 0.3s;
-            }
+            /* Popup: Scanner */
+            .cc2-scan-line { position:absolute; left:0; width:100%; height:3px; background:var(--accent); box-shadow:0 0 20px 6px rgba(249,115,22,0.4); opacity:0; z-index:5; transition:none; }
 
-            .clarity-result {
-                position: absolute;
-                top: 50%;
-                left: 50%;
-                transform: translate(-50%, -50%) scale(0.9);
-                opacity: 0;
-                background: rgba(15, 15, 18, 0.95);
-                border: 1px solid var(--accent);
-                padding: 2.5rem;
-                border-radius: 12px;
-                z-index: 20;
-                width: 80%;
-                max-width: 700px;
-                box-shadow: 0 20px 50px rgba(0,0,0,0.8), 0 0 0 1px rgba(var(--accent-rgb), 0.2) inset;
-                transition: all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) 1.5s;
-                text-align: left;
-            }
-
-            .clarity-header {
-                color: var(--accent);
-                font-size: 1.2rem;
-                text-transform: uppercase;
-                letter-spacing: 2px;
-                margin-bottom: 1rem;
-                display: flex;
-                align-items: center;
-                gap: 0.5rem;
-            }
-
-            .clarity-title {
-                font-size: 2.5rem;
-                font-weight: 700;
-                color: #fff;
-                margin-bottom: 1.5rem;
-            }
-
-            .clarity-list {
-                list-style: none;
-                padding: 0;
-                margin: 0 0 2rem 0;
-            }
-            .clarity-list li {
-                color: rgba(255,255,255,0.9);
-                padding: 0.8rem 0;
-                border-bottom: 1px solid rgba(255,255,255,0.05);
-                display: flex;
-                align-items: flex-start;
-                gap: 1rem;
-            }
-            .clarity-list li::before {
-                content: '✓';
-                color: var(--accent);
-                font-weight: bold;
-            }
-
-            .clarity-badge {
-                display: inline-flex;
-                align-items: center;
-                gap: 0.8rem;
-                background: rgba(var(--accent-rgb), 0.1);
-                color: var(--accent);
-                padding: 1rem 1.5rem;
-                border-radius: 50px;
-                font-size: 1.1rem;
-                font-weight: 600;
-                border: 1px solid rgba(var(--accent-rgb), 0.3);
-                box-shadow: 0 0 20px rgba(var(--accent-rgb), 0.2);
-            }
-
-            /* State: Scanning */
-            .scanning .ai-scanner {
-                opacity: 1;
-                transform: translateY(1200px);
-            }
-            .scanning .chaos-item {
-                transform: scale(0.5) translateY(100px) rotate(0deg);
-                opacity: 0;
-                filter: blur(10px);
-            }
-            .scanning .c-1 { transition-delay: 0.2s; }
-            .scanning .c-2 { transition-delay: 0.4s; }
-            .scanning .c-5 { transition-delay: 0.6s; }
-            .scanning .c-3 { transition-delay: 0.8s; }
-            .scanning .c-4 { transition-delay: 1.0s; }
-
-            /* State: Resolved */
-            .resolved .clarity-result {
-                opacity: 1;
-                transform: translate(-50%, -50%) scale(1);
-            }
-            
-            /* Add source link inside the card */
-            .clarity-source {
-                margin-top: 1.5rem;
-                font-size: 0.85rem;
-                color: rgba(255,255,255,0.4);
-                text-align: right;
-            }
+            /* Popup: Output section */
+            .cc2-output { padding:1.5rem 2rem 2rem; }
+            .cc2-output-header { display:flex; align-items:center; gap:0.5rem; color:var(--accent); font-size:0.85rem; text-transform:uppercase; letter-spacing:2px; margin-bottom:1rem; font-weight:600; }
+            .cc2-row { opacity:0; transform:translateY(8px); transition:all 0.4s ease; margin-bottom:0.8rem; padding:0.7rem 0; border-bottom:1px solid rgba(255,255,255,0.04); }
+            .cc2-row.visible { opacity:1; transform:translateY(0); }
+            .cc2-row-label { font-size:0.7rem; color:var(--accent); text-transform:uppercase; letter-spacing:1px; margin-bottom:0.25rem; font-weight:600; }
+            .cc2-row-value { color:rgba(255,255,255,0.88); font-size:clamp(0.82rem,1.2vw,0.95rem); line-height:1.5; }
+            .cc2-time-badge { display:inline-flex; align-items:center; gap:0.6rem; background:rgba(249,115,22,0.08); color:var(--accent); padding:0.7rem 1.2rem; border-radius:50px; font-size:clamp(0.8rem,1.1vw,0.95rem); font-weight:600; border:1px solid rgba(249,115,22,0.25); opacity:0; transform:scale(0.9); transition:all 0.5s cubic-bezier(0.34,1.56,0.64,1); margin-top:0.5rem; }
+            .cc2-time-badge.visible { opacity:1; transform:scale(1); }
+            .cc2-source { margin-top:1.2rem; padding-top:0.8rem; border-top:1px solid rgba(255,255,255,0.06); }
+            .cc2-source a { color:rgba(255,255,255,0.35); font-size:0.75rem; text-decoration:none; transition:color 0.2s; }
+            .cc2-source a:hover { color:var(--accent); }
         </style>
-        <div class="slide-chaos-to-clarity component no-click-advance" id="cc-${slide.id}" data-state="idle">
-            <div class="chaos-container">
-                <!-- Chaos Elements -->
-                <div class="chaos-item c-1">
-                    <strong>[23:14] Föräldramejl:</strong><br/>
-                    "Det här är helt oacceptabelt!! Ni har inte lyssnat på ett ord jag sagt om rasterna..."
-                </div>
-                <div class="chaos-item c-2">
-                    <strong>[EHT-anteckning]:</strong><br/>
-                    Skolan: orolig. Åtgärd? Måste kolla kap 5. Kanske anpassad studiegång? Vem gör vad?
-                </div>
-                <div class="chaos-item c-3">
-                    <strong>[Skollagen 5 kap 3§]:</strong><br/>
-                    "Utbildningen ska utformas så att alla elever tillförsäkras en skolmiljö som är präglad av trygghet..."
-                </div>
-                <div class="chaos-item c-4">
-                    <strong>[Lärarrapport]:</strong><br/>
-                    Eleven vägrar gå ut på rast. Kastade suddgummi. Vi behöver en plan direkt!
-                </div>
-                <div class="chaos-item c-5">
-                    "Blankt papper-ångest"
-                </div>
-
-                <!-- The Scanner -->
-                <div class="ai-scanner"></div>
-
-                <!-- The Clarity Result -->
-                <div class="clarity-result">
-                    <div class="clarity-header">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
-                        Vardags-VEP:en
-                    </div>
-                    <div class="clarity-title">Strukturerat & Förberett</div>
-                    <ul class="clarity-list">
-                        <li><strong>Sammanfattning:</strong> Konfliktmönster identifierat under raster (vecka 19-20).</li>
-                        <li><strong>Juridiskt ramverk:</strong> Mappat mot 5 kap. Skollagen (Trygghet och studiero).</li>
-                        <li><strong>Förslag till åtgärd:</strong> Formellt utkast till kränkningsutredning samt professionellt svarsmejl till vårdnadshavare.</li>
-                    </ul>
-                    <div class="clarity-badge">
-                        <span>⏳ Tidsvinst: 90 minuter</span>
-                        <span>➔</span>
-                        <span>Omstyrd till lektionsobservation</span>
-                    </div>
-                    <div class="clarity-source">
-                        Baserat på: SU (Susanne Kjällander) & RISE EduAssist (2025-2026)
-                    </div>
+        <div class="slide-chaos-to-clarity component no-click-advance" id="${uid}">
+            <div class="cc2-stage" id="${uid}-stage">
+                <div class="cc2-title">Från Admin till Klassrum</div>
+                <div id="${uid}-cards">${buildCards(0)}</div>
+                <div class="cc2-pager left"><button id="${uid}-prev">‹</button></div>
+                <div class="cc2-pager right"><button id="${uid}-next">›</button></div>
+                <div class="cc2-page-indicator" id="${uid}-pageindicator">1 / ${totalPages}</div>
+            </div>
+            <div class="cc2-overlay" id="${uid}-overlay">
+                <div class="cc2-popup" id="${uid}-popup">
+                    <button class="cc2-popup-close" id="${uid}-close">✕</button>
+                    <div class="cc2-input" id="${uid}-input"></div>
+                    <div class="cc2-scan-line" id="${uid}-scanline"></div>
+                    <div class="cc2-output" id="${uid}-output"></div>
                 </div>
             </div>
-        </div>
-        `;
+        </div>`;
 
         setTimeout(() => {
-            const el = document.getElementById(`cc-${slide.id}`);
-            if(!el) return;
-            
-            el.addEventListener('click', (e) => {
-                const state = el.getAttribute('data-state');
-                if (state === 'idle') {
-                    e.stopPropagation();
-                    el.setAttribute('data-state', 'scanning');
-                    el.querySelector('.chaos-container').classList.add('scanning');
-                    
-                    setTimeout(() => {
-                        el.setAttribute('data-state', 'resolved');
-                        el.querySelector('.chaos-container').classList.add('resolved');
-                    }, 2000);
-                } else if (state === 'resolved') {
-                    el.classList.remove('no-click-advance');
-                }
+            const root = document.getElementById(uid);
+            if (!root) return;
+            const overlay = document.getElementById(uid + '-overlay');
+            const popup = document.getElementById(uid + '-popup');
+            const inputEl = document.getElementById(uid + '-input');
+            const outputEl = document.getElementById(uid + '-output');
+            const scanline = document.getElementById(uid + '-scanline');
+            const closeBtn = document.getElementById(uid + '-close');
+
+            function openPopup(idx) {
+                const s = allScenarios[idx];
+                inputEl.innerHTML = '<div class="cc2-input-role">' + s.icon + ' ' + s.role + '</div><div class="cc2-input-text"><strong>' + s.label + '</strong><br/>' + s.text + '</div>';
+                outputEl.innerHTML = '<div class="cc2-output-header"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg> AI-analys</div>'
+                    + '<div class="cc2-row" id="'+uid+'-r0"><div class="cc2-row-label">Sammanfattning</div><div class="cc2-row-value">' + s.summary + '</div></div>'
+                    + '<div class="cc2-row" id="'+uid+'-r1"><div class="cc2-row-label">Juridiskt ramverk</div><div class="cc2-row-value">' + s.law + '</div></div>'
+                    + '<div class="cc2-row" id="'+uid+'-r2"><div class="cc2-row-label">AI-genererat utkast</div><div class="cc2-row-value">' + s.action + '</div></div>'
+                    + '<div class="cc2-time-badge" id="'+uid+'-badge">⏳ Tidsvinst: ' + s.time + ' → Omstyrd till ' + s.redirect + '</div>'
+                    + '<div class="cc2-source"><a href="' + s.srcUrl + '" target="_blank" rel="noopener">' + s.srcText + ' ↗</a></div>';
+                overlay.classList.add('open');
+                // Run scan animation
+                scanline.style.transition = 'none';
+                scanline.style.top = inputEl.offsetTop + 'px';
+                scanline.style.opacity = '1';
+                requestAnimationFrame(() => {
+                    scanline.style.transition = 'top 1.2s ease-in-out';
+                    scanline.style.top = (outputEl.offsetTop + outputEl.scrollHeight) + 'px';
+                });
+                // Reveal rows sequentially
+                [0,1,2].forEach((ri,i) => {
+                    setTimeout(() => { const r = document.getElementById(uid+'-r'+ri); if(r) r.classList.add('visible'); }, 600 + i * 400);
+                });
+                setTimeout(() => { const b = document.getElementById(uid+'-badge'); if(b) b.classList.add('visible'); }, 1800);
+                setTimeout(() => { scanline.style.opacity = '0'; }, 1400);
+            }
+
+            function closePopup() {
+                overlay.classList.remove('open');
+            }
+
+            function bindCards() {
+                root.querySelectorAll('.cc2-card').forEach(card => {
+                    card.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        openPopup(parseInt(card.dataset.idx));
+                    });
+                });
+            }
+            bindCards();
+
+            closeBtn.addEventListener('click', (e) => { e.stopPropagation(); closePopup(); });
+            overlay.addEventListener('click', (e) => { if (e.target === overlay) closePopup(); });
+            document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && overlay.classList.contains('open')) { e.stopPropagation(); closePopup(); } });
+
+            // Pagination
+            const cardsContainer = document.getElementById(uid + '-cards');
+            const prevBtn = document.getElementById(uid + '-prev');
+            const nextBtn = document.getElementById(uid + '-next');
+            const pageInd = document.getElementById(uid + '-pageindicator');
+
+            function renderPage(p) {
+                currentPage = p;
+                cardsContainer.innerHTML = buildCards(p);
+                pageInd.textContent = (p + 1) + ' / ' + totalPages;
+                bindCards();
+            }
+            prevBtn.addEventListener('click', (e) => { e.stopPropagation(); if (currentPage > 0) renderPage(currentPage - 1); });
+            nextBtn.addEventListener('click', (e) => { e.stopPropagation(); if (currentPage < totalPages - 1) renderPage(currentPage + 1); });
+
+            // Allow slide advance when clicking the stage (not a card)
+            root.querySelector('.cc2-stage').addEventListener('click', (e) => {
+                if (!e.target.closest('.cc2-card')) { root.classList.remove('no-click-advance'); }
             });
-        }, 100);
+        }, 150);
 
         return html;
     }
