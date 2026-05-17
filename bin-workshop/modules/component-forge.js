@@ -4683,7 +4683,8 @@
         'glitch-warning': renderGlitchWarning,
         'milestone-reveal': renderMilestoneReveal,
         'chaos-to-clarity': renderChaosToClarity,
-        'gdpr-mindmap': renderGdprMindmap
+        'gdpr-mindmap': renderGdprMindmap,
+        'leadership-mindmap': renderLeadershipMindmap
     };
 
     // --- GDPR × GENERATIV AI MINDMAP ---
@@ -4782,6 +4783,78 @@
         return html;
     }
 
+
+    // --- CHEFSPERSPEKTIV PÅ AI MINDMAP ---
+    function renderLeadershipMindmap(slide) {
+        const tree = {
+            label: 'Chefsperspektiv på Generativ AI', icon: '🎯', children: [
+                { label: 'Administrativ avlastning', icon: '⏱️', children: [
+                    { label: '60–80% admin → kärnuppdrag', detail: 'Globala studier visar att rektorer lägger 60–80% på admin. AI kan halvera detta och frigöra tid för pedagogiskt ledarskap.' },
+                    { label: 'Kommunikation & dokumentation', detail: 'Utkast till föräldrabrev, mötesprotokoll, policytexter, nyhetsbrev. Sänker tröskeln från 45 min till 10 min per uppgift.' },
+                    { label: 'Dataanalys & uppföljning', detail: 'Sammanställning av resultat, frånvaromönster, SKA-underlag. AI identifierar trender du annars missar.' }
+                ]},
+                { label: 'Etik & beslutsfattande', icon: '⚖️', children: [
+                    { label: 'AI som "tankepartner"', detail: 'UNESCO & OECD: AI ska vara en "thought partner", aldrig en beslutsfattare. Human-in-the-loop är lag (EU AI Act Art. 14).' },
+                    { label: 'Algoritmisk bias', detail: 'AI-verktyg kan förstärka befintliga ojämlikheter. Chefen måste kvalitetssäkra att verktyg inte diskriminerar elever/personal.' },
+                    { label: 'Transparens mot föräldrar', detail: 'Ökande krav på att redovisa NÄR och HUR AI används i skolverksamheten. Förtroende kräver öppenhet.' }
+                ]},
+                { label: 'Kompetensutveckling', icon: '📚', children: [
+                    { label: 'UNESCO: 15 lärarkompetenser', detail: 'AI Competency Framework for Teachers (2024): Etik, grundläggande AI, AI-pedagogik, professionellt lärande med AI.' },
+                    { label: 'Sveriges Skolledare: akut behov', detail: 'Majoritet av skolledare saknar utbildning. Kräver nationellt stöd — skolan exkluderad från AI-kommissionens strategi.' },
+                    { label: 'OECD: "AI-litteracitet"', detail: '4 domäner: Engage with AI, Create with AI, Manage AI, Design AI. Förbereds som del av PISA-ramverket.' }
+                ]},
+                { label: 'Policy & styrning', icon: '📋', children: [
+                    { label: 'Nationellt styrningsglapp (SE)', detail: 'Sverige saknar nationell AI-strategi för skolan. SKR + Ifous ger lokalt stöd, men rektorer navigerar i dimma.' },
+                    { label: 'Kontrollerad vs okontrollerad', detail: 'Frågan är inte "AI eller ej" utan "loggad, styrd användning" kontra "osynlig, oreglerad". Chefen sätter tonen.' },
+                    { label: 'PUB-avtal & upphandling', detail: 'Huvudmannen MÅSTE ha personuppgiftsbiträdesavtal med AI-leverantörer. Gratis = ingen garanti.' }
+                ]},
+                { label: 'Internationella ramverk', icon: '🌍', children: [
+                    { label: 'UNESCO FutureProof Education', detail: 'Lanserat sept 2025 med EU. Stöd till skolmyndigheter i 6 länder. Praktiska verktyg för AI-integration på skolnivå.' },
+                    { label: 'OECD Empowering Leaders Toolkit', detail: '3 moduler: Riskminimering, Strategisk integration, Möjlighetsmaximering. Uppdaterad dec 2025.' },
+                    { label: 'EU AI Act (stegvis 2025–2027)', detail: 'Högrisk-klassning möjlig för AI i utbildning. Kräver FRIA + dokumentation + mänsklig kontroll. Gäller dig som chef.' }
+                ]}
+            ]
+        };
+        const uid = 'lm-' + Math.random().toString(36).slice(2,8);
+        function renderNode(node, depth) {
+            const hasKids = node.children && node.children.length;
+            const cls = depth === 0 ? 'gm-root' : (hasKids ? 'gm-branch' : 'gm-leaf');
+            let h = '<div class="gm-node '+cls+'" data-depth="'+depth+'">';
+            h += '<div class="gm-label" tabindex="0">';
+            if (node.icon) h += '<span class="gm-icon">'+node.icon+'</span>';
+            h += '<span class="gm-text">'+node.label+'</span>';
+            if (hasKids) h += '<span class="gm-toggle">\u25b8</span>';
+            h += '</div>';
+            if (node.detail) h += '<div class="gm-detail">'+node.detail+'</div>';
+            if (hasKids) {
+                h += '<div class="gm-children">';
+                node.children.forEach(c => { h += renderNode(c, depth+1); });
+                h += '</div>';
+            }
+            h += '</div>';
+            return h;
+        }
+        let html = `
+        <div class="slide-gdpr-mindmap component no-click-advance" id="${uid}">
+            <div class="gm-container">${renderNode(tree, 0)}</div>
+        </div>`;
+        setTimeout(() => {
+            const root = document.getElementById(uid);
+            if (!root) return;
+            root.querySelectorAll('.gm-label').forEach(label => {
+                label.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    const node = label.parentElement;
+                    if (node.classList.contains('gm-root')) return;
+                    node.classList.toggle('open');
+                });
+            });
+            root.querySelector('.gm-container').addEventListener('click', (e) => {
+                if (!e.target.closest('.gm-label')) { root.classList.remove('no-click-advance'); }
+            });
+        }, 150);
+        return html;
+    }
 
     function registerTypes() {
         if (typeof window.slideTypeRegistry === 'object') {

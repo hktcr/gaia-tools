@@ -541,6 +541,12 @@
       "type": "gdpr-mindmap"
     },
     {
+      "id": "chef-ai-perspektiv",
+      "section": "agenter",
+      "title": "Chefsperspektiv på AI",
+      "type": "leadership-mindmap"
+    },
+    {
       "id": "ai-skyddsnat",
       "section": "agenter",
       "title": "AI-Skyddsnätet",
