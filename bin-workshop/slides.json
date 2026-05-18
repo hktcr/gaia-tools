@@ -619,6 +619,49 @@
       "type": "dual-analysis-prompt"
     },
     {
+      "id": "cognitive-shift-contrast",
+      "section": "agenter",
+      "type": "comparison",
+      "title": "Den Kognitiva Förskjutningen",
+      "left": {
+        "label": "Traditionellt Skapande",
+        "items": [
+          "Högt startmotstånd",
+          "Kontinuerligt flow",
+          "Linjär kognitiv belastning",
+          "Djupfokus på en uppgift"
+        ]
+      },
+      "right": {
+        "label": "AI-Övervakning",
+        "items": [
+          "Lågt startmotstånd",
+          "Avbrutet flöde (prompta → vänta)",
+          "Högintensiv utvärdering (dränerande)",
+          "Extremt 'Context Switching'"
+        ]
+      }
+    },
+    {
+      "id": "ai-brain-fry",
+      "section": "agenter",
+      "title": "Kognitiv Belastning",
+      "type": "glitch-warning",
+      "glitchText": "AI BRAIN FRY",
+      "subtitle": "Baksidan av produktivitetsparadoxen",
+      "warnings": [
+        "Permanent Multitasking: Vi fyller sparad tid med fler parallella uppgifter",
+        "Övervakningsfällan: Utvärdering kräver mer av hjärnan än skapande",
+        "'AI Champions' är en riskgrupp: Överanvändning ökar felfrekvensen med 39%"
+      ],
+      "sources": [
+        {
+          "text": "Deep-Search Syntes: Forskning kring kognitiv intensifiering och reward hacking",
+          "url": "#"
+        }
+      ]
+    },
+    {
       "id": "ai-skyddsnat",
       "section": "agenter",
       "title": "AI-Skyddsnätet",
