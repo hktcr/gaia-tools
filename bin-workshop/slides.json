@@ -187,6 +187,13 @@
             }
           ]
         }
+      ],
+      "sources": [
+        {
+          "text": "METR (2026): Autonomous Task Horizon Data",
+          "url": "https://metr.org",
+          "quote": "Hur länge en AI kan arbeta autonomt utan mänsklig inblandning har blivit det primära måttet på förmåga (Task Horizon)."
+        }
       ]
     },
     {
@@ -267,6 +274,13 @@
             }
           ]
         }
+      ],
+      "sources": [
+        {
+          "text": "METR (2026): Autonomous Task Horizon Data 1.1",
+          "url": "https://metr.org",
+          "quote": "I början av 2026 slår Claude Opus 4.6 i taket på de existerande TH-testerna med över 14 timmars kontinuerligt autonomt arbete."
+        }
       ]
     },
     {
@@ -294,6 +308,13 @@
           "label": "Claude Opus 4.6 (min)",
           "icon": "⚡"
         }
+      ],
+      "sources": [
+        {
+          "text": "METR (Jan 2026): Sprängningen av TH 1.1 taket",
+          "url": "https://metr.org",
+          "quote": "Kapacitetsökningen i februari 2026 renderade de tidigare testsviterna närmast irrelevanta då modellerna hanterade komplexa workflows över hela arbetsdagar."
+        }
       ]
     },
     {
@@ -307,7 +328,14 @@
       "to": 4,
       "toSuffix": " mån",
       "toLabel": "Fördubblingstid (TH 1.1)",
-      "caption": "Hastigheten i AI-utvecklingen har underskattats med ~20 %. Kapaciteten fördubblas nu var 131:a dag."
+      "caption": "Hastigheten i AI-utvecklingen har underskattats med ~20 %. Kapaciteten fördubblas nu var 131:a dag.",
+      "sources": [
+        {
+          "text": "Epoch AI (2026): AI Progress Trends",
+          "url": "https://epochai.org",
+          "quote": "Kapaciteten fördubblas nu var 131:a dag, en signifikant acceleration från tidigare prognoser."
+        }
+      ]
     },
     {
       "id": "tank-om-progression",
@@ -412,6 +440,13 @@
           "x": 25,
           "y": 30
         }
+      ],
+      "sources": [
+        {
+          "text": "Epoch AI (2026): The Geography of AI Development",
+          "url": "https://epochai.org",
+          "quote": "Det globala racet domineras av ett fåtal noder med tillgång till de massiva compute-kluster som krävs för nästa generations frontier-modeller."
+        }
       ]
     },
     {
@@ -433,7 +468,31 @@
       "max": 1440,
       "unit": " min",
       "color": "#ea580c",
-      "subtitle": "Claude Opus 4.6 klarar autonomt uppgifter som tar en människa 14,5 timmar. Gränsen mäts nu i dagar. (Källa: METR TH 1.1)"
+      "subtitle": "Claude Opus 4.6 klarar autonomt uppgifter som tar en människa 14,5 timmar. Gränsen mäts nu i dagar. (Källa: METR TH 1.1)",
+      "sources": [
+        {
+          "text": "METR (Feb 2026): TH 1.1 Resultat",
+          "url": "https://metr.org",
+          "quote": "Gränsen mäts inte längre i minuter, utan i dagar och veckor av oövervakad exekvering."
+        }
+      ]
+    },
+    {
+      "id": "jagged-frontier-grade-inflation",
+      "section": "insikt",
+      "type": "callout",
+      "variant": "insight",
+      "pulsate": true,
+      "tag": "AKTUELL FORSKNING (MAJ 2026)",
+      "title": "Betygsinflation och The Jagged Frontier",
+      "body": "När elever använder AI för skrivande och kodning ser vi nu 2026 en markant <strong>betygsinflation (+13%)</strong>. Detta beror på <em>'The Jagged Frontier'</em>: AI är exceptionellt bra på vissa avgränsade uppgifter, men sämre på andra. När elever befinner sig innanför gränsen får de en omotiverad betygsskjuts – och resultaten komprimeras i toppen. Signalen för verklig kunskap eroderas snabbt.",
+      "sources": [
+        {
+          "text": "UC Berkeley (2026): The Jagged Frontier of AI-Driven Grade Inflation",
+          "url": "https://www.escholarship.org/",
+          "quote": "The share of A grades in AI-exposed courses rose by approximately 13 percentage points, driven heavily by task displacement. As grades increasingly reflect AI-assisted output rather than student ability, the informational value of transcripts declines."
+        }
+      ]
     },
     {
       "id": "agent-idag",
@@ -488,6 +547,13 @@
           "year": "Våren 2026",
           "text": "Multi-Agent Ekosystem",
           "sub": "Agenter pratar med agenter. System som löser komplexa infrastrukturuppgifter över flera dagar."
+        }
+      ],
+      "sources": [
+        {
+          "text": "Cognition AI / Anthropic / OpenAI (2024-2026)",
+          "url": "https://www.cognition.ai",
+          "quote": "Etableringen av multi-agent-system flyttar gränsen från chatbottar till agenter som kan hantera hela workflows, ta över skärmar och arbeta asynkront."
         }
       ]
     },
@@ -547,6 +613,12 @@
       "type": "leadership-mindmap"
     },
     {
+      "id": "dual-analysis-method",
+      "section": "agenter",
+      "title": "Dual Analysis Method",
+      "type": "dual-analysis-prompt"
+    },
+    {
       "id": "ai-skyddsnat",
       "section": "agenter",
       "title": "AI-Skyddsnätet",
@@ -562,6 +634,23 @@
         {
           "text": "IMY (2026): AI och barns integritet",
           "url": "https://www.imy.se/verksamhet/dataskydd/det-har-galler-enligt-gdpr/ai-och-dataskydd/"
+        }
+      ]
+    },
+    {
+      "id": "policy-human-in-the-loop",
+      "section": "agenter",
+      "type": "callout",
+      "variant": "insight",
+      "pulsate": false,
+      "tag": "INTERNATIONELL POLICY",
+      "title": "Lagstiftning 2026: Human-in-the-loop",
+      "body": "Efter de första årens trevande försök ser vi nu 2026 en extrem styrning mot regelverk. Över 50 skarpa lagförslag i amerikanska delstater sätter stenhårda gränser. Den starkaste gemensamma nämnaren är <strong>'Human-in-the-loop' (HITL)</strong>: Det blir uttryckligen förbjudet för AI att autonomt fatta 'high-stakes'-beslut som betygssättning eller nivåplacering. En människa <em>måste</em> alltid fälla avgörandet.",
+      "sources": [
+        {
+          "text": "FutureEd (maj 2026): Legislative Tracker State AI Bills",
+          "url": "https://www.future-ed.org/legislative-tracker-2026-state-ai-in-education-bills/",
+          "quote": "A critical trend in 2026 legislation is the requirement for 'human-in-the-loop' decision-making. Lawmakers are increasingly mandating that AI cannot serve as the primary basis for high-stakes decisions—such as grading, discipline, or student placement—without meaningful human review."
         }
       ]
     },

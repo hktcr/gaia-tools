@@ -4684,7 +4684,8 @@
         'milestone-reveal': renderMilestoneReveal,
         'chaos-to-clarity': renderChaosToClarity,
         'gdpr-mindmap': renderGdprMindmap,
-        'leadership-mindmap': renderLeadershipMindmap
+        'leadership-mindmap': renderLeadershipMindmap,
+        'dual-analysis-prompt': renderDualAnalysisPrompt
     };
 
     // --- GDPR × GENERATIV AI MINDMAP ---
@@ -4864,6 +4865,149 @@
                 if (!e.target.closest('.gm-label')) { root.classList.remove('no-click-advance'); }
             });
         }, 150);
+        return html;
+    }
+
+    // --- DUAL ANALYSIS METHOD PROMPT ---
+    function renderDualAnalysisPrompt(slide) {
+        const uid = 'dap-' + Math.random().toString(36).slice(2,8);
+        const promptText = `Du är en expert på textanalys och retorik. Mitt mål är att skapa ett "Personligt skrivregelsdokument" så att du framöver kan generera utkast som låter precis som jag. Vi ska använda The Dual Analysis Method.
+
+Steg 1: Ställ 3-4 korta frågor till mig om hur jag föredrar att kommunicera (min uttalade stil). Vänta på mitt svar.
+
+Steg 2: När jag har svarat ska du göra en djuplodande analys av *hur* jag faktiskt skrev mitt svar (observerad stil). Analysera meningslängd, ordval, struktur, ton och skiljetecken (t.ex. om jag använder tankstreck eller utropstecken).
+
+Steg 3: Baserat på både vad jag sade OCH hur jag skrev, ge mig en färdig, punktad lista med "Custom Instructions" som jag kan spara och använda framöver för att få dig att skriva i min röst.`;
+
+        let html = `
+        <style>
+            .slide-dual-analysis { width:100%; min-height:75vh; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:clamp(2rem,4vw,4rem); font-family:var(--font-body, system-ui); text-align:center; }
+            .da-typewriter-container { height: 4rem; margin-bottom: 2rem; display: flex; align-items: center; justify-content: center; }
+            .da-typewriter { font-size:clamp(2.5rem,4vw,3.5rem); font-weight:800; font-family:var(--font-mono, monospace); color:var(--accent); border-right: 4px solid var(--accent); white-space: nowrap; overflow: hidden; width: 0; }
+            .da-typewriter.start { animation: typing 2.5s steps(30, end) forwards, blink-caret .75s step-end infinite; }
+            @keyframes typing { from { width: 0 } to { width: 100% } }
+            @keyframes blink-caret { from, to { border-color: transparent } 50% { border-color: var(--accent); } }
+            
+            .da-explanation { opacity:0; transform:translateY(20px); font-size:clamp(1.1rem, 1.8vw, 1.4rem); color:rgba(255,255,255,0.8); max-width:800px; line-height:1.6; margin-bottom: 3rem; transition: all 1s ease; }
+            .da-explanation.visible { opacity:1; transform:translateY(0); }
+            
+            .da-method-box { opacity:0; transform:translateY(20px); display:flex; gap: 2rem; margin-bottom: 3rem; transition: all 1s ease 0.3s; }
+            .da-method-box.visible { opacity:1; transform:translateY(0); }
+            .da-step { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; padding: 1.5rem; width: 280px; text-align: left; position: relative; }
+            .da-step-num { position:absolute; top:-15px; left:-15px; background:var(--accent); color:#fff; width:36px; height:36px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-weight:bold; font-size:1.2rem; }
+            .da-step h3 { margin:0 0 0.5rem 0; color:#fff; font-size:1.2rem; }
+            .da-step p { margin:0; color:rgba(255,255,255,0.6); font-size:0.95rem; line-height:1.5; }
+            
+            .da-action-btn { opacity:0; transform:translateY(20px); transition: all 1s ease 0.6s; background: var(--accent); color: #fff; border: none; padding: 1rem 2rem; font-size: 1.2rem; font-weight: bold; border-radius: 8px; cursor: pointer; display: flex; align-items: center; gap: 0.8rem; box-shadow: 0 4px 15px rgba(249,115,22,0.3); }
+            .da-action-btn.visible { opacity:1; transform:translateY(0); }
+            .da-action-btn:hover { background: #ea580c; transform: translateY(-2px) !important; box-shadow: 0 6px 20px rgba(249,115,22,0.4); }
+            
+            /* Modal */
+            .da-modal-overlay { position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(0,0,0,0.85); backdrop-filter:blur(10px); z-index:9999; display:flex; align-items:center; justify-content:center; opacity:0; pointer-events:none; transition:opacity 0.3s; }
+            .da-modal-overlay.open { opacity:1; pointer-events:auto; }
+            .da-modal-content { background:#111; border:1px solid rgba(255,255,255,0.1); border-radius:16px; width:90%; max-width:800px; padding:2rem; position:relative; transform:scale(0.95); transition:transform 0.3s; box-shadow: 0 20px 50px rgba(0,0,0,0.5); }
+            .da-modal-overlay.open .da-modal-content { transform:scale(1); }
+            .da-close-btn { position:absolute; top:1.5rem; right:1.5rem; background:none; border:none; color:rgba(255,255,255,0.5); font-size:2rem; cursor:pointer; line-height:1; }
+            .da-close-btn:hover { color:#fff; }
+            .da-modal-title { font-size:1.5rem; color:#fff; margin:0 0 1.5rem 0; display:flex; align-items:center; gap:0.8rem; }
+            .da-prompt-box { background:rgba(0,0,0,0.5); border:1px solid rgba(255,255,255,0.08); border-radius:8px; padding:1.5rem; font-family:var(--font-mono, monospace); font-size:1rem; color:rgba(255,255,255,0.8); line-height:1.6; white-space:pre-wrap; margin-bottom:1.5rem; text-align: left; }
+            
+            .da-modal-actions { display:flex; gap:1rem; justify-content:flex-end; }
+            .da-copy-btn { background:rgba(255,255,255,0.1); color:#fff; border:none; padding:0.8rem 1.5rem; font-size:1rem; font-weight:bold; border-radius:6px; cursor:pointer; display:flex; align-items:center; gap:0.5rem; transition:background 0.2s; }
+            .da-copy-btn:hover { background:rgba(255,255,255,0.2); }
+            .da-copy-btn.success { background: #10b981; color: #fff; }
+        </style>
+        
+        <div class="slide-dual-analysis component" id="${uid}">
+            <div class="da-typewriter-container">
+                <div class="da-typewriter" id="${uid}-tw">Kan AI skriva som du?</div>
+            </div>
+            
+            <div class="da-explanation" id="${uid}-exp">
+                <strong>Spara tid från dag ett.</strong><br>
+                Många chefer fastnar i att ständigt behöva redigera AI:ns byråkratiska utkast. 
+                Genom att skapa en <em>personlig stilguide</em> kan du styra AI:n till att låta som dig direkt. 
+                Vi använder en teknik där AI:n inte bara lyssnar på vad du säger, utan även analyserar <em>hur</em> du säger det.
+            </div>
+            
+            <div class="da-method-box" id="${uid}-box">
+                <div class="da-step">
+                    <div class="da-step-num">1</div>
+                    <h3>Intervju</h3>
+                    <p>AI:n ställer frågor om hur du föredrar att kommunicera (din uttalade stil).</p>
+                </div>
+                <div class="da-step">
+                    <div class="da-step-num">2</div>
+                    <h3>Analys</h3>
+                    <p>AI:n analyserar din faktiska meningslängd, rytm och dina skiljetecken (din observerade stil).</p>
+                </div>
+                <div class="da-step">
+                    <div class="da-step-num">3</div>
+                    <h3>Stilguide</h3>
+                    <p>Du får ett färdigt skrivregelsdokument (System Prompt) att klistra in i din profil.</p>
+                </div>
+            </div>
+            
+            <button class="da-action-btn" id="${uid}-open"><span>💬</span> Visa Intervju-prompten</button>
+        </div>
+        
+        <div class="da-modal-overlay" id="${uid}-modal">
+            <div class="da-modal-content">
+                <button class="da-close-btn" id="${uid}-close">×</button>
+                <h2 class="da-modal-title"><span>📝</span> Dual Analysis Prompt</h2>
+                <div class="da-prompt-box" id="${uid}-text">${promptText}</div>
+                <div class="da-modal-actions">
+                    <button class="da-copy-btn" id="${uid}-copy">📋 Kopiera till urklipp</button>
+                </div>
+            </div>
+        </div>
+        `;
+
+        setTimeout(() => {
+            const tw = document.getElementById(uid + '-tw');
+            const exp = document.getElementById(uid + '-exp');
+            const box = document.getElementById(uid + '-box');
+            const btnOpen = document.getElementById(uid + '-open');
+            const modal = document.getElementById(uid + '-modal');
+            const btnClose = document.getElementById(uid + '-close');
+            const btnCopy = document.getElementById(uid + '-copy');
+            const promptEl = document.getElementById(uid + '-text');
+
+            // Trigger animations
+            setTimeout(() => { if (tw) tw.classList.add('start'); }, 500);
+            setTimeout(() => { if (exp) exp.classList.add('visible'); }, 3000);
+            setTimeout(() => { if (box) box.classList.add('visible'); }, 3000);
+            setTimeout(() => { if (btnOpen) btnOpen.classList.add('visible'); }, 3000);
+
+            // Modal logic
+            if (btnOpen) btnOpen.addEventListener('click', (e) => { e.stopPropagation(); modal.classList.add('open'); });
+            if (btnClose) btnClose.addEventListener('click', (e) => { e.stopPropagation(); modal.classList.remove('open'); });
+            if (modal) modal.addEventListener('click', (e) => { if (e.target === modal) { e.stopPropagation(); modal.classList.remove('open'); } });
+
+            // Copy logic
+            if (btnCopy && promptEl) {
+                btnCopy.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    const txt = promptEl.textContent || promptEl.innerText;
+                    navigator.clipboard.writeText(txt).then(() => {
+                        btnCopy.innerHTML = '✅ Kopierat!';
+                        btnCopy.classList.add('success');
+                        setTimeout(() => { btnCopy.innerHTML = '📋 Kopiera till urklipp'; btnCopy.classList.remove('success'); }, 2500);
+                    }).catch(() => {
+                        const ta = document.createElement('textarea');
+                        ta.value = txt;
+                        ta.style.position = 'fixed'; ta.style.opacity = '0';
+                        document.body.appendChild(ta);
+                        ta.select(); document.execCommand('copy');
+                        document.body.removeChild(ta);
+                        btnCopy.innerHTML = '✅ Kopierat!';
+                        btnCopy.classList.add('success');
+                        setTimeout(() => { btnCopy.innerHTML = '📋 Kopiera till urklipp'; btnCopy.classList.remove('success'); }, 2500);
+                    });
+                });
+            }
+        }, 150);
+
         return html;
     }
 
