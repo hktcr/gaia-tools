@@ -4921,17 +4921,17 @@ Steg 3: Baserat på både vad jag sade OCH hur jag skrev, ge mig en färdig, pun
             @keyframes typing { from { width: 0 } to { width: 100% } }
             @keyframes blink-caret { from, to { border-color: transparent } 50% { border-color: var(--accent); } }
             
-            .da-explanation { opacity:0; transform:translateY(20px); font-size:clamp(1.1rem, 1.8vw, 1.4rem); color:rgba(255,255,255,0.8); max-width:800px; line-height:1.6; margin-bottom: 3rem; transition: all 1s ease; }
+            .da-explanation { opacity:0; transform:translateY(20px); font-size:clamp(1.1rem, 1.8vw, 1.4rem); color:rgba(255,255,255,0.8); max-width:800px; line-height:1.6; margin-bottom: 3rem; transition: all 0.5s ease; }
             .da-explanation.visible { opacity:1; transform:translateY(0); }
             
-            .da-method-box { opacity:0; transform:translateY(20px); display:flex; gap: 2rem; margin-bottom: 3rem; transition: all 1s ease 0.3s; }
-            .da-method-box.visible { opacity:1; transform:translateY(0); }
-            .da-step { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; padding: 1.5rem; width: 280px; text-align: left; position: relative; }
+            .da-method-box { display:flex; gap: 2rem; margin-bottom: 3rem; }
+            .da-step { opacity:0; transform:translateY(20px); transition: all 0.5s ease; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; padding: 1.5rem; width: 280px; text-align: left; position: relative; }
+            .da-step.visible { opacity:1; transform:translateY(0); }
             .da-step-num { position:absolute; top:-15px; left:-15px; background:var(--accent); color:#fff; width:36px; height:36px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-weight:bold; font-size:1.2rem; }
             .da-step h3 { margin:0 0 0.5rem 0; color:#fff; font-size:1.2rem; }
             .da-step p { margin:0; color:rgba(255,255,255,0.6); font-size:0.95rem; line-height:1.5; }
             
-            .da-action-btn { opacity:0; transform:translateY(20px); transition: all 1s ease 0.6s; background: var(--accent); color: #fff; border: none; padding: 1rem 2rem; font-size: 1.2rem; font-weight: bold; border-radius: 8px; cursor: pointer; display: flex; align-items: center; gap: 0.8rem; box-shadow: 0 4px 15px rgba(249,115,22,0.3); }
+            .da-action-btn { opacity:0; transform:translateY(20px); transition: all 0.5s ease; background: var(--accent); color: #fff; border: none; padding: 1rem 2rem; font-size: 1.2rem; font-weight: bold; border-radius: 8px; cursor: pointer; display: flex; align-items: center; gap: 0.8rem; box-shadow: 0 4px 15px rgba(249,115,22,0.3); }
             .da-action-btn.visible { opacity:1; transform:translateY(0); }
             .da-action-btn:hover { background: #ea580c; transform: translateY(-2px) !important; box-shadow: 0 6px 20px rgba(249,115,22,0.4); }
             
@@ -4951,7 +4951,7 @@ Steg 3: Baserat på både vad jag sade OCH hur jag skrev, ge mig en färdig, pun
             .da-copy-btn.success { background: #10b981; color: #fff; }
         </style>
         
-        <div class="slide-dual-analysis component" id="${uid}">
+        <div class="slide-dual-analysis component no-click-advance" id="${uid}">
             <div class="da-typewriter-container">
                 <div class="da-typewriter" id="${uid}-tw">Kan AI skriva som du?</div>
             </div>
@@ -4964,17 +4964,17 @@ Steg 3: Baserat på både vad jag sade OCH hur jag skrev, ge mig en färdig, pun
             </div>
             
             <div class="da-method-box" id="${uid}-box">
-                <div class="da-step">
+                <div class="da-step" id="${uid}-s1">
                     <div class="da-step-num">1</div>
                     <h3>Intervju</h3>
                     <p>AI:n ställer frågor om hur du föredrar att kommunicera (din uttalade stil).</p>
                 </div>
-                <div class="da-step">
+                <div class="da-step" id="${uid}-s2">
                     <div class="da-step-num">2</div>
                     <h3>Analys</h3>
                     <p>AI:n analyserar din faktiska meningslängd, rytm och dina skiljetecken (din observerade stil).</p>
                 </div>
-                <div class="da-step">
+                <div class="da-step" id="${uid}-s3">
                     <div class="da-step-num">3</div>
                     <h3>Stilguide</h3>
                     <p>Du får ett färdigt skrivregelsdokument (System Prompt) att klistra in i din profil.</p>
@@ -4999,18 +4999,44 @@ Steg 3: Baserat på både vad jag sade OCH hur jag skrev, ge mig en färdig, pun
         setTimeout(() => {
             const tw = document.getElementById(uid + '-tw');
             const exp = document.getElementById(uid + '-exp');
-            const box = document.getElementById(uid + '-box');
+            const s1 = document.getElementById(uid + '-s1');
+            const s2 = document.getElementById(uid + '-s2');
+            const s3 = document.getElementById(uid + '-s3');
             const btnOpen = document.getElementById(uid + '-open');
             const modal = document.getElementById(uid + '-modal');
             const btnClose = document.getElementById(uid + '-close');
             const btnCopy = document.getElementById(uid + '-copy');
             const promptEl = document.getElementById(uid + '-text');
+            const slideContainer = document.getElementById(uid);
 
-            // Trigger animations
+            // Auto-start typewriter
             setTimeout(() => { if (tw) tw.classList.add('start'); }, 500);
-            setTimeout(() => { if (exp) exp.classList.add('visible'); }, 3000);
-            setTimeout(() => { if (box) box.classList.add('visible'); }, 3000);
-            setTimeout(() => { if (btnOpen) btnOpen.classList.add('visible'); }, 3000);
+
+            // Click-based progression
+            const steps = [
+                () => { if (exp) exp.classList.add('visible'); },
+                () => { if (s1) s1.classList.add('visible'); },
+                () => { if (s2) s2.classList.add('visible'); },
+                () => { if (s3) s3.classList.add('visible'); },
+                () => { 
+                    if (btnOpen) btnOpen.classList.add('visible'); 
+                    if (slideContainer) slideContainer.classList.remove('no-click-advance'); 
+                }
+            ];
+
+            let currentStep = 0;
+            if (slideContainer) {
+                slideContainer.addEventListener('click', (e) => {
+                    // Do not advance if clicking inside the modal or on the button
+                    if (e.target.closest('.da-action-btn') || e.target.closest('.da-modal-content')) return;
+                    
+                    if (currentStep < steps.length) {
+                        e.stopPropagation();
+                        steps[currentStep]();
+                        currentStep++;
+                    }
+                });
+            }
 
             // Modal logic
             if (btnOpen) btnOpen.addEventListener('click', (e) => { e.stopPropagation(); modal.classList.add('open'); });
