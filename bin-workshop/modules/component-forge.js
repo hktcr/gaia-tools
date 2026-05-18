@@ -4464,315 +4464,41 @@
         }
 
         let html = `
-        <style>
-            .slide-chaos-to-clarity { width:100%; min-height:75vh; display:flex; }
-            .cc2-stage { position:relative; width:100%; height:100%; min-height:75vh; overflow:hidden; background:radial-gradient(ellipse at 30% 40%, rgba(30,27,75,0.6) 0%, #0a0a0f 100%); border-radius:12px; border:1px solid rgba(255,255,255,0.06); }
-            .cc2-title { position:absolute; top:1.2rem; left:50%; transform:translateX(-50%); color:rgba(255,255,255,0.25); font-size:clamp(0.7rem,1.2vw,0.9rem); text-transform:uppercase; letter-spacing:3px; z-index:1; pointer-events:none; }
-            .cc2-card { position:absolute; background:rgba(255,255,255,0.04); backdrop-filter:blur(12px); border:1px solid rgba(255,255,255,0.1); padding:clamp(0.8rem,1.5vw,1.4rem); border-radius:10px; color:rgba(255,255,255,0.75); font-family:'Courier New',monospace; font-size:clamp(0.65rem,1.1vw,0.85rem); max-width:clamp(180px,22vw,300px); box-shadow:0 8px 30px rgba(0,0,0,0.5); cursor:pointer; transition:all 0.3s ease; z-index:2; }
-            .cc2-card:hover { border-color:var(--accent); transform:rotate(0deg) scale(1.05) !important; box-shadow:0 12px 40px rgba(249,115,22,0.2); z-index:5; }
-            .cc2-card-role { display:block; font-size:0.6rem; color:var(--accent); text-transform:uppercase; letter-spacing:1.5px; margin-bottom:0.3rem; font-family:'Inter',sans-serif; }
-            .cc2-hint { position:absolute; bottom:1.5rem; left:50%; transform:translateX(-50%); color:rgba(255,255,255,0.2); font-size:0.75rem; z-index:1; pointer-events:none; animation:cc2pulse 2s ease-in-out infinite; }
-            .cc2-pager { position:absolute; bottom:1.5rem; display:flex; gap:0.5rem; z-index:6; }
-            .cc2-pager.left { left:1.5rem; }
-            .cc2-pager.right { right:1.5rem; }
-            .cc2-pager button { background:rgba(255,255,255,0.08); border:1px solid rgba(255,255,255,0.15); color:rgba(255,255,255,0.5); width:34px; height:34px; border-radius:50%; font-size:1rem; cursor:pointer; transition:all 0.2s; display:flex; align-items:center; justify-content:center; }
-            .cc2-pager button:hover { background:rgba(255,255,255,0.18); color:var(--accent); }
-            .cc2-page-indicator { position:absolute; bottom:1.5rem; left:50%; transform:translateX(-50%); color:rgba(255,255,255,0.2); font-size:0.65rem; font-family:'JetBrains Mono',monospace; z-index:6; }
-            @keyframes cc2pulse { 0%,100%{opacity:0.2} 50%{opacity:0.5} }
-
-            /* === POPUP OVERLAY === */
-            .cc2-overlay { position:fixed; inset:0; background:rgba(0,0,0,0.88); backdrop-filter:blur(10px); z-index:300; display:flex; align-items:center; justify-content:center; opacity:0; pointer-events:none; transition:opacity 0.3s ease; }
-            .cc2-overlay.open { opacity:1; pointer-events:auto; }
-            .cc2-popup { width:min(94vw,880px); max-height:90vh; overflow-y:auto; background:rgba(10,10,16,0.99); border:1px solid var(--accent); border-radius:18px; box-shadow:0 40px 100px rgba(0,0,0,0.95),0 0 0 1px rgba(249,115,22,0.12) inset; padding:0; position:relative; transform:scale(0.92); transition:transform 0.4s cubic-bezier(0.34,1.56,0.64,1); }
-            .cc2-overlay.open .cc2-popup { transform:scale(1); }
-            .cc2-popup-close { position:absolute; top:1rem; right:1rem; background:rgba(255,255,255,0.08); border:1px solid rgba(255,255,255,0.15); color:#fff; width:40px; height:40px; border-radius:50%; font-size:1.2rem; cursor:pointer; z-index:10; display:flex; align-items:center; justify-content:center; transition:background 0.2s; }
-            .cc2-popup-close:hover { background:rgba(255,255,255,0.18); }
-
-            /* Popup: Input section */
-            .cc2-input { padding:clamp(1.5rem,3vw,2.5rem); border-bottom:1px solid rgba(255,255,255,0.06); position:relative; }
-            .cc2-input-role { display:inline-flex; align-items:center; gap:0.5rem; font-size:clamp(0.7rem,1vw,0.85rem); color:var(--accent); text-transform:uppercase; letter-spacing:2px; margin-bottom:0.6rem; font-weight:600; }
-            .cc2-input-text { font-family:'Courier New',monospace; color:rgba(255,255,255,0.65); font-size:clamp(0.9rem,1.5vw,1.15rem); line-height:1.7; }
-
-            /* Popup: Scanner */
-            .cc2-scan-line { position:absolute; left:0; width:100%; height:3px; background:var(--accent); box-shadow:0 0 20px 6px rgba(249,115,22,0.4); opacity:0; z-index:5; transition:none; }
-
-            /* Popup: Output section */
-            .cc2-output { padding:clamp(1.2rem,2.5vw,2rem) clamp(1.5rem,3vw,2.5rem); }
-            .cc2-output-header { display:flex; align-items:center; gap:0.5rem; color:var(--accent); font-size:clamp(0.75rem,1vw,0.9rem); text-transform:uppercase; letter-spacing:2px; margin-bottom:1.2rem; font-weight:600; }
-            .cc2-row { opacity:0; transform:translateY(8px); transition:all 0.4s ease; margin-bottom:1rem; padding:0.8rem 0; border-bottom:1px solid rgba(255,255,255,0.04); }
-            .cc2-row.visible { opacity:1; transform:translateY(0); }
-            .cc2-row-label { font-size:clamp(0.65rem,0.9vw,0.78rem); color:var(--accent); text-transform:uppercase; letter-spacing:1px; margin-bottom:0.3rem; font-weight:600; }
-            .cc2-row-value { color:rgba(255,255,255,0.9); font-size:clamp(0.9rem,1.3vw,1.1rem); line-height:1.6; }
-            .cc2-time-badge { display:inline-flex; align-items:center; gap:0.6rem; background:rgba(249,115,22,0.08); color:var(--accent); padding:0.8rem 1.4rem; border-radius:50px; font-size:clamp(0.85rem,1.2vw,1rem); font-weight:600; border:1px solid rgba(249,115,22,0.25); opacity:0; transform:scale(0.9); transition:all 0.5s cubic-bezier(0.34,1.56,0.64,1); margin-top:0.8rem; }
-            .cc2-time-badge.visible { opacity:1; transform:scale(1); }
-            .cc2-source { margin-top:1rem; padding-top:0.6rem; border-top:1px solid rgba(255,255,255,0.06); }
-            .cc2-source a { color:rgba(255,255,255,0.35); font-size:clamp(0.7rem,0.9vw,0.8rem); text-decoration:none; transition:color 0.2s; }
-            .cc2-source a:hover { color:var(--accent); }
-
-            /* Expert tips button & section */
-            .cc2-expert-btn { display:flex; align-items:center; gap:0.5rem; margin-top:1.2rem; background:rgba(99,102,241,0.08); border:1px solid rgba(99,102,241,0.3); color:rgba(99,102,241,0.9); padding:0.7rem 1.2rem; border-radius:8px; font-size:clamp(0.78rem,1vw,0.9rem); cursor:pointer; transition:all 0.3s; font-weight:500; }
-            .cc2-expert-btn:hover { background:rgba(99,102,241,0.15); border-color:rgba(99,102,241,0.5); }
-            .cc2-expert-section { margin-top:1rem; padding:1rem clamp(1rem,2vw,1.5rem); background:rgba(99,102,241,0.04); border:1px solid rgba(99,102,241,0.12); border-radius:10px; opacity:0; transform:translateY(10px); transition:all 0.5s ease; display:none; }
-            .cc2-expert-section.visible { opacity:1; transform:translateY(0); display:block; }
-            .cc2-expert-label { font-size:clamp(0.6rem,0.8vw,0.72rem); color:rgba(99,102,241,0.8); text-transform:uppercase; letter-spacing:1.5px; margin-bottom:0.5rem; font-weight:600; }
-            .cc2-expert-text { color:rgba(255,255,255,0.85); font-size:clamp(0.85rem,1.2vw,1rem); line-height:1.6; }
-        </style>
-        <div class="slide-chaos-to-clarity component no-click-advance" id="${uid}">
-            <div class="cc2-stage" id="${uid}-stage">
-                <div class="cc2-title">Från Admin till Klassrum</div>
-                <div id="${uid}-cards">${buildCards(0)}</div>
-                <div class="cc2-pager left"><button id="${uid}-prev">‹</button></div>
-                <div class="cc2-pager right"><button id="${uid}-next">›</button></div>
-                <div class="cc2-page-indicator" id="${uid}-pageindicator">1 / ${totalPages}</div>
-            </div>
-            <div class="cc2-overlay" id="${uid}-overlay">
-                <div class="cc2-popup" id="${uid}-popup">
-                    <button class="cc2-popup-close" id="${uid}-close">✕</button>
-                    <div class="cc2-input" id="${uid}-input"></div>
-                    <div class="cc2-scan-line" id="${uid}-scanline"></div>
-                    <div class="cc2-output" id="${uid}-output"></div>
-                </div>
-            </div>
-        </div>`;
-
-        setTimeout(() => {
-            const root = document.getElementById(uid);
-            if (!root) return;
-            const overlay = document.getElementById(uid + '-overlay');
-            const popup = document.getElementById(uid + '-popup');
-            const inputEl = document.getElementById(uid + '-input');
-            const outputEl = document.getElementById(uid + '-output');
-            const scanline = document.getElementById(uid + '-scanline');
-            const closeBtn = document.getElementById(uid + '-close');
-
-            function openPopup(idx) {
-                const s = allScenarios[idx];
-                inputEl.innerHTML = '<div class="cc2-input-role">' + s.icon + ' ' + s.role + '</div><div class="cc2-input-text"><strong>' + s.label + '</strong><br/>' + s.text + '</div>';
-                outputEl.innerHTML = '<div class="cc2-output-header"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg> AI-analys</div>'
-                    + '<div class="cc2-row" id="'+uid+'-r0"><div class="cc2-row-label">Sammanfattning</div><div class="cc2-row-value">' + s.summary + '</div></div>'
-                    + '<div class="cc2-row" id="'+uid+'-r1"><div class="cc2-row-label">Juridiskt ramverk</div><div class="cc2-row-value">' + s.law + '</div></div>'
-                    + '<div class="cc2-row" id="'+uid+'-r2"><div class="cc2-row-label">AI-genererat utkast</div><div class="cc2-row-value">' + s.action + '</div></div>'
-                    + '<div class="cc2-time-badge" id="'+uid+'-badge">⏳ Tidsvinst: ' + s.time + ' → Omstyrd till ' + s.redirect + '</div>'
-                    + '<div class="cc2-source"><a href="' + s.srcUrl + '" target="_blank" rel="noopener">' + s.srcText + ' ↗</a></div>'
-                    + '<button class="cc2-expert-btn" id="'+uid+'-expertbtn">💡 Tips från virtuella experter</button>'
-                    + '<div class="cc2-expert-section" id="'+uid+'-expertsec"><div class="cc2-expert-label">🎓 VEP Rekommendation</div><div class="cc2-expert-text">' + s.tip + '</div></div>';
-                overlay.classList.add('open');
-                // Scan animation
-                scanline.style.transition = 'none';
-                scanline.style.top = inputEl.offsetTop + 'px';
-                scanline.style.opacity = '1';
-                requestAnimationFrame(() => {
-                    scanline.style.transition = 'top 1.2s ease-in-out';
-                    scanline.style.top = (outputEl.offsetTop + outputEl.scrollHeight) + 'px';
-                });
-                [0,1,2].forEach((ri,i) => {
-                    setTimeout(() => { const r = document.getElementById(uid+'-r'+ri); if(r) r.classList.add('visible'); }, 600 + i * 400);
-                });
-                setTimeout(() => { const b = document.getElementById(uid+'-badge'); if(b) b.classList.add('visible'); }, 1800);
-                setTimeout(() => { scanline.style.opacity = '0'; }, 1400);
-                // Expert tips re-scan
-                setTimeout(() => {
-                    const ebtn = document.getElementById(uid+'-expertbtn');
-                    const esec = document.getElementById(uid+'-expertsec');
-                    if (ebtn && esec) {
-                        ebtn.addEventListener('click', (ev) => {
-                            ev.stopPropagation();
-                            ebtn.style.display = 'none';
-                            scanline.style.transition = 'none';
-                            scanline.style.top = esec.offsetTop + 'px';
-                            scanline.style.opacity = '1';
-                            requestAnimationFrame(() => {
-                                scanline.style.transition = 'top 0.8s ease-in-out';
-                                scanline.style.top = (esec.offsetTop + 80) + 'px';
-                            });
-                            setTimeout(() => { esec.classList.add('visible'); scanline.style.opacity = '0'; }, 500);
-                        });
-                    }
-                }, 200);
-            }
-
-            function closePopup() {
-                overlay.classList.remove('open');
-            }
-
-            function bindCards() {
-                root.querySelectorAll('.cc2-card').forEach(card => {
-                    card.addEventListener('click', (e) => {
-                        e.stopPropagation();
-                        openPopup(parseInt(card.dataset.idx));
-                    });
-                });
-            }
-            bindCards();
-
-            closeBtn.addEventListener('click', (e) => { e.stopPropagation(); closePopup(); });
-            overlay.addEventListener('click', (e) => { if (e.target === overlay) closePopup(); });
-            document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && overlay.classList.contains('open')) { e.stopPropagation(); closePopup(); } });
-
-            // Pagination
-            const cardsContainer = document.getElementById(uid + '-cards');
-            const prevBtn = document.getElementById(uid + '-prev');
-            const nextBtn = document.getElementById(uid + '-next');
-            const pageInd = document.getElementById(uid + '-pageindicator');
-
-            function renderPage(p) {
-                currentPage = p;
-                cardsContainer.innerHTML = buildCards(p);
-                pageInd.textContent = (p + 1) + ' / ' + totalPages;
-                bindCards();
-            }
-            prevBtn.addEventListener('click', (e) => { e.stopPropagation(); if (currentPage > 0) renderPage(currentPage - 1); });
-            nextBtn.addEventListener('click', (e) => { e.stopPropagation(); if (currentPage < totalPages - 1) renderPage(currentPage + 1); });
-
-            // Allow slide advance when clicking the stage (not a card)
-            root.querySelector('.cc2-stage').addEventListener('click', (e) => {
-                if (!e.target.closest('.cc2-card')) { root.classList.remove('no-click-advance'); }
-            });
-        }, 150);
-
-        return html;
-    }
-
-
-    const allTypes = {
-        'semantic-nebula': renderSemanticNebula,
-        'word-cascade': renderWordCascade,
-        'box-reveal': renderBoxReveal,
-        'bullet-build': renderBulletBuild,
-        'line-chart': renderLineChart,
-        'comparison': renderComparison,
-        'timeline-vertical': renderTimelineVertical,
-        'progress-ring': renderProgressRing,
-        'number-wall': renderNumberWall,
-        'bar-race': renderBarRace,
-        // Sprint 4
-        'giant-text': renderGiantText,
-        'callout': renderCallout,
-        'section-divider': renderSectionDivider,
-        'hero-image': renderHeroImage,
-        'outro': renderOutro,
-        'rewrite-progression': renderRewriteProgression,
-        'quote': renderQuote,
-        // Sprint 5
-        'ai-conversation': renderAiConversation,
-        'before-after': renderBeforeAfter,
-        'prompt-reveal': renderPromptReveal,
-        'pitfall': renderPitfall,
-        // Sprint 6
-        'stat-compare': renderStatCompare,
-        'voice-collage': renderVoiceCollage,
-        'portrait-quote': renderPortraitQuote,
-        'reflection': renderReflection,
-        // Sprint 7+8+Bonus
-        'collage': renderCollage,
-        'process-chain': renderProcessChain,
-        'acronym-list': renderAcronymList,
-        'map-pins': renderMapPins,
-        'mindmap': renderMindmap,
-        'map-journey': renderMapJourney,
-        'mindmap-tree': renderMindmapTree,
-        'map-progression': renderMapProgression,
-        'warning-pulse': renderWarningPulse,
-        'token-spinner': renderTokenSpinner,
-        // Signature
-        'letter-morph': renderLetterMorph,
-        // Audience
-        'prompt-card': renderPromptCard,
-        // Insights
-        'bento-grid': renderBentoGrid,
-        'glitch-warning': renderGlitchWarning,
-        'milestone-reveal': renderMilestoneReveal,
-        'chaos-to-clarity': renderChaosToClarity,
-        'gdpr-mindmap': renderGdprMindmap,
-        'leadership-mindmap': renderLeadershipMindmap,
-        'dual-analysis-prompt': renderDualAnalysisPrompt
-    };
-
-    // --- GDPR × GENERATIV AI MINDMAP ---
-    function renderGdprMindmap(slide) {
-        const tree = {
-            label: 'GDPR × Generativ AI', icon: '🔐', children: [
-                { label: 'Rättslig grund', icon: '⚖️', children: [
-                    { label: 'Berättigat intresse (Art. 6.1f)', detail: 'Kräver dokumenterat balanseringstest. EDPB Opinion 28/2024 ställer höga krav.' },
-                    { label: 'Samtycke (Art. 6.1a)', detail: 'Sällan tillämpbart — kräver frivilligt, specifikt och informerat samtycke. Svårt vid storskalig AI-träning.' },
-                    { label: 'Avtal (Art. 6.1b)', detail: 'Möjligt om behandlingen är strikt nödvändig för att fullgöra ett avtal med den registrerade.' },
-                    { label: 'Allmänt intresse (Art. 6.1e)', detail: 'Relevant för offentlig förvaltning. Kräver stöd i lag eller författning.' }
-                ]},
-                { label: 'Personuppgifter i AI', icon: '👤', children: [
-                    { label: 'Prompter som personuppgifter', detail: 'Allt du skriver i prompten kan vara en personuppgift. EDPB: "Elev X fick F i matte" = personuppgift om identifierbar.' },
-                    { label: 'Träningsdata', detail: 'LLM:er tränade på webben innehåller personuppgifter. EDPB: modellen är inte "anonym" om den kan rekonstruera data.' },
-                    { label: 'Output som personuppgift', detail: 'AI-genererade texter om individer (omdömen, sammanfattningar) är personuppgifter enligt GDPR.' }
-                ]},
-                { label: 'Skola & Kommun', icon: '🏫', children: [
-                    { label: 'IMY + Digg riktlinjer', detail: 'Gemensam vägledning 2024: DPIA krävs. Mänsklig kontroll. Inga personuppgifter i publika AI-tjänster.' },
-                    { label: 'Huvudmannens ansvar', detail: 'Kommunen/friskolan ansvarar för vilka verktyg som används. PUB-avtal krävs med leverantören.' },
-                    { label: 'Praktisk tumregel', detail: 'Aldrig namn, personnummer eller identifierbar info i ChatGPT/Claude. Använd "Elev X", anonymisera.' }
-                ]},
-                { label: 'EU AI Act + GDPR', icon: '🇪🇺', children: [
-                    { label: 'Kompletterande regelverk', detail: 'AI Act ersätter inte GDPR — båda gäller parallellt. GDPR = dataskydd, AI Act = produktsäkerhet.' },
-                    { label: 'DPIA ↔ FRIA', detail: 'Konsekvensbedömning (DPIA) under GDPR överlappar med Fundamental Rights Impact Assessment under AI Act.' },
-                    { label: 'Bias-undantag (Art. 10)', detail: 'AI Act tillåter känsliga data för biasdetektion under strikta villkor (pseudonymisering, ej överföring).' }
-                ]},
-                { label: 'Praktiska åtgärder', icon: '🛡️', children: [
-                    { label: 'Enterprise vs. gratis', detail: 'Gratisversioner saknar DPA och använder input för träning. Enterprise/API: DPA, zero-retention möjligt.' },
-                    { label: 'Anonymisering', detail: 'Pseudonymisera INNAN du promptar. Ta bort namn, personnr, skola. AI:n behöver inte veta vem.' },
-                    { label: 'Dokumentera allt', detail: 'Register (Art. 30), DPIA (Art. 35), informationsplikt (Art. 13/14). Visa att ni tänkt innan ni kör.' }
-                ]}
-            ]
-        };
-        const uid = 'gm-' + Math.random().toString(36).slice(2,8);
-        // Build HTML recursively
-        function renderNode(node, depth) {
-            const hasKids = node.children && node.children.length;
-            const cls = depth === 0 ? 'gm-root' : (hasKids ? 'gm-branch' : 'gm-leaf');
-            let h = '<div class="gm-node '+cls+'" data-depth="'+depth+'">';
-            h += '<div class="gm-label" tabindex="0">';
-            if (node.icon) h += '<span class="gm-icon">'+node.icon+'</span>';
-            h += '<span class="gm-text">'+node.label+'</span>';
-            if (hasKids) h += '<span class="gm-toggle">▸</span>';
-            h += '</div>';
-            if (node.detail) h += '<div class="gm-detail">'+node.detail+'</div>';
-            if (hasKids) {
-                h += '<div class="gm-children">';
-                node.children.forEach(c => { h += renderNode(c, depth+1); });
-                h += '</div>';
-            }
-            h += '</div>';
-            return h;
-        }
-        let html = `
-        <style>
-            .slide-gdpr-mindmap { width:100%; min-height:75vh; display:flex; align-items:center; justify-content:center; padding:clamp(1rem,2vw,2rem); }
-            .gm-container { width:100%; max-width:900px; font-family: var(--font-body, system-ui); }
-            .gm-node { margin:0; position: relative; }
-            .gm-root > .gm-label { font-size:clamp(1.3rem,2.5vw,1.8rem); color:var(--accent); font-weight:700; padding:0.8rem 1rem; border-bottom:2px solid rgba(249,115,22,0.4); margin-bottom:1rem; cursor:default; background: rgba(249,115,22,0.05); border-radius: 8px 8px 0 0; display: inline-flex; align-items: center; gap: 0.5rem;}
+                <style>
+            .slide-gdpr-mindmap { width:100%; min-height:75vh; display:flex; align-items:center; justify-content:center; padding:1rem; }
+            .gm-container { width:100%; max-width:1400px; font-family: var(--font-body, system-ui); display: flex; justify-content: center; }
             
-            /* Tree connectors */
-            .gm-children { position: relative; }
-            .gm-branch, .gm-leaf { margin-left:clamp(1.5rem,3vw,2.5rem); margin-top:0.6rem; position: relative; }
-            .gm-branch::before, .gm-leaf::before { content: ''; position: absolute; left: calc(-1 * clamp(1.5rem,3vw,2.5rem) + 0.5rem); top: 1.1rem; width: calc(clamp(1.5rem,3vw,2.5rem) - 0.5rem); height: 1.5px; background: rgba(255,255,255,0.15); transition: background 0.3s; }
-            .gm-branch::after, .gm-leaf::after { content: ''; position: absolute; left: calc(-1 * clamp(1.5rem,3vw,2.5rem) + 0.5rem); top: -0.6rem; bottom: 0; width: 1.5px; background: rgba(255,255,255,0.15); transition: background 0.3s; }
-            .gm-node:last-child::after { bottom: auto; height: 1.7rem; }
+            /* Horizontal Tree Structure */
+            .gm-node { display: flex; flex-direction: row; align-items: center; position: relative; margin: 0.2rem 0; }
+            .gm-label { z-index: 2; position: relative; max-width: 280px; }
             
-            .gm-branch > .gm-label { font-size:clamp(0.95rem,1.5vw,1.15rem); color:rgba(255,255,255,0.9); font-weight:600; padding:0.6rem 0.8rem; background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.1); border-radius:8px; cursor:pointer; transition:all 0.25s ease; display:flex; align-items:center; gap:0.5rem; position: relative; z-index: 2;}
-            .gm-branch > .gm-label:hover { background:rgba(249,115,22,0.1); border-color:rgba(249,115,22,0.4); transform: translateX(3px); }
-            .gm-branch.open > .gm-label { border-color:var(--accent); background:rgba(249,115,22,0.08); box-shadow: 0 4px 12px rgba(0,0,0,0.2); }
-            .gm-branch.open > .gm-label::before { background: var(--accent); } /* Highlight connector when open */
+            .gm-root { flex-direction: row; }
+            .gm-root > .gm-label { font-size:clamp(1.1rem, 4cqmin, 1.8rem); color:var(--accent); font-weight:700; padding:1rem 1.5rem; border:2px solid rgba(249,115,22,0.4); cursor:default; background: rgba(30,27,75,0.9); border-radius: 12px; box-shadow: 0 0 20px rgba(249,115,22,0.2); display: inline-flex; align-items: center; gap: 0.5rem; text-align: center; justify-content: center; margin-right: 2rem; }
             
-            .gm-leaf > .gm-label { font-size:clamp(0.85rem,1.3vw,1rem); color:rgba(255,255,255,0.75); padding:0.5rem 0.8rem; background:rgba(255,255,255,0.02); border:1px solid rgba(255,255,255,0.06); border-radius:6px; cursor:pointer; transition:all 0.2s ease; display:flex; align-items:center; gap:0.4rem; position: relative; z-index: 2;}
-            .gm-leaf > .gm-label:hover { background:rgba(99,102,241,0.1); border-color:rgba(99,102,241,0.4); color: #fff; transform: translateX(3px); }
-            .gm-leaf.open > .gm-label { border-color:rgba(99,102,241,0.5); background: rgba(99,102,241,0.05); color: #fff;}
+            .gm-children { display: flex; flex-direction: column; justify-content: center; position: relative; padding-left: 2rem; overflow: hidden; max-width: 0; opacity: 0; transition: max-width 0.6s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.4s ease; }
+            .gm-node.open > .gm-children { max-width: 1000px; opacity: 1; }
+            .gm-root > .gm-children { max-width: none; opacity: 1; padding-left: 0; }
             
-            .gm-icon { font-size:1.15em; }
+            /* Connectors */
+            .gm-children::before { content: ''; position: absolute; left: 0; top: 50%; transform: translateY(-50%); width: 2px; height: calc(100% - 3rem); background: rgba(255,255,255,0.15); border-radius: 2px; }
+            .gm-node:not(.gm-root)::before { content: ''; position: absolute; left: -2rem; top: 50%; width: 2rem; height: 2px; background: rgba(255,255,255,0.15); }
+            .gm-root > .gm-children::before { display: none; }
+            
+            .gm-branch > .gm-label { font-size:clamp(0.85rem, 2.5cqmin, 1.1rem); color:rgba(255,255,255,0.9); font-weight:600; padding:0.6rem 1rem; background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1); border-radius:8px; cursor:pointer; transition:all 0.25s ease; display:flex; align-items:center; gap:0.5rem; margin-right: 2rem; }
+            .gm-branch > .gm-label:hover { background:rgba(249,115,22,0.1); border-color:rgba(249,115,22,0.4); transform: scale(1.02); }
+            .gm-branch.open > .gm-label { border-color:var(--accent); background:rgba(249,115,22,0.15); box-shadow: 0 4px 12px rgba(0,0,0,0.3); }
+            
+            .gm-leaf { flex-direction: column; align-items: flex-start; }
+            .gm-leaf > .gm-label { font-size:clamp(0.75rem, 2cqmin, 0.95rem); color:rgba(255,255,255,0.8); padding:0.4rem 0.8rem; background:transparent; border:1px solid transparent; cursor:pointer; transition:all 0.2s ease; display:flex; align-items:center; gap:0.4rem; }
+            .gm-leaf > .gm-label:hover { color: #fff; text-shadow: 0 0 8px rgba(255,255,255,0.3); }
+            .gm-leaf.open > .gm-label { color: #fff; font-weight: bold; }
+            
+            .gm-icon { font-size:1.2em; }
             .gm-toggle { margin-left:auto; font-size:0.8em; color:rgba(255,255,255,0.4); transition:transform 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
             .gm-node.open > .gm-label .gm-toggle { transform:rotate(90deg); color:var(--accent); }
             
-            .gm-children { overflow:hidden; max-height:0; opacity:0; transition:max-height 0.5s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.4s ease; }
-            .gm-node.open > .gm-children { max-height:2500px; opacity:1; }
-            
-            .gm-detail { max-height:0; overflow:hidden; opacity:0; transition:all 0.4s cubic-bezier(0.4, 0, 0.2, 1); padding:0 1rem; margin-left:clamp(1.5rem,3vw,2.5rem); color:rgba(255,255,255,0.65); font-size:clamp(0.8rem,1.2vw,0.95rem); line-height:1.6; border-left:2px solid rgba(99,102,241,0.4); background: linear-gradient(90deg, rgba(99,102,241,0.05) 0%, transparent 100%); }
-            .gm-node.open > .gm-detail { max-height:300px; opacity:1; padding:0.6rem 1rem; margin-top:0.4rem; margin-bottom:0.6rem; border-radius: 0 6px 6px 0; }
-            .gm-root > .gm-children { max-height:none; opacity:1; }
+            .gm-detail { max-height:0; overflow:hidden; opacity:0; transition:all 0.4s cubic-bezier(0.4, 0, 0.2, 1); color:rgba(255,255,255,0.6); font-size:clamp(0.7rem, 1.8cqmin, 0.85rem); line-height:1.5; padding-left: 1.8rem; max-width: 350px; }
+            .gm-leaf.open > .gm-detail { max-height:150px; opacity:1; padding-top: 0.2rem; padding-bottom: 0.5rem; }
         </style>
         <div class="slide-gdpr-mindmap component no-click-advance" id="${uid}">
             <div class="gm-container">${renderNode(tree, 0)}</div>
@@ -4847,38 +4573,41 @@
             return h;
         }
         let html = `
-        <style>
-            .slide-gdpr-mindmap { width:100%; min-height:75vh; display:flex; align-items:center; justify-content:center; padding:clamp(1rem,2vw,2rem); }
-            .gm-container { width:100%; max-width:900px; font-family: var(--font-body, system-ui); }
-            .gm-node { margin:0; position: relative; }
-            .gm-root > .gm-label { font-size:clamp(1.3rem,2.5vw,1.8rem); color:var(--accent); font-weight:700; padding:0.8rem 1rem; border-bottom:2px solid rgba(249,115,22,0.4); margin-bottom:1rem; cursor:default; background: rgba(249,115,22,0.05); border-radius: 8px 8px 0 0; display: inline-flex; align-items: center; gap: 0.5rem;}
+                <style>
+            .slide-gdpr-mindmap { width:100%; min-height:75vh; display:flex; align-items:center; justify-content:center; padding:1rem; }
+            .gm-container { width:100%; max-width:1400px; font-family: var(--font-body, system-ui); display: flex; justify-content: center; }
             
-            /* Tree connectors */
-            .gm-children { position: relative; }
-            .gm-branch, .gm-leaf { margin-left:clamp(1.5rem,3vw,2.5rem); margin-top:0.6rem; position: relative; }
-            .gm-branch::before, .gm-leaf::before { content: ''; position: absolute; left: calc(-1 * clamp(1.5rem,3vw,2.5rem) + 0.5rem); top: 1.1rem; width: calc(clamp(1.5rem,3vw,2.5rem) - 0.5rem); height: 1.5px; background: rgba(255,255,255,0.15); transition: background 0.3s; }
-            .gm-branch::after, .gm-leaf::after { content: ''; position: absolute; left: calc(-1 * clamp(1.5rem,3vw,2.5rem) + 0.5rem); top: -0.6rem; bottom: 0; width: 1.5px; background: rgba(255,255,255,0.15); transition: background 0.3s; }
-            .gm-node:last-child::after { bottom: auto; height: 1.7rem; }
+            /* Horizontal Tree Structure */
+            .gm-node { display: flex; flex-direction: row; align-items: center; position: relative; margin: 0.2rem 0; }
+            .gm-label { z-index: 2; position: relative; max-width: 280px; }
             
-            .gm-branch > .gm-label { font-size:clamp(0.95rem,1.5vw,1.15rem); color:rgba(255,255,255,0.9); font-weight:600; padding:0.6rem 0.8rem; background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.1); border-radius:8px; cursor:pointer; transition:all 0.25s ease; display:flex; align-items:center; gap:0.5rem; position: relative; z-index: 2;}
-            .gm-branch > .gm-label:hover { background:rgba(249,115,22,0.1); border-color:rgba(249,115,22,0.4); transform: translateX(3px); }
-            .gm-branch.open > .gm-label { border-color:var(--accent); background:rgba(249,115,22,0.08); box-shadow: 0 4px 12px rgba(0,0,0,0.2); }
-            .gm-branch.open > .gm-label::before { background: var(--accent); }
+            .gm-root { flex-direction: row; }
+            .gm-root > .gm-label { font-size:clamp(1.1rem, 4cqmin, 1.8rem); color:var(--accent); font-weight:700; padding:1rem 1.5rem; border:2px solid rgba(249,115,22,0.4); cursor:default; background: rgba(30,27,75,0.9); border-radius: 12px; box-shadow: 0 0 20px rgba(249,115,22,0.2); display: inline-flex; align-items: center; gap: 0.5rem; text-align: center; justify-content: center; margin-right: 2rem; }
             
-            .gm-leaf > .gm-label { font-size:clamp(0.85rem,1.3vw,1rem); color:rgba(255,255,255,0.75); padding:0.5rem 0.8rem; background:rgba(255,255,255,0.02); border:1px solid rgba(255,255,255,0.06); border-radius:6px; cursor:pointer; transition:all 0.2s ease; display:flex; align-items:center; gap:0.4rem; position: relative; z-index: 2;}
-            .gm-leaf > .gm-label:hover { background:rgba(99,102,241,0.1); border-color:rgba(99,102,241,0.4); color: #fff; transform: translateX(3px); }
-            .gm-leaf.open > .gm-label { border-color:rgba(99,102,241,0.5); background: rgba(99,102,241,0.05); color: #fff;}
+            .gm-children { display: flex; flex-direction: column; justify-content: center; position: relative; padding-left: 2rem; overflow: hidden; max-width: 0; opacity: 0; transition: max-width 0.6s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.4s ease; }
+            .gm-node.open > .gm-children { max-width: 1000px; opacity: 1; }
+            .gm-root > .gm-children { max-width: none; opacity: 1; padding-left: 0; }
             
-            .gm-icon { font-size:1.15em; }
+            /* Connectors */
+            .gm-children::before { content: ''; position: absolute; left: 0; top: 50%; transform: translateY(-50%); width: 2px; height: calc(100% - 3rem); background: rgba(255,255,255,0.15); border-radius: 2px; }
+            .gm-node:not(.gm-root)::before { content: ''; position: absolute; left: -2rem; top: 50%; width: 2rem; height: 2px; background: rgba(255,255,255,0.15); }
+            .gm-root > .gm-children::before { display: none; }
+            
+            .gm-branch > .gm-label { font-size:clamp(0.85rem, 2.5cqmin, 1.1rem); color:rgba(255,255,255,0.9); font-weight:600; padding:0.6rem 1rem; background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1); border-radius:8px; cursor:pointer; transition:all 0.25s ease; display:flex; align-items:center; gap:0.5rem; margin-right: 2rem; }
+            .gm-branch > .gm-label:hover { background:rgba(249,115,22,0.1); border-color:rgba(249,115,22,0.4); transform: scale(1.02); }
+            .gm-branch.open > .gm-label { border-color:var(--accent); background:rgba(249,115,22,0.15); box-shadow: 0 4px 12px rgba(0,0,0,0.3); }
+            
+            .gm-leaf { flex-direction: column; align-items: flex-start; }
+            .gm-leaf > .gm-label { font-size:clamp(0.75rem, 2cqmin, 0.95rem); color:rgba(255,255,255,0.8); padding:0.4rem 0.8rem; background:transparent; border:1px solid transparent; cursor:pointer; transition:all 0.2s ease; display:flex; align-items:center; gap:0.4rem; }
+            .gm-leaf > .gm-label:hover { color: #fff; text-shadow: 0 0 8px rgba(255,255,255,0.3); }
+            .gm-leaf.open > .gm-label { color: #fff; font-weight: bold; }
+            
+            .gm-icon { font-size:1.2em; }
             .gm-toggle { margin-left:auto; font-size:0.8em; color:rgba(255,255,255,0.4); transition:transform 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
             .gm-node.open > .gm-label .gm-toggle { transform:rotate(90deg); color:var(--accent); }
             
-            .gm-children { overflow:hidden; max-height:0; opacity:0; transition:max-height 0.5s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.4s ease; }
-            .gm-node.open > .gm-children { max-height:2500px; opacity:1; }
-            
-            .gm-detail { max-height:0; overflow:hidden; opacity:0; transition:all 0.4s cubic-bezier(0.4, 0, 0.2, 1); padding:0 1rem; margin-left:clamp(1.5rem,3vw,2.5rem); color:rgba(255,255,255,0.65); font-size:clamp(0.8rem,1.2vw,0.95rem); line-height:1.6; border-left:2px solid rgba(99,102,241,0.4); background: linear-gradient(90deg, rgba(99,102,241,0.05) 0%, transparent 100%); }
-            .gm-node.open > .gm-detail { max-height:300px; opacity:1; padding:0.6rem 1rem; margin-top:0.4rem; margin-bottom:0.6rem; border-radius: 0 6px 6px 0; }
-            .gm-root > .gm-children { max-height:none; opacity:1; }
+            .gm-detail { max-height:0; overflow:hidden; opacity:0; transition:all 0.4s cubic-bezier(0.4, 0, 0.2, 1); color:rgba(255,255,255,0.6); font-size:clamp(0.7rem, 1.8cqmin, 0.85rem); line-height:1.5; padding-left: 1.8rem; max-width: 350px; }
+            .gm-leaf.open > .gm-detail { max-height:150px; opacity:1; padding-top: 0.2rem; padding-bottom: 0.5rem; }
         </style>
         <div class="slide-gdpr-mindmap component no-click-advance" id="${uid}">
             <div class="gm-container">${renderNode(tree, 0)}</div>

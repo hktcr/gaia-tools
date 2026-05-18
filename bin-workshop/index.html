@@ -80,13 +80,23 @@
         .slide-view {
             position: fixed; inset: 0; background: var(--bg);
             display: none; flex-direction: column; z-index: 100;
+            align-items: center; justify-content: center;
         }
         .slide-view.active { display: flex; }
+        
         .slide-content {
-            flex: 1; display: flex; flex-direction: column;
+            /* Perfectly letterboxed 16:9 container */
+            width: 100vw;
+            height: 56.25vw; /* 9/16 */
+            max-height: 100vh;
+            max-width: 177.78vh; /* 16/9 */
+            margin: auto;
+            position: relative;
+            display: flex; flex-direction: column;
             align-items: center; justify-content: center;
-            padding: 2rem; overflow-y: auto;
+            container-type: size; /* Enables container queries (cqmin) for true responsive text */
         }
+        
         .close-btn {
             position: fixed; top: 1rem; right: 1rem;
             background: rgba(255,255,255,0.1); border: none; color: white;
@@ -105,17 +115,17 @@
         }
 
         /* === TITLE SLIDE (manual) === */
-        .slide-title-custom { text-align: center; padding: 2rem; }
-        .slide-title-custom h1 { font-size: clamp(2rem, 5vw, 4rem); font-weight: 900; line-height: 1.1; }
+        .slide-title-custom { text-align: center; padding: 2rem; width: 100%; }
+        .slide-title-custom h1 { font-size: clamp(2rem, 8cqmin, 5rem); font-weight: 900; line-height: 1.1; }
         .slide-title-custom h1 span { color: var(--accent); }
-        .slide-title-custom .subtitle { font-size: clamp(1rem, 2vw, 1.4rem); color: var(--text-muted); margin-top: 1rem; }
+        .slide-title-custom .subtitle { font-size: clamp(1rem, 3cqmin, 2rem); color: var(--text-muted); margin-top: 1rem; }
         .slide-title-custom .note { font-size: 0.8rem; color: rgba(239,68,68,0.6); margin-top: 2rem; }
 
         /* Rewrite progression */
         .slide-rewrite { text-align: center; max-width: 900px; margin: 0 auto; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 24px; cursor: pointer; }
-        .rewrite-prefix { font-size: clamp(1.4rem, 2vw, 1.8rem); font-weight: 300; color: var(--accent); opacity: 0; transition: opacity 0.6s ease; font-style: italic; }
+        .rewrite-prefix { font-size: clamp(1.4rem, 3cqmin, 2.5rem); font-weight: 300; color: var(--accent); opacity: 0; transition: opacity 0.6s ease; font-style: italic; }
         .rewrite-prefix.visible { opacity: 1; }
-        .rewrite-main { font-size: clamp(2rem, 4vw, 3rem); font-weight: 300; line-height: 1.5; color: var(--text); }
+        .rewrite-main { font-size: clamp(2rem, 5cqmin, 4rem); font-weight: 300; line-height: 1.5; color: var(--text); }
         .rewrite-main .rw-slot { display: inline; color: var(--text-muted); transition: color 0.4s ease; }
         .rewrite-main .rw-slot.active { border-right: 2px solid var(--accent); animation: blink-border 0.8s step-end infinite; color: var(--accent); }
         .rewrite-main .rw-slot.changed { color: var(--accent); }
@@ -127,35 +137,25 @@
         /* Auditorium scaling */
         @media (min-width: 1200px) {
             .card-view { grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 1.2rem; }
+        }
+        
         /* === AUDITORIUM SCALING OVERRIDES (Gäller alla slides) === */
-        /* Intelligent dynamisk skalning: Vi sätter en bra bas-nivå, men tillåter sedan specifika 
-           modifierare beroende på hur mycket innehåll sliden har. */
         html.presentation-mode {
-            font-size: clamp(18px, 3.5vmin, 48px); /* Normal text-slide */
+            /* Now using cqmin which is relative to the 16:9 container, not the chaotic viewport! */
+            font-size: clamp(14px, 3.5cqmin, 48px);
         }
         
-        /* För data-tunga slides (grafer, kartor, jämförelser) */
         html.presentation-mode.scale-dense {
-            font-size: clamp(14px, 2.5vmin, 36px); 
+            font-size: clamp(12px, 2.5cqmin, 36px); 
         }
         
-        /* För kort, slagkraftig text (citat, rubriker, rewrite-progression) */
         html.presentation-mode.scale-large {
-            font-size: clamp(24px, 4.5vmin, 64px); 
+            font-size: clamp(18px, 4.5cqmin, 64px); 
         }
         
-        /* Tvinga alla slide-containrar att ta upp yta, men ALDRIG bli bredare än 160vh. 
-           Detta garanterar att de aldrig växer sig ur skärmens höjd (eftersom max-bredden då stryps)! */
         #slideContent > div[class^="slide-"] {
             width: 100% !important;
-            max-width: min(1600px, 95vw, 160vh) !important;
-        }
-        
-        /* Undantag: Kartsliden (som har flex/full-bleed) måste tvingas ta upp ytan utan de strikta max-bredd-spärrarna för att slippa svarta fält på sidorna */
-        #slideContent > div.slide-map-progression {
-            min-height: 100vh !important;
-            height: 100vh !important;
-            max-width: 100% !important;
+            height: 100% !important;
         }
         
         #fullscreenBtn:hover { opacity: 1 !important; color: var(--text) !important; }
