@@ -722,22 +722,29 @@
         .slide-glitch-warning {
             display: flex; flex-direction: column; height: 100%; width: 100%;
             justify-content: center; align-items: center; background: radial-gradient(circle at center, #1a0505 0%, #000 100%); position: relative;
+            padding: 2rem 5vw; box-sizing: border-box;
         }
-        .glitch-wrapper { text-align: center; max-width: 800px; }
+        .glitch-wrapper { text-align: center; width: 100%; max-width: 900px; display: flex; flex-direction: column; align-items: center; }
         .glitch {
-            font-size: clamp(4rem, 8vw, 8rem); font-weight: 900; text-transform: uppercase;
-            position: relative; color: white; margin-bottom: 1rem;
+            font-size: clamp(2.5rem, 8vw, 6rem); font-weight: 900; text-transform: uppercase;
+            position: relative; color: white; margin-bottom: 0.5rem; line-height: 1.1;
             text-shadow: 0.05em 0 0 rgba(255,0,0,0.75), -0.025em -0.05em 0 rgba(0,255,0,0.75), 0.025em 0.05em 0 rgba(0,0,255,0.75);
-            animation: glitch 500ms infinite;
+            animation: glitch 500ms infinite; word-break: break-word; hyphens: auto;
         }
         .glitch span { position: absolute; top: 0; left: 0; }
-        .glitch-subtitle { font-size: clamp(1.2rem, 3vw, 2rem); color: #ff6b6b; margin-bottom: 3rem; font-weight: 600; text-transform: uppercase; letter-spacing: 2px; }
-        .glitch-list { display: flex; flex-direction: column; gap: 1.5rem; text-align: left; }
-        .glitch-list-item {
-            font-size: clamp(1.3rem, 2.5vw, 1.8rem); color: #e2e8f0; background: rgba(255,0,0,0.1);
-            padding: 1.5rem; border-left: 4px solid #ff4444; border-radius: 0 8px 8px 0;
-            opacity: 1; transform: translateX(0); transition: all 0.4s ease-out;
+        .glitch-subtitle { 
+            font-size: clamp(1rem, 2.5vw, 1.8rem); color: #ff6b6b; margin-bottom: 2.5rem; 
+            font-weight: 600; text-transform: uppercase; letter-spacing: 2px;
+            border-bottom: 1px solid rgba(255,107,107,0.3); padding-bottom: 0.8rem;
         }
+        .glitch-list { display: flex; flex-direction: column; gap: 1rem; width: 100%; max-width: 800px; text-align: left; }
+        .glitch-list-item {
+            font-size: clamp(1.1rem, 2vw, 1.5rem); color: #e2e8f0; background: rgba(255,0,0,0.05);
+            padding: clamp(1rem, 3vw, 1.5rem); border-left: 4px solid #ff4444; border-radius: 0 8px 8px 0;
+            opacity: 1; transform: translateX(0); transition: all 0.4s ease-out;
+            line-height: 1.4; display: flex; gap: 0.8rem; align-items: flex-start;
+        }
+        .glitch-list-item::before { content: "⚠️"; flex-shrink: 0; font-size: 1.2em; }
         .glitch-list-item.step-hidden {
             opacity: 0; transform: translateX(-40px);
         }
