@@ -54,6 +54,16 @@
       "style": "typewriter"
     },
     {
+      "id": "myth-magic-prompt",
+      "section": "start",
+      "type": "pitfall",
+      "severity": "warning",
+      "badge": "MYTEN OM DEN MAGISKA PROMPTEN",
+      "question": "Om jag bara hittar den perfekta 'superprompten' kommer AI att lösa alla mina problem.",
+      "answer": "Målet är att memorera magiska 'hacks' från LinkedIn.",
+      "correction": "Vi fokuserar på principer och iterativ dialog. Det finns inga magiska ord – bara din egen expertis kombinerad med robust metodik."
+    },
+    {
       "id": "llm-mekanik",
       "section": "start",
       "type": "token-spinner",
