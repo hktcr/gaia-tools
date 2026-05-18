@@ -719,27 +719,60 @@
         .bento-item-text { font-size: clamp(1.1rem, 2vw, 1.5rem); color: var(--text-muted); line-height: 1.5; }
 
         /* ===== GLITCH WARNING ===== */
+        @keyframes bgPulseDanger {
+            0% { background-color: #4a0404; }
+            50% { background-color: #700f0f; }
+            100% { background-color: #4a0404; }
+        }
+        @keyframes glitchAnim {
+            0% { text-shadow: 0.05em 0 0 rgba(255,0,0,0.75), -0.025em -0.05em 0 rgba(0,255,0,0.75), 0.025em 0.05em 0 rgba(0,0,255,0.75); transform: translate(0); }
+            14% { text-shadow: 0.05em 0 0 rgba(255,0,0,0.75), -0.025em -0.05em 0 rgba(0,255,0,0.75), 0.025em 0.05em 0 rgba(0,0,255,0.75); transform: translate(0); }
+            15% { text-shadow: -0.05em -0.025em 0 rgba(255,0,0,0.75), 0.025em 0.025em 0 rgba(0,255,0,0.75), -0.05em -0.05em 0 rgba(0,0,255,0.75); transform: translate(-2px, 1px); }
+            49% { text-shadow: -0.05em -0.025em 0 rgba(255,0,0,0.75), 0.025em 0.025em 0 rgba(0,255,0,0.75), -0.05em -0.05em 0 rgba(0,0,255,0.75); transform: translate(-2px, 1px); }
+            50% { text-shadow: 0.025em 0.05em 0 rgba(255,0,0,0.75), 0.05em 0 0 rgba(0,255,0,0.75), 0 -0.05em 0 rgba(0,0,255,0.75); transform: translate(2px, -2px); }
+            99% { text-shadow: 0.025em 0.05em 0 rgba(255,0,0,0.75), 0.05em 0 0 rgba(0,255,0,0.75), 0 -0.05em 0 rgba(0,0,255,0.75); transform: translate(2px, -2px); }
+            100% { text-shadow: -0.025em 0 0 rgba(255,0,0,0.75), -0.025em -0.025em 0 rgba(0,255,0,0.75), -0.025em -0.05em 0 rgba(0,0,255,0.75); transform: translate(0); }
+        }
+        @keyframes scanline {
+            0% { transform: translateY(-100vh); }
+            100% { transform: translateY(100vh); }
+        }
         .slide-glitch-warning {
             display: flex; flex-direction: column; height: 100%; width: 100%;
-            justify-content: center; align-items: center; background: radial-gradient(circle at center, #1a0505 0%, #000 100%); position: relative;
+            justify-content: center; align-items: center; 
+            background: radial-gradient(circle at center, #7f1d1d 0%, #450a0a 100%); position: relative;
+            padding: 2rem 5vw; box-sizing: border-box; overflow: hidden;
+            animation: bgPulseDanger 4s ease-in-out infinite;
         }
-        .glitch-wrapper { text-align: center; max-width: 800px; }
+        .slide-glitch-warning::after {
+            content: ""; position: absolute; inset: 0; width: 100%; height: 30px;
+            background: linear-gradient(to bottom, rgba(255,255,255,0), rgba(255,255,255,0.1) 50%, rgba(255,255,255,0));
+            animation: scanline 4s linear infinite; pointer-events: none; z-index: 10;
+        }
+        .glitch-wrapper { text-align: center; width: 100%; max-width: 900px; display: flex; flex-direction: column; align-items: center; z-index: 2; position: relative; }
         .glitch {
-            font-size: clamp(4rem, 8vw, 8rem); font-weight: 900; text-transform: uppercase;
-            position: relative; color: white; margin-bottom: 1rem;
-            text-shadow: 0.05em 0 0 rgba(255,0,0,0.75), -0.025em -0.05em 0 rgba(0,255,0,0.75), 0.025em 0.05em 0 rgba(0,0,255,0.75);
-            animation: glitch 500ms infinite;
+            font-size: clamp(3rem, 10vw, 7rem); font-weight: 900; text-transform: uppercase;
+            position: relative; color: #fff; margin-bottom: 0.5rem; line-height: 1.1; letter-spacing: -0.02em;
+            animation: glitchAnim 2.5s infinite; word-break: break-word; hyphens: auto;
         }
-        .glitch span { position: absolute; top: 0; left: 0; }
-        .glitch-subtitle { font-size: clamp(1.2rem, 3vw, 2rem); color: #ff6b6b; margin-bottom: 3rem; font-weight: 600; text-transform: uppercase; letter-spacing: 2px; }
-        .glitch-list { display: flex; flex-direction: column; gap: 1.5rem; text-align: left; }
+        .glitch-subtitle { 
+            font-size: clamp(1.1rem, 2.8vw, 2rem); color: #fca5a5; margin-bottom: 2.5rem; 
+            font-weight: 700; text-transform: uppercase; letter-spacing: 4px;
+            border-bottom: 2px solid rgba(252,165,165,0.4); padding-bottom: 1rem;
+            text-shadow: 0 0 10px rgba(252,165,165,0.3);
+        }
+        .glitch-list { display: flex; flex-direction: column; gap: 1.2rem; width: 100%; max-width: 800px; text-align: left; perspective: 1000px; }
         .glitch-list-item {
-            font-size: clamp(1.3rem, 2.5vw, 1.8rem); color: #e2e8f0; background: rgba(255,0,0,0.1);
-            padding: 1.5rem; border-left: 4px solid #ff4444; border-radius: 0 8px 8px 0;
-            opacity: 1; transform: translateX(0); transition: all 0.4s ease-out;
+            font-size: clamp(1.2rem, 2.2vw, 1.6rem); color: #fff; background: rgba(0,0,0,0.3);
+            padding: clamp(1.2rem, 3vw, 1.8rem); border-left: 5px solid #ef4444; border-radius: 4px 12px 12px 4px;
+            opacity: 1; transform: rotateX(0deg) translateY(0); transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            line-height: 1.5; display: flex; gap: 1rem; align-items: flex-start;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.2), inset 0 0 0 1px rgba(255,255,255,0.05);
+            backdrop-filter: blur(10px);
         }
+        .glitch-list-item::before { content: "⚠️"; flex-shrink: 0; font-size: 1.3em; filter: drop-shadow(0 0 5px rgba(239,68,68,0.8)); }
         .glitch-list-item.step-hidden {
-            opacity: 0; transform: translateX(-40px);
+            opacity: 0; transform: rotateX(45deg) translateY(30px);
         }
 
         /* ===== MILESTONE REVEAL ===== */
@@ -4798,6 +4831,53 @@ Steg 3: Baserat på både vad jag sade OCH hur jag skrev, ge mig en färdig, pun
 
         return html;
     }
+
+    const allTypes = {
+        'word-cascade': renderWordCascade,
+        'box-reveal': renderBoxReveal,
+        'bullet-build': renderBulletBuild,
+        'line-chart': renderLineChart,
+        'comparison': renderComparison,
+        'timeline-vertical': renderTimelineVertical,
+        'progress-ring': renderProgressRing,
+        'number-wall': renderNumberWall,
+        'bar-race': renderBarRace,
+        'giant-text': renderGiantText,
+        'callout': renderCallout,
+        'section-divider': renderSectionDivider,
+        'hero-image': renderHeroImage,
+        'outro': renderOutro,
+        'ai-conversation': renderAiConversation,
+        'before-after': renderBeforeAfter,
+        'prompt-reveal': renderPromptReveal,
+        'pitfall': renderPitfall,
+        'stat-compare': renderStatCompare,
+        'voice-collage': renderVoiceCollage,
+        'portrait-quote': renderPortraitQuote,
+        'reflection': renderReflection,
+        'collage': renderCollage,
+        'process-chain': renderProcessChain,
+        'acronym-list': renderAcronymList,
+        'map-pins': renderMapPins,
+        'map-progression': renderMapProgression,
+        'mindmap': renderMindmap,
+        'letter-morph': renderLetterMorph,
+        'rewrite-progression': renderRewriteProgression,
+        'quote': renderQuote,
+        'map-journey': renderMapJourney,
+        'mindmap-tree': renderMindmapTree,
+        'warning-pulse': renderWarningPulse,
+        'token-spinner': renderTokenSpinner,
+        'bento-grid': renderBentoGrid,
+        'glitch-warning': renderGlitchWarning,
+        'semantic-nebula': renderSemanticNebula,
+        'prompt-card': renderPromptCard,
+        'milestone-reveal': renderMilestoneReveal,
+        'chaos-to-clarity': renderChaosToClarity,
+        'leadership-mindmap': renderLeadershipMindmap,
+        'gdpr-mindmap': renderLeadershipMindmap,
+        'dual-analysis-prompt': renderDualAnalysisPrompt
+    };
 
     function registerTypes() {
         if (typeof window.slideTypeRegistry === 'object') {
