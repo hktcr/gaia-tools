@@ -4742,24 +4742,35 @@
         let html = `
         <style>
             .slide-gdpr-mindmap { width:100%; min-height:75vh; display:flex; align-items:center; justify-content:center; padding:clamp(1rem,2vw,2rem); }
-            .gm-container { width:100%; max-width:900px; }
-            .gm-node { margin:0; }
-            .gm-root > .gm-label { font-size:clamp(1.1rem,2vw,1.5rem); color:var(--accent); font-weight:700; padding:0.8rem 0; border-bottom:2px solid rgba(249,115,22,0.3); margin-bottom:0.8rem; cursor:default; }
-            .gm-branch { margin-left:clamp(0.8rem,2vw,1.5rem); margin-top:0.4rem; }
-            .gm-branch > .gm-label { font-size:clamp(0.9rem,1.4vw,1.1rem); color:rgba(255,255,255,0.9); font-weight:600; padding:0.6rem 0.8rem; background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.08); border-radius:8px; cursor:pointer; transition:all 0.2s; display:flex; align-items:center; gap:0.5rem; }
-            .gm-branch > .gm-label:hover { background:rgba(249,115,22,0.08); border-color:rgba(249,115,22,0.3); }
-            .gm-branch.open > .gm-label { border-color:var(--accent); background:rgba(249,115,22,0.06); }
-            .gm-leaf { margin-left:clamp(1rem,2.5vw,2rem); margin-top:0.3rem; }
-            .gm-leaf > .gm-label { font-size:clamp(0.8rem,1.2vw,0.95rem); color:rgba(255,255,255,0.7); padding:0.5rem 0.8rem; background:rgba(255,255,255,0.02); border:1px solid rgba(255,255,255,0.05); border-radius:6px; cursor:pointer; transition:all 0.2s; display:flex; align-items:center; gap:0.4rem; }
-            .gm-leaf > .gm-label:hover { background:rgba(99,102,241,0.08); border-color:rgba(99,102,241,0.3); }
-            .gm-leaf.open > .gm-label { border-color:rgba(99,102,241,0.4); }
-            .gm-icon { font-size:1.1em; }
-            .gm-toggle { margin-left:auto; font-size:0.8em; color:rgba(255,255,255,0.3); transition:transform 0.3s; }
+            .gm-container { width:100%; max-width:900px; font-family: var(--font-body, system-ui); }
+            .gm-node { margin:0; position: relative; }
+            .gm-root > .gm-label { font-size:clamp(1.3rem,2.5vw,1.8rem); color:var(--accent); font-weight:700; padding:0.8rem 1rem; border-bottom:2px solid rgba(249,115,22,0.4); margin-bottom:1rem; cursor:default; background: rgba(249,115,22,0.05); border-radius: 8px 8px 0 0; display: inline-flex; align-items: center; gap: 0.5rem;}
+            
+            /* Tree connectors */
+            .gm-children { position: relative; }
+            .gm-branch, .gm-leaf { margin-left:clamp(1.5rem,3vw,2.5rem); margin-top:0.6rem; position: relative; }
+            .gm-branch::before, .gm-leaf::before { content: ''; position: absolute; left: calc(-1 * clamp(1.5rem,3vw,2.5rem) + 0.5rem); top: 1.1rem; width: calc(clamp(1.5rem,3vw,2.5rem) - 0.5rem); height: 1.5px; background: rgba(255,255,255,0.15); transition: background 0.3s; }
+            .gm-branch::after, .gm-leaf::after { content: ''; position: absolute; left: calc(-1 * clamp(1.5rem,3vw,2.5rem) + 0.5rem); top: -0.6rem; bottom: 0; width: 1.5px; background: rgba(255,255,255,0.15); transition: background 0.3s; }
+            .gm-node:last-child::after { bottom: auto; height: 1.7rem; }
+            
+            .gm-branch > .gm-label { font-size:clamp(0.95rem,1.5vw,1.15rem); color:rgba(255,255,255,0.9); font-weight:600; padding:0.6rem 0.8rem; background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.1); border-radius:8px; cursor:pointer; transition:all 0.25s ease; display:flex; align-items:center; gap:0.5rem; position: relative; z-index: 2;}
+            .gm-branch > .gm-label:hover { background:rgba(249,115,22,0.1); border-color:rgba(249,115,22,0.4); transform: translateX(3px); }
+            .gm-branch.open > .gm-label { border-color:var(--accent); background:rgba(249,115,22,0.08); box-shadow: 0 4px 12px rgba(0,0,0,0.2); }
+            .gm-branch.open > .gm-label::before { background: var(--accent); } /* Highlight connector when open */
+            
+            .gm-leaf > .gm-label { font-size:clamp(0.85rem,1.3vw,1rem); color:rgba(255,255,255,0.75); padding:0.5rem 0.8rem; background:rgba(255,255,255,0.02); border:1px solid rgba(255,255,255,0.06); border-radius:6px; cursor:pointer; transition:all 0.2s ease; display:flex; align-items:center; gap:0.4rem; position: relative; z-index: 2;}
+            .gm-leaf > .gm-label:hover { background:rgba(99,102,241,0.1); border-color:rgba(99,102,241,0.4); color: #fff; transform: translateX(3px); }
+            .gm-leaf.open > .gm-label { border-color:rgba(99,102,241,0.5); background: rgba(99,102,241,0.05); color: #fff;}
+            
+            .gm-icon { font-size:1.15em; }
+            .gm-toggle { margin-left:auto; font-size:0.8em; color:rgba(255,255,255,0.4); transition:transform 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
             .gm-node.open > .gm-label .gm-toggle { transform:rotate(90deg); color:var(--accent); }
-            .gm-children { overflow:hidden; max-height:0; opacity:0; transition:max-height 0.4s ease, opacity 0.3s ease; }
-            .gm-node.open > .gm-children { max-height:2000px; opacity:1; }
-            .gm-detail { max-height:0; overflow:hidden; opacity:0; transition:all 0.3s ease; padding:0 0.8rem; margin-left:clamp(1rem,2.5vw,2rem); color:rgba(255,255,255,0.6); font-size:clamp(0.78rem,1.1vw,0.9rem); line-height:1.6; border-left:2px solid rgba(99,102,241,0.3); }
-            .gm-node.open > .gm-detail { max-height:200px; opacity:1; padding:0.5rem 0.8rem; margin-top:0.3rem; margin-bottom:0.3rem; }
+            
+            .gm-children { overflow:hidden; max-height:0; opacity:0; transition:max-height 0.5s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.4s ease; }
+            .gm-node.open > .gm-children { max-height:2500px; opacity:1; }
+            
+            .gm-detail { max-height:0; overflow:hidden; opacity:0; transition:all 0.4s cubic-bezier(0.4, 0, 0.2, 1); padding:0 1rem; margin-left:clamp(1.5rem,3vw,2.5rem); color:rgba(255,255,255,0.65); font-size:clamp(0.8rem,1.2vw,0.95rem); line-height:1.6; border-left:2px solid rgba(99,102,241,0.4); background: linear-gradient(90deg, rgba(99,102,241,0.05) 0%, transparent 100%); }
+            .gm-node.open > .gm-detail { max-height:300px; opacity:1; padding:0.6rem 1rem; margin-top:0.4rem; margin-bottom:0.6rem; border-radius: 0 6px 6px 0; }
             .gm-root > .gm-children { max-height:none; opacity:1; }
         </style>
         <div class="slide-gdpr-mindmap component no-click-advance" id="${uid}">
