@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ebola 2026 — Epidemisk Dashboard & VEP Analys</title>
+    
+    <!-- Google Fonts: Inter & Outfit -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Leaflet.js (Karta) -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+    
+    <!-- Custom Style Sheet -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="app-container">
+        <!-- 1. SIDEBAR (Statistik & Status) -->
+        <aside id="sidebar">
+            <div class="sidebar-header">
+                <div class="logo-area">
+                    <span class="logo-emoji">🧬</span>
+                    <div>
+                        <h1>EBOLA 2026</h1>
+                        <p class="logo-sub">GAIA Epidemic Intelligence</p>
+                    </div>
+                </div>
+                <div class="pheic-badge">
+                    <span class="pulse-dot"></span>
+                    <span>WHO: PHEIC NÖDLÄGE</span>
+                </div>
+            </div>
+            
+            <div class="stats-container">
+                <div class="stat-card" id="card-suspected">
+                    <p class="stat-label">MISSTÄNKTA FALL</p>
+                    <h2 class="stat-value" id="val-suspected">--</h2>
+                    <div class="stat-trend trend-neutral">Datan uppdateras...</div>
+                </div>
+                
+                <div class="stat-card" id="card-confirmed">
+                    <p class="stat-label">BEKRÄFTADE FALL</p>
+                    <h2 class="stat-value" id="val-confirmed">--</h2>
+                    <div class="stat-trend trend-up">Laboratorieverifierade</div>
+                </div>
+                
+                <div class="stat-card" id="card-deaths">
+                    <p class="stat-label">MISSTÄNKTA DÖDSFALL</p>
+                    <h2 class="stat-value" id="val-deaths">--</h2>
+                    <div class="stat-trend trend-neutral">Ituri & Kampala</div>
+                </div>
+                
+                <div class="stat-card" id="card-cfr">
+                    <p class="stat-label">CASE FATALITY RATE (CFR)</p>
+                    <h2 class="stat-value" id="val-cfr">--%</h2>
+                    <div class="stat-trend" style="color: var(--accent-orange)">Genomsnittlig dödlighet</div>
+                </div>
+            </div>
+            
+            <div class="sidebar-info-block">
+                <h3>UTBROTTSFAKTA</h3>
+                <div class="info-row">
+                    <span class="info-key">Virusstam:</span>
+                    <span class="info-val highlight-orange" id="val-strain">Bundibugyo ebolavirus</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-key">Episenter:</span>
+                    <span class="info-val" id="val-epicenter">Ituri, DRC</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-key">Kritiskt hot:</span>
+                    <span class="info-val text-red">Inget licensierat vaccin</span>
+                </div>
+            </div>
+            
+            <footer class="sidebar-footer">
+                <p>© 2026 GAIA Intelligence System</p>
+                <p id="system-time">Tid: --</p>
+            </footer>
+        </aside>
+        
+        <!-- 2. MAIN WORKSPACE -->
+        <main id="main-content">
+            <!-- Top Navigation and Live Updates -->
+            <header id="top-bar">
+                <div class="top-title">
+                    <h2>Epidemiologisk Instrumentpanel</h2>
+                    <p>Fokus: Bundibugyo-virusutbrottet i DRC och Uganda</p>
+                </div>
+                
+                <div class="sync-status">
+                    <span class="status-indicator live"></span>
+                    <span id="sync-text">Synkad via /ebola2026</span>
+                    <span class="timestamp" id="last-updated">Senast synkad: --</span>
+                </div>
+            </header>
+            
+            <!-- Tab Navigation (Outfit typography) -->
+            <nav class="tab-navigation" aria-label="Dashboard sektioner">
+                <button class="tab-btn active" id="btn-tab-map" data-tab="tab-map">
+                    <span class="tab-icon">🗺️</span> Karta & Lägesbild
+                </button>
+                <button class="tab-btn" id="btn-tab-science" data-tab="tab-science">
+                    <span class="tab-icon">🔬</span> Vetenskaplig Analys
+                </button>
+                <button class="tab-btn" id="btn-tab-vep" data-tab="tab-vep">
+                    <span class="tab-icon">👥</span> VEP Expertgranskning
+                </button>
+            </nav>
+            
+            <!-- Tab Content 1: Map and News Feed -->
+            <section class="tab-pane active" id="tab-map">
+                <div class="map-grid">
+                    <!-- Map Container -->
+                    <div class="map-card card-glass">
+                        <div class="card-header">
+                            <h3>📍 Interaktiv Utbrottskarta (Leaflet)</h3>
+                            <div class="map-controls">
+                                <span class="map-legend-item"><span class="legend-color color-red"></span> Smittområde</span>
+                                <span class="map-legend-item"><span class="legend-color color-orange"></span> Importerade fall</span>
+                            </div>
+                        </div>
+                        <div id="map-container">
+                            <!-- Leaflet Map renders here -->
+                        </div>
+                    </div>
+                    
+                    <!-- ReliefWeb News Feed -->
+                    <div class="news-card card-glass">
+                        <div class="card-header">
+                            <h3>📰 Humanitära Lägesrapporter (ReliefWeb)</h3>
+                            <span class="badge" id="news-count">0 källor</span>
+                        </div>
+                        <div class="news-feed-container" id="news-feed">
+                            <!-- News elements inserted dynamically -->
+                            <div class="loading-spinner">Laddar lägesrapporter...</div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- Tab Content 2: Scientific Context & Research -->
+            <section class="tab-pane" id="tab-science">
+                <div class="science-grid">
+                    <!-- Molecular Profile -->
+                    <div class="science-card card-glass">
+                        <div class="card-header border-cyan">
+                            <h3>🧬 Bundibugyo ebolavirus (BDBV) Molekylär Profil</h3>
+                        </div>
+                        <div class="card-body">
+                            <p class="highlight-paragraph">
+                                <strong>Bundibugyo-viruset</strong> upptäcktes först 2007 under ett utbrott i Bundibugyo-distriktet i västra Uganda. Viruset tillhör släktet <em>Orthoebolavirus</em> och orsakar Ebola-sjukdom med en historisk dödlighet på 30% till 40% (betydligt lägre än Zaire-stammens 60% till 90%, men fortfarande extremt dödlig).
+                            </p>
+                            
+                            <div class="biology-details">
+                                <h4>Biologiska skillnader & Utmaningar:</h4>
+                                <ul>
+                                    <li><strong>Vaccinresistens:</strong> Existerande vaccin, <em>Ervebo</em> (rVSV-ZEBOV), är specifikt riktat mot ytglykoproteinet hos Zaire-ebolaviruset. Studier bekräftar att det ger <strong>noll immunitet</strong> mot Bundibugyo-viruset.</li>
+                                    <li><strong>Behandlingsbrist:</strong> Godkända monoklonala antikroppar (t.ex. <em>Ebanga</em> / Ansuvimab, och <em>Inmazeb</em>) är Zaire-specifika. Bundibugyo saknar helt godkända antivirala behandlingar.</li>
+                                    <li><strong>Klinisk bild:</strong> Liknar andra ebolautbrott med feber, diarré, kräkningar, buksmärta och i allvarliga fall systemiska blödningar.</li>
+                                </ul>
+                            </div>
+                            
+                            <div class="research-status">
+                                <h4>🔬 Aktuell klinisk forskning:</h4>
+                                <p>Kliniska fas-I/II-studier utvärderar just nu multivalenta mRNA-vaccinkandidater (som kombinerar antigener för Zaire, Sudan och Bundibugyo), men ingen är licensierad för kliniskt bruk under det nuvarande 2026-utbrottet.</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- EuropePMC Scientific Feed -->
+                    <div class="science-card card-glass">
+                        <div class="card-header border-cyan">
+                            <h3>📚 Vetenskapliga Publikationer & Studier (EuropePMC)</h3>
+                            <span class="badge" id="science-count">0 studier</span>
+                        </div>
+                        <div class="science-feed-container" id="science-feed">
+                            <!-- Scientific papers inserted dynamically -->
+                            <div class="loading-spinner">Söker efter vetenskaplig data...</div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- Tab Content 3: VEP Insights & Review -->
+            <section class="tab-pane" id="tab-vep">
+                <div class="vep-grid">
+                    <!-- VEP Board Members and Status -->
+                    <div class="vep-status-card card-glass">
+                        <div class="card-header border-purple">
+                            <h3>🛡️ Epidemic Response Board (ERB) Status</h3>
+                        </div>
+                        <div class="vep-stats">
+                            <div class="risk-gauge-container">
+                                <div class="risk-gauge-value" id="risk-score">--</div>
+                                <div class="risk-gauge-label">
+                                    <h4>GAIA RISKINDEX</h4>
+                                    <p id="risk-rating">BERÄKNAR...</p>
+                                </div>
+                            </div>
+                            
+                            <div class="vep-board-meta">
+                                <h4>INTELLIGENCE METADATA</h4>
+                                <p><strong>Paneltyp:</strong> Tvärvetenskaplig krisgrupp (ERB)</p>
+                                <p><strong>Granskningsnivå:</strong> 🔴 Deep Dive Deliberation</p>
+                                <p><strong>Protokoll:</strong> VEP-GBP Dual-Signature (§22)</p>
+                                <p><strong>Intern verifiering:</strong> <span class="text-green" id="vep-verification-status">✓ Dubbelsignerad</span></p>
+                            </div>
+                        </div>
+                        
+                        <div class="vep-roster">
+                            <h4>AKTIVA EXPERTER & BACKUPS</h4>
+                            <div class="roster-grid">
+                                <div class="roster-item">
+                                    <span class="roster-name">Dr. Sofia Epidemiologi</span>
+                                    <span class="roster-backup">↳ Peer-review: Dr. Anders (Backup)</span>
+                                </div>
+                                <div class="roster-item">
+                                    <span class="roster-name">Prof. Gustaf Källa</span>
+                                    <span class="roster-backup">↳ Peer-review: Dr. Elena Genom</span>
+                                </div>
+                                <div class="roster-item">
+                                    <span class="roster-name">Freja Fältforskare</span>
+                                    <span class="roster-backup">↳ Peer-review: Majoren Eric</span>
+                                </div>
+                                <div class="roster-item">
+                                    <span class="roster-name">Vera Verifikation</span>
+                                    <span class="roster-backup">↳ Peer-review: Marcus Mediekritik</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- VEP Deliberation Transcript -->
+                    <div class="vep-chat-card card-glass">
+                        <div class="card-header border-purple">
+                            <h3>💬 Deliberationslogg: Intern Granskning</h3>
+                            <span class="badge" style="background: var(--accent-purple)">Indexerade Yttranden (§22)</span>
+                        </div>
+                        
+                        <div class="vep-chat-container" id="vep-chat">
+                            <!-- VEP Chat debate messages inserted dynamically -->
+                            <div class="loading-spinner">Genererar panelanalys...</div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+    
+    <!-- Detail Popup Modal (Optional for Leaflet map elements) -->
+    <div id="detail-modal" class="modal-backdrop">
+        <div class="modal-content card-glass">
+            <button id="modal-close" class="modal-close-btn">&times;</button>
+            <div class="modal-header">
+                <span class="tier-badge" id="modal-badge">Zon-data</span>
+                <h3 id="modal-title">Detaljer för provins</h3>
+            </div>
+            <div class="modal-body">
+                <div class="modal-stat-grid">
+                    <div class="m-stat">
+                        <span class="m-label">Hälsozoner</span>
+                        <span class="m-value" id="modal-zones">--</span>
+                    </div>
+                    <div class="m-stat">
+                        <span class="m-label">Misstänkta fall</span>
+                        <span class="m-value text-orange" id="modal-cases">--</span>
+                    </div>
+                    <div class="m-stat">
+                        <span class="m-label">Dödsfall</span>
+                        <span class="m-value text-red" id="modal-deaths">--</span>
+                    </div>
+                </div>
+                <div class="modal-text-block">
+                    <h4>Regional Lägesrapport:</h4>
+                    <p id="modal-description">--</p>
+                </div>
+                <div class="modal-text-block">
+                    <h4>Säkerhet & Logistik (Freja Fältforskare / Majoren Eric):</h4>
+                    <p id="modal-security">--</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Application Logic Script -->
+    <script src="app.js"></script>
+</body>
+</html>

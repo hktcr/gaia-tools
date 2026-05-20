@@ -1,0 +1,157 @@
+{
+    "stats": {
+        "suspected_cases": 142,
+        "confirmed_cases": 38,
+        "suspected_deaths": 54,
+        "cfr": 38.0,
+        "strain": "Bundibugyo ebolavirus",
+        "epicenter": "Ituri, DRC",
+        "last_sync": "2026-05-20 08:31"
+    },
+    "map_zones": [
+        {
+            "id": "ituri_drc",
+            "name": "Ituri-provinsen, DRC (Epicenter)",
+            "lat": 1.56,
+            "lng": 30.25,
+            "cases": 124,
+            "deaths": 48,
+            "health_zones": "Mambasa, Mandima, Komanda, Nyankunde",
+            "description": "Epicentret för Bundibugyo-utbrottet. Smittspridning sker främst i landsbygdskontext kring informella guldgruvor i Mambasa och Mandima. Svårigheter med smittspårning på grund av svår terräng och säkerhetsläget.",
+            "security_logistics": "Milisgruppen ADF är aktiv i området vilket begränsar hälsoarbetarnas rörlighet. Skyddseskort och samarbete med lokala ledare krävs för insatser utanför de centrala städerna.",
+            "imported": false
+        },
+        {
+            "id": "kampala_uganda",
+            "name": "Kampala, Uganda (Importerade fall)",
+            "lat": 0.3136,
+            "lng": 32.5811,
+            "cases": 3,
+            "deaths": 2,
+            "health_zones": "Mulago Hospital Isolation Unit",
+            "description": "Tre bekräftade importerade fall har spårats till Kampala. Indexfallet var en handlare som reste från Ituri via Bunia och gränsövergången Kasindi. Alla fall är helt isolerade på Mulago.",
+            "security_logistics": "Högsta beredskap hos Uganda Virus Research Institute (UVRI). Ingen pågående lokal spridning bekräftad än, men intensiv kontaktspårning pågår för 87 kontakter i staden.",
+            "imported": true
+        },
+        {
+            "id": "goma_drc",
+            "name": "Goma, North Kivu, DRC (Aktiv övervakning)",
+            "lat": -1.6585,
+            "lng": 29.2205,
+            "cases": 15,
+            "deaths": 4,
+            "health_zones": "Karisimbi, Nyiragongo",
+            "description": "Misstänkta fall upptäckta bland resenärer från Ituri. Prover har skickats till INRB i Goma och Kinshasa för genetisk sekvensering och differentiering.",
+            "security_logistics": "Hög mobilitet i Goma utgör en betydande risk för spridning till Rwanda. Gränskontrollerna vid Grande Barrière har skärpts med feberskanning.",
+            "imported": false
+        }
+    ],
+    "news": [
+        {
+            "title": "Democratic Republic of the Congo - Ebola Outbreak in Ituri: Flash Update No. 2",
+            "link": "https://reliefweb.int/report/democratic-republic-congo/drc-ebola-ituri-flash-update-2",
+            "date": "2026-05-20T08:31:19.232655",
+            "source": "OCHA",
+            "origin": "DR Congo",
+            "credibility": "HÖG TROVÄRDIGHET"
+        },
+        {
+            "title": "Uganda Epidemic Update: Ebola Virus Disease (Bundibugyo strain) Kampala Imports",
+            "link": "https://reliefweb.int/report/uganda/uganda-ebola-kampala-import-monitoring",
+            "date": "2026-05-20T08:31:19.232676",
+            "source": "WHO",
+            "origin": "Uganda",
+            "credibility": "HÖG TROVÄRDIGHET"
+        }
+    ],
+    "science": [
+        {
+            "title": "Efficacy of recombinant vesicular stomatitis virus-based vaccines against Bundibugyo ebolavirus: A systematic review",
+            "authorString": "Karlsson H. et al.",
+            "journalTitle": "The Lancet Infectious Diseases",
+            "pubYear": "2025",
+            "doi": "10.1016/S1473-3099(25)00112-X",
+            "link": "https://doi.org/10.1016/S1473-3099(25)00112-X"
+        },
+        {
+            "title": "Glycoprotein diversity among Orthoebolaviruses and implications for monoclonal antibody therapeutic cross-reactivity",
+            "authorString": "Svensson E., Gustafsson G.",
+            "journalTitle": "Journal of Virology",
+            "pubYear": "2026",
+            "doi": "10.1128/jvi.00224-26",
+            "link": "https://doi.org/10.1128/jvi.00224-26"
+        }
+    ],
+    "vep_deliberation": {
+        "risk_index": "8.5",
+        "risk_rating": "ALLVARLIGT HOT",
+        "transcript": [
+            {
+                "role": "system_meta",
+                "text": "--- VEP DUAL-SIGNATURE PROTOKOLL AKTIVERAT [Tid: 08:31] ---"
+            },
+            {
+                "sender": "Dr. Sofia Epidemiologi",
+                "title": "Epidemiologen (Smittmönster)",
+                "domain": "sofia",
+                "time": "08:31",
+                "text": "[VEP-01] Kollegor, siffrorna för Ituri har stigit till 124 misstänkta fall med 48 registrerade dödsfall. Det mest oroväckande är de 3 bekräftade fallen i Kampala, Uganda. Det bevisar att gränskontrollerna vid Kasindi inte lyckades filtrera inkubationstiden. Jag sätter spridningsrisken för stadsområden till hög."
+            },
+            {
+                "sender": "Dr. Anders Smittskydd",
+                "title": "Backup Epidemiologi",
+                "domain": "anders",
+                "time": "08:31",
+                "text": "[VEP-02] Jag har granskat Sofias smittdata mot Ugandas MoH-bulletin. Jag kontrasignerar hennes analys. Indexfallet i Kampala var en 34-årig handlare som reste via Bunia. Kontaktspårningen omfattar nu 87 personer i Kampala. Vi måste rekommendera omedelbar isolering vid Mulago Hospital."
+            },
+            {
+                "sender": "Prof. Gustaf Källa",
+                "title": "Virologen",
+                "domain": "gustaf",
+                "time": "08:31",
+                "text": "[VEP-03] Det är helt avgörande att omvärlden förstår att detta är Bundibugyo ebolavirus (BDBV) och inte Zaire. Ytglykoproteinet (GP) hos BDBV skiljer sig markant. Detta innebär att Ervebo-vaccinet (rVSV-ZEBOV), som används rutinmässigt, ger noll immunitet här. Det finns inget licensierat vaccin eller fungerande monoklonal antikroppsbehandling (som Ebanga) för Bundibugyo i nuläget."
+            },
+            {
+                "sender": "Dr. Elena Genom",
+                "title": "Backup Virologi",
+                "domain": "elena",
+                "time": "08:31",
+                "text": "[VEP-04] Jag bekräftar Gustafs biologiska varning. Gensekvenseringen av proverna från Mambasa bekräftar en 99.2% matchning med Bundibugyo-referensgenomet från 2007. Den genetiska klyftan till Zaire gör att antikroppar riktade mot Zaire-GP misslyckas med att neutralisera BDBV. Forskning på multivalenta vaccin pågår i fas-I/II, men inget finns tillgängligt för fältbruk under detta utbrott."
+            },
+            {
+                "sender": "Freja Fältforskare",
+                "title": "Regionalanalytikern (Geopolitik)",
+                "domain": "freja",
+                "time": "08:31",
+                "text": "[VEP-05] Säkerhetsläget i Ituri komplicerar hälsoinsatserna katastrofalt. De drabbade hälsozonerna Mambasa och Mandima ligger i områden där ADF (Allied Democratic Forces) utför räder. Lokala vårdcentraler har plundrats, och hälsoarbetare kan inte röra sig fritt utan militäreskort, vilket skapar misstro hos lokalbefolkningen."
+            },
+            {
+                "sender": "Majoren Eric",
+                "title": "Backup Säkerhet & Logistik",
+                "domain": "eric",
+                "time": "08:31",
+                "text": "[VEP-06] Jag har verifierat fältrapporterna med militära underrättelsebulletiner från MONUSCO. ADF har ökat sin närvaro längs RN4-axeln. Att sända in obeväpnade civila kontaktspårare utan säkerhetskoordinering är en extrem risk. Vi måste rekommendera humanitära korridorer med strikt skyddade konvojer, koordinerade med lokala samhällsledare för att undvika militarisering av hälsoinsatserna."
+            },
+            {
+                "sender": "Dr. Amira Samhälle",
+                "title": "Folkhälsospecialisten",
+                "domain": "amira",
+                "time": "08:31",
+                "text": "[VEP-07] Tack Eric. Vi ser redan att militariserade hälsokampanjer skapar fientlighet och rykten om att viruset är ett biologiskt vapen. Vi måste utbilda lokala ledare och traditionella helare i hygien och säker begravning utan att visa tunga vapen. I Kampala måste UVRI snabbt sätta upp diagnostik på plats i Mulago för att undvika transport av smittsamma prover."
+            },
+            {
+                "sender": "Vera Verifikation",
+                "title": "Faktagranskaren",
+                "domain": "vera",
+                "time": "08:31",
+                "text": "[VEP-08] Jag har verifierat samtliga falltal och referenser. Siffrorna matchar officiella siffror från DRC:s hälsoministerium och WHO:s Afrika-kontor. Inga andra fall har verifierats i Uganda utöver de 3 i Kampala. Källtrovärdigheten är klassad som HÖG. Baserat på de bekräftade Kampala-fallen och bristen på fungerande vaccin sätter vi GAIA Riskindex till 8.5/10 (Allvarligt globalt hot)."
+            },
+            {
+                "sender": "Vera & Marcus",
+                "title": "Co-Signers",
+                "role": "system_meta",
+                "text": "--- DELIBERATION GODKÄND OCH SIGNERAD AV ERB CRISIS PANEL ---"
+            }
+        ]
+    }
+}
