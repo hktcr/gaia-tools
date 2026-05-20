@@ -158,6 +158,45 @@ document.addEventListener('DOMContentLoaded', () => {
                 updateCityMarkers();
             });
         }
+
+        // Ladda landsgränser dynamiskt med kloroplet-styling
+        loadCountryBorders(map);
+    }
+
+    // Funktion för att ladda och färglägga landsgränser (kloroplet)
+    function loadCountryBorders(mapInstance) {
+        fetch('https://raw.githubusercontent.com/nvkelso/natural-earth-vector/master/geojson/ne_110m_admin_0_countries.geojson')
+            .then(response => {
+                if (!response.ok) throw new Error('Network response not ok');
+                return response.json();
+            })
+            .then(geojsonData => {
+                L.geoJSON(geojsonData, {
+                    interactive: false, // Gör lagret klick-genomsläppligt för att inte blockera markörer
+                    style: function(feature) {
+                        const countryName = feature.properties.NAME || feature.properties.name || feature.properties.NAME_LONG || '';
+                        const iso = feature.properties.ISO_A3 || feature.properties.iso_a3 || feature.properties.ADM0_A3 || '';
+                        
+                        // 1. Epicenter: DR Kongo (Röd)
+                        if (iso === 'COD' || countryName.includes('Congo') || countryName.includes('DRC')) {
+                            return { fillColor: '#e11d48', weight: 1.5, opacity: 0.8, color: '#be123c', fillOpacity: 0.12 };
+                        } 
+                        // 2. Importerat: Uganda (Orange)
+                        else if (iso === 'UGA' || countryName === 'Uganda') {
+                            return { fillColor: '#ea580c', weight: 1.5, opacity: 0.8, color: '#c2410c', fillOpacity: 0.10 };
+                        } 
+                        // 3. Riskzon (Beredskap): Omgivande länder (Gul)
+                        else if (['RWA', 'BDI', 'SSD', 'KEN', 'TZA'].includes(iso) || 
+                                   ['Rwanda', 'Burundi', 'South Sudan', 'Kenya', 'Tanzania'].includes(countryName)) {
+                            return { fillColor: '#eab308', weight: 1.2, opacity: 0.6, color: '#a16207', fillOpacity: 0.06 };
+                        }
+                        
+                        // Övriga länder förblir osynliga/transparenta
+                        return { fillColor: 'transparent', weight: 0, opacity: 0, fillOpacity: 0 };
+                    }
+                }).addTo(mapInstance);
+            })
+            .catch(err => console.warn('Kunde inte ladda landsgränser (tyst fallbacksfel):', err));
     }
 
     // Funktion för att uppdatera stadsmarkörer
