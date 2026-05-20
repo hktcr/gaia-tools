@@ -6,40 +6,40 @@
  */
 
 :root {
-    /* Färgpalett */
-    --bg-dark: #08090d;
-    --bg-sidebar: rgba(11, 13, 20, 0.85);
-    --bg-card: rgba(18, 22, 33, 0.55);
-    --bg-card-hover: rgba(25, 30, 45, 0.7);
-    --bg-modal: rgba(13, 16, 24, 0.9);
+    /* Färgpalett för Premium Ljus-tema */
+    --bg-dark: #f1f5f9; /* Slate-100 */
+    --bg-sidebar: rgba(255, 255, 255, 0.75);
+    --bg-card: rgba(255, 255, 255, 0.6);
+    --bg-card-hover: rgba(255, 255, 255, 0.85);
+    --bg-modal: rgba(255, 255, 255, 0.96);
     
     /* Gränser och skuggor */
-    --border-color: rgba(255, 255, 255, 0.05);
-    --border-hover: rgba(255, 255, 255, 0.12);
-    --shadow-main: 0 12px 40px 0 rgba(0, 0, 0, 0.5);
-    --shadow-card: 0 8px 24px 0 rgba(0, 0, 0, 0.3);
+    --border-color: rgba(0, 0, 0, 0.06);
+    --border-hover: rgba(0, 0, 0, 0.12);
+    --shadow-main: 0 16px 32px 0 rgba(31, 38, 135, 0.05);
+    --shadow-card: 0 8px 20px 0 rgba(31, 38, 135, 0.02);
     
     /* Textfärger */
-    --text-primary: #f3f4f6;
-    --text-secondary: #a0aec0;
-    --text-muted: #718096;
+    --text-primary: #0f172a; /* Slate-900 */
+    --text-secondary: #334155; /* Slate-700 */
+    --text-muted: #64748b; /* Slate-500 */
     
-    /* Accentfärger */
-    --accent-red: #ff5252;
-    --accent-red-glow: rgba(255, 82, 82, 0.15);
-    --accent-orange: #ff9f43;
-    --accent-orange-glow: rgba(255, 159, 67, 0.15);
-    --accent-purple: #9b5de5;
-    --accent-purple-glow: rgba(155, 93, 229, 0.15);
-    --accent-cyan: #00d2d3;
-    --accent-cyan-glow: rgba(0, 210, 211, 0.15);
-    --accent-green: #10ac84;
-    --accent-green-glow: rgba(16, 172, 132, 0.15);
+    /* Accentfärger anpassade för hög läsbarhet i ljus miljö */
+    --accent-red: #e11d48; /* Rose-600 */
+    --accent-red-glow: rgba(225, 29, 72, 0.07);
+    --accent-orange: #ea580c; /* Orange-600 */
+    --accent-orange-glow: rgba(234, 88, 12, 0.07);
+    --accent-purple: #7c3aed; /* Violet-600 */
+    --accent-purple-glow: rgba(124, 58, 237, 0.07);
+    --accent-cyan: #0891b2; /* Cyan-600 */
+    --accent-cyan-glow: rgba(8, 145, 178, 0.07);
+    --accent-green: #0d9488; /* Teal-600 */
+    --accent-green-glow: rgba(13, 148, 136, 0.07);
     
     /* Typsnitt & Layout */
     --font-heading: 'Outfit', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
     --font-body: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-    --blur-strength: 16px;
+    --blur-strength: 20px;
     --radius-lg: 16px;
     --radius-md: 10px;
     --radius-sm: 6px;
@@ -70,23 +70,23 @@ h1, h2, h3, h4, h5, h6 {
     letter-spacing: -0.02em;
 }
 
-/* Elegant scrollbar för mörkt läge */
+/* Elegant scrollbar för ljust läge */
 ::-webkit-scrollbar {
     width: 6px;
     height: 6px;
 }
 
 ::-webkit-scrollbar-track {
-    background: rgba(0, 0, 0, 0.1);
+    background: rgba(0, 0, 0, 0.03);
 }
 
 ::-webkit-scrollbar-thumb {
-    background: rgba(255, 255, 255, 0.1);
+    background: rgba(0, 0, 0, 0.15);
     border-radius: var(--radius-sm);
 }
 
 ::-webkit-scrollbar-thumb:hover {
-    background: rgba(255, 255, 255, 0.2);
+    background: rgba(0, 0, 0, 0.25);
 }
 
 /* Huvudcontainer */
@@ -95,8 +95,8 @@ h1, h2, h3, h4, h5, h6 {
     height: 100vh;
     width: 100vw;
     position: relative;
-    background-image: radial-gradient(circle at 80% 20%, rgba(155, 93, 229, 0.05), transparent 40%),
-                      radial-gradient(circle at 10% 80%, rgba(0, 210, 211, 0.04), transparent 45%);
+    background-image: radial-gradient(circle at 80% 20%, rgba(124, 58, 237, 0.03), transparent 40%),
+                      radial-gradient(circle at 10% 80%, rgba(8, 145, 178, 0.03), transparent 45%);
 }
 
 /* 2. SIDEBAR STIL */
@@ -112,7 +112,7 @@ h1, h2, h3, h4, h5, h6 {
     justify-content: space-between;
     height: 100%;
     z-index: 100;
-    box-shadow: 4px 0 24px rgba(0, 0, 0, 0.25);
+    box-shadow: 4px 0 24px rgba(31, 38, 135, 0.03);
 }
 
 .sidebar-header {
@@ -217,7 +217,7 @@ h1, h2, h3, h4, h5, h6 {
 
 #card-suspected .stat-value { color: var(--accent-orange); }
 #card-confirmed .stat-value { color: var(--accent-red); }
-#card-deaths .stat-value { color: #f3f4f6; }
+#card-deaths .stat-value { color: var(--text-primary); }
 #card-cfr .stat-value { color: var(--accent-orange); }
 
 .stat-trend {
@@ -230,8 +230,8 @@ h1, h2, h3, h4, h5, h6 {
 .trend-down { color: var(--accent-green); }
 
 .sidebar-info-block {
-    background: rgba(255, 255, 255, 0.02);
-    border: 1px solid rgba(255, 255, 255, 0.04);
+    background: rgba(0, 0, 0, 0.015);
+    border: 1px solid rgba(0, 0, 0, 0.03);
     border-radius: var(--radius-md);
     padding: 14px;
     margin-bottom: 16px;
@@ -242,7 +242,7 @@ h1, h2, h3, h4, h5, h6 {
     letter-spacing: 0.1em;
     color: var(--text-secondary);
     margin-bottom: 10px;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.06);
     padding-bottom: 6px;
 }
 
@@ -276,7 +276,7 @@ h1, h2, h3, h4, h5, h6 {
 .sidebar-footer {
     font-size: 10px;
     color: var(--text-muted);
-    border-top: 1px solid rgba(255, 255, 255, 0.05);
+    border-top: 1px solid rgba(0, 0, 0, 0.06);
     padding-top: 12px;
 }
 
@@ -298,7 +298,7 @@ h1, h2, h3, h4, h5, h6 {
 #top-bar {
     height: 70px;
     min-height: 70px;
-    background: rgba(8, 9, 13, 0.6);
+    background: rgba(255, 255, 255, 0.65);
     backdrop-filter: blur(10px);
     border-bottom: 1px solid var(--border-color);
     display: flex;
@@ -322,11 +322,12 @@ h1, h2, h3, h4, h5, h6 {
     display: flex;
     align-items: center;
     gap: 8px;
-    background: rgba(255, 255, 255, 0.02);
-    border: 1px solid rgba(255, 255, 255, 0.04);
+    background: rgba(0, 0, 0, 0.02);
+    border: 1px solid rgba(0, 0, 0, 0.05);
     padding: 6px 12px;
     border-radius: var(--radius-sm);
     font-size: 11px;
+    color: var(--text-secondary);
 }
 
 .status-indicator {
@@ -343,14 +344,14 @@ h1, h2, h3, h4, h5, h6 {
 
 .timestamp {
     color: var(--text-muted);
-    border-left: 1px solid rgba(255, 255, 255, 0.1);
+    border-left: 1px solid rgba(0, 0, 0, 0.08);
     padding-left: 8px;
 }
 
 /* Tab Navigation */
 .tab-navigation {
     display: flex;
-    background: rgba(8, 9, 13, 0.3);
+    background: rgba(255, 255, 255, 0.45);
     border-bottom: 1px solid var(--border-color);
     padding: 0 32px;
     gap: 8px;
@@ -374,7 +375,7 @@ h1, h2, h3, h4, h5, h6 {
 
 .tab-btn:hover {
     color: var(--text-primary);
-    background: rgba(255, 255, 255, 0.02);
+    background: rgba(0, 0, 0, 0.02);
 }
 
 .tab-btn.active {
@@ -422,7 +423,7 @@ h1, h2, h3, h4, h5, h6 {
 
 .card-header {
     padding: 16px 20px;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.06);
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -434,8 +435,8 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .badge {
-    background: rgba(255, 255, 255, 0.06);
-    border: 1px solid rgba(255, 255, 255, 0.08);
+    background: rgba(0, 0, 0, 0.04);
+    border: 1px solid rgba(0, 0, 0, 0.06);
     border-radius: var(--radius-sm);
     padding: 2px 8px;
     font-size: 11px;
@@ -460,7 +461,7 @@ h1, h2, h3, h4, h5, h6 {
     width: 100%;
     height: 100%;
     min-height: 400px;
-    background: #0f111a;
+    background: #f1f5f9;
     position: relative;
 }
 
@@ -510,16 +511,16 @@ h1, h2, h3, h4, h5, h6 {
 
 /* Nyhetsartiklar */
 .news-item {
-    background: rgba(255, 255, 255, 0.015);
-    border: 1px solid rgba(255, 255, 255, 0.03);
+    background: rgba(0, 0, 0, 0.01);
+    border: 1px solid rgba(0, 0, 0, 0.04);
     border-radius: var(--radius-md);
     padding: 12px 14px;
     transition: all var(--transition-speed) ease;
 }
 
 .news-item:hover {
-    background: rgba(255, 255, 255, 0.035);
-    border-color: rgba(255, 255, 255, 0.08);
+    background: rgba(0, 0, 0, 0.02);
+    border-color: rgba(0, 0, 0, 0.08);
 }
 
 .news-item-header {
@@ -560,7 +561,7 @@ h1, h2, h3, h4, h5, h6 {
     justify-content: space-between;
     align-items: center;
     margin-top: 8px;
-    border-top: 1px dashed rgba(255, 255, 255, 0.05);
+    border-top: 1px dashed rgba(0, 0, 0, 0.06);
     padding-top: 8px;
     font-size: 11px;
 }
@@ -606,9 +607,9 @@ h1, h2, h3, h4, h5, h6 {
 .highlight-paragraph {
     font-size: 15px;
     line-height: 1.6;
-    color: #e2e8f0;
+    color: var(--text-primary);
     margin-bottom: 20px;
-    background: rgba(0, 210, 211, 0.04);
+    background: var(--accent-cyan-glow);
     border-left: 3px solid var(--accent-cyan);
     padding: 12px 16px;
     border-radius: 0 var(--radius-md) var(--radius-md) 0;
@@ -752,9 +753,9 @@ h1, h2, h3, h4, h5, h6 {
     width: 70px;
     height: 70px;
     border-radius: 50%;
-    background: rgba(15, 17, 26, 0.6);
+    background: rgba(255, 255, 255, 0.9);
     border: 3px solid var(--accent-red);
-    box-shadow: 0 0 12px rgba(255, 82, 82, 0.2);
+    box-shadow: 0 0 12px rgba(255, 82, 82, 0.15);
 }
 
 .risk-gauge-value {
@@ -796,7 +797,7 @@ h1, h2, h3, h4, h5, h6 {
     letter-spacing: 0.05em;
     color: var(--text-secondary);
     margin-bottom: 12px;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.06);
     padding-bottom: 6px;
 }
 
@@ -807,8 +808,8 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .roster-item {
-    background: rgba(255, 255, 255, 0.015);
-    border: 1px solid rgba(255, 255, 255, 0.03);
+    background: rgba(0, 0, 0, 0.01);
+    border: 1px solid rgba(0, 0, 0, 0.04);
     border-radius: var(--radius-md);
     padding: 10px 14px;
     display: flex;
@@ -852,8 +853,8 @@ h1, h2, h3, h4, h5, h6 {
 .vep-message.system-meta {
     max-width: 100%;
     align-self: center;
-    background: rgba(255, 255, 255, 0.01);
-    border: 1px dashed rgba(255, 255, 255, 0.05);
+    background: rgba(0, 0, 0, 0.01);
+    border: 1px dashed rgba(0, 0, 0, 0.06);
     padding: 8px 16px;
     border-radius: var(--radius-sm);
     font-size: 11px;
@@ -910,7 +911,7 @@ h1, h2, h3, h4, h5, h6 {
 .vep-message[data-domain="amira"] .vep-sender { color: var(--accent-green); }
 .vep-message[data-domain="amira"] .vep-bubble { border-left: 3px solid var(--accent-green); }
 
-.vep-message[data-domain="vera"] .vep-sender { color: #f3f4f6; }
+.vep-message[data-domain="vera"] .vep-sender { color: var(--text-primary); }
 .vep-message[data-domain="vera"] .vep-bubble { border-left: 3px solid var(--text-secondary); }
 
 .vep-message[data-domain="freja"] .vep-sender { color: var(--accent-red); }
@@ -933,7 +934,7 @@ h1, h2, h3, h4, h5, h6 {
     left: 0;
     width: 100vw;
     height: 100vh;
-    background: rgba(3, 4, 6, 0.7);
+    background: rgba(15, 23, 42, 0.45);
     backdrop-filter: blur(8px);
     z-index: 1000;
     justify-content: center;
@@ -951,9 +952,9 @@ h1, h2, h3, h4, h5, h6 {
     width: 550px;
     max-width: 90vw;
     background: var(--bg-modal);
-    border: 1px solid rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(0, 0, 0, 0.08);
     border-radius: var(--radius-lg);
-    box-shadow: 0 20px 50px rgba(0,0,0,0.6);
+    box-shadow: 0 20px 50px rgba(15, 23, 42, 0.15);
     padding: 24px;
     position: relative;
     transform: scale(0.9);
@@ -1012,8 +1013,8 @@ h1, h2, h3, h4, h5, h6 {
     display: grid;
     grid-template-columns: 1fr 1fr 1fr;
     gap: 12px;
-    background: rgba(255, 255, 255, 0.02);
-    border: 1px solid rgba(255, 255, 255, 0.04);
+    background: rgba(0, 0, 0, 0.015);
+    border: 1px solid rgba(0, 0, 0, 0.04);
     border-radius: var(--radius-md);
     padding: 12px;
     margin-bottom: 20px;
@@ -1052,7 +1053,7 @@ h1, h2, h3, h4, h5, h6 {
     color: var(--text-secondary);
     letter-spacing: 0.05em;
     margin-bottom: 6px;
-    border-bottom: 1px dashed rgba(255, 255, 255, 0.06);
+    border-bottom: 1px dashed rgba(0, 0, 0, 0.06);
     padding-bottom: 4px;
 }
 
@@ -1064,12 +1065,12 @@ h1, h2, h3, h4, h5, h6 {
 
 /* 8. MAP POPUP & MARKER STYLING (LEAFLET CUSTOM) */
 .leaflet-popup-content-wrapper {
-    background: rgba(13, 16, 24, 0.95) !important;
+    background: rgba(255, 255, 255, 0.95) !important;
     backdrop-filter: blur(10px) !important;
-    border: 1px solid rgba(255, 255, 255, 0.08) !important;
+    border: 1px solid rgba(0, 0, 0, 0.06) !important;
     color: var(--text-primary) !important;
     border-radius: var(--radius-md) !important;
-    box-shadow: 0 10px 24px rgba(0, 0, 0, 0.4) !important;
+    box-shadow: 0 10px 25px rgba(15, 23, 42, 0.08) !important;
     padding: 0 !important;
 }
 
@@ -1079,9 +1080,9 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .leaflet-popup-tip {
-    background: rgba(13, 16, 24, 0.95) !important;
-    border-left: 1px solid rgba(255, 255, 255, 0.08) !important;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
+    background: rgba(255, 255, 255, 0.95) !important;
+    border-left: 1px solid rgba(0, 0, 0, 0.06) !important;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.06) !important;
 }
 
 .map-popup-header {
@@ -1150,4 +1151,136 @@ h1, h2, h3, h4, h5, h6 {
 @keyframes fade-in {
     from { opacity: 0; transform: translateY(6px); }
     to { opacity: 1; transform: translateY(0); }
+}
+
+/* API-info knapp och styling för källor */
+.api-info-btn {
+    background: transparent;
+    border: none;
+    font-size: 14px;
+    cursor: pointer;
+    margin-left: 8px;
+    padding: 2px 6px;
+    border-radius: var(--radius-sm);
+    color: var(--text-secondary);
+    transition: all var(--transition-speed) ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-left: 1px solid rgba(0, 0, 0, 0.08);
+    padding-left: 10px;
+}
+
+.api-info-btn:hover {
+    color: var(--accent-cyan);
+    transform: scale(1.1);
+}
+
+.api-source-card {
+    background: rgba(0, 0, 0, 0.015);
+    border: 1px solid var(--border-color);
+    padding: 14px;
+    border-radius: var(--radius-md);
+    margin-bottom: 12px;
+    transition: all var(--transition-speed) ease;
+}
+
+.api-source-card:hover {
+    background: rgba(0, 0, 0, 0.03);
+    border-color: var(--border-hover);
+}
+
+.api-source-card h4 {
+    font-size: 14px;
+    margin-bottom: 4px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.api-source-card p {
+    font-size: 12.5px;
+    color: var(--text-secondary);
+    line-height: 1.45;
+}
+
+/* 10. FLYTANDE KARTPANEL (MAP FLOATING CONTROLS) */
+.map-floating-controls {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    z-index: 1000;
+    padding: 12px 16px;
+    width: 220px;
+    background: rgba(255, 255, 255, 0.85) !important;
+    backdrop-filter: blur(12px) !important;
+    border: 1px solid rgba(0, 0, 0, 0.08) !important;
+    border-radius: var(--radius-md) !important;
+    box-shadow: 0 10px 25px rgba(15, 23, 42, 0.08) !important;
+    pointer-events: auto; /* Gör kontrollerna klickbara över Leaflet */
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.map-floating-controls .control-group {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.map-floating-controls .control-group label {
+    font-family: var(--font-heading);
+    font-size: 9.5px;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    color: var(--text-secondary);
+}
+
+.map-floating-controls .control-select {
+    width: 100%;
+    padding: 6px 8px;
+    border-radius: var(--radius-sm);
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    background: rgba(255, 255, 255, 0.9);
+    color: var(--text-primary);
+    font-family: var(--font-body);
+    font-size: 11.5px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all var(--transition-speed) ease;
+    outline: none;
+}
+
+.map-floating-controls .control-select:hover {
+    border-color: rgba(0, 0, 0, 0.15);
+    background: #ffffff;
+}
+
+.map-floating-controls .control-select:focus {
+    border-color: var(--accent-cyan);
+    box-shadow: 0 0 0 2px var(--accent-cyan-glow);
+}
+
+.map-floating-controls .toggle-group {
+    flex-direction: row;
+    align-items: center;
+    gap: 8px;
+    padding-top: 4px;
+    border-top: 1px dashed rgba(0, 0, 0, 0.06);
+}
+
+.map-floating-controls .toggle-group input[type="checkbox"] {
+    width: 14px;
+    height: 14px;
+    cursor: pointer;
+    accent-color: var(--accent-cyan);
+}
+
+.map-floating-controls .toggle-group label {
+    font-size: 11px;
+    font-weight: 600;
+    cursor: pointer;
+    color: var(--text-primary);
+    user-select: none;
 }

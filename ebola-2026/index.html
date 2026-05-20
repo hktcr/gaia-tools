@@ -96,6 +96,7 @@
                     <span class="status-indicator live"></span>
                     <span id="sync-text">Synkad via /ebola2026</span>
                     <span class="timestamp" id="last-updated">Senast synkad: --</span>
+                    <button id="btn-api-info" class="api-info-btn" title="Anslutna API-källor">ℹ️</button>
                 </div>
             </header>
             
@@ -126,6 +127,21 @@
                         </div>
                         <div id="map-container">
                             <!-- Leaflet Map renders here -->
+                            <div class="map-floating-controls card-glass">
+                                <div class="control-group">
+                                    <label for="map-style-select">🌍 KARTVY</label>
+                                    <select id="map-style-select" class="control-select">
+                                        <option value="light" selected>Ljust läge (CartoDB)</option>
+                                        <option value="dark">Mörkt läge (CartoDB)</option>
+                                        <option value="osm">Standard (OSM)</option>
+                                        <option value="satellite">Satellitvy (Esri)</option>
+                                    </select>
+                                </div>
+                                <div class="control-group toggle-group">
+                                    <input type="checkbox" id="toggle-cities" checked>
+                                    <label for="toggle-cities">📍 Markera städer</label>
+                                </div>
+                            </div>
                         </div>
                     </div>
                     
@@ -282,6 +298,49 @@
                 <div class="modal-text-block">
                     <h4>Säkerhet & Logistik (Freja Fältforskare / Majoren Eric):</h4>
                     <p id="modal-security">--</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- API Info Modal -->
+    <div id="api-modal" class="modal-backdrop">
+        <div class="modal-content card-glass" style="max-width: 500px;">
+            <button id="api-modal-close" class="modal-close-btn">&times;</button>
+            <div class="modal-header">
+                <span class="tier-badge" style="background: var(--accent-cyan-glow); color: var(--accent-cyan); border-color: rgba(0, 210, 211, 0.2);">System-API:er</span>
+                <h3>Anslutna API-Källor & Tjänster</h3>
+            </div>
+            <div class="modal-body">
+                <p style="margin-bottom: 16px; font-size: 13.5px; color: var(--text-secondary); line-height: 1.55;">
+                    Denna dashboard uppdateras kontinuerligt via en automatiserad datainsamlings-pipeline (<code>/ebola2026</code>) som hämtar, korsrefererar och verifierar epidemiologiska data via följande kostnadsfria tjänster:
+                </p>
+                
+                <div class="api-source-card">
+                    <h4 style="color: var(--accent-cyan);">
+                        <span>📰</span> ReliefWeb API (OCHA / FN)
+                    </h4>
+                    <p>
+                        Förenta Nationernas centrala informationsportal för globala humanitära kriser. Skriptet söker efter de senaste officiella lägesrapporterna (SitReps), pressmeddelandena och fältbulletinerna publicerade av WHO, CDC och hälsoministerier.
+                    </p>
+                </div>
+                
+                <div class="api-source-card">
+                    <h4 style="color: var(--accent-orange);">
+                        <span>🔬</span> EuropePMC API (EMBL-EBI)
+                    </h4>
+                    <p>
+                        Europas främsta öppna arkiv för medicinsk och livsmedelsvetenskaplig forskningslitteratur. Används för att i realtid bevaka kliniska studier, akademiska framsteg och terapeutiska rön om <em>Bundibugyo ebolavirus</em>.
+                    </p>
+                </div>
+                
+                <div class="api-source-card">
+                    <h4 style="color: var(--accent-purple);">
+                        <span>🗺️</span> Leaflet.js & CartoDB Dark Matter
+                    </h4>
+                    <p>
+                        Visuell kartrendering integrerad direkt i appen. Vi hämtar mörka CartoDB-kartplattor helt utan att behöva kommersiella API-nycklar, vilket ger en premium, mörkeroptimerad spårningsvy fri från trackers.
+                    </p>
                 </div>
             </div>
         </div>

@@ -15,6 +15,8 @@ document.addEventListener('DOMContentLoaded', () => {
     let ebolaData = null;
     let map = null;
     let markers = [];
+    let activeTileLayer = null;
+    let cityMarkers = [];
     
     // UI Element Referenser
     const tabButtons = document.querySelectorAll('.tab-btn');
@@ -47,6 +49,26 @@ document.addEventListener('DOMContentLoaded', () => {
     const modalDeaths = document.getElementById('modal-deaths');
     const modalDescription = document.getElementById('modal-description');
     const modalSecurity = document.getElementById('modal-security');
+    
+    // API Info Modal
+    const apiModal = document.getElementById('api-modal');
+    const apiModalBtn = document.getElementById('btn-api-info');
+    const apiModalClose = document.getElementById('api-modal-close');
+
+    // Map Controls
+    const mapStyleSelect = document.getElementById('map-style-select');
+    const toggleCities = document.getElementById('toggle-cities');
+
+    // Regionala städer i smittoområdet
+    const regionalCities = [
+        { name: "Kampala", lat: 0.3136, lng: 32.5811, population: "1.7 miljoner", info: "Ugandas huvudstad och ekonomiska centrum. Här behandlas importerade fall på Mulago-sjukhuset under strikt isolering." },
+        { name: "Goma", lat: -1.6742, lng: 29.2285, population: "2.0 miljoner", info: "Huvudstad i provinsen North Kivu, DRC. Extremt tätbefolkad gränsstad mot Rwanda vid Kivusjön." },
+        { name: "Bunia", lat: 1.5635, lng: 30.2458, population: "400 000", info: "Huvudstad i provinsen Ituri, DRC. Belägen i direkt anslutning till utbrottets epicentrum och RN4-axeln." },
+        { name: "Beni", lat: 0.4913, lng: 29.4719, population: "230 000", info: "Stor handelsstad i North Kivu, DRC. Historiskt drabbad av ebola och präglad av högt säkerhetsläge." },
+        { name: "Butembo", lat: 0.1412, lng: 29.2882, population: "670 000", info: "Betydande kommersiellt nav i North Kivu med tät handel och persontrafik över gränsen till Uganda." },
+        { name: "Kisangani", lat: 0.5152, lng: 25.1900, population: "1.3 miljoner", info: "Huvudstad i provinsen Tshopo, DRC. Stor hamnstad längs Kongofloden och strategisk knutpunkt." },
+        { name: "Entebbe", lat: 0.0512, lng: 32.4637, population: "70 000", info: "Ugandisk stad vid Victoriasjön som hyser landets internationella flygplats och virusforskningsinstitut (UVRI)." }
+    ];
 
     // Systemklocka (Realtid)
     function updateClock() {
@@ -82,23 +104,99 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // 2. INITIALISERA KARTA (Leaflet.js)
+    const mapTiles = {
+        light: {
+            url: 'https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png',
+            attrib: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/attributions">CARTO</a>'
+        },
+        dark: {
+            url: 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png',
+            attrib: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/attributions">CARTO</a>'
+        },
+        osm: {
+            url: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+            attrib: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+        },
+        satellite: {
+            url: 'https://services.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
+            attrib: 'Tiles &copy; Esri &mdash; Source: Esri, USDA, USGS, Aerogrid, IGN, IGP, and the GIS User Community'
+        }
+    };
+
     function initMap() {
         // Centrera över Central/Östafrika (DRC/Uganda)
         map = L.map('map-container', {
             zoomControl: true,
-            attributionControl: false
+            attributionControl: true
         }).setView([0.50, 29.50], 6); // Centrerad nära Semliki Valley / Bunia / Kampala
 
-        // CartoDB Dark Matter (Premium mörk stil, helt gratis utan nyckel)
-        L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
-            maxZoom: 19
+        // Standard: Ljust läge (CartoDB Positron) för att matcha det ljusa temat
+        activeTileLayer = L.tileLayer(mapTiles.light.url, {
+            maxZoom: 19,
+            attribution: mapTiles.light.attrib
         }).addTo(map);
 
-        // Skapa en elegant, liten attribution-ruta manuellt i hörnet
-        L.control.attribution({
-            position: 'bottomright',
-            prefix: 'Leaflet | Map tiles by CartoDB'
-        }).addTo(map);
+        // Lyssna på kartbytes-väljaren
+        if (mapStyleSelect) {
+            mapStyleSelect.addEventListener('change', (e) => {
+                const style = e.target.value;
+                if (mapTiles[style]) {
+                    if (activeTileLayer) {
+                        map.removeLayer(activeTileLayer);
+                    }
+                    activeTileLayer = L.tileLayer(mapTiles[style].url, {
+                        maxZoom: 19,
+                        attribution: mapTiles[style].attrib
+                    }).addTo(map);
+                }
+            });
+        }
+
+        // Lyssna på stads-togglen
+        if (toggleCities) {
+            toggleCities.addEventListener('change', () => {
+                updateCityMarkers();
+            });
+        }
+    }
+
+    // Funktion för att uppdatera stadsmarkörer
+    function updateCityMarkers() {
+        // Rensa gamla stadsmarkörer
+        cityMarkers.forEach(m => map.removeLayer(m));
+        cityMarkers = [];
+
+        if (toggleCities && toggleCities.checked) {
+            regionalCities.forEach(city => {
+                // Skapa en elegant, liten blå cirkelmarkör med vit ram
+                const marker = L.circleMarker([city.lat, city.lng], {
+                    radius: 5,
+                    color: '#ffffff',
+                    fillColor: '#0891b2', // cyan-600
+                    fillOpacity: 0.9,
+                    weight: 1.5
+                }).addTo(map);
+
+                // Popup text
+                const popupContent = `
+                    <div class="map-popup-header">📍 ${city.name}</div>
+                    <div class="map-popup-row" style="margin-bottom: 6px;">
+                        <span>Befolkning:</span>
+                        <span style="font-weight: 700; color: var(--accent-cyan);">${city.population}</span>
+                    </div>
+                    <div style="font-size: 11px; color: var(--text-secondary); line-height: 1.45;">
+                        ${city.info}
+                    </div>
+                `;
+
+                marker.bindPopup(popupContent, {
+                    maxWidth: 220,
+                    closeButton: false
+                });
+
+                cityMarkers.push(marker);
+            });
+        }
     }
 
     // 3. LADDA DATA
@@ -113,6 +211,7 @@ document.addEventListener('DOMContentLoaded', () => {
             // 4. POPULERA UI
             populateSidebar(ebolaData.stats);
             populateMapMarkers(ebolaData.map_zones);
+            updateCityMarkers(); // Rita städerna efter att data har laddats in
             populateNews(ebolaData.news);
             populateScience(ebolaData.science);
             populateVEP(ebolaData.vep_deliberation);
@@ -219,12 +318,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Helper för att hämta CSS-färgvariabler
     function varColor(name) {
-        if (name === 'red') return '#ff5252';
-        if (name === 'orange') return '#ff9f43';
-        if (name === 'purple') return '#9b5de5';
-        if (name === 'cyan') return '#00d2d3';
-        if (name === 'green') return '#10ac84';
-        return '#ffffff';
+        if (name === 'red') return '#e11d48';
+        if (name === 'orange') return '#ea580c';
+        if (name === 'purple') return '#7c3aed';
+        if (name === 'cyan') return '#0891b2';
+        if (name === 'green') return '#0d9488';
+        return '#475569';
     }
 
     // Öppna Detail Modal för zon
@@ -260,6 +359,27 @@ document.addEventListener('DOMContentLoaded', () => {
         detailModal.addEventListener('click', (e) => {
             if (e.target === detailModal) {
                 detailModal.classList.remove('active');
+            }
+        });
+    }
+
+    // Hantera API Info Modal
+    if (apiModalBtn && apiModal) {
+        apiModalBtn.addEventListener('click', () => {
+            apiModal.classList.add('active');
+        });
+    }
+
+    if (apiModalClose && apiModal) {
+        apiModalClose.addEventListener('click', () => {
+            apiModal.classList.remove('active');
+        });
+    }
+
+    if (apiModal) {
+        apiModal.addEventListener('click', (e) => {
+            if (e.target === apiModal) {
+                apiModal.classList.remove('active');
             }
         });
     }
