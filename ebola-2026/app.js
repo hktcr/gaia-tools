@@ -17,6 +17,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let markers = [];
     let activeTileLayer = null;
     let cityMarkers = [];
+    let trendChartInstance = null;
     
     // UI Element Referenser
     const tabButtons = document.querySelectorAll('.tab-btn');
@@ -98,6 +99,13 @@ document.addEventListener('DOMContentLoaded', () => {
             if (targetTab === 'tab-map' && map) {
                 setTimeout(() => {
                     map.invalidateSize();
+                }, 100);
+            }
+            
+            // Chart.js bugg-fix: invalidatisera storlek om vi visar diagrammet
+            if (targetTab === 'tab-charts' && trendChartInstance) {
+                setTimeout(() => {
+                    trendChartInstance.resize();
                 }, 100);
             }
         });
@@ -254,6 +262,11 @@ document.addEventListener('DOMContentLoaded', () => {
             populateNews(ebolaData.news);
             populateScience(ebolaData.science);
             populateVEP(ebolaData.vep_deliberation);
+            
+            // Initiera trenddiagrammet
+            if (ebolaData.history) {
+                initTrendChart(ebolaData.history);
+            }
             
             if (lastUpdated) {
                 lastUpdated.textContent = `Senast synkad: ${ebolaData.stats.last_sync || '--'}`;
@@ -531,6 +544,152 @@ document.addEventListener('DOMContentLoaded', () => {
         setTimeout(() => {
             vepChat.scrollTop = vepChat.scrollHeight;
         }, 300);
+    }
+
+    // Skapa och formatera det interaktiva trenddiagrammet
+    function initTrendChart(history) {
+        const canvas = document.getElementById('trendChart');
+        if (!canvas) return;
+        
+        const ctx = canvas.getContext('2d');
+        if (!ctx) return;
+
+        // Förstör tidigare instans om den redan finns (t.ex. vid återinladdning)
+        if (trendChartInstance) {
+            trendChartInstance.destroy();
+        }
+
+        // Skapa tonade fyllningar (gradients) under linjerna för en modern 'area chart'-känsla
+        const fillCases = ctx.createLinearGradient(0, 0, 0, 400);
+        fillCases.addColorStop(0, 'rgba(225, 29, 72, 0.12)'); // Rose-600 soft fill
+        fillCases.addColorStop(1, 'rgba(225, 29, 72, 0.00)');
+
+        const fillDeaths = ctx.createLinearGradient(0, 0, 0, 400);
+        fillDeaths.addColorStop(0, 'rgba(100, 116, 139, 0.12)'); // Slate-500 soft fill
+        fillDeaths.addColorStop(1, 'rgba(100, 116, 139, 0.00)');
+
+        // Formatera datumet till svenskt format (t.ex. "22 maj")
+        function formatDateSwedish(dateStr) {
+            const d = new Date(dateStr);
+            if (isNaN(d.getTime())) return dateStr;
+            const months = ['jan', 'feb', 'mar', 'apr', 'maj', 'jun', 'jul', 'aug', 'sep', 'okt', 'nov', 'dec'];
+            return `${d.getDate()} ${months[d.getMonth()]}`;
+        }
+
+        trendChartInstance = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: history.map(d => formatDateSwedish(d.date)),
+                datasets: [
+                    {
+                        label: 'Misstänkta fall (Kumulativt)',
+                        data: history.map(d => d.cases),
+                        borderColor: '#e11d48', // var(--accent-red)
+                        backgroundColor: fillCases,
+                        borderWidth: 3,
+                        fill: true,
+                        tension: 0.35,
+                        pointBackgroundColor: '#e11d48',
+                        pointBorderColor: '#ffffff',
+                        pointBorderWidth: 1.5,
+                        pointRadius: 4,
+                        pointHoverRadius: 6,
+                        pointHoverBorderWidth: 2
+                    },
+                    {
+                        label: 'Misstänkta dödsfall (Kumulativt)',
+                        data: history.map(d => d.deaths),
+                        borderColor: '#64748b', // Slate-500 (color-deaths)
+                        backgroundColor: fillDeaths,
+                        borderWidth: 3,
+                        fill: true,
+                        tension: 0.35,
+                        pointBackgroundColor: '#64748b',
+                        pointBorderColor: '#ffffff',
+                        pointBorderWidth: 1.5,
+                        pointRadius: 4,
+                        pointHoverRadius: 6,
+                        pointHoverBorderWidth: 2
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: false // Vi använder vår egen premium HTML-legend
+                    },
+                    tooltip: {
+                        backgroundColor: 'rgba(255, 255, 255, 0.95)',
+                        titleColor: '#0f172a',
+                        bodyColor: '#334155',
+                        titleFont: {
+                            family: "'Outfit', sans-serif",
+                            size: 13,
+                            weight: '600'
+                        },
+                        bodyFont: {
+                            family: "'Inter', sans-serif",
+                            size: 12
+                        },
+                        borderColor: 'rgba(0, 0, 0, 0.06)',
+                        borderWidth: 1,
+                        padding: 12,
+                        cornerRadius: 10,
+                        displayColors: true,
+                        boxWidth: 8,
+                        boxHeight: 8,
+                        boxPadding: 6,
+                        usePointStyle: true,
+                        callbacks: {
+                            label: function(context) {
+                                let label = context.dataset.label || '';
+                                if (label) {
+                                    label = label.split(' ')[0] + ': '; // Förenkla till "Misstänkta:" eller "Dödsfall:"
+                                }
+                                if (context.parsed.y !== null) {
+                                    label += context.parsed.y + ' st';
+                                }
+                                return label;
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    x: {
+                        grid: {
+                            display: false
+                        },
+                        ticks: {
+                            color: 'rgba(15, 23, 42, 0.6)',
+                            font: {
+                                family: "'Inter', sans-serif",
+                                size: 11
+                            }
+                        }
+                    },
+                    y: {
+                        grid: {
+                            color: 'rgba(15, 23, 42, 0.04)',
+                            drawBorder: false
+                        },
+                        ticks: {
+                            color: 'rgba(15, 23, 42, 0.6)',
+                            font: {
+                                family: "'Inter', sans-serif",
+                                size: 11
+                            },
+                            stepSize: 20
+                        }
+                    }
+                },
+                interaction: {
+                    intersect: false,
+                    mode: 'index'
+                }
+            }
+        });
     }
 
     // Initialisera karta och ladda data

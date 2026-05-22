@@ -14,6 +14,9 @@
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
     
+    <!-- Chart.js (Diagram) -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
     <!-- Custom Style Sheet -->
     <link rel="stylesheet" href="style.css">
 </head>
@@ -110,6 +113,9 @@
                 </button>
                 <button class="tab-btn" id="btn-tab-vep" data-tab="tab-vep">
                     <span class="tab-icon">👥</span> VEP Expertgranskning
+                </button>
+                <button class="tab-btn" id="btn-tab-charts" data-tab="tab-charts">
+                    <span class="tab-icon">📈</span> Utveckling & Diagram
                 </button>
             </nav>
             
@@ -264,6 +270,26 @@
                         <div class="vep-chat-container" id="vep-chat">
                             <!-- VEP Chat debate messages inserted dynamically -->
                             <div class="loading-spinner">Genererar panelanalys...</div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- Tab Content 4: Epidemiological Charts & Trends -->
+            <section class="tab-pane" id="tab-charts">
+                <div class="charts-grid">
+                    <div class="chart-card card-glass">
+                        <div class="card-header border-orange">
+                            <h3>📈 Epidemiologisk Trendkurva (BDBV 2026)</h3>
+                            <div class="chart-legend-header">
+                                <span class="chart-legend-item"><span class="legend-color color-red"></span> Fall (Kumulativt)</span>
+                                <span class="chart-legend-item"><span class="legend-color color-deaths"></span> Dödsfall (Kumulativt)</span>
+                            </div>
+                        </div>
+                        <div class="chart-body">
+                            <div class="chart-container-wrapper">
+                                <canvas id="trendChart"></canvas>
+                            </div>
                         </div>
                     </div>
                 </div>
