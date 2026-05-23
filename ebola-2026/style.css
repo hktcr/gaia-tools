@@ -1356,3 +1356,122 @@ h1, h2, h3, h4, h5, h6 {
     padding: 10px;
 }
 
+/* ═══════════════════════════════════════════════════════════════
+   DATA PROVENANCE BANNER
+   ═══════════════════════════════════════════════════════════════ */
+
+.provenance-banner {
+    padding: 8px 24px;
+    background: linear-gradient(135deg, rgba(241, 245, 249, 0.95), rgba(226, 232, 240, 0.9));
+    border-bottom: 1px solid rgba(148, 163, 184, 0.2);
+    overflow-x: auto;
+}
+
+.provenance-items {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.provenance-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 11.5px;
+    font-family: 'Inter', sans-serif;
+    font-weight: 500;
+    white-space: nowrap;
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+    cursor: default;
+}
+
+.provenance-chip:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.provenance-chip .chip-icon {
+    font-size: 12px;
+}
+
+.provenance-chip .chip-label {
+    color: var(--text-secondary);
+    font-weight: 400;
+}
+
+.provenance-chip .chip-status {
+    font-weight: 600;
+    letter-spacing: 0.02em;
+}
+
+/* Chip variants */
+.provenance-chip.chip-live {
+    background: rgba(16, 185, 129, 0.1);
+    border: 1px solid rgba(16, 185, 129, 0.25);
+}
+.provenance-chip.chip-live .chip-status {
+    color: #059669;
+}
+
+.provenance-chip.chip-simulation {
+    background: rgba(234, 88, 12, 0.08);
+    border: 1px solid rgba(234, 88, 12, 0.2);
+}
+.provenance-chip.chip-simulation .chip-status {
+    color: #c2410c;
+}
+
+.provenance-chip.chip-ai {
+    background: rgba(124, 58, 237, 0.08);
+    border: 1px solid rgba(124, 58, 237, 0.2);
+}
+.provenance-chip.chip-ai .chip-status {
+    color: #6d28d9;
+}
+
+.provenance-chip.chip-fallback {
+    background: rgba(245, 158, 11, 0.1);
+    border: 1px solid rgba(245, 158, 11, 0.25);
+}
+.provenance-chip.chip-fallback .chip-status {
+    color: #b45309;
+}
+
+/* Source badge in card headers */
+.source-badge {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-size: 10.5px;
+    font-weight: 600;
+    letter-spacing: 0.03em;
+    vertical-align: middle;
+    margin-left: 6px;
+}
+
+.source-badge.badge-live {
+    background: rgba(16, 185, 129, 0.12);
+    color: #059669;
+    border: 1px solid rgba(16, 185, 129, 0.2);
+}
+
+.source-badge.badge-simulation {
+    background: rgba(234, 88, 12, 0.1);
+    color: #c2410c;
+    border: 1px solid rgba(234, 88, 12, 0.2);
+}
+
+.source-badge.badge-fallback {
+    background: rgba(245, 158, 11, 0.12);
+    color: #b45309;
+    border: 1px solid rgba(245, 158, 11, 0.2);
+}
+
+.source-badge.badge-ai {
+    background: rgba(124, 58, 237, 0.1);
+    color: #6d28d9;
+    border: 1px solid rgba(124, 58, 237, 0.2);
+}

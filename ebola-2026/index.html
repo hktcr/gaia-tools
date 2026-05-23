@@ -103,6 +103,13 @@
                 </div>
             </header>
             
+            <!-- Data Provenance Banner -->
+            <div id="provenance-banner" class="provenance-banner">
+                <div class="provenance-items" id="provenance-items">
+                    <!-- Populated dynamically by app.js -->
+                </div>
+            </div>
+
             <!-- Tab Navigation (Outfit typography) -->
             <nav class="tab-navigation" aria-label="Dashboard sektioner">
                 <button class="tab-btn active" id="btn-tab-map" data-tab="tab-map">
@@ -155,7 +162,7 @@
                     <!-- ReliefWeb News Feed -->
                     <div class="news-card card-glass">
                         <div class="card-header">
-                            <h3>📰 Humanitära Lägesrapporter (ReliefWeb)</h3>
+                            <h3>📰 Humanitära Datakällor <span class="source-badge" id="news-source-badge">—</span></h3>
                             <span class="badge" id="news-count">0 källor</span>
                         </div>
                         <div class="news-feed-container" id="news-feed">
@@ -342,33 +349,51 @@
             </div>
             <div class="modal-body">
                 <p style="margin-bottom: 16px; font-size: 13.5px; color: var(--text-secondary); line-height: 1.55;">
-                    Denna dashboard uppdateras kontinuerligt via en automatiserad datainsamlings-pipeline (<code>/ebola2026</code>) som hämtar, korsrefererar och verifierar epidemiologiska data via följande kostnadsfria tjänster:
+                    Denna dashboard drivs av en automatiserad pipeline (<code>/ebola2026</code>) som kombinerar simulerad epidemiologisk data med riktiga API-källor. Transparens om dataursprung visas nedan.
                 </p>
                 
-                <div class="api-source-card">
-                    <h4 style="color: var(--accent-cyan);">
-                        <span>📰</span> ReliefWeb API (OCHA / FN)
-                    </h4>
-                    <p>
-                        Förenta Nationernas centrala informationsportal för globala humanitära kriser. Skriptet söker efter de senaste officiella lägesrapporterna (SitReps), pressmeddelandena och fältbulletinerna publicerade av WHO, CDC och hälsoministerier.
-                    </p>
-                </div>
-                
-                <div class="api-source-card">
+                <div class="api-source-card" style="border-left: 3px solid var(--accent-orange);">
                     <h4 style="color: var(--accent-orange);">
-                        <span>🔬</span> EuropePMC API (EMBL-EBI)
+                        <span>⚙️</span> Epidemiologiska Siffror — SIMULERING
                     </h4>
                     <p>
-                        Europas främsta öppna arkiv för medicinsk och livsmedelsvetenskaplig forskningslitteratur. Används för att i realtid bevaka kliniska studier, akademiska framsteg och terapeutiska rön om <em>Bundibugyo ebolavirus</em>.
+                        Falltal, dödsfall och CFR genereras av en logistisk tillväxtmodell som inkrementellt uppdaterar siffrorna vid varje synk. Eftersom utbrottet är en simulerad fallstudie finns inga riktiga API-källor för dessa siffror.
                     </p>
                 </div>
                 
-                <div class="api-source-card">
-                    <h4 style="color: var(--accent-purple);">
-                        <span>🗺️</span> Leaflet.js & CartoDB Dark Matter
+                <div class="api-source-card" style="border-left: 3px solid var(--accent-green);">
+                    <h4 style="color: var(--accent-green);">
+                        <span>🌐</span> HDX — Humanitarian Data Exchange (OCHA/FN)
                     </h4>
                     <p>
-                        Visuell kartrendering integrerad direkt i appen. Vi hämtar mörka CartoDB-kartplattor helt utan att behöva kommersiella API-nycklar, vilket ger en premium, mörkeroptimerad spårningsvy fri från trackers.
+                        FN:s öppna dataplattform för humanitära datasets om DRC och Uganda. Returnerar generella humanitära datasets, inte utbrottsspecifika sitreps.
+                    </p>
+                </div>
+                
+                <div class="api-source-card" style="border-left: 3px solid var(--accent-cyan);">
+                    <h4 style="color: var(--accent-cyan);">
+                        <span>🔬</span> EuropePMC — EMBL-EBI (LIVE API)
+                    </h4>
+                    <p>
+                        Riktiga peer-reviewed vetenskapliga artiklar om <em>Bundibugyo ebolavirus</em> hämtade live från Europas främsta öppna forskningsarkiv.
+                    </p>
+                </div>
+                
+                <div class="api-source-card" style="border-left: 3px solid var(--accent-purple);">
+                    <h4 style="color: var(--accent-purple);">
+                        <span>🤖</span> VEP Expertgranskning — AI-GENERERAD
+                    </h4>
+                    <p>
+                        Deliberationsloggen produceras av gAIa med fiktiva expertpersonor. Yttranden baseras på aktuella simulerade siffror och riktiga vetenskapliga rön.
+                    </p>
+                </div>
+                
+                <div class="api-source-card" style="border-left: 3px solid var(--text-tertiary);">
+                    <h4 style="color: var(--text-secondary);">
+                        <span>🗺️</span> Kartdata — Leaflet.js & CartoDB/Esri
+                    </h4>
+                    <p>
+                        Kartrendering via helt kostnadsfria kartpaneler (inga API-nycklar). GeoJSON-gränser från Natural Earth.
                     </p>
                 </div>
             </div>

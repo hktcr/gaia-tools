@@ -1,12 +1,12 @@
 {
     "stats": {
-        "suspected_cases": 154,
+        "suspected_cases": 160,
         "confirmed_cases": 44,
-        "suspected_deaths": 58,
-        "cfr": 37.7,
+        "suspected_deaths": 60,
+        "cfr": 37.5,
         "strain": "Bundibugyo ebolavirus",
         "epicenter": "Ituri, DRC",
-        "last_sync": "2026-05-23 23:19",
+        "last_sync": "2026-05-23 23:33",
         "delta_cases": 6,
         "delta_deaths": 2
     },
@@ -16,8 +16,8 @@
             "name": "Ituri-provinsen, DRC (Epicenter)",
             "lat": 1.56,
             "lng": 30.25,
-            "cases": 134,
-            "deaths": 50,
+            "cases": 139,
+            "deaths": 51,
             "health_zones": "Mambasa, Mandima, Komanda, Nyankunde",
             "description": "Epicentret för Bundibugyo-utbrottet. Smittspridning sker främst i landsbygdskontext kring informella guldgruvor i Mambasa och Mandima. Svårigheter med smittspårning på grund av svår terräng och säkerhetsläget.",
             "security_logistics": "Milisgruppen ADF är aktiv i området vilket begränsar hälsoarbetarnas rörlighet. Skyddseskort och samarbete med lokala ledare krävs för insatser utanför de centrala städerna.",
@@ -28,7 +28,7 @@
             "name": "Kampala, Uganda (Importerade fall)",
             "lat": 0.3136,
             "lng": 32.5811,
-            "cases": 5,
+            "cases": 6,
             "deaths": 2,
             "health_zones": "Mulago Hospital Isolation Unit",
             "description": "Importerade fall har spårats till Kampala. Indexfallet var en handlare som reste från Ituri via Bunia och gränsövergången Kasindi. Fallen är isolerade på Mulago.",
@@ -198,69 +198,69 @@
         "transcript": [
             {
                 "role": "system_meta",
-                "text": "--- VEP DUAL-SIGNATURE PROTOKOLL AKTIVERAT [Tid: 23:19] [Utbrottsdag 8] ---"
+                "text": "--- VEP DUAL-SIGNATURE PROTOKOLL AKTIVERAT [Tid: 23:33] [Utbrottsdag 8] ---"
             },
             {
                 "sender": "Dr. Sofia Epidemiologi",
                 "title": "Epidemiologen (Smittmönster)",
                 "domain": "sofia",
-                "time": "23:19",
-                "text": "[VEP-07] Kollegor, de totala siffrorna visar nu 154 misstänkta fall med 58 registrerade dödsfall (CFR 37.7%). Sedan senaste synk: +6 fall, +2 dödsfall. Ituri rapporterar 134 fall, Goma 15 och Kampala 5. Utbrottet visar fortfarande aktiv tillväxt."
+                "time": "23:33",
+                "text": "[VEP-07] Kollegor, de totala siffrorna visar nu 160 misstänkta fall med 60 registrerade dödsfall (CFR 37.5%). Sedan senaste synk: +6 fall, +2 dödsfall. Ituri rapporterar 139 fall, Goma 15 och Kampala 6. Utbrottet visar fortfarande aktiv tillväxt."
             },
             {
                 "sender": "Dr. Anders Smittskydd",
                 "title": "Backup Epidemiologi",
                 "domain": "anders",
-                "time": "23:19",
-                "text": "[VEP-08] Jag har granskat Sofias siffror mot tillgängliga officiella källor. Kontrasignerar analysen. Kampala-fallen (5 st) är fortfarande isolerade. Kontaktspårningen i Kampala omfattar uppskattningsvis 145 kontakter."
+                "time": "23:33",
+                "text": "[VEP-08] Jag har granskat Sofias siffror mot tillgängliga officiella källor. Kontrasignerar analysen. Kampala-fallen (6 st) är fortfarande isolerade. Kontaktspårningen i Kampala omfattar uppskattningsvis 174 kontakter."
             },
             {
                 "sender": "Prof. Gustaf Källa",
                 "title": "Virologen",
                 "domain": "gustaf",
-                "time": "23:19",
+                "time": "23:33",
                 "text": "[VEP-09] Påminner om att detta är Bundibugyo ebolavirus (BDBV), inte Zaire. Ervebo-vaccinet (rVSV-ZEBOV) ger noll immunitet. Vi har hittat 10 relevanta vetenskapliga artiklar i denna synk. Forskning på multivalenta vaccin pågår i fas-I/II men inget är tillgängligt för fältbruk."
             },
             {
                 "sender": "Dr. Elena Genom",
                 "title": "Backup Virologi",
                 "domain": "elena",
-                "time": "23:19",
+                "time": "23:33",
                 "text": "[VEP-10] Bekräftar Gustafs biologiska varning. Gensekvenseringen av proverna från Mambasa bekräftar 99.2% matchning med Bundibugyo-referensgenomet (2007). Den genetiska klyftan till Zaire gör att Zaire-riktade antikroppar är verkningslösa mot BDBV."
             },
             {
                 "sender": "Freja Fältforskare",
                 "title": "Regionalanalytikern (Geopolitik)",
                 "domain": "freja",
-                "time": "23:19",
+                "time": "23:33",
                 "text": "[VEP-11] Säkerhetsläget i Ituri förblir kritiskt. ADF (Allied Democratic Forces) är aktiva längs RN4-axeln. Övervakningszonen i Goma visar begränsad men oroande aktivitet."
             },
             {
                 "sender": "Majoren Eric",
                 "title": "Backup Säkerhet & Logistik",
                 "domain": "eric",
-                "time": "23:19",
+                "time": "23:33",
                 "text": "[VEP-12] Verifierat fältrapporterna. Humanitära korridorer med skyddade konvojer krävs fortfarande för kontaktspårning i Mambasa och Mandima. MONUSCO-koordinering rekommenderas."
             },
             {
                 "sender": "Dr. Amira Samhälle",
                 "title": "Folkhälsospecialisten",
                 "domain": "amira",
-                "time": "23:19",
+                "time": "23:33",
                 "text": "[VEP-13] Lokalt engagemang och kulturellt anpassade hygienprotokoll fortsätter att vara avgörande. I Kampala måste UVRI-diagnostiken på Mulago säkerställas. Humanitära datasets från HDX ger oss bättre grund för logistisk planering."
             },
             {
                 "sender": "Vera Verifikation",
                 "title": "Faktagranskaren",
                 "domain": "vera",
-                "time": "23:19",
-                "text": "[VEP-14] Verifiering slutförd. 5 humanitära källor och 10 vetenskapliga artiklar granskade. Källtrovärdigheten klassas som HÖG för officiella kanaler. Baserat på 154 fall, 58 dödsfall, CFR 37.7%, och brist på fungerande vaccin sätter ERB GAIA Riskindex till 7.8/10 (FÖRHÖJT HOT)."
+                "time": "23:33",
+                "text": "[VEP-14] Verifiering slutförd. 5 humanitära källor och 10 vetenskapliga artiklar granskade. Källtrovärdigheten klassas som HÖG för officiella kanaler. Baserat på 160 fall, 60 dödsfall, CFR 37.5%, och brist på fungerande vaccin sätter ERB GAIA Riskindex till 7.8/10 (FÖRHÖJT HOT)."
             },
             {
                 "sender": "Vera & Marcus",
                 "title": "Co-Signers",
                 "role": "system_meta",
-                "text": "--- DELIBERATION GODKÄND OCH SIGNERAD AV ERB CRISIS PANEL [23:19] ---"
+                "text": "--- DELIBERATION GODKÄND OCH SIGNERAD AV ERB CRISIS PANEL [23:33] ---"
             }
         ]
     },
@@ -330,5 +330,45 @@
             "cases": 148,
             "deaths": 56
         }
-    ]
+    ],
+    "data_provenance": {
+        "epidemiology": {
+            "type": "SIMULERING",
+            "description": "Logistisk tillväxtmodell — inkrementell simulering baserad på föregående synk. Inte hämtad från extern källa.",
+            "confidence": "MODELL",
+            "icon": "⚙️"
+        },
+        "news": {
+            "type": "LIVE API",
+            "source": "HDX (Humanitarian Data Exchange / OCHA)",
+            "description": "Humanitära datasets om DRC och Uganda från FN:s öppna dataplattform.",
+            "confidence": "HÖG",
+            "icon": "🌐"
+        },
+        "science": {
+            "type": "LIVE API",
+            "source": "EuropePMC (EMBL-EBI)",
+            "description": "Peer-reviewed vetenskapliga artiklar om Bundibugyo ebolavirus.",
+            "confidence": "HÖG",
+            "icon": "🌐"
+        },
+        "vep": {
+            "type": "AI-GENERERAD",
+            "description": "VEP-deliberationen genereras av gAIa baserat på aktuella siffror. Expertpersonerna är fiktiva.",
+            "confidence": "SYNTETISK",
+            "icon": "🤖"
+        },
+        "map_zones": {
+            "type": "SIMULERING",
+            "description": "Geografisk fördelning baserad på proportionell simuleringsmodell.",
+            "confidence": "MODELL",
+            "icon": "⚙️"
+        },
+        "trend_chart": {
+            "type": "SIMULERING",
+            "description": "Historiska datapunkter är inledningsvis kurerade, sedan inkrementellt simulerade.",
+            "confidence": "MODELL",
+            "icon": "⚙️"
+        }
+    }
 }

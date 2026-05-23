@@ -262,6 +262,7 @@ document.addEventListener('DOMContentLoaded', () => {
             populateNews(ebolaData.news);
             populateScience(ebolaData.science);
             populateVEP(ebolaData.vep_deliberation);
+            populateProvenance(ebolaData.data_provenance);
             
             // Initiera trenddiagrammet
             if (ebolaData.history) {
@@ -544,6 +545,49 @@ document.addEventListener('DOMContentLoaded', () => {
         setTimeout(() => {
             vepChat.scrollTop = vepChat.scrollHeight;
         }, 300);
+    }
+
+    // Populera dataproveniensbanderoll
+    function populateProvenance(provenance) {
+        const container = document.getElementById('provenance-items');
+        if (!container || !provenance) return;
+        container.innerHTML = '';
+
+        const items = [
+            { key: 'epidemiology', label: 'Siffror' },
+            { key: 'news', label: 'Nyheter' },
+            { key: 'science', label: 'Vetenskap' },
+            { key: 'vep', label: 'VEP' },
+            { key: 'trend_chart', label: 'Diagram' },
+        ];
+
+        items.forEach(item => {
+            const p = provenance[item.key];
+            if (!p) return;
+
+            let chipClass = 'chip-simulation';
+            if (p.type === 'LIVE API') chipClass = 'chip-live';
+            else if (p.type === 'FALLBACK') chipClass = 'chip-fallback';
+            else if (p.type === 'AI-GENERERAD') chipClass = 'chip-ai';
+
+            const chip = document.createElement('div');
+            chip.className = `provenance-chip ${chipClass}`;
+            chip.title = p.description;
+            chip.innerHTML = `
+                <span class="chip-icon">${p.icon}</span>
+                <span class="chip-label">${item.label}:</span>
+                <span class="chip-status">${p.type}</span>
+            `;
+            container.appendChild(chip);
+        });
+
+        // Update news source badge
+        const newsBadge = document.getElementById('news-source-badge');
+        if (newsBadge && provenance.news) {
+            const p = provenance.news;
+            newsBadge.textContent = p.type;
+            newsBadge.className = 'source-badge ' + (p.type === 'LIVE API' ? 'badge-live' : 'badge-fallback');
+        }
     }
 
     // Skapa och formatera det interaktiva trenddiagrammet
