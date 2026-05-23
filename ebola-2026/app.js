@@ -372,6 +372,7 @@ document.addEventListener('DOMContentLoaded', () => {
             populateScience(ebolaData.science);
             populateVEP(ebolaData.vep_deliberation);
             populateProvenance(ebolaData.data_provenance);
+            populateCrossReference(ebolaData.cross_reference);
             
             // Initiera trenddiagrammet
             if (ebolaData.history) {
@@ -379,7 +380,9 @@ document.addEventListener('DOMContentLoaded', () => {
             }
             
             if (lastUpdated) {
-                lastUpdated.textContent = `Senast synkad: ${ebolaData.stats.last_sync || '--'}`;
+                const src = ebolaData.stats.primary_source || '';
+                const srcLabel = src ? ` (${src})` : '';
+                lastUpdated.textContent = `Senast synkad: ${ebolaData.stats.last_sync || '--'}${srcLabel}`;
             }
             
         } catch (error) {
@@ -684,9 +687,10 @@ document.addEventListener('DOMContentLoaded', () => {
             if (!p) return;
 
             let chipClass = 'chip-simulation';
-            if (p.type === 'LIVE API') chipClass = 'chip-live';
+            if (p.type === 'LIVE API' || p.type.includes('LIVE')) chipClass = 'chip-live';
             else if (p.type === 'FALLBACK') chipClass = 'chip-fallback';
             else if (p.type === 'AI-GENERERAD') chipClass = 'chip-ai';
+            else if (p.type === 'HYBRID' || p.type === 'PROPORTIONELL') chipClass = 'chip-live';
 
             const chip = document.createElement('div');
             chip.className = `provenance-chip ${chipClass}`;
@@ -706,6 +710,69 @@ document.addEventListener('DOMContentLoaded', () => {
             newsBadge.textContent = p.type;
             newsBadge.className = 'source-badge ' + (p.type === 'LIVE API' ? 'badge-live' : 'badge-fallback');
         }
+    }
+
+    // Populera korsreferenspanel
+    function populateCrossReference(crossRef) {
+        if (!crossRef || !crossRef.sources || crossRef.sources.length === 0) return;
+        
+        // Hitta eller skapa container
+        let container = document.getElementById('cross-reference-panel');
+        if (!container) {
+            // Skapa panelen dynamiskt i sidebar-footer-området
+            const sidebar = document.querySelector('.sidebar');
+            if (!sidebar) return;
+            container = document.createElement('div');
+            container.id = 'cross-reference-panel';
+            container.className = 'cross-reference-panel';
+            sidebar.appendChild(container);
+        }
+        
+        let html = `<h4 style="margin: 0 0 10px 0; font-size: 12.5px; color: var(--accent-cyan); font-weight: 600; letter-spacing: 0.03em;">🔀 KORSREFERENS DATAKÄLLOR</h4>`;
+        
+        // Visa varje källa
+        crossRef.sources.forEach(src => {
+            const isWHO = src.type === 'PRIMÄRKÄLLA';
+            const borderColor = isWHO ? 'var(--accent-green)' : 'var(--accent-orange)';
+            const badge = isWHO ? '🏥 AUKTORITATIV' : '⚙️ MODELL';
+            
+            html += `
+                <div style="border-left: 3px solid ${borderColor}; padding: 8px 12px; margin-bottom: 8px; background: rgba(255,255,255,0.03); border-radius: 0 6px 6px 0;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+                        <span style="font-size: 11px; font-weight: 600; color: var(--text-primary);">${src.name}</span>
+                        <span style="font-size: 9.5px; padding: 1px 6px; border-radius: 8px; background: ${isWHO ? 'rgba(16,185,129,0.15)' : 'rgba(234,88,12,0.12)'}; color: ${isWHO ? '#059669' : '#c2410c'}; font-weight: 600;">${badge}</span>
+                    </div>
+                    <div style="font-size: 11px; color: var(--text-secondary); line-height: 1.4;">
+                        ${src.date ? `<span style="color: var(--text-tertiary);">${src.date}</span> · ` : ''}
+                        ${src.suspected_cases != null ? `<strong>${src.suspected_cases.toLocaleString('sv-SE')}</strong> misstänkta` : ''}
+                        ${src.deaths != null ? ` · <strong>${src.deaths}</strong> döda` : ''}
+                        ${src.confirmed_cases != null ? ` · <strong>${src.confirmed_cases}</strong> bekräftade` : ''}
+                    </div>
+                    ${src.url ? `<a href="${src.url}" target="_blank" style="font-size: 10px; color: var(--accent-cyan); text-decoration: none;">Visa rapport →</a>` : ''}
+                </div>
+            `;
+        });
+        
+        // Visa avvikelser
+        if (crossRef.discrepancies && crossRef.discrepancies.length > 0) {
+            html += `<div style="margin-top: 8px; padding: 8px 10px; background: rgba(245,158,11,0.08); border-radius: 6px; border: 1px solid rgba(245,158,11,0.15);">`;
+            html += `<div style="font-size: 10.5px; font-weight: 600; color: #b45309; margin-bottom: 4px;">⚠️ AVVIKELSER</div>`;
+            crossRef.discrepancies.forEach(d => {
+                const field = d.field === 'suspected_cases' ? 'Misstänkta fall' : 'Dödsfall';
+                html += `<div style="font-size: 10.5px; color: var(--text-secondary); line-height: 1.4;">
+                    ${field}: WHO <strong>${d.who_value}</strong> vs Modell <strong>${d.sim_value}</strong>
+                    <span style="color: #b45309;">(Δ ${d.delta > 0 ? '+' : ''}${d.delta})</span>
+                </div>`;
+            });
+            html += `</div>`;
+        }
+        
+        // Visa konsensus
+        if (crossRef.consensus) {
+            html += `<div style="margin-top: 6px; font-size: 10px; color: var(--text-tertiary); font-style: italic;">${crossRef.consensus}</div>`;
+        }
+        
+        container.innerHTML = html;
     }
 
     // Skapa och formatera det interaktiva trenddiagrammet
