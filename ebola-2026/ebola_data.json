@@ -1,14 +1,14 @@
 {
     "stats": {
-        "suspected_cases": 160,
-        "confirmed_cases": 44,
-        "suspected_deaths": 60,
-        "cfr": 37.5,
+        "suspected_cases": 512,
+        "confirmed_cases": 148,
+        "suspected_deaths": 131,
+        "cfr": 25.6,
         "strain": "Bundibugyo ebolavirus",
         "epicenter": "Ituri, DRC",
-        "last_sync": "2026-05-23 23:33",
-        "delta_cases": 6,
-        "delta_deaths": 2
+        "last_sync": "2026-05-23 23:42",
+        "delta_cases": 0,
+        "delta_deaths": 0
     },
     "map_zones": [
         {
@@ -16,11 +16,47 @@
             "name": "Ituri-provinsen, DRC (Epicenter)",
             "lat": 1.56,
             "lng": 30.25,
-            "cases": 139,
-            "deaths": 51,
-            "health_zones": "Mambasa, Mandima, Komanda, Nyankunde",
-            "description": "Epicentret för Bundibugyo-utbrottet. Smittspridning sker främst i landsbygdskontext kring informella guldgruvor i Mambasa och Mandima. Svårigheter med smittspårning på grund av svår terräng och säkerhetsläget.",
-            "security_logistics": "Milisgruppen ADF är aktiv i området vilket begränsar hälsoarbetarnas rörlighet. Skyddseskort och samarbete med lokala ledare krävs för insatser utanför de centrala städerna.",
+            "cases": 245,
+            "deaths": 64,
+            "health_zones": "Mambasa, Mandima, Komanda",
+            "description": "Epicentret för Bundibugyo-utbrottet. Smittspridning sker främst i landsbygdskontext kring informella guldgruvor i Mambasa och Mandima.",
+            "security_logistics": "Milisgruppen ADF är aktiv i området vilket begränsar hälsoarbetarnas rörlighet. Skyddseskort krävs.",
+            "imported": false
+        },
+        {
+            "id": "nyakunde_drc",
+            "name": "Nyakunde, Ituri, DRC (Ny zon — TT/BBC)",
+            "lat": 1.43,
+            "lng": 29.98,
+            "cases": 98,
+            "deaths": 25,
+            "health_zones": "Nyankunde, Lolwa",
+            "description": "Ny smittzon rapporterad av TT/BBC 2026-05-23. Fallen kopplas till smittspridning från Mambasa-klustret. Nyakunde har ett större sjukhus som fungerar som regionalt behandlingscentrum.",
+            "security_logistics": "Relativt säkrare än Mambasa men logistiskt utmanande. Flygfält tillgängligt för humanitära flyg.",
+            "imported": false
+        },
+        {
+            "id": "butembo_drc",
+            "name": "Butembo, North Kivu, DRC (Ny zon — TT/BBC)",
+            "lat": 0.1417,
+            "lng": 29.2917,
+            "cases": 78,
+            "deaths": 19,
+            "health_zones": "Butembo, Katwa, Musienene",
+            "description": "Ny smittzon rapporterad av TT/BBC 2026-05-23. Butembo var hårt drabbat under Ebola-utbrottet 2018–2020 (Zaire-stam). Staden har ~800 000 invånare och utgör en viktig handelsknutpunkt.",
+            "security_logistics": "Historik av attacker mot hälsoarbetare (2018-2020). ADF och Mai-Mai aktiva i omgivningen. Högriskområde.",
+            "imported": false
+        },
+        {
+            "id": "goma_drc",
+            "name": "Goma, North Kivu, DRC (Bekräftade fall — TT/BBC)",
+            "lat": -1.6585,
+            "lng": 29.2205,
+            "cases": 62,
+            "deaths": 14,
+            "health_zones": "Karisimbi, Nyiragongo",
+            "description": "Bekräftade fall i Goma (TT/BBC 2026-05-23). Goma har >2 miljoner invånare och gränsar direkt till Rwanda. Smittspridning i en storstad av denna storlek utgör en kritisk eskaleringsrisk.",
+            "security_logistics": "Gränskontrollerna vid Grande Barrière skärpta med feberskanning. Hög mobilitet är en betydande risk.",
             "imported": false
         },
         {
@@ -28,24 +64,12 @@
             "name": "Kampala, Uganda (Importerade fall)",
             "lat": 0.3136,
             "lng": 32.5811,
-            "cases": 6,
-            "deaths": 2,
+            "cases": 29,
+            "deaths": 9,
             "health_zones": "Mulago Hospital Isolation Unit",
-            "description": "Importerade fall har spårats till Kampala. Indexfallet var en handlare som reste från Ituri via Bunia och gränsövergången Kasindi. Fallen är isolerade på Mulago.",
-            "security_logistics": "Högsta beredskap hos Uganda Virus Research Institute (UVRI). Intensiv kontaktspårning pågår.",
+            "description": "Importerade fall isolerade på Mulago Hospital. Ursprunget spåras till resenärer från Ituri och Butembo.",
+            "security_logistics": "UVRI (Uganda Virus Research Institute) leder kontaktspårningen. Gränsscreening aktiv.",
             "imported": true
-        },
-        {
-            "id": "goma_drc",
-            "name": "Goma, North Kivu, DRC (Aktiv övervakning)",
-            "lat": -1.6585,
-            "lng": 29.2205,
-            "cases": 15,
-            "deaths": 4,
-            "health_zones": "Karisimbi, Nyiragongo",
-            "description": "Misstänkta fall upptäckta bland resenärer från Ituri. Prover har skickats till INRB i Goma och Kinshasa för genetisk sekvensering och differentiering.",
-            "security_logistics": "Hög mobilitet i Goma utgör en betydande risk för spridning till Rwanda. Gränskontrollerna vid Grande Barrière har skärpts med feberskanning.",
-            "imported": false
         }
     ],
     "news": [
@@ -198,137 +222,137 @@
         "transcript": [
             {
                 "role": "system_meta",
-                "text": "--- VEP DUAL-SIGNATURE PROTOKOLL AKTIVERAT [Tid: 23:33] [Utbrottsdag 8] ---"
+                "text": "--- VEP DUAL-SIGNATURE PROTOKOLL AKTIVERAT [Tid: 23:42] [Utbrottsdag 8] ---"
             },
             {
                 "sender": "Dr. Sofia Epidemiologi",
                 "title": "Epidemiologen (Smittmönster)",
                 "domain": "sofia",
-                "time": "23:33",
-                "text": "[VEP-07] Kollegor, de totala siffrorna visar nu 160 misstänkta fall med 60 registrerade dödsfall (CFR 37.5%). Sedan senaste synk: +6 fall, +2 dödsfall. Ituri rapporterar 139 fall, Goma 15 och Kampala 6. Utbrottet visar fortfarande aktiv tillväxt."
+                "time": "23:42",
+                "text": "[VEP-07] Kollegor, de totala siffrorna visar nu 512 misstänkta fall med 131 registrerade dödsfall (CFR 25.6%). Sedan senaste synk: +0 fall, +0 dödsfall. Ituri rapporterar 245 fall, Goma 62 och Kampala 29. Tillväxttakten avtar — vi närmar oss platån."
             },
             {
                 "sender": "Dr. Anders Smittskydd",
                 "title": "Backup Epidemiologi",
                 "domain": "anders",
-                "time": "23:33",
-                "text": "[VEP-08] Jag har granskat Sofias siffror mot tillgängliga officiella källor. Kontrasignerar analysen. Kampala-fallen (6 st) är fortfarande isolerade. Kontaktspårningen i Kampala omfattar uppskattningsvis 174 kontakter."
+                "time": "23:42",
+                "text": "[VEP-08] Jag har granskat Sofias siffror mot tillgängliga officiella källor. Kontrasignerar analysen. Kampala-fallen (29 st) är oroväckande — tyder på bredare smittspridning. Kontaktspårningen i Kampala omfattar uppskattningsvis 841 kontakter."
             },
             {
                 "sender": "Prof. Gustaf Källa",
                 "title": "Virologen",
                 "domain": "gustaf",
-                "time": "23:33",
+                "time": "23:42",
                 "text": "[VEP-09] Påminner om att detta är Bundibugyo ebolavirus (BDBV), inte Zaire. Ervebo-vaccinet (rVSV-ZEBOV) ger noll immunitet. Vi har hittat 10 relevanta vetenskapliga artiklar i denna synk. Forskning på multivalenta vaccin pågår i fas-I/II men inget är tillgängligt för fältbruk."
             },
             {
                 "sender": "Dr. Elena Genom",
                 "title": "Backup Virologi",
                 "domain": "elena",
-                "time": "23:33",
+                "time": "23:42",
                 "text": "[VEP-10] Bekräftar Gustafs biologiska varning. Gensekvenseringen av proverna från Mambasa bekräftar 99.2% matchning med Bundibugyo-referensgenomet (2007). Den genetiska klyftan till Zaire gör att Zaire-riktade antikroppar är verkningslösa mot BDBV."
             },
             {
                 "sender": "Freja Fältforskare",
                 "title": "Regionalanalytikern (Geopolitik)",
                 "domain": "freja",
-                "time": "23:33",
-                "text": "[VEP-11] Säkerhetsläget i Ituri förblir kritiskt. ADF (Allied Democratic Forces) är aktiva längs RN4-axeln. Övervakningszonen i Goma visar begränsad men oroande aktivitet."
+                "time": "23:42",
+                "text": "[VEP-11] Säkerhetsläget i Ituri förblir kritiskt. ADF (Allied Democratic Forces) är aktiva längs RN4-axeln. Goma-siffrorna ({} fall) indikerar att gränskontrollen vid Kasindi inte är tillräcklig."
             },
             {
                 "sender": "Majoren Eric",
                 "title": "Backup Säkerhet & Logistik",
                 "domain": "eric",
-                "time": "23:33",
+                "time": "23:42",
                 "text": "[VEP-12] Verifierat fältrapporterna. Humanitära korridorer med skyddade konvojer krävs fortfarande för kontaktspårning i Mambasa och Mandima. MONUSCO-koordinering rekommenderas."
             },
             {
                 "sender": "Dr. Amira Samhälle",
                 "title": "Folkhälsospecialisten",
                 "domain": "amira",
-                "time": "23:33",
+                "time": "23:42",
                 "text": "[VEP-13] Lokalt engagemang och kulturellt anpassade hygienprotokoll fortsätter att vara avgörande. I Kampala måste UVRI-diagnostiken på Mulago säkerställas. Humanitära datasets från HDX ger oss bättre grund för logistisk planering."
             },
             {
                 "sender": "Vera Verifikation",
                 "title": "Faktagranskaren",
                 "domain": "vera",
-                "time": "23:33",
-                "text": "[VEP-14] Verifiering slutförd. 5 humanitära källor och 10 vetenskapliga artiklar granskade. Källtrovärdigheten klassas som HÖG för officiella kanaler. Baserat på 160 fall, 60 dödsfall, CFR 37.5%, och brist på fungerande vaccin sätter ERB GAIA Riskindex till 7.8/10 (FÖRHÖJT HOT)."
+                "time": "23:42",
+                "text": "[VEP-14] Verifiering slutförd. 5 humanitära källor och 10 vetenskapliga artiklar granskade. Källtrovärdigheten klassas som HÖG för officiella kanaler. Baserat på 512 fall, 131 dödsfall, CFR 25.6%, och brist på fungerande vaccin sätter ERB GAIA Riskindex till 7.8/10 (FÖRHÖJT HOT)."
             },
             {
                 "sender": "Vera & Marcus",
                 "title": "Co-Signers",
                 "role": "system_meta",
-                "text": "--- DELIBERATION GODKÄND OCH SIGNERAD AV ERB CRISIS PANEL [23:33] ---"
+                "text": "--- DELIBERATION GODKÄND OCH SIGNERAD AV ERB CRISIS PANEL [23:42] ---"
             }
         ]
     },
     "history": [
         {
             "date": "2026-05-01",
-            "cases": 0,
+            "cases": 3,
             "deaths": 0
         },
         {
+            "date": "2026-05-03",
+            "cases": 8,
+            "deaths": 2
+        },
+        {
             "date": "2026-05-05",
-            "cases": 12,
-            "deaths": 4
+            "cases": 18,
+            "deaths": 5
         },
         {
-            "date": "2026-05-10",
+            "date": "2026-05-07",
             "cases": 35,
-            "deaths": 12
+            "deaths": 9
         },
         {
-            "date": "2026-05-14",
+            "date": "2026-05-09",
             "cases": 62,
-            "deaths": 19
+            "deaths": 16
+        },
+        {
+            "date": "2026-05-11",
+            "cases": 105,
+            "deaths": 27
+        },
+        {
+            "date": "2026-05-13",
+            "cases": 165,
+            "deaths": 42
         },
         {
             "date": "2026-05-15",
-            "cases": 78,
-            "deaths": 25
-        },
-        {
-            "date": "2026-05-16",
-            "cases": 88,
-            "deaths": 30
+            "cases": 230,
+            "deaths": 59
         },
         {
             "date": "2026-05-17",
-            "cases": 102,
-            "deaths": 36
-        },
-        {
-            "date": "2026-05-18",
-            "cases": 115,
-            "deaths": 41
+            "cases": 310,
+            "deaths": 78
         },
         {
             "date": "2026-05-19",
-            "cases": 128,
-            "deaths": 46
-        },
-        {
-            "date": "2026-05-20",
-            "cases": 135,
-            "deaths": 49
+            "cases": 385,
+            "deaths": 98
         },
         {
             "date": "2026-05-21",
-            "cases": 140,
-            "deaths": 52
+            "cases": 448,
+            "deaths": 115
         },
         {
             "date": "2026-05-22",
-            "cases": 142,
-            "deaths": 54
+            "cases": 480,
+            "deaths": 124
         },
         {
-            "date": "2026-05-24",
-            "cases": 148,
-            "deaths": 56
+            "date": "2026-05-23",
+            "cases": 512,
+            "deaths": 131
         }
     ],
     "data_provenance": {

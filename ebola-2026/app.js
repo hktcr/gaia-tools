@@ -171,7 +171,7 @@ document.addEventListener('DOMContentLoaded', () => {
         loadCountryBorders(map);
     }
 
-    // Funktion för att ladda och färglägga landsgränser (kloroplet)
+    // Funktion för att ladda och färglägga landsgränser (kloroplet) med klickinteraktion
     function loadCountryBorders(mapInstance) {
         fetch('https://raw.githubusercontent.com/nvkelso/natural-earth-vector/master/geojson/ne_110m_admin_0_countries.geojson')
             .then(response => {
@@ -180,31 +180,140 @@ document.addEventListener('DOMContentLoaded', () => {
             })
             .then(geojsonData => {
                 L.geoJSON(geojsonData, {
-                    interactive: false, // Gör lagret klick-genomsläppligt för att inte blockera markörer
+                    interactive: true,
                     style: function(feature) {
-                        const countryName = feature.properties.NAME || feature.properties.name || feature.properties.NAME_LONG || '';
                         const iso = feature.properties.ISO_A3 || feature.properties.iso_a3 || feature.properties.ADM0_A3 || '';
+                        const countryName = feature.properties.NAME || feature.properties.name || feature.properties.NAME_LONG || '';
                         
-                        // 1. Epicenter: DR Kongo (Röd)
                         if (iso === 'COD' || countryName.includes('Congo') || countryName.includes('DRC')) {
-                            return { fillColor: '#e11d48', weight: 1.5, opacity: 0.8, color: '#be123c', fillOpacity: 0.12 };
+                            return { fillColor: '#e11d48', weight: 1.5, opacity: 0.8, color: '#be123c', fillOpacity: 0.12, className: 'country-clickable' };
                         } 
-                        // 2. Importerat: Uganda (Orange)
                         else if (iso === 'UGA' || countryName === 'Uganda') {
-                            return { fillColor: '#ea580c', weight: 1.5, opacity: 0.8, color: '#c2410c', fillOpacity: 0.10 };
+                            return { fillColor: '#ea580c', weight: 1.5, opacity: 0.8, color: '#c2410c', fillOpacity: 0.10, className: 'country-clickable' };
                         } 
-                        // 3. Riskzon (Beredskap): Omgivande länder (Gul)
                         else if (['RWA', 'BDI', 'SSD', 'KEN', 'TZA'].includes(iso) || 
                                    ['Rwanda', 'Burundi', 'South Sudan', 'Kenya', 'Tanzania'].includes(countryName)) {
-                            return { fillColor: '#eab308', weight: 1.2, opacity: 0.6, color: '#a16207', fillOpacity: 0.06 };
+                            return { fillColor: '#eab308', weight: 1.2, opacity: 0.6, color: '#a16207', fillOpacity: 0.06, className: 'country-clickable' };
                         }
                         
-                        // Övriga länder förblir osynliga/transparenta
-                        return { fillColor: 'transparent', weight: 0, opacity: 0, fillOpacity: 0 };
+                        return { fillColor: 'transparent', weight: 0, opacity: 0, fillOpacity: 0, interactive: false };
+                    },
+                    onEachFeature: function(feature, layer) {
+                        const iso = feature.properties.ISO_A3 || feature.properties.iso_a3 || feature.properties.ADM0_A3 || '';
+                        const countryName = feature.properties.NAME || feature.properties.name || feature.properties.NAME_LONG || '';
+                        
+                        // Only add interaction for affected countries
+                        const countryStats = getCountryStats(iso, countryName);
+                        if (!countryStats) return;
+                        
+                        layer.on({
+                            mouseover: function(e) {
+                                const l = e.target;
+                                l.setStyle({ fillOpacity: l.options.fillOpacity + 0.12, weight: 2.5 });
+                            },
+                            mouseout: function(e) {
+                                const l = e.target;
+                                l.setStyle({ fillOpacity: countryStats.fillOpacity, weight: countryStats.weight });
+                            },
+                            click: function(e) {
+                                const popup = L.popup({ maxWidth: 300, closeButton: true })
+                                    .setLatLng(e.latlng)
+                                    .setContent(buildCountryPopup(countryStats))
+                                    .openOn(mapInstance);
+                            }
+                        });
                     }
                 }).addTo(mapInstance);
             })
-            .catch(err => console.warn('Kunde inte ladda landsgränser (tyst fallbacksfel):', err));
+            .catch(err => console.warn('Kunde inte ladda landsgränser:', err));
+    }
+
+    // Aggregera statistik per land från zondatan
+    function getCountryStats(iso, countryName) {
+        if (!ebolaData || !ebolaData.map_zones) return null;
+        const zones = ebolaData.map_zones;
+        
+        // DRC
+        if (iso === 'COD' || countryName.includes('Congo') || countryName.includes('DRC')) {
+            const drcZones = zones.filter(z => z.id.endsWith('_drc'));
+            const cases = drcZones.reduce((s, z) => s + z.cases, 0);
+            const deaths = drcZones.reduce((s, z) => s + z.deaths, 0);
+            return {
+                name: 'Demokratiska Republiken Kongo',
+                flag: '🇨🇩',
+                status: 'EPICENTER',
+                statusColor: '#e11d48',
+                cases: cases,
+                deaths: deaths,
+                cfr: cases > 0 ? ((deaths / cases) * 100).toFixed(1) : '--',
+                zones: drcZones.map(z => z.name.split(',')[0]).join(', '),
+                detail: 'Utbrottets epicentrum med aktiv spridning i Ituri (Mambasa, Nyakunde), Butembo och Goma. Källa: TT/BBC 2026-05-23.',
+                fillOpacity: 0.12,
+                weight: 1.5
+            };
+        }
+        // Uganda
+        else if (iso === 'UGA' || countryName === 'Uganda') {
+            const ugZones = zones.filter(z => z.id === 'kampala_uganda');
+            const cases = ugZones.reduce((s, z) => s + z.cases, 0);
+            const deaths = ugZones.reduce((s, z) => s + z.deaths, 0);
+            return {
+                name: 'Uganda',
+                flag: '🇺🇬',
+                status: 'IMPORTERADE FALL',
+                statusColor: '#ea580c',
+                cases: cases,
+                deaths: deaths,
+                cfr: cases > 0 ? ((deaths / cases) * 100).toFixed(1) : '--',
+                zones: 'Kampala (Mulago Hospital)',
+                detail: 'Importerade fall isolerade på Mulago Hospital. Intensiv kontaktspårning pågår via UVRI.',
+                fillOpacity: 0.10,
+                weight: 1.5
+            };
+        }
+        // Risk zone countries
+        else if (['RWA', 'BDI', 'SSD', 'KEN', 'TZA'].includes(iso) || 
+                 ['Rwanda', 'Burundi', 'South Sudan', 'Kenya', 'Tanzania'].includes(countryName)) {
+            const nameMap = {
+                'RWA': 'Rwanda', 'BDI': 'Burundi', 'SSD': 'Sydsudan',
+                'KEN': 'Kenya', 'TZA': 'Tanzania'
+            };
+            const flagMap = {
+                'RWA': '🇷🇼', 'BDI': '🇧🇮', 'SSD': '🇸🇸',
+                'KEN': '🇰🇪', 'TZA': '🇹🇿'
+            };
+            return {
+                name: nameMap[iso] || countryName,
+                flag: flagMap[iso] || '🏳️',
+                status: 'BEREDSKAPSZON',
+                statusColor: '#eab308',
+                cases: 0,
+                deaths: 0,
+                cfr: '--',
+                zones: 'Inga aktiva fall',
+                detail: 'Förhöjd beredskap. Gränskontroller med feberskanning aktiva. Inga bekräftade fall.',
+                fillOpacity: 0.06,
+                weight: 1.2
+            };
+        }
+        return null;
+    }
+
+    // Bygg popup-HTML för landsstatistik
+    function buildCountryPopup(stats) {
+        const casesRow = stats.cases > 0 
+            ? `<div class="map-popup-row"><span>Misstänkta fall:</span><span style="font-weight:700;color:${stats.statusColor}">${stats.cases}</span></div>
+               <div class="map-popup-row"><span>Dödsfall:</span><span style="font-weight:700;color:var(--accent-red)">${stats.deaths}</span></div>
+               <div class="map-popup-row"><span>CFR:</span><span style="font-weight:700">${stats.cfr}%</span></div>`
+            : `<div class="map-popup-row"><span>Fall:</span><span style="font-weight:600;color:#059669">0 bekräftade</span></div>`;
+        
+        return `
+            <div class="map-popup-header">${stats.flag} ${stats.name}</div>
+            <div style="display:inline-block;padding:2px 8px;border-radius:10px;font-size:10px;font-weight:700;letter-spacing:0.03em;margin-bottom:8px;background:${stats.statusColor}15;color:${stats.statusColor};border:1px solid ${stats.statusColor}30">${stats.status}</div>
+            ${casesRow}
+            <div class="map-popup-row" style="margin-top:4px"><span>Zoner:</span><span style="font-size:11px">${stats.zones}</span></div>
+            <div style="font-size:11px;color:var(--text-secondary);line-height:1.45;margin-top:8px;padding-top:8px;border-top:1px dashed rgba(0,0,0,0.1)">${stats.detail}</div>
+        `;
     }
 
     // Funktion för att uppdatera stadsmarkörer
@@ -367,6 +476,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
             markers.push(circle);
         });
+
+        // Auto-zoom: Anpassa kartan dynamiskt till alla drabbade zoner
+        if (markers.length > 0) {
+            const bounds = L.latLngBounds(zones.map(z => [z.lat, z.lng]));
+            // Lägg till padding och inkludera grannar
+            bounds.extend([3.5, 25.0]);   // Nordväst (Sydsudan)
+            bounds.extend([-5.0, 34.0]);  // Sydöst (Tanzania/Kenya)
+            map.fitBounds(bounds, { padding: [30, 30], maxZoom: 7 });
+        }
     }
 
     // Helper för att hämta CSS-färgvariabler

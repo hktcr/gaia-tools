@@ -447,15 +447,16 @@ h1, h2, h3, h4, h5, h6 {
 
 /* 4. KARTA & NYHETS-FLIK (MAP GRID) */
 .map-grid {
-    display: grid;
-    grid-template-columns: 3fr 2fr;
-    gap: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
     height: 100%;
     min-height: 500px;
 }
 
 .map-card {
-    height: 100%;
+    flex: 1 1 auto;
+    min-height: 450px;
 }
 
 #map-container {
@@ -504,7 +505,8 @@ h1, h2, h3, h4, h5, h6 {
 
 /* ReliefWeb News Feed */
 .news-card {
-    height: 100%;
+    flex: 0 0 auto;
+    max-height: 280px;
 }
 
 .news-feed-container {
