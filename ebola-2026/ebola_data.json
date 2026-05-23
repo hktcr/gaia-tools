@@ -6,7 +6,7 @@
         "cfr": 25.6,
         "strain": "Bundibugyo ebolavirus",
         "epicenter": "Ituri, DRC",
-        "last_sync": "2026-05-23 23:42",
+        "last_sync": "2026-05-23 23:43",
         "delta_cases": 0,
         "delta_deaths": 0
     },
@@ -217,74 +217,74 @@
         }
     ],
     "vep_deliberation": {
-        "risk_index": "7.8",
-        "risk_rating": "FÖRHÖJT HOT",
+        "risk_index": "8.1",
+        "risk_rating": "ALLVARLIGT HOT",
         "transcript": [
             {
                 "role": "system_meta",
-                "text": "--- VEP DUAL-SIGNATURE PROTOKOLL AKTIVERAT [Tid: 23:42] [Utbrottsdag 8] ---"
+                "text": "--- VEP DUAL-SIGNATURE PROTOKOLL AKTIVERAT [Tid: 23:43] [Utbrottsdag 8] ---"
             },
             {
                 "sender": "Dr. Sofia Epidemiologi",
                 "title": "Epidemiologen (Smittmönster)",
                 "domain": "sofia",
-                "time": "23:42",
+                "time": "23:43",
                 "text": "[VEP-07] Kollegor, de totala siffrorna visar nu 512 misstänkta fall med 131 registrerade dödsfall (CFR 25.6%). Sedan senaste synk: +0 fall, +0 dödsfall. Ituri rapporterar 245 fall, Goma 62 och Kampala 29. Tillväxttakten avtar — vi närmar oss platån."
             },
             {
                 "sender": "Dr. Anders Smittskydd",
                 "title": "Backup Epidemiologi",
                 "domain": "anders",
-                "time": "23:42",
+                "time": "23:43",
                 "text": "[VEP-08] Jag har granskat Sofias siffror mot tillgängliga officiella källor. Kontrasignerar analysen. Kampala-fallen (29 st) är oroväckande — tyder på bredare smittspridning. Kontaktspårningen i Kampala omfattar uppskattningsvis 841 kontakter."
             },
             {
                 "sender": "Prof. Gustaf Källa",
                 "title": "Virologen",
                 "domain": "gustaf",
-                "time": "23:42",
+                "time": "23:43",
                 "text": "[VEP-09] Påminner om att detta är Bundibugyo ebolavirus (BDBV), inte Zaire. Ervebo-vaccinet (rVSV-ZEBOV) ger noll immunitet. Vi har hittat 10 relevanta vetenskapliga artiklar i denna synk. Forskning på multivalenta vaccin pågår i fas-I/II men inget är tillgängligt för fältbruk."
             },
             {
                 "sender": "Dr. Elena Genom",
                 "title": "Backup Virologi",
                 "domain": "elena",
-                "time": "23:42",
+                "time": "23:43",
                 "text": "[VEP-10] Bekräftar Gustafs biologiska varning. Gensekvenseringen av proverna från Mambasa bekräftar 99.2% matchning med Bundibugyo-referensgenomet (2007). Den genetiska klyftan till Zaire gör att Zaire-riktade antikroppar är verkningslösa mot BDBV."
             },
             {
                 "sender": "Freja Fältforskare",
                 "title": "Regionalanalytikern (Geopolitik)",
                 "domain": "freja",
-                "time": "23:42",
+                "time": "23:43",
                 "text": "[VEP-11] Säkerhetsläget i Ituri förblir kritiskt. ADF (Allied Democratic Forces) är aktiva längs RN4-axeln. Goma-siffrorna ({} fall) indikerar att gränskontrollen vid Kasindi inte är tillräcklig."
             },
             {
                 "sender": "Majoren Eric",
                 "title": "Backup Säkerhet & Logistik",
                 "domain": "eric",
-                "time": "23:42",
+                "time": "23:43",
                 "text": "[VEP-12] Verifierat fältrapporterna. Humanitära korridorer med skyddade konvojer krävs fortfarande för kontaktspårning i Mambasa och Mandima. MONUSCO-koordinering rekommenderas."
             },
             {
                 "sender": "Dr. Amira Samhälle",
                 "title": "Folkhälsospecialisten",
                 "domain": "amira",
-                "time": "23:42",
+                "time": "23:43",
                 "text": "[VEP-13] Lokalt engagemang och kulturellt anpassade hygienprotokoll fortsätter att vara avgörande. I Kampala måste UVRI-diagnostiken på Mulago säkerställas. Humanitära datasets från HDX ger oss bättre grund för logistisk planering."
             },
             {
                 "sender": "Vera Verifikation",
                 "title": "Faktagranskaren",
                 "domain": "vera",
-                "time": "23:42",
-                "text": "[VEP-14] Verifiering slutförd. 5 humanitära källor och 10 vetenskapliga artiklar granskade. Källtrovärdigheten klassas som HÖG för officiella kanaler. Baserat på 512 fall, 131 dödsfall, CFR 25.6%, och brist på fungerande vaccin sätter ERB GAIA Riskindex till 7.8/10 (FÖRHÖJT HOT)."
+                "time": "23:43",
+                "text": "[VEP-14] Verifiering slutförd. 5 humanitära källor och 10 vetenskapliga artiklar granskade. Källtrovärdigheten klassas som HÖG för officiella kanaler. Baserat på 512 fall, 131 dödsfall, CFR 25.6%, och brist på fungerande vaccin sätter ERB GAIA Riskindex till 8.1/10 (ALLVARLIGT HOT)."
             },
             {
                 "sender": "Vera & Marcus",
                 "title": "Co-Signers",
                 "role": "system_meta",
-                "text": "--- DELIBERATION GODKÄND OCH SIGNERAD AV ERB CRISIS PANEL [23:42] ---"
+                "text": "--- DELIBERATION GODKÄND OCH SIGNERAD AV ERB CRISIS PANEL [23:43] ---"
             }
         ]
     },
