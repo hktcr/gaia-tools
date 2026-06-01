@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>gAIa Verktyg</title>
+    <meta name="description" content="Digitala verktyg for undervisning, fagelskadning och kreativt arbete">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
@@ -41,7 +42,6 @@
             overflow-x: hidden;
         }
 
-        /* Subtle grid background */
         body::before {
             content: '';
             position: fixed;
@@ -63,7 +63,7 @@
 
         /* Hero */
         .hero {
-            padding: 64px 0 48px;
+            padding: 48px 0 20px;
             text-align: center;
         }
 
@@ -71,12 +71,12 @@
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            width: 72px;
-            height: 72px;
+            width: 64px;
+            height: 64px;
             background: linear-gradient(135deg, var(--accent), #a855f7);
-            border-radius: 20px;
-            font-size: 36px;
-            margin-bottom: 24px;
+            border-radius: 18px;
+            font-size: 32px;
+            margin-bottom: 20px;
             box-shadow: 0 8px 30px var(--accent-glow);
             animation: float 6s ease-in-out infinite;
         }
@@ -87,43 +87,116 @@
         }
 
         .hero h1 {
-            font-size: 40px;
+            font-size: 36px;
             font-weight: 800;
             letter-spacing: -1px;
-            margin-bottom: 12px;
+            margin-bottom: 8px;
             background: linear-gradient(135deg, var(--text), var(--accent));
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
 
         .hero p {
-            font-size: 17px;
+            font-size: 15px;
             color: var(--text-dim);
             max-width: 500px;
-            margin: 0 auto;
-            line-height: 1.6;
+            margin: 0 auto 16px;
+            line-height: 1.5;
         }
 
-        /* Categories */
+        /* Search */
+        .search-wrap {
+            max-width: 460px;
+            margin: 0 auto 32px;
+            position: relative;
+        }
+
+        .search-wrap input {
+            width: 100%;
+            padding: 12px 16px 12px 40px;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            color: var(--text);
+            font-family: inherit;
+            font-size: 14px;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        .search-wrap input:focus {
+            border-color: var(--accent);
+        }
+
+        .search-wrap input::placeholder {
+            color: var(--text-muted);
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-muted);
+            font-size: 14px;
+            pointer-events: none;
+        }
+
+        .tool-count {
+            text-align: center;
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-bottom: 32px;
+        }
+
+        /* Categories — Expandable */
         .category {
-            margin-bottom: 48px;
+            margin-bottom: 8px;
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            overflow: hidden;
+            transition: margin 0.3s;
+        }
+
+        .category.open {
+            margin-bottom: 16px;
         }
 
         .category-header {
             display: flex;
             align-items: center;
             gap: 10px;
-            margin-bottom: 20px;
-            padding-bottom: 12px;
-            border-bottom: 1px solid var(--border);
+            padding: 16px 20px;
+            cursor: pointer;
+            user-select: none;
+            background: var(--bg-card);
+            transition: background 0.2s;
+        }
+
+        .category-header:hover {
+            background: var(--bg-card-hover);
+        }
+
+        .category-chevron {
+            color: var(--text-muted);
+            font-size: 12px;
+            transition: transform 0.3s ease;
+            flex-shrink: 0;
+            width: 20px;
+            text-align: center;
+        }
+
+        .category.open .category-chevron {
+            transform: rotate(90deg);
         }
 
         .category-header h2 {
-            font-size: 15px;
+            font-size: 14px;
             font-weight: 600;
             text-transform: uppercase;
-            letter-spacing: 1.5px;
+            letter-spacing: 1.2px;
             color: var(--text-dim);
+            flex: 1;
         }
 
         .category-count {
@@ -133,26 +206,41 @@
             font-weight: 700;
             padding: 2px 8px;
             border-radius: 10px;
+            flex-shrink: 0;
+        }
+
+        .category-body {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.4s ease;
+        }
+
+        .category.open .category-body {
+            max-height: 3000px;
+        }
+
+        .category-body-inner {
+            padding: 4px 16px 16px;
         }
 
         /* Tool grid */
         .tools-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-            gap: 16px;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 12px;
         }
 
         .tool-card {
             background: var(--bg-card);
             border: 1px solid var(--border);
-            border-radius: var(--radius);
-            padding: 24px;
+            border-radius: 12px;
+            padding: 18px 20px;
             text-decoration: none;
             color: inherit;
             transition: all 0.25s ease;
             display: flex;
             flex-direction: column;
-            gap: 12px;
+            gap: 8px;
             position: relative;
             overflow: hidden;
         }
@@ -160,9 +248,7 @@
         .tool-card::before {
             content: '';
             position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
+            top: 0; left: 0; right: 0;
             height: 3px;
             background: var(--card-accent, var(--accent));
             opacity: 0;
@@ -172,13 +258,13 @@
         .tool-card:hover {
             background: var(--bg-card-hover);
             border-color: var(--card-accent, var(--accent));
-            transform: translateY(-3px);
-            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.3);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
         }
 
-        .tool-card:hover::before {
-            opacity: 1;
-        }
+        .tool-card:hover::before { opacity: 1; }
+
+        .tool-card.hidden { display: none; }
 
         .tool-top {
             display: flex;
@@ -187,19 +273,30 @@
         }
 
         .tool-icon {
-            width: 44px;
-            height: 44px;
-            border-radius: 12px;
+            width: 38px;
+            height: 38px;
+            border-radius: 10px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 22px;
+            font-size: 18px;
             flex-shrink: 0;
+        }
+
+        .tool-badge {
+            font-size: 9px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            padding: 2px 7px;
+            border-radius: 6px;
+            background: var(--green-soft);
+            color: var(--green);
         }
 
         .tool-arrow {
             color: var(--text-muted);
-            font-size: 18px;
+            font-size: 16px;
             transition: all 0.2s ease;
         }
 
@@ -209,13 +306,13 @@
         }
 
         .tool-name {
-            font-size: 17px;
+            font-size: 15px;
             font-weight: 700;
-            letter-spacing: -0.3px;
+            letter-spacing: -0.2px;
         }
 
         .tool-desc {
-            font-size: 13px;
+            font-size: 12px;
             color: var(--text-dim);
             line-height: 1.5;
             flex: 1;
@@ -223,26 +320,35 @@
 
         .tool-tags {
             display: flex;
-            gap: 6px;
+            gap: 5px;
             flex-wrap: wrap;
         }
 
         .tag {
-            font-size: 11px;
+            font-size: 10px;
             font-weight: 500;
-            padding: 3px 10px;
-            border-radius: 6px;
+            padding: 2px 8px;
+            border-radius: 5px;
             background: rgba(255,255,255,0.04);
             color: var(--text-muted);
             border: 1px solid var(--border);
         }
 
-        /* Footer */
-        footer {
+        /* No results */
+        .no-results {
             text-align: center;
             padding: 48px 0;
             color: var(--text-muted);
-            font-size: 13px;
+            font-size: 14px;
+            display: none;
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 40px 0;
+            color: var(--text-muted);
+            font-size: 12px;
             border-top: 1px solid var(--border);
         }
 
@@ -253,9 +359,10 @@
 
         /* Responsive */
         @media (max-width: 768px) {
-            .hero { padding: 40px 0 32px; }
-            .hero h1 { font-size: 28px; }
+            .hero { padding: 32px 0 16px; }
+            .hero h1 { font-size: 26px; }
             .tools-grid { grid-template-columns: 1fr; }
+            .category-header { padding: 14px 16px; }
         }
     </style>
 </head>
@@ -263,310 +370,416 @@
 
 <div class="container">
     <section class="hero">
-        <div class="hero-logo">🌎</div>
+        <div class="hero-logo" aria-hidden="true">&#x1F30E;</div>
         <h1>gAIa Verktyg</h1>
-        <p>Digitala verktyg för undervisning, fågelskådning och kreativt arbete</p>
+        <p>Digitala verktyg for undervisning, fagelskadning och kreativt arbete</p>
     </section>
 
-    <!-- Klassrumsverktyg -->
-    <section class="category">
-        <div class="category-header">
-            <h2>🏫 Klassrumsverktyg</h2>
-            <span class="category-count">9</span>
+    <div class="search-wrap">
+        <span class="search-icon" aria-hidden="true">&#x1F50D;</span>
+        <input type="search" id="toolSearch" placeholder="Sok verktyg..." aria-label="Sok bland verktyg">
+    </div>
+    <div class="tool-count" id="toolCount"></div>
+
+    <!-- ═══ Klassrumsverktyg ═══ -->
+    <section class="category open" data-cat="klassrum">
+        <div class="category-header" role="button" tabindex="0" aria-expanded="true">
+            <span class="category-chevron" aria-hidden="true">&#x25B6;</span>
+            <h2>Klassrumsverktyg</h2>
+            <span class="category-count">10</span>
         </div>
-        <div class="tools-grid">
-            <a href="https://hktcr.github.io/q/apex-39x5.html" target="_blank" class="tool-card" style="--card-accent: var(--green);">
-                <div class="tool-top">
-                    <div class="tool-icon" style="background: var(--green-soft); color: var(--green);">🌿</div>
-                    <span class="tool-arrow">→</span>
-                </div>
-                <div class="tool-name">Apex</div>
-                <div class="tool-desc">Ett ekologiskt överlevnadsspel om näringskedjor, populationer och bioackumulation.</div>
-                <div class="tool-tags"><span class="tag">ekologi</span><span class="tag">spel</span></div>
-            </a>
+        <div class="category-body"><div class="category-body-inner">
+            <div class="tools-grid">
 
-            <a href="https://hktcr.github.io/begreppskollen/" class="tool-card" style="--card-accent: var(--accent);">
-                <div class="tool-top">
-                    <div class="tool-icon" style="background: var(--accent-soft); color: var(--accent);">🧠</div>
-                    <span class="tool-arrow">→</span>
-                </div>
-                <div class="tool-name">Begreppsträning (Portal)</div>
-                <div class="tool-desc">Interaktiv mängdträning av NO-glosor (Flashcards, Quiz, Praktikfall)</div>
-                <div class="tool-tags"><span class="tag">glosor</span><span class="tag">träning</span></div>
-            </a>
+                <a href="https://hktcr.github.io/soundpulse/" target="_blank" class="tool-card" style="--card-accent: var(--green);" data-tags="ljud quiz podcast ekologi interaktiv">
+                    <div class="tool-top">
+                        <div class="tool-icon" style="background: var(--green-soft); color: var(--green);">&#x266B;</div>
+                        <span class="tool-badge">NY</span>
+                        <span class="tool-arrow">&rarr;</span>
+                    </div>
+                    <div class="tool-name">SoundPulse</div>
+                    <div class="tool-desc">Interaktiv podcastuppspelare med live-quiz, 24 ekologifragor och bi-spel. Larar- och elevlage.</div>
+                    <div class="tool-tags"><span class="tag">podcast</span><span class="tag">quiz</span><span class="tag">ekologi</span></div>
+                </a>
 
-            <a href="https://hktcr.github.io/SoundMonitor/" class="tool-card" style="--card-accent: var(--green);">
-                <div class="tool-top">
-                    <div class="tool-icon" style="background: var(--green-soft); color: var(--green);">🎙️</div>
-                    <span class="tool-arrow">→</span>
-                </div>
-                <div class="tool-name">SoundMonitor</div>
-                <div class="tool-desc">Realtids-ljudmonitor med aktivitetsfaser, streak-counter och nordljus-animation</div>
-                <div class="tool-tags"><span class="tag">klassrum</span><span class="tag">ljud</span></div>
-            </a>
+                <a href="https://hktcr.github.io/q/apex-39x5.html" target="_blank" class="tool-card" style="--card-accent: var(--green);" data-tags="ekologi spel naringskedja population">
+                    <div class="tool-top">
+                        <div class="tool-icon" style="background: var(--green-soft); color: var(--green);">&#x2618;</div>
+                        <span class="tool-arrow">&rarr;</span>
+                    </div>
+                    <div class="tool-name">Apex</div>
+                    <div class="tool-desc">Ekologiskt overlevnadsspel om naringskedjor, populationer och bioackumulation.</div>
+                    <div class="tool-tags"><span class="tag">ekologi</span><span class="tag">spel</span></div>
+                </a>
 
-            <a href="https://hktcr.github.io/LessonLab/" class="tool-card" style="--card-accent: var(--amber);">
-                <div class="tool-top">
-                    <div class="tool-icon" style="background: var(--amber-soft); color: var(--amber);">📖</div>
-                    <span class="tool-arrow">→</span>
-                </div>
-                <div class="tool-name">LessonLab</div>
-                <div class="tool-desc">Lösenordsskyddad samling av genomgångsmanus för klassrummet</div>
-                <div class="tool-tags"><span class="tag">lektion</span><span class="tag">manus</span></div>
-            </a>
+                <a href="https://hktcr.github.io/begreppskollen/" class="tool-card" style="--card-accent: var(--accent);" data-tags="glosor traning flashcard quiz begrepp NO">
+                    <div class="tool-top">
+                        <div class="tool-icon" style="background: var(--accent-soft); color: var(--accent);">&#x25C9;</div>
+                        <span class="tool-arrow">&rarr;</span>
+                    </div>
+                    <div class="tool-name">Begreppstraning (Portal)</div>
+                    <div class="tool-desc">Interaktiv mangdtraning av NO-glosor (Flashcards, Quiz, Praktikfall)</div>
+                    <div class="tool-tags"><span class="tag">glosor</span><span class="tag">traning</span></div>
+                </a>
 
-            <a href="https://hktcr.github.io/StudentSelector/" class="tool-card" style="--card-accent: var(--cyan);">
-                <div class="tool-top">
-                    <div class="tool-icon" style="background: var(--cyan-soft); color: var(--cyan);">🎯</div>
-                    <span class="tool-arrow">→</span>
-                </div>
-                <div class="tool-name">Bänkväljare</div>
-                <div class="tool-desc">Snabbslumpning av endast bänknummer för projektor (100% anonymt).</div>
-                <div class="tool-tags"><span class="tag">slump</span><span class="tag">GDPR</span></div>
-            </a>
+                <a href="https://hktcr.github.io/SoundMonitor/" class="tool-card" style="--card-accent: var(--green);" data-tags="klassrum ljud ljudniva monitor">
+                    <div class="tool-top">
+                        <div class="tool-icon" style="background: var(--green-soft); color: var(--green);">&#x2609;</div>
+                        <span class="tool-arrow">&rarr;</span>
+                    </div>
+                    <div class="tool-name">SoundMonitor</div>
+                    <div class="tool-desc">Realtids-ljudmonitor med aktivitetsfaser, streak-counter och nordljus-animation</div>
+                    <div class="tool-tags"><span class="tag">klassrum</span><span class="tag">ljud</span></div>
+                </a>
 
-            <a href="https://hktcr.github.io/StudentSelector/klassrum/seating.html" class="tool-card" style="--card-accent: var(--amber);">
-                <div class="tool-top">
-                    <div class="tool-icon" style="background: var(--amber-soft); color: var(--amber);">🧑‍🏫</div>
-                    <span class="tool-arrow">→</span>
-                </div>
-                <div class="tool-name">Klassrumsplacering (Lärare)</div>
-                <div class="tool-desc">Rita upp klassrummet, placera elever på bänkar och slumpa fram namn (med guld-bänkar).</div>
-                <div class="tool-tags"><span class="tag">klassrum</span><span class="tag">helskärm</span></div>
-            </a>
+                <a href="https://hktcr.github.io/LessonLab/" class="tool-card" style="--card-accent: var(--amber);" data-tags="lektion manus genomgang LessonLab">
+                    <div class="tool-top">
+                        <div class="tool-icon" style="background: var(--amber-soft); color: var(--amber);">&#x2261;</div>
+                        <span class="tool-arrow">&rarr;</span>
+                    </div>
+                    <div class="tool-name">LessonLab</div>
+                    <div class="tool-desc">Losenordsskyddad samling av genomgangs&shy;manus for klassrummet</div>
+                    <div class="tool-tags"><span class="tag">lektion</span><span class="tag">manus</span></div>
+                </a>
 
-            <a href="https://hktcr.github.io/klassrumsplacering/" class="tool-card" style="--card-accent: var(--rose);">
-                <div class="tool-top">
-                    <div class="tool-icon" style="background: var(--rose-soft); color: var(--rose);">🪑</div>
-                    <span class="tool-arrow">→</span>
-                </div>
-                <div class="tool-name">Klassrumsplacering (Elevval)</div>
-                <div class="tool-desc">Interaktiv webbapp där elever själva väljer önskade platser och skickar till läraren.</div>
-                <div class="tool-tags"><span class="tag">elever</span><span class="tag">placering</span></div>
-            </a>
+                <a href="https://hktcr.github.io/StudentSelector/" class="tool-card" style="--card-accent: var(--cyan);" data-tags="slump bankval GDPR elevval">
+                    <div class="tool-top">
+                        <div class="tool-icon" style="background: var(--cyan-soft); color: var(--cyan);">&#x25CE;</div>
+                        <span class="tool-arrow">&rarr;</span>
+                    </div>
+                    <div class="tool-name">Bankvaljare</div>
+                    <div class="tool-desc">Snabbslumpning av banknummer for projektor (100% anonymt).</div>
+                    <div class="tool-tags"><span class="tag">slump</span><span class="tag">GDPR</span></div>
+                </a>
 
-            <a href="https://hktcr.github.io/SlideLauncher/" class="tool-card" style="--card-accent: var(--orange);">
-                <div class="tool-top">
-                    <div class="tool-icon" style="background: var(--orange-soft); color: var(--orange);">🖥️</div>
-                    <span class="tool-arrow">→</span>
-                </div>
-                <div class="tool-name">SlideLauncher</div>
-                <div class="tool-desc">Presentationsvisare för SlideCraft-formatet</div>
-                <div class="tool-tags"><span class="tag">presentation</span></div>
-            </a>
+                <a href="https://hktcr.github.io/StudentSelector/klassrum/seating.html" class="tool-card" style="--card-accent: var(--amber);" data-tags="klassrum placering larare bank">
+                    <div class="tool-top">
+                        <div class="tool-icon" style="background: var(--amber-soft); color: var(--amber);">&#x25A3;</div>
+                        <span class="tool-arrow">&rarr;</span>
+                    </div>
+                    <div class="tool-name">Klassrumsplacering (Larare)</div>
+                    <div class="tool-desc">Rita upp klassrummet, placera elever pa bankar och slumpa fram namn.</div>
+                    <div class="tool-tags"><span class="tag">klassrum</span><span class="tag">helskarm</span></div>
+                </a>
 
-            <a href="brusvakten/index.html" class="tool-card" style="--card-accent: var(--cyan);">
-                <div class="tool-top">
-                    <div class="tool-icon" style="background: var(--cyan-soft); color: var(--cyan);">🔇</div>
-                    <span class="tool-arrow">→</span>
-                </div>
-                <div class="tool-name">Brusvakten</div>
-                <div class="tool-desc">Akustisk spegling — mikrofon mäter ljudnivån och spelar upp brus när klassen är för stökig</div>
-                <div class="tool-tags"><span class="tag">klassrum</span><span class="tag">ljud</span><span class="tag">brus</span></div>
-            </a>
-        </div>
+                <a href="https://hktcr.github.io/klassrumsplacering/" class="tool-card" style="--card-accent: var(--rose);" data-tags="elever placering val elevval">
+                    <div class="tool-top">
+                        <div class="tool-icon" style="background: var(--rose-soft); color: var(--rose);">&#x2316;</div>
+                        <span class="tool-arrow">&rarr;</span>
+                    </div>
+                    <div class="tool-name">Klassrumsplacering (Elevval)</div>
+                    <div class="tool-desc">Interaktiv webbapp dar elever sjalva valjer onskade platser och skickar till lararen.</div>
+                    <div class="tool-tags"><span class="tag">elever</span><span class="tag">placering</span></div>
+                </a>
+
+                <a href="https://hktcr.github.io/SlideLauncher/" class="tool-card" style="--card-accent: var(--orange);" data-tags="presentation slide SlideCraft visare">
+                    <div class="tool-top">
+                        <div class="tool-icon" style="background: var(--orange-soft); color: var(--orange);">&#x25FB;</div>
+                        <span class="tool-arrow">&rarr;</span>
+                    </div>
+                    <div class="tool-name">SlideLauncher</div>
+                    <div class="tool-desc">Presentationsvisare for SlideCraft-formatet</div>
+                    <div class="tool-tags"><span class="tag">presentation</span></div>
+                </a>
+
+                <a href="brusvakten/index.html" class="tool-card" style="--card-accent: var(--cyan);" data-tags="klassrum ljud brus mikrofon">
+                    <div class="tool-top">
+                        <div class="tool-icon" style="background: var(--cyan-soft); color: var(--cyan);">&#x25EC;</div>
+                        <span class="tool-arrow">&rarr;</span>
+                    </div>
+                    <div class="tool-name">Brusvakten</div>
+                    <div class="tool-desc">Akustisk spegling &mdash; mikrofon mater ljudnivan och spelar upp brus nar klassen ar for stokig</div>
+                    <div class="tool-tags"><span class="tag">klassrum</span><span class="tag">ljud</span><span class="tag">brus</span></div>
+                </a>
+
+            </div>
+        </div></div>
     </section>
 
-    <!-- Spel & Träning -->
-    <section class="category">
-        <div class="category-header">
-            <h2>🎮 Spel & Träning</h2>
+    <!-- ═══ Spel & Traning ═══ -->
+    <section class="category" data-cat="spel">
+        <div class="category-header" role="button" tabindex="0" aria-expanded="false">
+            <span class="category-chevron" aria-hidden="true">&#x25B6;</span>
+            <h2>Spel och Traning</h2>
             <span class="category-count">2</span>
         </div>
-        <div class="tools-grid">
-            <a href="https://hktcr.github.io/q/ekosnake.html" target="_blank" class="tool-card" style="--card-accent: var(--green);">
-                <div class="tool-top">
-                    <div class="tool-icon" style="background: var(--green-soft); color: var(--green);">🐍</div>
-                    <span class="tool-arrow">→</span>
-                </div>
-                <div class="tool-name">EkoSnake</div>
-                <div class="tool-desc">Korsord + Snake i ett. 33 ekologibegrepp med ledtrådar, definitioner och kontextpopups. Progressiva hinder och highscore.</div>
-                <div class="tool-tags"><span class="tag">ekologi</span><span class="tag">spel</span><span class="tag">korsord</span></div>
-            </a>
+        <div class="category-body"><div class="category-body-inner">
+            <div class="tools-grid">
 
-            <a href="https://hktcr.github.io/q/attenborough.html" target="_blank" class="tool-card" style="--card-accent: var(--amber);">
-                <div class="tool-top">
-                    <div class="tool-icon" style="background: var(--amber-soft); color: var(--amber);">🎬</div>
-                    <span class="tool-arrow">→</span>
-                </div>
-                <div class="tool-name">Attenborough Quiz</div>
-                <div class="tool-desc">Filmquiz baserat på David Attenboroughs dokumentärer om ekosystem och evolution.</div>
-                <div class="tool-tags"><span class="tag">quiz</span><span class="tag">film</span><span class="tag">ekologi</span></div>
-            </a>
-        </div>
+                <a href="https://hktcr.github.io/q/ekosnake.html" target="_blank" class="tool-card" style="--card-accent: var(--green);" data-tags="ekologi spel snake korsord begrepp">
+                    <div class="tool-top">
+                        <div class="tool-icon" style="background: var(--green-soft); color: var(--green);">&#x223F;</div>
+                        <span class="tool-arrow">&rarr;</span>
+                    </div>
+                    <div class="tool-name">EkoSnake</div>
+                    <div class="tool-desc">Korsord + Snake i ett. 33 ekologibegrepp med ledtradar, definitioner och kontextpopups.</div>
+                    <div class="tool-tags"><span class="tag">ekologi</span><span class="tag">spel</span><span class="tag">korsord</span></div>
+                </a>
+
+                <a href="https://hktcr.github.io/q/attenborough.html" target="_blank" class="tool-card" style="--card-accent: var(--amber);" data-tags="quiz film Attenborough ekologi evolution">
+                    <div class="tool-top">
+                        <div class="tool-icon" style="background: var(--amber-soft); color: var(--amber);">&#x25B7;</div>
+                        <span class="tool-arrow">&rarr;</span>
+                    </div>
+                    <div class="tool-name">Attenborough Quiz</div>
+                    <div class="tool-desc">Filmquiz baserat pa David Attenboroughs dokumentarer om ekosystem och evolution.</div>
+                    <div class="tool-tags"><span class="tag">quiz</span><span class="tag">film</span><span class="tag">ekologi</span></div>
+                </a>
+
+            </div>
+        </div></div>
     </section>
 
-    <!-- Fågelverktyg -->
-    <section class="category">
-        <div class="category-header">
-            <h2>🐦 Fågelskådning & Inventering</h2>
+    <!-- ═══ Fagelverktyg ═══ -->
+    <section class="category" data-cat="fagel">
+        <div class="category-header" role="button" tabindex="0" aria-expanded="false">
+            <span class="category-chevron" aria-hidden="true">&#x25B6;</span>
+            <h2>Fagelskadning och Inventering</h2>
             <span class="category-count">7</span>
         </div>
-        <div class="tools-grid">
-            <a href="https://hktcr.github.io/FaltPunkter/" class="tool-card" style="--card-accent: var(--cyan);">
-                <div class="tool-top">
-                    <div class="tool-icon" style="background: var(--cyan-soft); color: var(--cyan);">📌</div>
-                    <span class="tool-arrow">→</span>
-                </div>
-                <div class="tool-name">FältPunkter</div>
-                <div class="tool-desc">GPS-positionering och koordinatverktyg för fältbruk med Lantmäteriets topografiska karta</div>
-                <div class="tool-tags"><span class="tag">karta</span><span class="tag">GPS</span><span class="tag">fält</span></div>
-            </a>
+        <div class="category-body"><div class="category-body-inner">
+            <div class="tools-grid">
 
-            <a href="https://astorpsfaglar.se" class="tool-card" style="--card-accent: var(--green);">
-                <div class="tool-top">
-                    <div class="tool-icon" style="background: var(--green-soft); color: var(--green);">🌿</div>
-                    <span class="tool-arrow">→</span>
-                </div>
-                <div class="tool-name">Fågelåret i Åstorp</div>
-                <div class="tool-desc">Fullständig webbplats med årshjul, artguide, väder och krysslistor</div>
-                <div class="tool-tags"><span class="tag">hugo</span><span class="tag">webbplats</span></div>
-            </a>
+                <a href="https://hktcr.github.io/FaltPunkter/" class="tool-card" style="--card-accent: var(--cyan);" data-tags="karta GPS falt position">
+                    <div class="tool-top">
+                        <div class="tool-icon" style="background: var(--cyan-soft); color: var(--cyan);">&#x2316;</div>
+                        <span class="tool-arrow">&rarr;</span>
+                    </div>
+                    <div class="tool-name">FaltPunkter</div>
+                    <div class="tool-desc">GPS-positionering och koordinatverktyg for faltbruk med Lantmateriets topografiska karta</div>
+                    <div class="tool-tags"><span class="tag">karta</span><span class="tag">GPS</span><span class="tag">falt</span></div>
+                </a>
 
-            <a href="https://hktcr.github.io/faltlistan/" class="tool-card" style="--card-accent: var(--cyan);">
-                <div class="tool-top">
-                    <div class="tool-icon" style="background: var(--cyan-soft); color: var(--cyan);">📋</div>
-                    <span class="tool-arrow">→</span>
-                </div>
-                <div class="tool-name">Fältlistan</div>
-                <div class="tool-desc">Digital krysslista för fågelskådning — offline-resilient och standalone</div>
-                <div class="tool-tags"><span class="tag">krysslista</span><span class="tag">offline</span></div>
-            </a>
+                <a href="https://astorpsfaglar.se" class="tool-card" style="--card-accent: var(--green);" data-tags="fagel Astorp arshjul artguide vader krysslista">
+                    <div class="tool-top">
+                        <div class="tool-icon" style="background: var(--green-soft); color: var(--green);">&#x2766;</div>
+                        <span class="tool-arrow">&rarr;</span>
+                    </div>
+                    <div class="tool-name">Fagelaret i Astorp</div>
+                    <div class="tool-desc">Fullstandig webbplats med arshjul, artguide, vader och krysslistor</div>
+                    <div class="tool-tags"><span class="tag">hugo</span><span class="tag">webbplats</span></div>
+                </a>
 
-            <a href="https://hktcr.github.io/koordinatvaljare/" class="tool-card" style="--card-accent: var(--amber);">
-                <div class="tool-top">
-                    <div class="tool-icon" style="background: var(--amber-soft); color: var(--amber);">📍</div>
-                    <span class="tool-arrow">→</span>
-                </div>
-                <div class="tool-name">Koordinatväljare</div>
-                <div class="tool-desc">Terrängkarta för att plocka GPS-koordinater — perfekt för fältanteckningar</div>
-                <div class="tool-tags"><span class="tag">karta</span><span class="tag">GPS</span></div>
-            </a>
+                <a href="https://hktcr.github.io/faltlistan/" class="tool-card" style="--card-accent: var(--cyan);" data-tags="krysslista fagel offline falt">
+                    <div class="tool-top">
+                        <div class="tool-icon" style="background: var(--cyan-soft); color: var(--cyan);">&#x2611;</div>
+                        <span class="tool-arrow">&rarr;</span>
+                    </div>
+                    <div class="tool-name">Faltlistan</div>
+                    <div class="tool-desc">Digital krysslista for fagelskadning &mdash; offline-resilient och standalone</div>
+                    <div class="tool-tags"><span class="tag">krysslista</span><span class="tag">offline</span></div>
+                </a>
 
-            <a href="rakor/admin.html" class="tool-card" style="--card-accent: var(--rose);">
-                <div class="tool-top">
-                    <div class="tool-icon" style="background: var(--rose-soft); color: var(--rose);">🪹</div>
-                    <span class="tool-arrow">→</span>
-                </div>
-                <div class="tool-name">Råkoinventering (Admin)</div>
-                <div class="tool-desc">Interaktiv app för att redigera och föra in nya råkbon i Åstorps kommun</div>
-                <div class="tool-tags"><span class="tag">inventering</span><span class="tag">admin</span></div>
-            </a>
+                <a href="https://hktcr.github.io/koordinatvaljare/" class="tool-card" style="--card-accent: var(--amber);" data-tags="karta GPS koordinat terrang">
+                    <div class="tool-top">
+                        <div class="tool-icon" style="background: var(--amber-soft); color: var(--amber);">&#x2295;</div>
+                        <span class="tool-arrow">&rarr;</span>
+                    </div>
+                    <div class="tool-name">Koordinatvaljare</div>
+                    <div class="tool-desc">Terrangkarta for att plocka GPS-koordinater &mdash; perfekt for faltanteckningar</div>
+                    <div class="tool-tags"><span class="tag">karta</span><span class="tag">GPS</span></div>
+                </a>
 
-            <a href="rakor/index.html" class="tool-card" style="--card-accent: var(--rose);">
-                <div class="tool-top">
-                    <div class="tool-icon" style="background: var(--rose-soft); color: var(--rose);">🗺️</div>
-                    <span class="tool-arrow">→</span>
-                </div>
-                <div class="tool-name">Råkoinventering (Visning)</div>
-                <div class="tool-desc">Publik och tyst vy över råkkoloniernas fördelning i kommunen</div>
-                <div class="tool-tags"><span class="tag">karta</span><span class="tag">viewer</span></div>
-            </a>
+                <a href="rakor/admin.html" class="tool-card" style="--card-accent: var(--rose);" data-tags="inventering raka admin bon">
+                    <div class="tool-top">
+                        <div class="tool-icon" style="background: var(--rose-soft); color: var(--rose);">&#x2302;</div>
+                        <span class="tool-arrow">&rarr;</span>
+                    </div>
+                    <div class="tool-name">Rakoinventering (Admin)</div>
+                    <div class="tool-desc">Interaktiv app for att redigera och fora in nya rakbon i Astorps kommun</div>
+                    <div class="tool-tags"><span class="tag">inventering</span><span class="tag">admin</span></div>
+                </a>
 
-            <a href="fornsok-karta/index.html" class="tool-card" style="--card-accent: var(--amber);">
-                <div class="tool-top">
-                    <div class="tool-icon" style="background: var(--amber-soft); color: var(--amber);">🏛️</div>
-                    <span class="tool-arrow">→</span>
-                </div>
-                <div class="tool-name">Fornsök Karta</div>
-                <div class="tool-desc">Interaktiv karta över fornlämningar (Kulturmiljöregistret API)</div>
-                <div class="tool-tags"><span class="tag">karta</span><span class="tag">arv</span></div>
-            </a>
-        </div>
+                <a href="rakor/index.html" class="tool-card" style="--card-accent: var(--rose);" data-tags="karta raka visning koloni">
+                    <div class="tool-top">
+                        <div class="tool-icon" style="background: var(--rose-soft); color: var(--rose);">&#x2637;</div>
+                        <span class="tool-arrow">&rarr;</span>
+                    </div>
+                    <div class="tool-name">Rakoinventering (Visning)</div>
+                    <div class="tool-desc">Publik vy over rakokoloniernas fordelning i kommunen</div>
+                    <div class="tool-tags"><span class="tag">karta</span><span class="tag">viewer</span></div>
+                </a>
+
+                <a href="fornsok-karta/index.html" class="tool-card" style="--card-accent: var(--amber);" data-tags="karta fornlamning kulturarv arkeologi">
+                    <div class="tool-top">
+                        <div class="tool-icon" style="background: var(--amber-soft); color: var(--amber);">&#x2617;</div>
+                        <span class="tool-arrow">&rarr;</span>
+                    </div>
+                    <div class="tool-name">Fornsok Karta</div>
+                    <div class="tool-desc">Interaktiv karta over fornlamningar (Kulturmiljoregistret API)</div>
+                    <div class="tool-tags"><span class="tag">karta</span><span class="tag">arv</span></div>
+                </a>
+
+            </div>
+        </div></div>
     </section>
 
-    <!-- Produktivitetsverktyg -->
-    <section class="category">
-        <div class="category-header">
-            <h2>⚡ Produktivitet</h2>
+    <!-- ═══ Produktivitet ═══ -->
+    <section class="category" data-cat="prod">
+        <div class="category-header" role="button" tabindex="0" aria-expanded="false">
+            <span class="category-chevron" aria-hidden="true">&#x25B6;</span>
+            <h2>Produktivitet</h2>
             <span class="category-count">5</span>
         </div>
-        <div class="tools-grid">
-            <a href="https://hktcr.github.io/pdf-verktyg/" class="tool-card" style="--card-accent: var(--accent);">
-                <div class="tool-top">
-                    <div class="tool-icon" style="background: var(--accent-soft); color: var(--accent);">📄</div>
-                    <span class="tool-arrow">→</span>
-                </div>
-                <div class="tool-name">PDF Verktyg</div>
-                <div class="tool-desc">Slå ihop, dela och redigera PDF:er — välj sidor visuellt och exportera</div>
-                <div class="tool-tags"><span class="tag">PDF</span><span class="tag">merge</span></div>
-            </a>
+        <div class="category-body"><div class="category-body-inner">
+            <div class="tools-grid">
 
-            <a href="https://hktcr.github.io/Bildanalys/" class="tool-card" style="--card-accent: var(--rose);">
-                <div class="tool-top">
-                    <div class="tool-icon" style="background: var(--rose-soft); color: var(--rose);">🖼️</div>
-                    <span class="tool-arrow">→</span>
-                </div>
-                <div class="tool-name">Bildanalys</div>
-                <div class="tool-desc">SharpFrame — extrahera skarpa bildrutor ur video för analys</div>
-                <div class="tool-tags"><span class="tag">bild</span><span class="tag">video</span></div>
-            </a>
+                <a href="https://hktcr.github.io/pdf-verktyg/" class="tool-card" style="--card-accent: var(--accent);" data-tags="PDF merge dela redigera">
+                    <div class="tool-top">
+                        <div class="tool-icon" style="background: var(--accent-soft); color: var(--accent);">&#x25A4;</div>
+                        <span class="tool-arrow">&rarr;</span>
+                    </div>
+                    <div class="tool-name">PDF Verktyg</div>
+                    <div class="tool-desc">Sla ihop, dela och redigera PDF:er &mdash; valj sidor visuellt och exportera</div>
+                    <div class="tool-tags"><span class="tag">PDF</span><span class="tag">merge</span></div>
+                </a>
 
-            <a href="https://hktcr.github.io/nyhetskartan/" class="tool-card" style="--card-accent: var(--orange);">
-                <div class="tool-top">
-                    <div class="tool-icon" style="background: var(--orange-soft); color: var(--orange);">🗞️</div>
-                    <span class="tool-arrow">→</span>
-                </div>
-                <div class="tool-name">Nyhetskartan</div>
-                <div class="tool-desc">Sammanställning av aktuella nyheter på en interaktiv världskarta</div>
-                <div class="tool-tags"><span class="tag">nyheter</span><span class="tag">karta</span></div>
-            </a>
+                <a href="https://hktcr.github.io/Bildanalys/" class="tool-card" style="--card-accent: var(--rose);" data-tags="bild video bildrutor SharpFrame">
+                    <div class="tool-top">
+                        <div class="tool-icon" style="background: var(--rose-soft); color: var(--rose);">&#x25A7;</div>
+                        <span class="tool-arrow">&rarr;</span>
+                    </div>
+                    <div class="tool-name">Bildanalys</div>
+                    <div class="tool-desc">SharpFrame &mdash; extrahera skarpa bildrutor ur video for analys</div>
+                    <div class="tool-tags"><span class="tag">bild</span><span class="tag">video</span></div>
+                </a>
 
-            <a href="https://hktcr.github.io/SkrivBord/" class="tool-card" style="--card-accent: var(--cyan);">
-                <div class="tool-top">
-                    <div class="tool-icon" style="background: var(--cyan-soft); color: var(--cyan);">⌨️</div>
-                    <span class="tool-arrow">→</span>
-                </div>
-                <div class="tool-name">Skrivr</div>
-                <div class="tool-desc">Distraktionsfri och minimalistisk markdown-editor med skrivmaskinsläge & export.</div>
-                <div class="tool-tags"><span class="tag">skriva</span><span class="tag">markdown</span></div>
-            </a>
+                <a href="https://hktcr.github.io/nyhetskartan/" class="tool-card" style="--card-accent: var(--orange);" data-tags="nyheter karta varlden nyhetskartan">
+                    <div class="tool-top">
+                        <div class="tool-icon" style="background: var(--orange-soft); color: var(--orange);">&#x2637;</div>
+                        <span class="tool-arrow">&rarr;</span>
+                    </div>
+                    <div class="tool-name">Nyhetskartan</div>
+                    <div class="tool-desc">Sammanstallning av aktuella nyheter pa en interaktiv varldskarta</div>
+                    <div class="tool-tags"><span class="tag">nyheter</span><span class="tag">karta</span></div>
+                </a>
 
-            <a href="ebola-2026/index.html" class="tool-card" style="--card-accent: var(--rose);">
-                <div class="tool-top">
-                    <div class="tool-icon" style="background: var(--rose-soft); color: var(--rose);">🧬</div>
-                    <span class="tool-arrow">→</span>
-                </div>
-                <div class="tool-name">Ebola 2026 Dashboard</div>
-                <div class="tool-desc">Epidemisk instrumentpanel och VEP-krisrumsanalys över Bundibugyo-ebolautbrottet i DRC och Uganda.</div>
-                <div class="tool-tags"><span class="tag">epidemi</span><span class="tag">karta</span><span class="tag">VEP</span></div>
-            </a>
-        </div>
+                <a href="https://hktcr.github.io/SkrivBord/" class="tool-card" style="--card-accent: var(--cyan);" data-tags="skriva markdown editor distraktionsfri">
+                    <div class="tool-top">
+                        <div class="tool-icon" style="background: var(--cyan-soft); color: var(--cyan);">&#x2328;</div>
+                        <span class="tool-arrow">&rarr;</span>
+                    </div>
+                    <div class="tool-name">Skrivr</div>
+                    <div class="tool-desc">Distraktionsfri och minimalistisk markdown-editor med skrivmaskinslage och export.</div>
+                    <div class="tool-tags"><span class="tag">skriva</span><span class="tag">markdown</span></div>
+                </a>
+
+                <a href="ebola-2026/index.html" class="tool-card" style="--card-accent: var(--rose);" data-tags="epidemi karta Ebola VEP dashboard">
+                    <div class="tool-top">
+                        <div class="tool-icon" style="background: var(--rose-soft); color: var(--rose);">&#x2623;</div>
+                        <span class="tool-arrow">&rarr;</span>
+                    </div>
+                    <div class="tool-name">Ebola 2026 Dashboard</div>
+                    <div class="tool-desc">Epidemisk instrumentpanel och VEP-krisrumsanalys over Bundibugyo-ebolautbrottet.</div>
+                    <div class="tool-tags"><span class="tag">epidemi</span><span class="tag">karta</span><span class="tag">VEP</span></div>
+                </a>
+
+            </div>
+        </div></div>
     </section>
 
-    <!-- Föreläsningar -->
-    <section class="category">
-        <div class="category-header">
-            <h2>🎤 Föreläsningar & Presentationer</h2>
+    <!-- ═══ Forelasningar ═══ -->
+    <section class="category" data-cat="forelasning">
+        <div class="category-header" role="button" tabindex="0" aria-expanded="false">
+            <span class="category-chevron" aria-hidden="true">&#x25B6;</span>
+            <h2>Forelasningar och Presentationer</h2>
             <span class="category-count">2</span>
         </div>
-        <div class="tools-grid">
-            <a href="https://hktcr.github.io/ai-for-ledare/" target="_blank" class="tool-card" style="--card-accent: var(--orange);">
-                <div class="tool-top">
-                    <div class="tool-icon" style="background: var(--orange-soft); color: var(--orange);">📊</div>
-                    <span class="tool-arrow">→</span>
-                </div>
-                <div class="tool-name">AI för BIN:s chefsgrupp</div>
-                <div class="tool-desc">Workshop 21 maj 2026. Autonoma agenter, METR-data, hockeyklubban och vad det innebär för verksamheten.</div>
-                <div class="tool-tags"><span class="tag">workshop</span><span class="tag">AI</span><span class="tag">BIN</span></div>
-            </a>
+        <div class="category-body"><div class="category-body-inner">
+            <div class="tools-grid">
 
-            <a href="https://hktcr.github.io/familjen-hbg-ai/" class="tool-card" style="--card-accent: var(--accent);">
-                <div class="tool-top">
-                    <div class="tool-icon" style="background: var(--accent-soft); color: var(--accent);">🤖</div>
-                    <span class="tool-arrow">→</span>
-                </div>
-                <div class="tool-name">AI i förskolan (Familjen Hbg)</div>
-                <div class="tool-desc">Föreläsning för förskolechefer. Interaktivt SlideCraft-deck om AI-kommissionen, risker och praktik.</div>
-                <div class="tool-tags"><span class="tag">föreläsning</span><span class="tag">AI</span><span class="tag">förskola</span></div>
-            </a>
-        </div>
+                <a href="https://hktcr.github.io/ai-for-ledare/" target="_blank" class="tool-card" style="--card-accent: var(--orange);" data-tags="workshop AI BIN chefsgrupp">
+                    <div class="tool-top">
+                        <div class="tool-icon" style="background: var(--orange-soft); color: var(--orange);">&#x25C8;</div>
+                        <span class="tool-arrow">&rarr;</span>
+                    </div>
+                    <div class="tool-name">AI for BIN:s chefsgrupp</div>
+                    <div class="tool-desc">Workshop 21 maj 2026. Autonoma agenter, METR-data, hockeyklubban och vad det innebar for verksamheten.</div>
+                    <div class="tool-tags"><span class="tag">workshop</span><span class="tag">AI</span><span class="tag">BIN</span></div>
+                </a>
+
+                <a href="https://hktcr.github.io/familjen-hbg-ai/" class="tool-card" style="--card-accent: var(--accent);" data-tags="forelasning AI forskola Familjen">
+                    <div class="tool-top">
+                        <div class="tool-icon" style="background: var(--accent-soft); color: var(--accent);">&#x25C6;</div>
+                        <span class="tool-arrow">&rarr;</span>
+                    </div>
+                    <div class="tool-name">AI i forskolan (Familjen Hbg)</div>
+                    <div class="tool-desc">Forelasning for forskolechefer. Interaktivt SlideCraft-deck om AI-kommissionen, risker och praktik.</div>
+                    <div class="tool-tags"><span class="tag">forelasning</span><span class="tag">AI</span><span class="tag">forskola</span></div>
+                </a>
+
+            </div>
+        </div></div>
     </section>
+
+    <div class="no-results" id="noResults">Inga verktyg matchar sokningen.</div>
+
 </div>
 
 <footer>
-    <p>gAIa Verktyg — <a href="https://github.com/hktcr">github.com/hktcr</a></p>
+    <p>gAIa Verktyg &mdash; <a href="https://github.com/hktcr">github.com/hktcr</a></p>
 </footer>
+
+<script>
+(function() {
+    'use strict';
+
+    // Toggle categories
+    document.querySelectorAll('.category-header').forEach(header => {
+        function toggle() {
+            const cat = header.closest('.category');
+            const wasOpen = cat.classList.contains('open');
+            cat.classList.toggle('open');
+            header.setAttribute('aria-expanded', !wasOpen);
+        }
+        header.addEventListener('click', toggle);
+        header.addEventListener('keydown', e => {
+            if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggle(); }
+        });
+    });
+
+    // Search
+    const searchInput = document.getElementById('toolSearch');
+    const noResults = document.getElementById('noResults');
+    const countEl = document.getElementById('toolCount');
+    const allCards = document.querySelectorAll('.tool-card');
+    const categories = document.querySelectorAll('.category');
+
+    function updateCount() {
+        const visible = document.querySelectorAll('.tool-card:not(.hidden)').length;
+        countEl.textContent = visible + ' verktyg';
+    }
+    updateCount();
+
+    searchInput.addEventListener('input', function() {
+        const q = this.value.toLowerCase().trim();
+        let anyVisible = false;
+
+        allCards.forEach(card => {
+            const name = card.querySelector('.tool-name').textContent.toLowerCase();
+            const desc = card.querySelector('.tool-desc').textContent.toLowerCase();
+            const tags = (card.dataset.tags || '').toLowerCase();
+            const match = !q || name.includes(q) || desc.includes(q) || tags.includes(q);
+            card.classList.toggle('hidden', !match);
+            if (match) anyVisible = true;
+        });
+
+        // Auto-open categories with matches, collapse empty
+        categories.forEach(cat => {
+            const visibleCards = cat.querySelectorAll('.tool-card:not(.hidden)');
+            const count = visibleCards.length;
+            cat.querySelector('.category-count').textContent = count;
+            if (q) {
+                cat.classList.toggle('open', count > 0);
+                cat.querySelector('.category-header').setAttribute('aria-expanded', count > 0);
+            }
+        });
+
+        noResults.style.display = anyVisible ? 'none' : 'block';
+        updateCount();
+    });
+})();
+</script>
 
 </body>
 </html>
