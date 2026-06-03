@@ -396,22 +396,36 @@
         <div class="category-header" role="button" tabindex="0" aria-expanded="false">
             <span class="category-chevron" aria-hidden="true">&#x25B6;</span>
             <h2>Klassrumsverktyg</h2>
-            <span class="category-count">10</span>
+            <span class="category-count">11</span>
         </div>
         <div class="category-body"><div class="category-body-inner">
             <div class="tools-grid">
 
-                <a href="https://hktcr.github.io/soundpulse/" target="_blank" class="tool-card" style="--card-accent: var(--green);" data-tags="ljud quiz podcast ekologi interaktiv">
+                <a href="https://hktcr.github.io/soundpulse/?mode=teacher" target="_blank" class="tool-card" style="--card-accent: var(--amber);" data-tags="ljud quiz podcast ekologi interaktiv lärare teacher">
                     <div class="tool-top">
-                        <div class="tool-icon" style="background: var(--green-soft); color: var(--green);">&#x266B;</div>
+                        <div class="tool-icon" style="background: var(--amber-soft); color: var(--amber);">&#x266B;</div>
                     </div>
                     <div class="tool-info">
-                        <div class="tool-name">SoundPulse<span class="tool-badge">NY</span></div>
-                        <div class="tool-desc">Interaktiv podcastuppspelare med live-quiz, 24 ekologifrågor och bi-spel. Lärar- och elevläge.</div>
-                        <div class="tool-tags"><span class="tag">podcast</span><span class="tag">quiz</span><span class="tag">ekologi</span></div>
+                        <div class="tool-name">SoundPulse — Lärarpanel<span class="tool-badge">NY</span></div>
+                        <div class="tool-desc">Lärarvyn med elevöversikt, frågebank och live-synk. Kopiera elevlänken nedan och dela ut.</div>
+                        <div class="tool-tags"><span class="tag">lärare</span><span class="tag">dashboard</span><span class="tag">ekologi</span></div>
                     </div>
                     <span class="tool-arrow">&rarr;</span>
                 </a>
+
+                <div class="tool-card" style="--card-accent: var(--green); cursor: default;" data-tags="ljud quiz podcast ekologi interaktiv elev övning">
+                    <div class="tool-top">
+                        <div class="tool-icon" style="background: var(--green-soft); color: var(--green);">&#x1F3A7;</div>
+                    </div>
+                    <div class="tool-info">
+                        <div class="tool-name">SoundPulse — Elevövning</div>
+                        <div class="tool-desc">Interaktiv podcastuppspelare med 20 ekologifrågor om sammetsgetingen. Dela länken nedan med eleverna.</div>
+                        <div style="display:flex;align-items:center;gap:8px;margin-top:6px;">
+                            <code style="font-size:12px;background:rgba(255,255,255,0.06);padding:4px 10px;border-radius:6px;color:var(--green);user-select:all;">hktcr.github.io/soundpulse/</code>
+                            <button onclick="navigator.clipboard.writeText('https://hktcr.github.io/soundpulse/').then(()=>{this.textContent='✓ Kopierad!';setTimeout(()=>this.textContent='Kopiera',2000)})" style="background:var(--green-soft);color:var(--green);border:1px solid var(--green);border-radius:8px;padding:4px 12px;font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap;">Kopiera</button>
+                        </div>
+                    </div>
+                </div>
 
                 <a href="https://hktcr.github.io/q/apex-39x5.html" target="_blank" class="tool-card" style="--card-accent: var(--green);" data-tags="ekologi spel naringskedja population">
                     <div class="tool-top">
