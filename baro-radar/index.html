@@ -1,0 +1,1614 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BaroRadar — Kvidinge</title>
+    <meta name="description" content="Realtidsvisualisering av lufttrycksförändringar runt Kvidinge med data från SMHI och Open-Meteo">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        /* ===============================================================
+           CSS — Dark Premium Theme
+           =============================================================== */
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --bg-deep: #060a13;
+            --bg-primary: #0a0e17;
+            --bg-surface: #111827;
+            --bg-elevated: #1e293b;
+            --border-subtle: rgba(100, 180, 255, 0.08);
+            --border-glow: rgba(100, 180, 255, 0.2);
+            --accent: #38bdf8;
+            --accent-dim: rgba(56, 189, 248, 0.15);
+            --text-primary: #e2e8f0;
+            --text-secondary: #94a3b8;
+            --text-muted: #64748b;
+            --red-drop: #ef4444;
+            --yellow-stable: #eab308;
+            --green-rise: #22c55e;
+            --wind-color: #c4b5fd;
+            --glass-bg: rgba(17, 24, 39, 0.75);
+            --glass-border: rgba(100, 180, 255, 0.12);
+        }
+
+        body {
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            background: var(--bg-deep);
+            color: var(--text-primary);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            overflow-x: hidden;
+        }
+
+        .app {
+            width: 100%;
+            max-width: 720px;
+            padding: 1.5rem 1rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1.25rem;
+        }
+
+        header { text-align: center; }
+
+        h1 {
+            font-size: 1.75rem;
+            font-weight: 700;
+            letter-spacing: -0.03em;
+            background: linear-gradient(135deg, var(--accent), #a78bfa);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .subtitle {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            font-weight: 400;
+            margin-top: 0.25rem;
+            letter-spacing: 0.05em;
+        }
+
+        /* Controls bar */
+        .controls {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .time-selector, .toggle-group {
+            display: flex;
+            gap: 0.25rem;
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            padding: 4px;
+            backdrop-filter: blur(12px);
+        }
+
+        .time-btn, .toggle-btn {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.8rem;
+            font-weight: 500;
+            padding: 0.4rem 1rem;
+            border: none;
+            border-radius: 8px;
+            background: transparent;
+            color: var(--text-muted);
+            cursor: pointer;
+            transition: all 0.25s ease;
+            position: relative;
+        }
+
+        .time-btn:hover, .toggle-btn:hover {
+            color: var(--text-primary);
+            background: rgba(56, 189, 248, 0.08);
+        }
+
+        .time-btn.active {
+            color: var(--bg-deep);
+            background: var(--accent);
+            box-shadow: 0 0 16px rgba(56, 189, 248, 0.3);
+        }
+
+        .toggle-btn.active {
+            color: var(--bg-deep);
+            background: var(--wind-color);
+            box-shadow: 0 0 16px rgba(196, 181, 253, 0.3);
+        }
+
+        /* Mode hint (past vs forecast) */
+        .mode-hint {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.65rem;
+            color: var(--text-muted);
+            letter-spacing: 0.04em;
+        }
+        .mode-hint .fwd { color: var(--accent); }
+
+        /* Radar container */
+        .radar-container {
+            width: min(88vw, 88vh, 580px);
+            aspect-ratio: 1;
+            position: relative;
+        }
+
+        .radar-container svg {
+            width: 100%;
+            height: 100%;
+            display: block;
+        }
+
+        /* SVG cell styling */
+        .cell {
+            stroke: rgba(100, 180, 255, 0.07);
+            stroke-width: 0.5;
+            transition: fill 1.8s cubic-bezier(0.4, 0, 0.2, 1);
+            cursor: pointer;
+            fill: rgba(17, 24, 39, 0.5);
+        }
+
+        .cell:hover {
+            stroke: rgba(200, 230, 255, 0.35);
+            stroke-width: 1.2;
+            filter: brightness(1.25);
+        }
+
+        /* Distinct fills for the three "no value" reasons */
+        .cell.no-station {
+            fill: rgba(30, 41, 59, 0.25);
+            cursor: default;
+        }
+        .cell.stale {
+            fill: rgba(60, 50, 30, 0.4);
+            cursor: help;
+        }
+        .cell.failed {
+            fill: rgba(70, 30, 30, 0.4);
+            cursor: help;
+        }
+
+        .ring-line {
+            fill: none;
+            stroke: rgba(100, 180, 255, 0.12);
+            stroke-width: 0.6;
+        }
+
+        .spoke-line {
+            stroke: rgba(100, 180, 255, 0.05);
+            stroke-width: 0.4;
+        }
+
+        .compass-label {
+            fill: rgba(148, 163, 184, 0.55);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 10px;
+            font-weight: 500;
+            text-anchor: middle;
+            dominant-baseline: central;
+            letter-spacing: 0.06em;
+            pointer-events: none;
+        }
+
+        .compass-label.cardinal {
+            fill: rgba(148, 163, 184, 0.8);
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .dist-label {
+            fill: rgba(100, 130, 170, 0.35);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 8px;
+            text-anchor: middle;
+            dominant-baseline: central;
+            pointer-events: none;
+        }
+
+        /* Trend glyph inside cell (arrow / dash) */
+        .trend-glyph {
+            font-family: 'JetBrains Mono', monospace;
+            font-weight: 600;
+            text-anchor: middle;
+            dominant-baseline: central;
+            pointer-events: none;
+            fill: rgba(255, 255, 255, 0.92);
+            paint-order: stroke;
+            stroke: rgba(0, 0, 0, 0.45);
+            stroke-width: 2px;
+        }
+
+        .center-dot {
+            fill: var(--accent);
+            filter: url(#center-glow);
+        }
+
+        .center-ring {
+            fill: none;
+            stroke: var(--accent);
+            opacity: 0.3;
+            animation: pulse-ring 3s ease-in-out infinite;
+        }
+
+        @keyframes pulse-ring {
+            0%, 100% { opacity: 0.1; r: 10; }
+            50% { opacity: 0.35; r: 16; }
+        }
+
+        /* Wind barbs / arrows */
+        .wind-arrow {
+            stroke: var(--wind-color);
+            stroke-width: 1.6;
+            stroke-linecap: round;
+            fill: none;
+            pointer-events: none;
+            filter: drop-shadow(0 0 2px rgba(0,0,0,0.6));
+        }
+        .wind-head {
+            fill: var(--wind-color);
+            pointer-events: none;
+            filter: drop-shadow(0 0 2px rgba(0,0,0,0.6));
+        }
+        .wind-hidden { display: none; }
+
+        .station-marker {
+            fill: rgba(255, 255, 255, 0.6);
+            stroke: none;
+            pointer-events: none;
+        }
+
+        /* Legend */
+        .legend {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            padding: 0.6rem 1.2rem;
+            backdrop-filter: blur(12px);
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .legend-label {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            font-weight: 500;
+            white-space: nowrap;
+        }
+
+        .legend-bar {
+            width: 180px;
+            height: 10px;
+            border-radius: 5px;
+            background: linear-gradient(to right,
+                hsl(0, 85%, 45%),
+                hsl(20, 90%, 50%),
+                hsl(45, 95%, 55%),
+                hsl(80, 80%, 48%),
+                hsl(142, 70%, 40%)
+            );
+            border: 1px solid rgba(255,255,255,0.08);
+        }
+
+        .legend-values {
+            display: flex;
+            justify-content: space-between;
+            width: 180px;
+            margin-top: 2px;
+        }
+
+        .legend-val {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.6rem;
+            color: var(--text-muted);
+        }
+
+        /* Info panel (bottom) */
+        .info-panel {
+            text-align: center;
+            min-height: 2.5rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.15rem;
+        }
+
+        .info-station {
+            font-size: 0.8rem;
+            font-weight: 500;
+            color: var(--text-primary);
+        }
+
+        .info-detail {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+        }
+
+        .info-source {
+            font-size: 0.65rem;
+            color: var(--text-muted);
+        }
+
+        /* Tooltip */
+        .tooltip {
+            position: fixed;
+            pointer-events: none;
+            background: rgba(10, 14, 23, 0.92);
+            border: 1px solid var(--glass-border);
+            border-radius: 10px;
+            padding: 0.6rem 0.8rem;
+            backdrop-filter: blur(16px);
+            z-index: 100;
+            opacity: 0;
+            transition: opacity 0.2s ease;
+            max-width: 260px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+        }
+
+        .tooltip.visible { opacity: 1; }
+
+        .tooltip-title {
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--accent);
+            margin-bottom: 0.3rem;
+        }
+
+        .tooltip-row {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.7rem;
+            color: var(--text-secondary);
+            line-height: 1.5;
+        }
+
+        .tooltip-row .val { color: var(--text-primary); font-weight: 500; }
+        .tooltip-row .drop { color: var(--red-drop); }
+        .tooltip-row .rise { color: var(--green-rise); }
+        .tooltip-row .stable { color: var(--yellow-stable); }
+
+        /* Footer */
+        footer {
+            display: flex;
+            gap: 1.5rem;
+            font-size: 0.65rem;
+            color: var(--text-muted);
+            font-family: 'JetBrains Mono', monospace;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .status-dot {
+            display: inline-block;
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            margin-right: 4px;
+            vertical-align: middle;
+        }
+
+        .status-dot.ok { background: var(--green-rise); box-shadow: 0 0 6px var(--green-rise); }
+        .status-dot.loading { background: var(--yellow-stable); animation: blink 1s infinite; }
+        .status-dot.error { background: var(--red-drop); }
+        .status-dot.partial { background: var(--yellow-stable); }
+
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
+
+        /* Loading overlay */
+        .loading-overlay {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(6, 10, 19, 0.6);
+            border-radius: 50%;
+            z-index: 10;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.4s ease;
+        }
+
+        .loading-overlay.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .loading-text {
+            font-size: 0.85rem;
+            color: var(--accent);
+            font-weight: 500;
+            animation: pulse-text 1.5s ease-in-out infinite;
+        }
+
+        @keyframes pulse-text {
+            0%, 100% { opacity: 0.5; }
+            50% { opacity: 1; }
+        }
+
+        /* Center pressure display */
+        .center-pressure {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 8px;
+            fill: rgba(56, 189, 248, 0.7);
+            text-anchor: middle;
+            pointer-events: none;
+        }
+
+        /* Fronts panel */
+        .wind-charts-panel {
+            width: 100%;
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 1.5rem;
+            padding: 1.25rem;
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            margin-bottom: 1rem;
+        }
+        .wind-charts-panel.hidden { display: none; }
+        .wind-chart-box {
+            position: relative;
+            width: 100%;
+            height: 80px;
+        }
+        .wind-chart-label {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            font-weight: 500;
+            margin-bottom: 4px;
+        }
+        .wind-chart-unit {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+        }
+
+        /* Responsive */
+        @media (max-width: 480px) {
+            .app { padding: 1rem 0.5rem; gap: 1rem; }
+            h1 { font-size: 1.4rem; }
+            .compass-label { font-size: 8px; }
+            .compass-label.cardinal { font-size: 10px; }
+            .legend { padding: 0.5rem 0.8rem; gap: 0.5rem; }
+            .legend-bar { width: 140px; }
+            .legend-values { width: 140px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="app">
+        <header>
+            <h1>BaroRadar</h1>
+            <p class="subtitle">Kvidinge · Lufttrycksförändringar i realtid</p>
+        </header>
+
+        <div class="controls">
+            <div class="time-selector">
+                <button class="time-btn" data-hours="1">1 tim</button>
+                <button class="time-btn active" data-hours="3">3 tim</button>
+                <button class="time-btn" data-hours="5">5 tim</button>
+                <button class="time-btn" data-hours="24">24 tim</button>
+            </div>
+        </div>
+
+        <div class="radar-container">
+            <svg id="radar" viewBox="0 0 600 600" aria-label="Barometrisk tryckradar centrerad på Kvidinge">
+                <defs>
+                    <filter id="center-glow">
+                        <feGaussianBlur stdDeviation="4" result="blur"/>
+                        <feMerge>
+                            <feMergeNode in="blur"/>
+                            <feMergeNode in="blur"/>
+                            <feMergeNode in="SourceGraphic"/>
+                        </feMerge>
+                    </filter>
+                    <filter id="cell-glow">
+                        <feGaussianBlur stdDeviation="2" result="blur"/>
+                        <feMerge>
+                            <feMergeNode in="blur"/>
+                            <feMergeNode in="SourceGraphic"/>
+                        </feMerge>
+                    </filter>
+                </defs>
+                <g id="g-cells"></g>
+                <g id="g-rings"></g>
+                <g id="g-spokes"></g>
+                <g id="g-labels"></g>
+                <g id="g-dist-labels"></g>
+                <g id="g-station-markers"></g>
+                <g id="g-center-wind-arrow"></g>
+                <circle class="center-ring" cx="300" cy="300" r="12"/>
+                <circle class="center-dot" cx="300" cy="300" r="5"/>
+                <text id="center-text" class="center-pressure" x="300" y="322"></text>
+            </svg>
+            <div class="loading-overlay" id="loading">
+                <span class="loading-text">Hämtar data…</span>
+            </div>
+        </div>
+
+        <div class="legend">
+            <span class="legend-label">Sjunkande ↓</span>
+            <div style="display:flex;flex-direction:column;align-items:center;">
+                <div class="legend-bar"></div>
+                <div class="legend-values">
+                    <span class="legend-val" id="legend-min"></span>
+                    <span class="legend-val">0</span>
+                    <span class="legend-val" id="legend-max"></span>
+                </div>
+            </div>
+            <span class="legend-label">↑ Stigande</span>
+        </div>
+
+        <div class="info-panel" id="info-panel">
+            <div class="info-station" id="info-station">Hovra över en sektor</div>
+            <div class="info-detail" id="info-detail"></div>
+            <div class="info-source" id="info-source"></div>
+        </div>
+
+        <!-- Vindkomponent-diagram (ersätter fronts-panel) -->
+        <div id="wind-charts-panel" class="wind-charts-panel hidden">
+            <div class="panel-header" style="text-align: left; margin-bottom: 12px; font-size: 0.85rem; font-weight: 600; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.05em;">Vindkomponenter (senaste <span id="wind-period-label">3</span>h)</div>
+            <div class="wind-chart-box">
+                <div class="wind-chart-label">Nord ↔ Syd <span class="wind-chart-unit">(m/s)</span></div>
+                <canvas id="wind-ns-canvas"></canvas>
+            </div>
+            <div class="wind-chart-box" style="margin-top: 16px;">
+                <div class="wind-chart-label">Öst ↔ Väst <span class="wind-chart-unit">(m/s)</span></div>
+                <canvas id="wind-ew-canvas"></canvas>
+            </div>
+            <div style="font-size: 0.75rem; color: var(--text-muted); margin-top: 12px; text-align: center;">
+                Staplar uppåt = Nord/Öst. Staplar nedåt = Syd/Väst.
+            </div>
+        </div>
+
+        <footer>
+            <span><span class="status-dot" id="status-dot"></span><span id="status-text">Startar…</span></span>
+            <span id="next-update"></span>
+        </footer>
+    </div>
+
+    <div class="tooltip" id="tooltip"></div>
+
+    <script>
+    /* ============================================================
+       BaroRadar v2 — Kvidinge
+       Barometric Pressure Change Radar
+       Data: SMHI Open Data + Open-Meteo
+       ============================================================ */
+
+    // ============================================================
+    // CONFIGURATION
+    // ============================================================
+    const CONFIG = {
+        center: { lat: 56.1336, lon: 13.0542, name: 'Kvidinge' },
+        maxDistKm: 160,
+        svgSize: 600,
+        svgCenter: 300,
+        maxRadius: 258,
+        centerGap: 14,
+        refreshMs: 15 * 60 * 1000,
+        defaultPeriod: 3,
+        fetchTimeoutMs: 12000,
+        maxRetries: 1,
+        staleAfterMs: 90 * 60 * 1000, // 90 min
+        // Scale max hPa change for each period (for full color saturation)
+        scaleMax: { 1: 1.5, 3: 3, 5: 5, 24: 10 },
+    };
+
+    // ============================================================
+    // SECTORS & RINGS
+    // ============================================================
+    const SECTORS = [
+        { label: 'N',   angle: 0,     cardinal: true },
+        { label: 'NNO', angle: 22.5,  cardinal: false },
+        { label: 'NO',  angle: 45,    cardinal: false },
+        { label: 'ONO', angle: 67.5,  cardinal: false },
+        { label: 'O',   angle: 90,    cardinal: true },
+        { label: 'OSO', angle: 112.5, cardinal: false },
+        { label: 'SO',  angle: 135,   cardinal: false },
+        { label: 'SSO', angle: 157.5, cardinal: false },
+        { label: 'S',   angle: 180,   cardinal: true },
+        { label: 'SSV', angle: 202.5, cardinal: false },
+        { label: 'SV',  angle: 225,   cardinal: false },
+        { label: 'VSV', angle: 247.5, cardinal: false },
+        { label: 'V',   angle: 270,   cardinal: true },
+        { label: 'VNV', angle: 292.5, cardinal: false },
+        { label: 'NV',  angle: 315,   cardinal: false },
+        { label: 'NNV', angle: 337.5, cardinal: false },
+    ];
+
+    const RINGS = [
+        { minKm: 0,   maxKm: 35,  label: '35 km' },
+        { minKm: 35,  maxKm: 75,  label: '75 km' },
+        { minKm: 75,  maxKm: 115, label: '115 km' },
+        { minKm: 115, maxKm: 160, label: '160 km' },
+    ];
+
+    const SECTOR_SPAN = 360 / SECTORS.length; // 22.5°
+
+    // ============================================================
+    // SMHI STATIONS
+    // ============================================================
+    const SMHI_STATIONS = [
+        { name: 'Helsingborg A',                id: 62040, lat: 56.0304, lon: 12.7628 },
+        { name: 'Ängelholm-Barkåkra Flygplats', id: 62180, lat: 56.2926, lon: 12.8558 },
+        { name: 'Hästveda',                     id: 63160, lat: 56.2800, lon: 13.9431 },
+        { name: 'Halmstad flygplats',           id: 62410, lat: 56.6833, lon: 12.8167 },
+        { name: 'Malmö-Sturup Flygplats',       id: 53300, lat: 55.5231, lon: 13.3787 },
+        { name: 'Falsterbo A',                  id: 52240, lat: 55.3837, lon: 12.8166 },
+        { name: 'Torup A',                      id: 63590, lat: 56.9494, lon: 13.0601 },
+        { name: 'Skillinge A',                  id: 54290, lat: 55.4890, lon: 14.3144 },
+        { name: 'Växjö A',                      id: 64510, lat: 56.8463, lon: 14.8296 },
+        { name: 'Ronneby-Bredåkra',             id: 65160, lat: 56.2670, lon: 15.2650 },
+        { name: 'Hagshult',                     id: 74180, lat: 57.2920, lon: 14.1370 },
+        { name: 'Karlskrona-Söderstjerna',      id: 65090, lat: 56.1500, lon: 15.5890 },
+    ];
+
+    // ============================================================
+    // STATE
+    // ============================================================
+    const state = {
+        period: CONFIG.defaultPeriod,
+        cellData: {},         // key "si-ri" → { readings, source, stationName, distKm, direction, lat, lon }
+        smhiStationsData: {}, // key "stationId" -> { lat, lon, wind: { speed, direction } }
+        lastUpdate: null,
+        isLoading: false,
+        refreshTimer: null,
+        countdownTimer: null,
+        dataStatus: 'ok', // 'ok', 'partial', 'error'
+        showWind: true,
+    };
+
+    // ============================================================
+    // GEOMETRY UTILITIES
+    // ============================================================
+    function toRad(deg) { return deg * Math.PI / 180; }
+    function toDeg(rad) { return rad * 180 / Math.PI; }
+
+    function haversine(lat1, lon1, lat2, lon2) {
+        const R = 6371;
+        const dLat = toRad(lat2 - lat1);
+        const dLon = toRad(lon2 - lon1);
+        const a = Math.sin(dLat / 2) ** 2 +
+                  Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) * Math.sin(dLon / 2) ** 2;
+        return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    }
+
+    function bearing(lat1, lon1, lat2, lon2) {
+        const dLon = toRad(lon2 - lon1);
+        const y = Math.sin(dLon) * Math.cos(toRad(lat2));
+        const x = Math.cos(toRad(lat1)) * Math.sin(toRad(lat2)) -
+                  Math.sin(toRad(lat1)) * Math.cos(toRad(lat2)) * Math.cos(dLon);
+        return (toDeg(Math.atan2(y, x)) + 360) % 360;
+    }
+
+    function destPoint(lat, lon, bearingDeg, distKm) {
+        const R = 6371;
+        const brng = toRad(bearingDeg);
+        const d = distKm / R;
+        const lat1 = toRad(lat);
+        const lon1 = toRad(lon);
+        const lat2 = Math.asin(Math.sin(lat1) * Math.cos(d) +
+                               Math.cos(lat1) * Math.sin(d) * Math.cos(brng));
+        const lon2 = lon1 + Math.atan2(Math.sin(brng) * Math.sin(d) * Math.cos(lat1),
+                                       Math.cos(d) - Math.sin(lat1) * Math.sin(lat2));
+        return { lat: toDeg(lat2), lon: toDeg(lon2) };
+    }
+
+    function mapToSectorRing(lat, lon) {
+        const dist = haversine(CONFIG.center.lat, CONFIG.center.lon, lat, lon);
+        const bear = bearing(CONFIG.center.lat, CONFIG.center.lon, lat, lon);
+        const si = Math.round(bear / SECTOR_SPAN) % SECTORS.length;
+        const ri = RINGS.findIndex(r => dist >= r.minKm && dist < r.maxKm);
+        return { si, ri, dist, bear };
+    }
+
+    function kmToSvg(km) {
+        return (km / CONFIG.maxDistKm) * CONFIG.maxRadius;
+    }
+
+    function angleSvg(deg) {
+        return (deg - 90) * Math.PI / 180; // SVG: 0° = top (N)
+    }
+
+    // ============================================================
+    // SVG PATH: Annular Sector
+    // ============================================================
+    function annularSectorPath(cx, cy, innerR, outerR, startDeg, endDeg) {
+        const s = angleSvg(startDeg);
+        const e = angleSvg(endDeg);
+        const x1 = cx + innerR * Math.cos(s);
+        const y1 = cy + innerR * Math.sin(s);
+        const x2 = cx + outerR * Math.cos(s);
+        const y2 = cy + outerR * Math.sin(s);
+        const x3 = cx + outerR * Math.cos(e);
+        const y3 = cy + outerR * Math.sin(e);
+        const x4 = cx + innerR * Math.cos(e);
+        const y4 = cy + innerR * Math.sin(e);
+        const large = (endDeg - startDeg) > 180 ? 1 : 0;
+        return [
+            `M ${x1} ${y1}`,
+            `L ${x2} ${y2}`,
+            `A ${outerR} ${outerR} 0 ${large} 1 ${x3} ${y3}`,
+            `L ${x4} ${y4}`,
+            `A ${innerR} ${innerR} 0 ${large} 0 ${x1} ${y1}`,
+            'Z'
+        ].join(' ');
+    }
+
+    // ============================================================
+    // DATA FETCHING ABSTRACTION
+    // ============================================================
+    async function fetchWithTimeout(url, options = {}) {
+        const { timeout = CONFIG.fetchTimeoutMs } = options;
+        const controller = new AbortController();
+        const id = setTimeout(() => controller.abort(), timeout);
+        const response = await fetch(url, {
+            ...options,
+            signal: controller.signal
+        });
+        clearTimeout(id);
+        return response;
+    }
+
+    async function fetchRetry(url, options = {}, retries = CONFIG.maxRetries) {
+        try {
+            return await fetchWithTimeout(url, options);
+        } catch (err) {
+            if (retries > 0) {
+                await new Promise(r => setTimeout(r, 1000));
+                return await fetchRetry(url, options, retries - 1);
+            }
+            throw err;
+        }
+    }
+
+    // ============================================================
+    // COLOR ENGINE
+    // ============================================================
+    function pressureColor(changeHpa, maxScale) {
+        if (changeHpa === null || changeHpa === undefined || isNaN(changeHpa)) {
+            return 'rgba(30, 41, 59, 0.3)';
+        }
+        const clamped = Math.max(-maxScale, Math.min(maxScale, changeHpa));
+        const t = clamped / maxScale; // -1 to +1
+
+        if (Math.abs(t) < 0.08) {
+            // Stable: warm amber
+            return `hsl(48, 92%, 52%)`;
+        } else if (t < 0) {
+            // Dropping → red
+            const a = Math.abs(t);
+            const hue = 48 - a * 48;         // 48 → 0
+            const sat = 85 + a * 10;          // 85 → 95
+            const light = 52 - a * 14;        // 52 → 38
+            return `hsl(${hue}, ${sat}%, ${light}%)`;
+        } else {
+            // Rising → green
+            const a = t;
+            const hue = 48 + a * 94;          // 48 → 142
+            const sat = 75 + a * 15;          // 75 → 90
+            const light = 52 - a * 12;        // 52 → 40
+            return `hsl(${hue}, ${sat}%, ${light}%)`;
+        }
+    }
+
+    // ============================================================
+    // DRAW SVG
+    // ============================================================
+    function initSVG() {
+        const CX = CONFIG.svgCenter, CY = CONFIG.svgCenter;
+        const gCells = document.getElementById('g-cells');
+        const gRings = document.getElementById('g-rings');
+        const gSpokes = document.getElementById('g-spokes');
+        const gLabels = document.getElementById('g-labels');
+        const gDist = document.getElementById('g-dist-labels');
+
+        // Draw cells
+        SECTORS.forEach((sector, si) => {
+            const startAngle = sector.angle - SECTOR_SPAN / 2;
+            const endAngle = sector.angle + SECTOR_SPAN / 2;
+            RINGS.forEach((ring, ri) => {
+                const innerR = ri === 0 ? CONFIG.centerGap : kmToSvg(ring.minKm);
+                const outerR = kmToSvg(ring.maxKm);
+                const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+                path.setAttribute('d', annularSectorPath(CX, CY, innerR, outerR, startAngle, endAngle));
+                path.setAttribute('id', `cell-${si}-${ri}`);
+                path.setAttribute('class', 'cell no-station');
+                path.dataset.si = si;
+                path.dataset.ri = ri;
+                gCells.appendChild(path);
+            });
+        });
+
+        // Draw ring circles
+        RINGS.forEach((ring, ri) => {
+            const r = kmToSvg(ring.maxKm);
+            const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+            circle.setAttribute('cx', CX);
+            circle.setAttribute('cy', CY);
+            circle.setAttribute('r', r);
+            circle.setAttribute('class', 'ring-line');
+            gRings.appendChild(circle);
+        });
+
+        // Inner ring (center gap)
+        const innerCircle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+        innerCircle.setAttribute('cx', CX);
+        innerCircle.setAttribute('cy', CY);
+        innerCircle.setAttribute('r', CONFIG.centerGap);
+        innerCircle.setAttribute('class', 'ring-line');
+        innerCircle.style.opacity = '0.3';
+        gRings.appendChild(innerCircle);
+
+        // Draw spokes (16 lines)
+        const outerR = kmToSvg(CONFIG.maxDistKm);
+        SECTORS.forEach((sector) => {
+            const a = angleSvg(sector.angle - SECTOR_SPAN / 2);
+            const x2 = CX + outerR * Math.cos(a);
+            const y2 = CY + outerR * Math.sin(a);
+            const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+            line.setAttribute('x1', CX);
+            line.setAttribute('y1', CY);
+            line.setAttribute('x2', x2);
+            line.setAttribute('y2', y2);
+            line.setAttribute('class', 'spoke-line');
+            gSpokes.appendChild(line);
+        });
+
+        // Compass labels (outside outer ring)
+        const labelR = outerR + 16;
+        SECTORS.forEach((sector) => {
+            const a = angleSvg(sector.angle);
+            const x = CX + labelR * Math.cos(a);
+            const y = CY + labelR * Math.sin(a);
+            const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+            text.setAttribute('x', x);
+            text.setAttribute('y', y);
+            text.setAttribute('class', `compass-label${sector.cardinal ? ' cardinal' : ''}`);
+            text.textContent = sector.label;
+            gLabels.appendChild(text);
+        });
+
+        // Distance labels on the east axis
+        RINGS.forEach((ring) => {
+            const r = kmToSvg(ring.maxKm);
+            const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+            text.setAttribute('x', CX + r + 1);
+            text.setAttribute('y', CY - 3);
+            text.setAttribute('class', 'dist-label');
+            text.setAttribute('text-anchor', 'start');
+            text.textContent = ring.label;
+            gDist.appendChild(text);
+        });
+    }
+
+    // ============================================================
+    // DATA FETCHING: SMHI
+    // ============================================================
+    async function fetchSMHI(stationId) {
+        // Fetch pressure (Param 9 - hourly/daily)
+        const pPress = fetchRetry(`https://opendata-download-metobs.smhi.se/api/version/1.0/parameter/9/station/${stationId}/period/latest-day/data.json`)
+            .then(r => r.json())
+            .catch(() => null);
+
+        // Fetch wind direction (Param 3 - latest day)
+        const pWindDir = fetchRetry(`https://opendata-download-metobs.smhi.se/api/version/1.0/parameter/3/station/${stationId}/period/latest-day/data.json`)
+            .then(r => r.json())
+            .catch(() => null);
+
+        // Fetch wind speed (Param 4 - latest day)
+        const pWindSpd = fetchRetry(`https://opendata-download-metobs.smhi.se/api/version/1.0/parameter/4/station/${stationId}/period/latest-day/data.json`)
+            .then(r => r.json())
+            .catch(() => null);
+
+        const [dPress, dWindDir, dWindSpd] = await Promise.all([pPress, pWindDir, pWindSpd]);
+
+        if (!dPress) throw new Error(`SMHI Pressure missing for ${stationId}`);
+
+        const readings = (dPress.value || [])
+            .filter(v => v.quality === 'G' || v.quality === 'Y')
+            .map(v => ({
+                time: new Date(v.date),
+                pressure: parseFloat(v.value),
+            }))
+            .sort((a, b) => a.time - b.time);
+
+        let wind = null;
+        if (dWindDir && dWindDir.value && dWindDir.value.length > 0 &&
+            dWindSpd && dWindSpd.value && dWindSpd.value.length > 0) {
+            
+            const validDir = dWindDir.value.filter(v => v.quality === 'G' || v.quality === 'Y');
+            const validSpd = dWindSpd.value.filter(v => v.quality === 'G' || v.quality === 'Y');
+            
+            if (validDir.length > 0 && validSpd.length > 0) {
+                const windReadings = [];
+                const dirMap = new Map();
+                validDir.forEach(v => dirMap.set(v.date, parseFloat(v.value)));
+
+                validSpd.forEach(v => {
+                    if (dirMap.has(v.date)) {
+                        windReadings.push({
+                            time: new Date(v.date),
+                            speed: parseFloat(v.value),
+                            direction: dirMap.get(v.date)
+                        });
+                    }
+                });
+
+                windReadings.sort((a, b) => a.time - b.time);
+
+                if (windReadings.length > 0) {
+                    const latest = windReadings[windReadings.length - 1];
+                    wind = {
+                        direction: latest.direction,
+                        speed: latest.speed,
+                        history: windReadings
+                    };
+                }
+            }
+        }
+
+        return { readings, wind };
+    }
+
+    async function fetchAllSMHI() {
+        const results = new Map();
+        const stationsData = {};
+        
+        let successCount = 0;
+        let failCount = 0;
+
+        const promises = SMHI_STATIONS.map(async (station) => {
+            try {
+                const data = await fetchSMHI(station.id);
+                if (data.readings.length > 0) {
+                    successCount++;
+                    stationsData[station.id] = {
+                        lat: station.lat,
+                        lon: station.lon,
+                        wind: data.wind
+                    };
+
+                    const mapping = mapToSectorRing(station.lat, station.lon);
+                    if (mapping.ri >= 0) {
+                        const key = `${mapping.si}-${mapping.ri}`;
+                        // If cell already has a station, keep the closer one
+                        if (!results.has(key) || mapping.dist < results.get(key).distKm) {
+                            results.set(key, {
+                                readings: data.readings,
+                                source: 'smhi',
+                                stationName: station.name,
+                                stationId: station.id,
+                                distKm: Math.round(mapping.dist * 10) / 10,
+                                direction: SECTORS[mapping.si].label,
+                                lat: station.lat,
+                                lon: station.lon,
+                            });
+                        }
+                    }
+                } else {
+                    failCount++;
+                }
+            } catch (e) {
+                failCount++;
+                console.warn(`SMHI fetch failed for ${station.name}:`, e.message);
+            }
+        });
+
+        await Promise.all(promises);
+        return { results, stationsData, successCount, failCount };
+    }
+
+    // ============================================================
+    // DATA FETCHING: Open-Meteo (for empty cells + center)
+    // ============================================================
+    async function fetchOpenMeteo(coords) {
+        // coords = [ { lat, lon, key } ]
+        if (coords.length === 0) return new Map();
+
+        const lats = coords.map(c => c.lat.toFixed(4)).join(',');
+        const lons = coords.map(c => c.lon.toFixed(4)).join(',');
+        const url = `https://api.open-meteo.com/v1/forecast?latitude=${lats}&longitude=${lons}&hourly=pressure_msl&past_hours=25&forecast_hours=0&timezone=Europe%2FStockholm`;
+
+        const resp = await fetchRetry(url);
+        if (!resp.ok) throw new Error(`Open-Meteo: ${resp.status}`);
+        const json = await resp.json();
+
+        const results = new Map();
+        const dataArr = Array.isArray(json) ? json : [json];
+        dataArr.forEach((loc, i) => {
+            if (!loc.hourly) return;
+            const readings = loc.hourly.time.map((t, j) => ({
+                time: new Date(t),
+                pressure: loc.hourly.pressure_msl[j],
+            })).filter(r => r.pressure != null && !isNaN(r.pressure));
+
+            if (readings.length > 0 && coords[i]) {
+                results.set(coords[i].key, {
+                    readings,
+                    source: 'model',
+                    stationName: `Modellpunkt (${coords[i].lat.toFixed(1)}°N, ${coords[i].lon.toFixed(1)}°O)`,
+                    distKm: coords[i].distKm || 0,
+                    direction: coords[i].direction || '',
+                    lat: coords[i].lat,
+                    lon: coords[i].lon,
+                });
+            }
+        });
+        return results;
+    }
+
+    // ============================================================
+    // FETCH ALL DATA
+    // ============================================================
+    async function fetchAllData() {
+        if (state.isLoading) return;
+        state.isLoading = true;
+        setStatus('loading', 'Hämtar data…');
+        document.getElementById('loading').classList.add('active');
+
+        try {
+            // 1. Fetch SMHI (real stations)
+            let smhiData = new Map();
+            let smhiStatus = 'ok';
+            try {
+                const smhiFetchResult = await fetchAllSMHI();
+                smhiData = smhiFetchResult.results;
+                state.smhiStationsData = smhiFetchResult.stationsData;
+                if (smhiFetchResult.failCount > 0 && smhiFetchResult.successCount > 0) {
+                    smhiStatus = 'partial';
+                } else if (smhiFetchResult.successCount === 0) {
+                    smhiStatus = 'error';
+                }
+            } catch (e) {
+                console.warn('SMHI batch failed:', e);
+                smhiStatus = 'error';
+            }
+
+            // 2. Determine which cells need Open-Meteo fill
+            const emptyCells = [];
+            SECTORS.forEach((sector, si) => {
+                RINGS.forEach((ring, ri) => {
+                    const key = `${si}-${ri}`;
+                    if (!smhiData.has(key)) {
+                        const midDist = (ring.minKm + ring.maxKm) / 2;
+                        const pt = destPoint(CONFIG.center.lat, CONFIG.center.lon, sector.angle, midDist);
+                        emptyCells.push({
+                            lat: pt.lat,
+                            lon: pt.lon,
+                            key,
+                            distKm: midDist,
+                            direction: sector.label,
+                        });
+                    }
+                });
+            });
+
+            // Add Kvidinge center point
+            emptyCells.push({
+                lat: CONFIG.center.lat,
+                lon: CONFIG.center.lon,
+                key: 'center',
+                distKm: 0,
+                direction: 'C',
+            });
+
+            // 3. Fetch Open-Meteo in batches (max 50 per call)
+            let openMeteoData = new Map();
+            let meteoFailed = false;
+            const batchSize = 50;
+            for (let i = 0; i < emptyCells.length; i += batchSize) {
+                const batch = emptyCells.slice(i, i + batchSize);
+                try {
+                    const batchResult = await fetchOpenMeteo(batch);
+                    batchResult.forEach((v, k) => openMeteoData.set(k, v));
+                } catch (e) {
+                    console.warn('Open-Meteo batch failed:', e);
+                    meteoFailed = true;
+                }
+            }
+
+            // Determine total status
+            if (smhiStatus === 'error' && meteoFailed) state.dataStatus = 'error';
+            else if (smhiStatus === 'partial' || meteoFailed || smhiStatus === 'error') state.dataStatus = 'partial';
+            else state.dataStatus = 'ok';
+
+            // 4. Merge: SMHI takes priority
+            state.cellData = {};
+            smhiData.forEach((v, k) => { state.cellData[k] = v; });
+            openMeteoData.forEach((v, k) => {
+                if (!state.cellData[k]) state.cellData[k] = v;
+            });
+
+            state.lastUpdate = new Date();
+            updateDisplay();
+            
+            if (state.dataStatus === 'error') setStatus('error', 'Kunde inte hämta data');
+            else if (state.dataStatus === 'partial') setStatus('partial', `Uppdaterad (delvis) ${formatTime(state.lastUpdate)}`);
+            else setStatus('ok', `Uppdaterad ${formatTime(state.lastUpdate)}`);
+
+        } catch (e) {
+            console.error('Data fetch error:', e);
+            setStatus('error', 'Kunde inte hämta data');
+        } finally {
+            state.isLoading = false;
+            document.getElementById('loading').classList.remove('active');
+        }
+    }
+
+    // ============================================================
+    // PRESSURE CHANGE CALCULATION (Linear Regression)
+    // ============================================================
+    function computeChange(readings, hoursBack) {
+        if (!readings || readings.length < 2) return null;
+        
+        const now = Date.now();
+        // Identify the latest reading time available (should be recent)
+        const latestReadingTime = readings[readings.length - 1].time.getTime();
+        
+        // If data is stale, we can still calculate regression relative to the available data
+        const targetTime = latestReadingTime - hoursBack * 3600000;
+        
+        // Filter readings to those within the period window + 60 mins tolerance back
+        const windowReadings = readings.filter(r => r.time.getTime() >= targetTime - 60 * 60 * 1000);
+        
+        if (windowReadings.length < 2) return null;
+        
+        let sumX = 0, sumY = 0, sumXY = 0, sumXX = 0;
+        const n = windowReadings.length;
+        
+        windowReadings.forEach(r => {
+            // Convert time difference to hours relative to targetTime
+            const x = (r.time.getTime() - targetTime) / 3600000;
+            const y = r.pressure;
+            sumX += x;
+            sumY += y;
+            sumXY += x * y;
+            sumXX += x * x;
+        });
+        
+        // Slope = hPa / hour
+        const slope = (n * sumXY - sumX * sumY) / (n * sumXX - sumX * sumX);
+        const totalChange = slope * hoursBack;
+        
+        return { 
+            change: Math.round(totalChange * 100) / 100,
+            rate: Math.round(slope * 100) / 100,
+            pts: n,
+            stale: (now - latestReadingTime) > CONFIG.staleAfterMs
+        };
+    }
+
+    // ============================================================
+    // UPDATE DISPLAY
+    // ============================================================
+    function updateDisplay() {
+        const maxScale = CONFIG.scaleMax[state.period] || 3;
+        const CX = CONFIG.svgCenter, CY = CONFIG.svgCenter;
+        
+        SECTORS.forEach((sector, si) => {
+            RINGS.forEach((ring, ri) => {
+                const key = `${si}-${ri}`;
+                const cell = document.getElementById(`cell-${si}-${ri}`);
+                if (!cell) return;
+
+                // Reset classes
+                cell.className.baseVal = 'cell';
+
+                const data = state.cellData[key];
+                if (!data) {
+                    cell.style.fill = '';
+                    cell.classList.add('no-station');
+                    return;
+                }
+
+                const stats = computeChange(data.readings, state.period);
+                if (!stats) {
+                    cell.style.fill = '';
+                    cell.classList.add('failed');
+                    return;
+                }
+
+                if (stats.stale) {
+                    cell.classList.add('stale');
+                }
+
+                const color = pressureColor(stats.change, maxScale);
+                cell.style.fill = color;
+
+            });
+        });
+
+        // Update center text
+        const centerData = state.cellData['center'];
+        const centerText = document.getElementById('center-text');
+        if (centerData && centerData.readings.length > 0) {
+            const latest = centerData.readings[centerData.readings.length - 1];
+            centerText.textContent = `${latest.pressure.toFixed(1)}`;
+        }
+
+        // Update legend scale labels
+        const maxVal = CONFIG.scaleMax[state.period];
+        document.getElementById('legend-min').textContent = `−${maxVal}`;
+        document.getElementById('legend-max').textContent = `+${maxVal}`;
+
+        // Update station markers & wind charts
+        drawStationMarkers();
+        drawWindComponents();
+        drawCenterWindArrow();
+    }
+
+    function drawStationMarkers() {
+        const g = document.getElementById('g-station-markers');
+        g.innerHTML = '';
+        const CX = CONFIG.svgCenter, CY = CONFIG.svgCenter;
+
+        SMHI_STATIONS.forEach((station) => {
+            const dist = haversine(CONFIG.center.lat, CONFIG.center.lon, station.lat, station.lon);
+            const bear = bearing(CONFIG.center.lat, CONFIG.center.lon, station.lat, station.lon);
+            if (dist > CONFIG.maxDistKm) return;
+
+            const r = kmToSvg(dist);
+            const a = angleSvg(bear);
+            const x = CX + r * Math.cos(a);
+            const y = CY + r * Math.sin(a);
+
+            const dot = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+            dot.setAttribute('cx', x);
+            dot.setAttribute('cy', y);
+            dot.setAttribute('r', 2.5);
+            dot.setAttribute('class', 'station-marker');
+            g.appendChild(dot);
+        });
+    }
+
+    function drawCenterWindArrow() {
+        const g = document.getElementById('g-center-wind-arrow');
+        if (!g) return;
+        g.innerHTML = '';
+        const CX = CONFIG.svgCenter, CY = CONFIG.svgCenter;
+
+        let bestStation = null;
+        let minD = Infinity;
+        Object.values(state.smhiStationsData).forEach(st => {
+            if (st.wind && st.wind.speed !== undefined) {
+                const d = haversine(CONFIG.center.lat, CONFIG.center.lon, st.lat, st.lon);
+                if (d < minD) { minD = d; bestStation = st; }
+            }
+        });
+
+        if (!bestStation || bestStation.wind.speed === undefined) return;
+
+        const speed = bestStation.wind.speed;
+        const direction = bestStation.wind.direction;
+
+        if (speed < 0.5) return;
+
+        const bear = (direction + 180) % 360;
+        const a = angleSvg(bear);
+
+        const length = Math.min(150, Math.max(30, speed * 7));
+        
+        const endX = CX + length * Math.cos(a);
+        const endY = CY + length * Math.sin(a);
+
+        const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+        line.setAttribute('x1', CX);
+        line.setAttribute('y1', CY);
+        line.setAttribute('x2', endX);
+        line.setAttribute('y2', endY);
+        line.setAttribute('class', 'wind-arrow');
+        line.setAttribute('stroke-width', '2.5');
+
+        const headSize = 10;
+        const h1X = endX - headSize * Math.cos(a - Math.PI / 6);
+        const h1Y = endY - headSize * Math.sin(a - Math.PI / 6);
+        const h2X = endX - headSize * Math.cos(a + Math.PI / 6);
+        const h2Y = endY - headSize * Math.sin(a + Math.PI / 6);
+
+        const head = document.createElementNS('http://www.w3.org/2000/svg', 'polygon');
+        head.setAttribute('points', `${endX},${endY} ${h1X},${h1Y} ${h2X},${h2Y}`);
+        head.setAttribute('class', 'wind-head');
+
+        const textDist = length + 18;
+        const textX = CX + textDist * Math.cos(a);
+        const textY = CY + textDist * Math.sin(a);
+        
+        const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+        text.setAttribute('x', textX);
+        text.setAttribute('y', textY);
+        text.setAttribute('text-anchor', 'middle');
+        text.setAttribute('dominant-baseline', 'middle');
+        text.setAttribute('fill', 'var(--wind-color)');
+        text.setAttribute('font-size', '13');
+        text.setAttribute('font-weight', '700');
+        text.setAttribute('style', 'text-shadow: 0 0 5px rgba(0,0,0,1);');
+        text.textContent = `${speed.toFixed(1)} m/s`;
+
+        g.appendChild(line);
+        g.appendChild(head);
+        g.appendChild(text);
+    }
+
+    function drawWindComponents() {
+        const panel = document.getElementById('wind-charts-panel');
+        if (!panel) return;
+        document.getElementById('wind-period-label').textContent = state.period;
+        
+        let bestStation = null;
+        let minD = Infinity;
+        Object.values(state.smhiStationsData).forEach(st => {
+            if (st.wind && st.wind.history) {
+                const d = haversine(CONFIG.center.lat, CONFIG.center.lon, st.lat, st.lon);
+                if (d < minD) { minD = d; bestStation = st; }
+            }
+        });
+        
+        if (!bestStation || bestStation.wind.history.length === 0) {
+            panel.classList.add('hidden');
+            return;
+        }
+        panel.classList.remove('hidden');
+
+        const targetTime = Date.now();
+        const startTime = targetTime - state.period * 3600000;
+        const readings = bestStation.wind.history.filter(r => r.time.getTime() >= startTime);
+        
+        if (readings.length === 0) return;
+
+        // Extract components
+        const dataNS = [];
+        const dataEW = [];
+        let maxAbs = 2;
+
+        readings.forEach(r => {
+            const rad = r.direction * Math.PI / 180;
+            const ns = r.speed * Math.cos(rad);
+            const ew = r.speed * Math.sin(rad);
+
+            dataNS.push({ time: r.time, val: ns });
+            dataEW.push({ time: r.time, val: ew });
+
+            if (Math.abs(ns) > maxAbs) maxAbs = Math.abs(ns);
+            if (Math.abs(ew) > maxAbs) maxAbs = Math.abs(ew);
+        });
+
+        maxAbs = Math.ceil(maxAbs);
+
+        function drawCanvas(canvasId, data, colorPos, colorNeg) {
+            const canvas = document.getElementById(canvasId);
+            if (!canvas) return;
+            const parent = canvas.parentElement;
+            const w = parent.clientWidth;
+            const h = parent.clientHeight;
+            
+            const dpr = window.devicePixelRatio || 1;
+            canvas.width = w * dpr;
+            canvas.height = h * dpr;
+            canvas.style.width = w + 'px';
+            canvas.style.height = h + 'px';
+            const ctx = canvas.getContext('2d');
+            ctx.scale(dpr, dpr);
+
+            ctx.clearRect(0, 0, w, h);
+
+            // Draw zero line
+            const midY = h / 2;
+            ctx.strokeStyle = 'rgba(255,255,255,0.2)';
+            ctx.lineWidth = 1;
+            ctx.beginPath();
+            ctx.moveTo(0, midY);
+            ctx.lineTo(w, midY);
+            ctx.stroke();
+
+            // Draw labels
+            ctx.fillStyle = 'rgba(255,255,255,0.4)';
+            ctx.font = '10px Inter';
+            ctx.textAlign = 'left';
+            ctx.textBaseline = 'top';
+            ctx.fillText(maxAbs.toString(), 2, 2);
+            ctx.textBaseline = 'bottom';
+            ctx.fillText('-' + maxAbs.toString(), 2, h - 2);
+
+            if (data.length < 1) return;
+
+            const timeRange = state.period * 3600000;
+            const barW = Math.max(2, (w / data.length) - 1.5);
+            
+            data.forEach(d => {
+                const x = ((d.time.getTime() - startTime) / timeRange) * w;
+                const barH = (Math.abs(d.val) / maxAbs) * (h / 2);
+                
+                if (d.val >= 0) {
+                    ctx.fillStyle = colorPos;
+                    ctx.fillRect(x - barW/2, midY - barH, barW, barH);
+                } else {
+                    ctx.fillStyle = colorNeg;
+                    ctx.fillRect(x - barW/2, midY, barW, barH);
+                }
+            });
+        }
+
+        drawCanvas('wind-ns-canvas', dataNS, 'rgba(59, 130, 246, 0.9)', 'rgba(239, 68, 68, 0.9)'); // Blue/Red
+        drawCanvas('wind-ew-canvas', dataEW, 'rgba(245, 158, 11, 0.9)', 'rgba(16, 185, 129, 0.9)'); // Orange/Green
+    }
+
+    // ============================================================
+    // INTERACTIVITY
+    // ============================================================
+    function setupEventListeners() {
+        // Time buttons
+        document.querySelectorAll('.time-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelector('.time-btn.active')?.classList.remove('active');
+                btn.classList.add('active');
+                state.period = parseInt(btn.dataset.hours);
+                updateDisplay();
+            });
+        });
+
+        // Cell pointer events (replaces mouse/touch separation)
+        const tooltip = document.getElementById('tooltip');
+        const infoStation = document.getElementById('info-station');
+        const infoDetail = document.getElementById('info-detail');
+        const infoSource = document.getElementById('info-source');
+
+        const radarContainer = document.getElementById('radar');
+
+        radarContainer.addEventListener('pointermove', (e) => {
+            const cell = e.target.closest('.cell');
+            if (!cell) {
+                hideTooltip();
+                return;
+            }
+            
+            const si = parseInt(cell.dataset.si);
+            const ri = parseInt(cell.dataset.ri);
+            const key = `${si}-${ri}`;
+            const data = state.cellData[key];
+
+            if (!data) {
+                infoStation.textContent = `${SECTORS[si].label} · ${RINGS[ri].label}`;
+                infoDetail.textContent = 'Ingen station/data';
+                infoSource.textContent = '';
+                tooltip.classList.remove('visible');
+                return;
+            }
+
+            const stats = computeChange(data.readings, state.period);
+            const latest = data.readings[data.readings.length - 1];
+            
+            let changeStr = '—';
+            let changeClass = 'stable';
+            let detailStr = 'Ej tillräckligt med data';
+            let tooltipChangeHtml = '';
+            
+            if (stats) {
+                changeStr = stats.change > 0 ? `+${stats.change.toFixed(1)}` : stats.change.toFixed(1);
+                changeClass = stats.change > 0.1 ? 'rise' : stats.change < -0.1 ? 'drop' : 'stable';
+                const rateStr = stats.rate > 0 ? `+${stats.rate.toFixed(2)}` : stats.rate.toFixed(2);
+                detailStr = `${latest.pressure.toFixed(1)} hPa · Δ${state.period}h: ${changeStr} hPa (${rateStr} hPa/h)`;
+                
+                tooltipChangeHtml = `
+                    <div class="tooltip-row">Δ ${state.period}h: <span class="${changeClass}">${changeStr} hPa</span></div>
+                    <div class="tooltip-row">Takt: <span class="val">${rateStr} hPa/h</span> (regress. över ${stats.pts} pts)</div>
+                `;
+            }
+
+            // Wind info for SMHI
+            let windStr = '';
+            let windHtml = '';
+            if (data.source === 'smhi' && state.smhiStationsData[data.stationId]?.wind) {
+                const wind = state.smhiStationsData[data.stationId].wind;
+                windStr = ` · Vind: ${wind.speed.toFixed(1)} m/s (från ${wind.direction}°)`;
+                windHtml = `<div class="tooltip-row" style="margin-top: 4px; color: var(--wind-color);">Vind: <span class="val" style="color: var(--wind-color);">${wind.speed.toFixed(1)} m/s</span> från ${wind.direction}°</div>`;
+            }
+
+            // Info panel
+            infoStation.textContent = data.stationName;
+            infoDetail.textContent = detailStr + windStr;
+            let statusNote = stats && stats.stale ? ' (Gammal data)' : '';
+            infoSource.textContent = `${data.source === 'smhi' ? 'SMHI mätstation' : 'Open-Meteo modelldata'} · ${Math.round(data.distKm)} km ${data.direction}${statusNote}`;
+
+            // Tooltip
+            tooltip.innerHTML = `
+                <div class="tooltip-title">${data.stationName}</div>
+                <div class="tooltip-row">Tryck nu: <span class="val">${latest.pressure.toFixed(1)} hPa</span></div>
+                ${tooltipChangeHtml}
+                ${windHtml}
+                <div class="tooltip-row" style="margin-top: 4px;">${Math.round(data.distKm)} km ${data.direction} · ${data.source === 'smhi' ? 'SMHI' : 'Modell'}</div>
+            `;
+
+            tooltip.style.left = `${e.clientX + 16}px`;
+            tooltip.style.top = `${e.clientY - 10}px`;
+
+            // Keep tooltip in viewport
+            const rect = tooltip.getBoundingClientRect();
+            if (rect.right > window.innerWidth - 10) {
+                tooltip.style.left = `${e.clientX - rect.width - 16}px`;
+            }
+            if (rect.bottom > window.innerHeight - 10) {
+                tooltip.style.top = `${e.clientY - rect.height - 10}px`;
+            }
+
+            tooltip.classList.add('visible');
+        });
+
+        radarContainer.addEventListener('pointerleave', hideTooltip);
+
+        function hideTooltip() {
+            tooltip.classList.remove('visible');
+            infoStation.textContent = 'Hovra över en sektor';
+            infoDetail.textContent = '';
+            infoSource.textContent = '';
+        }
+    }
+
+    // ============================================================
+    // STATUS & UTILITIES
+    // ============================================================
+    function setStatus(type, text) {
+        const dot = document.getElementById('status-dot');
+        const statusText = document.getElementById('status-text');
+        dot.className = `status-dot ${type}`;
+        statusText.textContent = text;
+    }
+
+    function formatTime(date) {
+        return date.toLocaleTimeString('sv-SE', { hour: '2-digit', minute: '2-digit' });
+    }
+
+    function startCountdown() {
+        if (state.countdownTimer) clearInterval(state.countdownTimer);
+        state.countdownTimer = setInterval(() => {
+            if (!state.lastUpdate) return;
+            const elapsed = Date.now() - state.lastUpdate.getTime();
+            const remaining = Math.max(0, CONFIG.refreshMs - elapsed);
+            const mins = Math.floor(remaining / 60000);
+            const secs = Math.floor((remaining % 60000) / 1000);
+            document.getElementById('next-update').textContent =
+                `Nästa uppdatering: ${mins}:${secs.toString().padStart(2, '0')}`;
+        }, 1000);
+    }
+
+    // ============================================================
+    // INITIALIZATION
+    // ============================================================
+    async function init() {
+        initSVG();
+        setupEventListeners();
+        await fetchAllData();
+
+        let resizeTimer;
+        window.addEventListener('resize', () => {
+            clearTimeout(resizeTimer);
+            resizeTimer = setTimeout(() => {
+                if (state.cellData) {
+                    drawWindComponents();
+                }
+            }, 200);
+        });
+
+        // Auto-refresh
+        state.refreshTimer = setInterval(() => fetchAllData(), CONFIG.refreshMs);
+        startCountdown();
+    }
+
+    init();
+    </script>
+</body>
+</html>
