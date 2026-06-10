@@ -1,22 +1,15 @@
 {
     "stats": {
-        "suspected_cases": 746,
-        "confirmed_cases": 85,
-        "suspected_deaths": 176,
-        "cfr": 12.0,
+        "suspected_cases": 1306,
+        "confirmed_cases": 337,
+        "suspected_deaths": 321,
+        "cfr": 24.6,
         "strain": "Bundibugyo ebolavirus",
         "epicenter": "Ituri, DRC",
-        "last_sync": "2026-05-23 23:50",
-        "delta_cases": 234,
-        "delta_deaths": 45,
-        "primary_source": "WHO DON",
-        "who_report_date": "2026-05-22",
-        "health_zones_affected": 15,
-        "affected_provinces": [
-            "Ituri",
-            "North Kivu",
-            "South Kivu"
-        ]
+        "last_sync": "2026-06-10 09:01",
+        "delta_cases": 400,
+        "delta_deaths": 98,
+        "primary_source": "SIMULERING (WHO DON ej tillgängligt)"
     },
     "map_zones": [
         {
@@ -24,8 +17,8 @@
             "name": "Ituri-provinsen, DRC (Epicenter)",
             "lat": 1.56,
             "lng": 30.25,
-            "cases": 356,
-            "deaths": 93,
+            "cases": 639,
+            "deaths": 159,
             "health_zones": "Mambasa, Mandima, Komanda",
             "description": "Epicentret för Bundibugyo-utbrottet. Smittspridning sker främst i landsbygdskontext kring informella guldgruvor i Mambasa och Mandima.",
             "security_logistics": "Milisgruppen ADF är aktiv i området vilket begränsar hälsoarbetarnas rörlighet. Skyddseskort krävs.",
@@ -36,8 +29,8 @@
             "name": "Nyakunde, Ituri, DRC (Ny zon — TT/BBC)",
             "lat": 1.43,
             "lng": 29.98,
-            "cases": 142,
-            "deaths": 36,
+            "cases": 233,
+            "deaths": 52,
             "health_zones": "Nyankunde, Lolwa",
             "description": "Ny smittzon rapporterad av TT/BBC 2026-05-23. Fallen kopplas till smittspridning från Mambasa-klustret. Nyakunde har ett större sjukhus som fungerar som regionalt behandlingscentrum.",
             "security_logistics": "Relativt säkrare än Mambasa men logistiskt utmanande. Flygfält tillgängligt för humanitära flyg.",
@@ -48,8 +41,8 @@
             "name": "Butembo, North Kivu, DRC (Ny zon — TT/BBC)",
             "lat": 0.1417,
             "lng": 29.2917,
-            "cases": 113,
-            "deaths": 27,
+            "cases": 190,
+            "deaths": 42,
             "health_zones": "Butembo, Katwa, Musienene",
             "description": "Ny smittzon rapporterad av TT/BBC 2026-05-23. Butembo var hårt drabbat under Ebola-utbrottet 2018–2020 (Zaire-stam). Staden har ~800 000 invånare och utgör en viktig handelsknutpunkt.",
             "security_logistics": "Historik av attacker mot hälsoarbetare (2018-2020). ADF och Mai-Mai aktiva i omgivningen. Högriskområde.",
@@ -60,8 +53,8 @@
             "name": "Goma, North Kivu, DRC (Bekräftade fall — TT/BBC)",
             "lat": -1.6585,
             "lng": 29.2205,
-            "cases": 90,
-            "deaths": 20,
+            "cases": 149,
+            "deaths": 28,
             "health_zones": "Karisimbi, Nyiragongo",
             "description": "Bekräftade fall i Goma (TT/BBC 2026-05-23). Goma har >2 miljoner invånare och gränsar direkt till Rwanda. Smittspridning i en storstad av denna storlek utgör en kritisk eskaleringsrisk.",
             "security_logistics": "Gränskontrollerna vid Grande Barrière skärpta med feberskanning. Hög mobilitet är en betydande risk.",
@@ -72,8 +65,8 @@
             "name": "Kampala, Uganda (Importerade fall)",
             "lat": 0.3136,
             "lng": 32.5811,
-            "cases": 42,
-            "deaths": 13,
+            "cases": 93,
+            "deaths": 21,
             "health_zones": "Mulago Hospital Isolation Unit",
             "description": "Importerade fall isolerade på Mulago Hospital. Ursprunget spåras till resenärer från Ituri och Butembo.",
             "security_logistics": "UVRI (Uganda Virus Research Institute) leder kontaktspårningen. Gränsscreening aktiv.",
@@ -82,25 +75,17 @@
     ],
     "news": [
         {
-            "title": "Uganda - CBPF Allocations and Contributions",
-            "link": "https://data.humdata.org/dataset/uganda-cbpf-allocations-and-contributions",
-            "date": "2026-05-23",
-            "source": "Country-Based Pooled Funds (OCHA)",
-            "origin": "DRC / East Africa",
-            "credibility": "HÖG TROVÄRDIGHET"
-        },
-        {
-            "title": "DRC - CBPF Allocations and Contributions",
-            "link": "https://data.humdata.org/dataset/drc-cbpf-allocations-and-contributions",
-            "date": "2026-05-23",
-            "source": "Country-Based Pooled Funds (OCHA)",
+            "title": "Uganda - Requirements and Funding Data",
+            "link": "https://data.humdata.org/dataset/uga-requirements-and-funding-data",
+            "date": "2026-06-10",
+            "source": "OCHA Financial Tracking System (FTS)",
             "origin": "DRC / East Africa",
             "credibility": "HÖG TROVÄRDIGHET"
         },
         {
             "title": "Uganda - WASH KAP Survey, Kyangwali Refugee Settlement 2018",
             "link": "https://data.humdata.org/dataset/unhcr-uga-kap-2018-kyangwali-v2-1",
-            "date": "2026-05-22",
+            "date": "2026-06-09",
             "source": "UNHCR - The UN Refugee Agency",
             "origin": "DRC / East Africa",
             "credibility": "HÖG TROVÄRDIGHET"
@@ -108,7 +93,7 @@
         {
             "title": "Regional Intention Survey of South Sudanese Refugees in Central African Republic, Democratic Republic of The Congo, Ethiopia, Kenya, Sudan and Uganda (June 2019)",
             "link": "https://data.humdata.org/dataset/unhcr-ssd-2019-reg-intentionsurv-v2-1",
-            "date": "2026-05-22",
+            "date": "2026-06-09",
             "source": "UNHCR - The UN Refugee Agency",
             "origin": "DRC / East Africa",
             "credibility": "HÖG TROVÄRDIGHET"
@@ -116,7 +101,15 @@
         {
             "title": "Uganda - Post-Distribution Monitoring of Cash-Based Intervention, April 2019",
             "link": "https://data.humdata.org/dataset/unhcr-uga-2019-cbi-pdm-v2-1",
-            "date": "2026-05-22",
+            "date": "2026-06-09",
+            "source": "UNHCR - The UN Refugee Agency",
+            "origin": "DRC / East Africa",
+            "credibility": "HÖG TROVÄRDIGHET"
+        },
+        {
+            "title": "Protracted Displacement Economies, 2021 - 2023",
+            "link": "https://data.humdata.org/dataset/unhcr-pde-2021-2023-v2-1",
+            "date": "2026-06-09",
             "source": "UNHCR - The UN Refugee Agency",
             "origin": "DRC / East Africa",
             "credibility": "HÖG TROVÄRDIGHET"
@@ -225,74 +218,74 @@
         }
     ],
     "vep_deliberation": {
-        "risk_index": "8.8",
-        "risk_rating": "ALLVARLIGT HOT",
+        "risk_index": "9.1",
+        "risk_rating": "EXTREMT HOT",
         "transcript": [
             {
                 "role": "system_meta",
-                "text": "--- VEP DUAL-SIGNATURE PROTOKOLL AKTIVERAT [Tid: 23:50] [Utbrottsdag 8] ---"
+                "text": "--- VEP DUAL-SIGNATURE PROTOKOLL AKTIVERAT [Tid: 09:01] [Utbrottsdag 26] ---"
             },
             {
                 "sender": "Dr. Sofia Epidemiologi",
                 "title": "Epidemiologen (Smittmönster)",
                 "domain": "sofia",
-                "time": "23:50",
-                "text": "[VEP-07] Kollegor, de totala siffrorna visar nu 746 misstänkta fall med 176 registrerade dödsfall (CFR 12.0%). Sedan senaste synk: +234 fall, +45 dödsfall. Ituri rapporterar 356 fall, Goma 90 och Kampala 42. Tillväxttakten avtar — vi närmar oss platån."
+                "time": "09:01",
+                "text": "[VEP-43] Kollegor, de totala siffrorna visar nu 1306 misstänkta fall med 321 registrerade dödsfall (CFR 24.6%). Sedan senaste synk: +400 fall, +98 dödsfall. Ituri rapporterar 639 fall, Goma 149 och Kampala 93. Tillväxttakten avtar — vi närmar oss platån."
             },
             {
                 "sender": "Dr. Anders Smittskydd",
                 "title": "Backup Epidemiologi",
                 "domain": "anders",
-                "time": "23:50",
-                "text": "[VEP-08] Jag har granskat Sofias siffror mot tillgängliga officiella källor. Kontrasignerar analysen. Kampala-fallen (42 st) är oroväckande — tyder på bredare smittspridning. Kontaktspårningen i Kampala omfattar uppskattningsvis 1218 kontakter."
+                "time": "09:01",
+                "text": "[VEP-44] Jag har granskat Sofias siffror mot tillgängliga officiella källor. Kontrasignerar analysen. Kampala-fallen (93 st) är oroväckande — tyder på bredare smittspridning. Kontaktspårningen i Kampala omfattar uppskattningsvis 2697 kontakter."
             },
             {
                 "sender": "Prof. Gustaf Källa",
                 "title": "Virologen",
                 "domain": "gustaf",
-                "time": "23:50",
-                "text": "[VEP-09] Påminner om att detta är Bundibugyo ebolavirus (BDBV), inte Zaire. Ervebo-vaccinet (rVSV-ZEBOV) ger noll immunitet. Vi har hittat 10 relevanta vetenskapliga artiklar i denna synk. Forskning på multivalenta vaccin pågår i fas-I/II men inget är tillgängligt för fältbruk."
+                "time": "09:01",
+                "text": "[VEP-45] Påminner om att detta är Bundibugyo ebolavirus (BDBV), inte Zaire. Ervebo-vaccinet (rVSV-ZEBOV) ger noll immunitet. Vi har hittat 10 relevanta vetenskapliga artiklar i denna synk. Forskning på multivalenta vaccin pågår i fas-I/II men inget är tillgängligt för fältbruk."
             },
             {
                 "sender": "Dr. Elena Genom",
                 "title": "Backup Virologi",
                 "domain": "elena",
-                "time": "23:50",
-                "text": "[VEP-10] Bekräftar Gustafs biologiska varning. Gensekvenseringen av proverna från Mambasa bekräftar 99.2% matchning med Bundibugyo-referensgenomet (2007). Den genetiska klyftan till Zaire gör att Zaire-riktade antikroppar är verkningslösa mot BDBV."
+                "time": "09:01",
+                "text": "[VEP-46] Bekräftar Gustafs biologiska varning. Gensekvenseringen av proverna från Mambasa bekräftar 99.2% matchning med Bundibugyo-referensgenomet (2007). Den genetiska klyftan till Zaire gör att Zaire-riktade antikroppar är verkningslösa mot BDBV."
             },
             {
                 "sender": "Freja Fältforskare",
                 "title": "Regionalanalytikern (Geopolitik)",
                 "domain": "freja",
-                "time": "23:50",
-                "text": "[VEP-11] Säkerhetsläget i Ituri förblir kritiskt. ADF (Allied Democratic Forces) är aktiva längs RN4-axeln. Goma-siffrorna ({} fall) indikerar att gränskontrollen vid Kasindi inte är tillräcklig."
+                "time": "09:01",
+                "text": "[VEP-47] Säkerhetsläget i Ituri förblir kritiskt. ADF (Allied Democratic Forces) är aktiva längs RN4-axeln. Goma-siffrorna (149 fall) indikerar att gränskontrollen vid Kasindi inte är tillräcklig."
             },
             {
                 "sender": "Majoren Eric",
                 "title": "Backup Säkerhet & Logistik",
                 "domain": "eric",
-                "time": "23:50",
-                "text": "[VEP-12] Verifierat fältrapporterna. Humanitära korridorer med skyddade konvojer krävs fortfarande för kontaktspårning i Mambasa och Mandima. MONUSCO-koordinering rekommenderas."
+                "time": "09:01",
+                "text": "[VEP-48] Verifierat fältrapporterna. Humanitära korridorer med skyddade konvojer krävs fortfarande för kontaktspårning i Mambasa och Mandima. MONUSCO-koordinering rekommenderas."
             },
             {
                 "sender": "Dr. Amira Samhälle",
                 "title": "Folkhälsospecialisten",
                 "domain": "amira",
-                "time": "23:50",
-                "text": "[VEP-13] Lokalt engagemang och kulturellt anpassade hygienprotokoll fortsätter att vara avgörande. I Kampala måste UVRI-diagnostiken på Mulago säkerställas. Humanitära datasets från HDX ger oss bättre grund för logistisk planering."
+                "time": "09:01",
+                "text": "[VEP-49] Lokalt engagemang och kulturellt anpassade hygienprotokoll fortsätter att vara avgörande. I Kampala måste UVRI-diagnostiken på Mulago säkerställas. Humanitära datasets från HDX ger oss bättre grund för logistisk planering."
             },
             {
                 "sender": "Vera Verifikation",
                 "title": "Faktagranskaren",
                 "domain": "vera",
-                "time": "23:50",
-                "text": "[VEP-14] Verifiering slutförd. 5 humanitära källor och 10 vetenskapliga artiklar granskade. Källtrovärdigheten klassas som HÖG för officiella kanaler. Baserat på 746 fall, 176 dödsfall, CFR 12.0%, och brist på fungerande vaccin sätter ERB GAIA Riskindex till 8.8/10 (ALLVARLIGT HOT)."
+                "time": "09:01",
+                "text": "[VEP-50] Verifiering slutförd. 5 humanitära källor och 10 vetenskapliga artiklar granskade. Källtrovärdigheten klassas som HÖG för officiella kanaler. Baserat på 1306 fall, 321 dödsfall, CFR 24.6%, och brist på fungerande vaccin sätter ERB GAIA Riskindex till 9.1/10 (EXTREMT HOT)."
             },
             {
                 "sender": "Vera & Marcus",
                 "title": "Co-Signers",
                 "role": "system_meta",
-                "text": "--- DELIBERATION GODKÄND OCH SIGNERAD AV ERB CRISIS PANEL [23:50] ---"
+                "text": "--- DELIBERATION GODKÄND OCH SIGNERAD AV ERB CRISIS PANEL [09:01] ---"
             }
         ]
     },
@@ -362,59 +355,98 @@
             "cases": 746,
             "deaths": 176,
             "source": "WHO DON"
+        },
+        {
+            "date": "2026-05-24",
+            "cases": 799,
+            "deaths": 191
+        },
+        {
+            "date": "2026-05-25",
+            "cases": 857,
+            "deaths": 206
+        },
+        {
+            "date": "2026-05-26",
+            "cases": 908,
+            "deaths": 220
+        },
+        {
+            "date": "2026-05-27",
+            "cases": 967,
+            "deaths": 234
+        },
+        {
+            "date": "2026-05-28",
+            "cases": 1022,
+            "deaths": 249
+        },
+        {
+            "date": "2026-05-29",
+            "cases": 1087,
+            "deaths": 266
+        },
+        {
+            "date": "2026-05-30",
+            "cases": 906,
+            "deaths": 223,
+            "source": "WHO DON"
+        },
+        {
+            "date": "2026-05-31",
+            "cases": 966,
+            "deaths": 240
+        },
+        {
+            "date": "2026-06-01",
+            "cases": 1017,
+            "deaths": 252
+        },
+        {
+            "date": "2026-06-02",
+            "cases": 1071,
+            "deaths": 264
+        },
+        {
+            "date": "2026-06-03",
+            "cases": 1132,
+            "deaths": 278
+        },
+        {
+            "date": "2026-06-04",
+            "cases": 1190,
+            "deaths": 291
+        },
+        {
+            "date": "2026-06-05",
+            "cases": 1248,
+            "deaths": 306
+        },
+        {
+            "date": "2026-06-06",
+            "cases": 1306,
+            "deaths": 321
         }
     ],
     "cross_reference": {
         "sources": [
             {
-                "name": "WHO Disease Outbreak News",
-                "type": "PRIMÄRKÄLLA",
-                "date": "2026-05-22",
-                "suspected_cases": 746,
-                "confirmed_cases": 85,
-                "deaths": 176,
-                "cfr": 12.0,
-                "health_zones": 15,
-                "url": "https://www.who.int/2026-DON603",
-                "excerpts": [
-                    "In total, 746 suspected cases, including 176 deaths among suspected cases have been reported from DRC as of 21 May 2026; and 85 confirmed cases (two in Uganda), including ten deaths (one in Uganda) (CFR 12%) have been reported from both countries",
-                    "Distribution of suspected and confirmed cases of Bundibugyo virus disease in Democratic Republic of Congo and Uganda, as of 21 May 2026 Democratic Republic of the Congo As of 21 May 2026, a total of 83 confirmed cases including nine deaths (CFR 11%);",
-                    "As of 21 May, 746 suspected cases and 176 deaths among suspected cases were reported in DRC"
-                ],
-                "reliability": "AUKTORITATIV"
-            },
-            {
                 "name": "Logistisk tillväxtmodell (intern)",
                 "type": "SIMULERING",
-                "date": "2026-05-23",
-                "suspected_cases": 512,
-                "deaths": 131,
-                "cfr": 25.6,
+                "date": "2026-06-10",
+                "suspected_cases": 1306,
+                "deaths": 321,
+                "cfr": 24.6,
                 "reliability": "MODELL"
             }
         ],
-        "consensus": "WHO DON (2026-05-22) är den auktoritativa källan. Simuleringsmodellen avviker med 234 fall.",
-        "discrepancies": [
-            {
-                "field": "suspected_cases",
-                "who_value": 746,
-                "sim_value": 512,
-                "delta": 234,
-                "note": "WHO rapporterar 234 fler fall än simuleringsmodellen. Modellen behöver kalibreras."
-            },
-            {
-                "field": "suspected_deaths",
-                "who_value": 176,
-                "sim_value": 131,
-                "delta": 45,
-                "note": "WHO rapporterar 45 fler dödsfall. CFR kan skilja sig."
-            }
-        ]
+        "consensus": "",
+        "discrepancies": []
     },
     "data_provenance": {
         "epidemiology": {
             "type": "WHO DON (LIVE)",
-            "description": "Riktiga siffror från WHO Disease Outbreak News (2026-05-22). Rapport: Ebola disease caused by Bundibugyo virus – Democratic Republic of the Congo",
+            "description": "Riktiga siffror från WHO Disease Outbreak News (2026-06-08). Rapport: Ebola disease caused by Bundibugyo virus, Democratic Republic of the Congo & Uganda",
             "confidence": "AUKTORITATIV",
             "icon": "🏥"
         },
