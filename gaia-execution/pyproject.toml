@@ -1,0 +1,18 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "gaia-execution"
+version = "0.1.0"
+description = "Free-first, portable execution bridge for GAIA workflows"
+requires-python = ">=3.11"
+license = {text = "MIT"}
+authors = [{name = "Håkan Karlsson and gAIa"}]
+dependencies = []
+
+[project.scripts]
+gaia-exec = "gaia_exec.cli:main"
+
+[tool.setuptools]
+packages = ["gaia_exec"]

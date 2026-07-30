@@ -1,0 +1,13 @@
+{
+  "version": 1,
+  "feeds": [
+    {
+      "name": "example-disabled-feed",
+      "enabled": false,
+      "mode": "search",
+      "provider": "semantic-scholar",
+      "query": "generative artificial intelligence education",
+      "limit": 20
+    }
+  ]
+}

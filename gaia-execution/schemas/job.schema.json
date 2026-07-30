@@ -1,0 +1,24 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://gaia.local/schemas/job.schema.json",
+  "title": "GAIA execution job",
+  "type": "object",
+  "required": ["type", "payload"],
+  "additionalProperties": false,
+  "properties": {
+    "id": {"type": "string", "minLength": 1, "maxLength": 128},
+    "type": {
+      "type": "string",
+      "enum": [
+        "health.open_apis",
+        "tts.generate",
+        "research.search",
+        "research.recommend",
+        "news.rss",
+        "artportalen.count",
+        "tasks.list"
+      ]
+    },
+    "payload": {"type": "object"}
+  }
+}

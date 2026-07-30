@@ -1,0 +1,33 @@
+name: GAIA open API health
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "17 4 * * *"
+
+permissions:
+  contents: read
+
+jobs:
+  health:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Run live health checks
+        env:
+          PYTHONPATH: gaia-execution
+        run: |
+          mkdir -p gaia-execution/output
+          python -m gaia_exec health --output gaia-execution/output/open-api-health.json
+      - name: Upload receipt
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: gaia-open-api-health
+          path: gaia-execution/output/open-api-health.json
+          if-no-files-found: error
+          retention-days: 30
