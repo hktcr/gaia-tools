@@ -4,6 +4,12 @@ on:
   workflow_dispatch:
   schedule:
     - cron: "17 4 * * *"
+  pull_request:
+    branches:
+      - main
+    paths:
+      - "gaia-execution/**"
+      - ".github/workflows/gaia-health.yml"
 
 permissions:
   contents: read
