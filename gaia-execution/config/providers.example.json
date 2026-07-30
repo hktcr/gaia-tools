@@ -1,0 +1,12 @@
+{
+  "version": 1,
+  "free_first": true,
+  "secret_policy": "references-only",
+  "providers": {
+    "tts": ["macos-say", "browser-speechsynthesis", "elevenlabs-optional-paid"],
+    "research": ["semantic-scholar", "crossref", "openalex", "datacite", "europe-pmc"],
+    "news": ["rss-atom"],
+    "weather": ["open-meteo", "noaa-swpc"],
+    "tasks": ["google-apps-script-bridge"]
+  }
+}

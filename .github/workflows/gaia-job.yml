@@ -1,0 +1,56 @@
+name: GAIA allowlisted job
+
+on:
+  workflow_dispatch:
+    inputs:
+      job_type:
+        description: Allowlisted job type
+        required: true
+        type: choice
+        options:
+          - health.open_apis
+          - research.search
+          - research.recommend
+          - news.rss
+          - artportalen.count
+          - tasks.list
+          - tts.generate
+      payload_json:
+        description: JSON object with the job payload
+        required: true
+        default: "{}"
+        type: string
+
+permissions:
+  contents: read
+
+jobs:
+  execute:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Execute allowlisted job
+        env:
+          PYTHONPATH: gaia-execution
+          ARTPORTALEN_API_KEY: ${{ secrets.ARTPORTALEN_API_KEY }}
+          ELEVENLABS_API_KEY: ${{ secrets.ELEVENLABS_API_KEY }}
+          SEMANTIC_SCHOLAR_API_KEY: ${{ secrets.SEMANTIC_SCHOLAR_API_KEY }}
+          GAIA_TASKS_BRIDGE_URL: ${{ secrets.GAIA_TASKS_BRIDGE_URL }}
+          GAIA_TASKS_BRIDGE_TOKEN: ${{ secrets.GAIA_TASKS_BRIDGE_TOKEN }}
+          JOB_TYPE: ${{ inputs.job_type }}
+          PAYLOAD_JSON: ${{ inputs.payload_json }}
+        run: |
+          mkdir -p gaia-execution/output
+          python -m gaia_exec job run-inline "$JOB_TYPE" "$PAYLOAD_JSON" --output-dir gaia-execution/output
+      - name: Upload receipt and artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: gaia-job-${{ github.run_id }}
+          path: gaia-execution/output
+          if-no-files-found: error
+          retention-days: 30
