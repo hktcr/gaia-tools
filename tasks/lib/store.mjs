@@ -88,4 +88,3 @@ export function loadUiSettings() {
 export function saveUiSettings(settings) {
   localStorage.setItem("gaiaTasks.ui", JSON.stringify(settings));
 }
-

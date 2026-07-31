@@ -119,4 +119,3 @@ export function safeJsonParse(text, maximumCharacters = 20 * 1024 * 1024) {
   rejectDangerousKeys(parsed);
   return parsed;
 }
-
