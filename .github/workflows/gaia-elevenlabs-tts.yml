@@ -1,0 +1,85 @@
+name: GAIA ElevenLabs TTS
+
+on:
+  workflow_dispatch:
+    inputs:
+      manuscript:
+        description: Repository-relative UTF-8 manuscript path
+        required: true
+        default: gaia-execution/requests/tts/gaia_miljobyte_tts.txt
+        type: string
+  push:
+    branches:
+      - main
+    paths:
+      - "gaia-execution/requests/tts/gaia_miljobyte_tts.txt"
+
+permissions:
+  contents: read
+
+jobs:
+  generate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      PYTHONPATH: gaia-execution
+      ELEVENLABS_API_KEY: ${{ secrets.ELEVENLABS_API_KEY }}
+      MANUSCRIPT: ${{ inputs.manuscript || 'gaia-execution/requests/tts/gaia_miljobyte_tts.txt' }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Validate request
+        shell: bash
+        run: |
+          set -euo pipefail
+          case "$MANUSCRIPT" in
+            gaia-execution/requests/tts/*.txt) ;;
+            *) echo "Invalid manuscript path" >&2; exit 2 ;;
+          esac
+          test -s "$MANUSCRIPT"
+          test -n "$ELEVENLABS_API_KEY"
+      - name: Generate River narration
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p gaia-execution/output/elevenlabs
+          python - <<'PY'
+          import hashlib
+          import json
+          import os
+          import time
+          from pathlib import Path
+          from gaia_exec.tts import generate
+
+          manuscript = Path(os.environ["MANUSCRIPT"])
+          text = manuscript.read_text(encoding="utf-8").strip()
+          output = Path("gaia-execution/output/elevenlabs/gaia_miljobyte_river.mp3")
+          result = generate(text, output, provider="elevenlabs", allow_paid=True)
+          receipt = {
+              "status": "success",
+              "provider": result["provider"],
+              "voice": "River",
+              "voice_id": "SAz9YHcvj6GT2YYXdXww",
+              "model": "eleven_multilingual_v2",
+              "characters": len(text),
+              "manuscript_sha256": hashlib.sha256(text.encode("utf-8")).hexdigest(),
+              "audio_sha256": hashlib.sha256(output.read_bytes()).hexdigest(),
+              "audio_bytes": output.stat().st_size,
+              "created_at": time.time(),
+              "artifact": output.name,
+          }
+          Path("gaia-execution/output/elevenlabs/receipt.json").write_text(
+              json.dumps(receipt, ensure_ascii=False, indent=2), encoding="utf-8"
+          )
+          print(json.dumps({k: v for k, v in receipt.items() if k != "created_at"}, ensure_ascii=False))
+          PY
+      - name: Upload narration and receipt
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: gaia-miljobyte-river-${{ github.run_id }}
+          path: gaia-execution/output/elevenlabs
+          if-no-files-found: error
+          retention-days: 30
