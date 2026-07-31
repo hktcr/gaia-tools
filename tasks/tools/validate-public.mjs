@@ -60,4 +60,3 @@ if (failures.length) {
   process.exit(1);
 }
 process.stdout.write("Publik task-artefakt: inga kända klartextläckor hittades.\n");
-
