@@ -1,0 +1,35 @@
+name: gAIa Tasks check
+
+on:
+  pull_request:
+    paths:
+      - "tasks/**"
+      - ".github/workflows/gaia-tasks-check.yml"
+  push:
+    branches:
+      - main
+    paths:
+      - "tasks/**"
+      - ".github/workflows/gaia-tasks-check.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Syntax
+        run: |
+          node --check tasks/app.mjs
+          node --check tasks/sw.js
+          node --check tasks/tools/vault-cli.mjs
+      - name: Unit tests
+        run: node --test tasks/test/*.test.mjs
+      - name: Public artifact scan
+        run: node tasks/tools/validate-public.mjs tasks
