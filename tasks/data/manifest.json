@@ -1,8 +1,0 @@
-{
-  "type": "gaia-task-public-manifest",
-  "version": 1,
-  "datasetId": "1f8a6dd4-13b0-41de-a419-cab45ad4ad69",
-  "masterRevision": 1,
-  "vaultFile": "./tasks.91a889a035c4cc4a12b9b076.vault.json",
-  "vaultSha256": "91a889a035c4cc4a12b9b0765f5043ead574b2ede41386536e0ea2fa5b448291"
-}
