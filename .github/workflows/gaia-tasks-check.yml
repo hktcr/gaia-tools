@@ -29,6 +29,7 @@ jobs:
           node --check tasks/app.mjs
           node --check tasks/sw.js
           node --check tasks/tools/vault-cli.mjs
+          for file in tasks/lib/*.mjs; do node --check "$file"; done
       - name: Unit tests
         run: node --test tasks/test/*.test.mjs
       - name: Public artifact scan

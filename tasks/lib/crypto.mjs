@@ -8,7 +8,7 @@ import {
   safeJsonParse,
   utf8,
 } from "./codec.mjs";
-import { computeMasterHash, validateMaster } from "./model.mjs";
+import { SUPPORTED_SCHEMA_VERSIONS, computeMasterHash, validateMaster } from "./model.mjs";
 
 const DEFAULT_ITERATIONS = 600_000;
 
@@ -174,7 +174,7 @@ function validateVaultEnvelope(vault) {
   if (!vault || vault.type !== "gaia-task-vault" || vault.envelopeVersion !== 1) {
     throw new Error("Vault-formatet stöds inte");
   }
-  if (vault.schemaVersion !== 1 || !Number.isInteger(vault.masterRevision)) {
+  if (!SUPPORTED_SCHEMA_VERSIONS.includes(vault.schemaVersion) || !Number.isInteger(vault.masterRevision)) {
     throw new Error("Vault-metadata är ogiltig");
   }
   if (vault.kdf?.name !== "PBKDF2" || vault.kdf?.hash !== "SHA-256") {

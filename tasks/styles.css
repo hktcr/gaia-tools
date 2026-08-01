@@ -332,6 +332,10 @@ textarea {
   resize: vertical;
 }
 
+#task-blocked-by {
+  min-height: 7.5rem;
+}
+
 input:hover,
 select:hover,
 textarea:hover {
@@ -615,6 +619,88 @@ textarea:hover {
   letter-spacing: -0.025em;
 }
 
+.moment-bar {
+  display: grid;
+  grid-template-columns: minmax(220px, 0.65fr) minmax(0, 1.35fr);
+  align-items: end;
+  gap: 24px;
+  margin-bottom: 20px;
+  padding: 18px 20px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  background: color-mix(in srgb, var(--surface) 88%, transparent);
+  backdrop-filter: blur(16px);
+}
+
+.moment-copy h3 {
+  margin: 0;
+  font-size: 1.05rem;
+}
+
+.moment-copy > p:last-child {
+  margin: 4px 0 0;
+  color: var(--text-muted);
+  font-size: 0.82rem;
+}
+
+.moment-controls {
+  display: grid;
+  grid-template-columns: 1.15fr 0.9fr minmax(120px, 0.65fr);
+  align-items: end;
+  gap: 12px;
+}
+
+.segment-field {
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.segment-field legend,
+.moment-context > span {
+  margin-bottom: 6px;
+  color: var(--text-muted);
+  font-size: 0.72rem;
+  font-weight: 750;
+}
+
+.segments {
+  display: flex;
+  min-width: 0;
+  padding: 3px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: var(--bg-soft);
+}
+
+.segments button {
+  min-width: 0;
+  min-height: 38px;
+  flex: 1;
+  padding: 6px 8px;
+  border: 0;
+  border-radius: 9px;
+  background: transparent;
+  color: var(--text-muted);
+  font-size: 0.76rem;
+  font-weight: 700;
+}
+
+.segments button.is-active {
+  background: var(--surface-raised);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.14);
+  color: var(--text);
+}
+
+.moment-context {
+  display: grid;
+}
+
+.moment-context select {
+  min-height: 46px;
+}
+
 .hero-grid {
   display: grid;
   grid-template-columns: minmax(0, 1.45fr) minmax(280px, 0.72fr);
@@ -679,6 +765,15 @@ textarea:hover {
   font-size: 1.05rem;
 }
 
+.step-label {
+  margin: 0 0 4px;
+  color: var(--cyan);
+  font-size: 0.74rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
 .focus-reason {
   display: flex;
   align-items: center;
@@ -693,6 +788,67 @@ textarea:hover {
   display: flex;
   flex-wrap: wrap;
   gap: 10px;
+}
+
+.why-now {
+  max-width: 680px;
+  margin: 18px 0 22px;
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+}
+
+.why-now summary {
+  min-height: 44px;
+  padding: 11px 0;
+  color: var(--text-soft);
+  cursor: pointer;
+  font-size: 0.85rem;
+  font-weight: 750;
+}
+
+.reason-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  padding: 4px 0 12px;
+}
+
+.reason-factor {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 2px 8px;
+  padding: 10px;
+  border-radius: 12px;
+  background: var(--bg-soft);
+}
+
+.reason-factor span {
+  color: var(--text-soft);
+  font-size: 0.76rem;
+  font-weight: 700;
+}
+
+.reason-factor strong {
+  color: var(--cyan);
+}
+
+.reason-factor small {
+  grid-column: 1 / -1;
+  color: var(--text-muted);
+  font-size: 0.68rem;
+}
+
+.reason-evidence {
+  margin: 0 0 10px;
+  padding-left: 20px;
+  color: var(--text-soft);
+  font-size: 0.82rem;
+}
+
+.confidence-note {
+  margin: 0 0 14px;
+  color: var(--text-muted);
+  font-size: 0.74rem;
 }
 
 .quiet-panel {
@@ -734,6 +890,51 @@ textarea:hover {
 
 .attention-section {
   margin-top: 28px;
+}
+
+.now-secondary {
+  margin-top: 28px;
+}
+
+.bundle-card,
+.clarify-card {
+  margin-top: 18px;
+  padding: 22px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  background: var(--surface);
+}
+
+.bundle-card {
+  background: linear-gradient(135deg, var(--cyan-soft), var(--surface) 48%);
+}
+
+.clarify-card {
+  background: linear-gradient(135deg, var(--amber-soft), var(--surface) 48%);
+}
+
+.bundle-kicker {
+  color: var(--violet);
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.bundle-card h3,
+.clarify-card h3 {
+  margin: 6px 0;
+  font-size: 1.15rem;
+}
+
+.bundle-card p,
+.clarify-card p {
+  margin: 0;
+  color: var(--text-soft);
+}
+
+.clarify-card .button {
+  margin-top: 14px;
 }
 
 .subheading {
@@ -816,6 +1017,18 @@ textarea:hover {
   font-weight: 730;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+
+.commitment {
+  padding: 2px 6px;
+  border-radius: 999px;
+  background: var(--violet-soft);
+  color: var(--violet);
+}
+
+.commitment-must {
+  background: var(--amber-soft);
+  color: var(--amber);
 }
 
 .task-card.is-done .task-title {
@@ -943,6 +1156,19 @@ textarea:hover {
   font-size: 0.8rem;
 }
 
+.project-card .project-health {
+  min-height: 0;
+  margin: 14px 0 0;
+  padding-top: 12px;
+  border-top: 1px solid var(--line);
+  color: var(--green);
+  font-size: 0.78rem;
+}
+
+.project-card .project-health.needs-attention {
+  color: var(--amber);
+}
+
 .change-layout {
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(270px, 0.48fr);
@@ -1033,7 +1259,8 @@ textarea:hover {
 }
 
 .editor-dialog,
-.revision-dialog {
+.revision-dialog,
+.mobile-more-dialog {
   width: min(calc(100% - 32px), 780px);
   max-height: min(88vh, 920px);
   overflow: auto;
@@ -1050,14 +1277,21 @@ textarea:hover {
 }
 
 .editor-dialog::backdrop,
-.revision-dialog::backdrop {
+.revision-dialog::backdrop,
+.mobile-more-dialog::backdrop {
   background: rgba(3, 6, 13, 0.72);
   backdrop-filter: blur(6px);
 }
 
 .editor-dialog form,
-.revision-dialog {
+.revision-dialog,
+.friction-content,
+.mobile-more-content {
   padding: 24px;
+}
+
+.mobile-more-dialog {
+  width: min(calc(100% - 32px), 520px);
 }
 
 .dialog-header {
@@ -1087,6 +1321,136 @@ textarea:hover {
 
 .field-wide {
   grid-column: 1 / -1;
+}
+
+.field-help {
+  margin: 0 0 16px;
+  color: var(--text-muted);
+  font-size: 0.84rem;
+}
+
+.task-intelligence {
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  background: var(--bg-soft);
+}
+
+.task-intelligence > summary {
+  min-height: 50px;
+  padding: 13px 16px;
+  color: var(--text-soft);
+  cursor: pointer;
+  font-size: 0.88rem;
+  font-weight: 750;
+}
+
+.task-intelligence[open] > summary {
+  border-bottom: 1px solid var(--line);
+}
+
+.task-intelligence > p,
+.intelligence-grid {
+  margin-inline: 16px;
+}
+
+.task-intelligence > p {
+  margin-top: 14px;
+}
+
+.intelligence-grid {
+  margin-bottom: 16px;
+}
+
+.window-field {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px 18px;
+  padding: 12px 14px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+}
+
+.window-field legend {
+  padding-inline: 5px;
+  color: var(--text-muted);
+  font-size: 0.78rem;
+  font-weight: 700;
+}
+
+.window-field label {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  color: var(--text-soft);
+  font-size: 0.82rem;
+}
+
+.window-field input {
+  width: 18px;
+  min-height: 18px;
+}
+
+.friction-grid,
+.more-grid {
+  display: grid;
+  gap: 10px;
+}
+
+.friction-choice,
+.more-grid button {
+  display: grid;
+  gap: 2px;
+  min-height: 64px;
+  padding: 12px 14px;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: var(--surface-raised);
+  text-align: left;
+}
+
+.friction-choice:hover,
+.more-grid button:hover {
+  border-color: var(--violet);
+  background: var(--surface-hover);
+}
+
+.friction-choice span,
+.more-grid small {
+  color: var(--text-muted);
+  font-size: 0.78rem;
+}
+
+.more-settings {
+  display: grid;
+  gap: 10px;
+  margin-top: 18px;
+  padding-top: 18px;
+  border-top: 1px solid var(--line);
+}
+
+.strict-lock-setting {
+  display: grid;
+  grid-template-columns: 22px 1fr;
+  align-items: start;
+  gap: 10px;
+  padding: 12px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+}
+
+.strict-lock-setting input {
+  width: 20px;
+  min-height: 20px;
+  margin-top: 2px;
+}
+
+.strict-lock-setting span {
+  display: grid;
+}
+
+.strict-lock-setting small {
+  color: var(--text-muted);
 }
 
 .checkbox-field {
@@ -1200,6 +1564,10 @@ textarea:hover {
     grid-template-columns: 1fr;
   }
 
+  .moment-bar {
+    grid-template-columns: 1fr;
+  }
+
   .quiet-panel {
     min-height: 220px;
   }
@@ -1255,6 +1623,21 @@ textarea:hover {
     display: block;
   }
 
+  .moment-bar {
+    display: block;
+    padding: 16px;
+  }
+
+  .moment-controls {
+    grid-template-columns: 1fr;
+    margin-top: 14px;
+  }
+
+  .segments button {
+    min-height: 42px;
+    padding-inline: 5px;
+  }
+
   .focus-panel {
     min-height: 310px;
     padding: 24px;
@@ -1263,6 +1646,10 @@ textarea:hover {
   .focus-panel h3 {
     margin-top: 44px;
     font-size: clamp(2.2rem, 12vw, 3.5rem);
+  }
+
+  .reason-grid {
+    grid-template-columns: 1fr;
   }
 
   .quiet-panel {
@@ -1302,7 +1689,7 @@ textarea:hover {
     left: 0;
     z-index: 60;
     display: grid;
-    grid-template-columns: repeat(7, 1fr);
+    grid-template-columns: repeat(5, 1fr);
     min-height: calc(64px + env(safe-area-inset-bottom));
     align-items: start;
     padding: 6px 6px env(safe-area-inset-bottom);
@@ -1346,7 +1733,8 @@ textarea:hover {
   }
 
   .editor-dialog,
-  .revision-dialog {
+  .revision-dialog,
+  .mobile-more-dialog {
     width: 100%;
     max-width: none;
     max-height: calc(100vh - max(12px, env(safe-area-inset-top)));
@@ -1355,12 +1743,18 @@ textarea:hover {
   }
 
   .editor-dialog form,
-  .revision-dialog {
+  .revision-dialog,
+  .friction-content,
+  .mobile-more-content {
     padding: 20px 16px calc(24px + env(safe-area-inset-bottom));
   }
 
   .form-grid {
     grid-template-columns: 1fr;
+  }
+
+  .intelligence-grid {
+    margin-inline: 12px;
   }
 
   .field-wide {

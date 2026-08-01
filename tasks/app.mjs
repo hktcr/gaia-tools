@@ -2,9 +2,12 @@ import { decryptLocalRecord, decryptVault, encryptLocalRecord } from "./lib/cryp
 import {
   createProject,
   createTask,
-  rankActionableTasks,
+  evaluateAttentionContract,
+  isTaskActionable,
   replaceTask,
   taskCounts,
+  unresolvedBlockers,
+  upgradeMasterSchema,
   validateMaster,
 } from "./lib/model.mjs";
 import {
@@ -14,6 +17,7 @@ import {
   encodeRevision,
 } from "./lib/revision.mjs";
 import { safeJsonParse, sha256Hex } from "./lib/codec.mjs";
+import { isoToZonedDateTimeLocal, zonedDateTimeToIso } from "./lib/time.mjs";
 import {
   clearEncryptedLocal,
   getOrCreateDeviceId,
@@ -31,6 +35,7 @@ const VIEW_COPY = {
   projects: ["Resultat som kräver flera steg", "Projekt"],
   changes: ["Lokal kö till gAIa", "Ändringar"],
 };
+const MOBILE_MORE_VIEWS = new Set(["today", "projects", "changes"]);
 
 const STATE_LABELS = {
   inbox: "Inkorg",
@@ -41,6 +46,13 @@ const STATE_LABELS = {
   done: "Klar",
   cancelled: "Avbruten",
   trash: "Papperskorg",
+};
+
+const COMMITMENT_LABELS = {
+  must: "Måste",
+  intend: "Avser",
+  option: "Möjlighet",
+  idea: "Idé",
 };
 
 const OPERATION_LABELS = {
@@ -80,6 +92,8 @@ const dom = {
   projectForm: $("#project-form"),
   revisionDialog: $("#revision-dialog"),
   revisionCode: $("#revision-code"),
+  frictionDialog: $("#friction-dialog"),
+  mobileMoreDialog: $("#mobile-more-dialog"),
   snackbar: $("#snackbar"),
   snackbarMessage: $("#snackbar-message"),
   snackbarAction: $("#snackbar-action"),
@@ -100,6 +114,9 @@ let lastRevisionCode = "";
 let lockDeadline = 0;
 let snackbarTimer = null;
 let dialogOpener = null;
+let frictionTaskId = null;
+let momentCapsule = { availableMinutes: 30, energy: "medium", context: "" };
+let strictLock = true;
 
 function element(tag, className, text) {
   const node = document.createElement(tag);
@@ -137,11 +154,11 @@ function formatDate(value, withTime = false) {
 }
 
 function toDatetimeLocal(value) {
-  if (!value) return "";
-  const date = new Date(value);
-  if (!Number.isFinite(date.getTime())) return "";
-  const pad = (number) => String(number).padStart(2, "0");
-  return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}T${pad(date.getHours())}:${pad(date.getMinutes())}`;
+  return isoToZonedDateTimeLocal(value, workingMaster?.timeZone || "Europe/Stockholm");
+}
+
+function localInputToIso(value) {
+  return zonedDateTimeToIso(value, workingMaster?.timeZone || "Europe/Stockholm");
 }
 
 function projectFor(task) {
@@ -198,6 +215,9 @@ function taskCard(task, reason = "") {
     meta.append(projectMeta);
   }
   meta.append(element("span", "", STATE_LABELS[task.state] || task.state));
+  if (task.commitmentClass && task.commitmentClass !== "intend") {
+    meta.append(element("span", `commitment commitment-${task.commitmentClass}`, COMMITMENT_LABELS[task.commitmentClass]));
+  }
   if (task.estimateMinutes) meta.append(element("span", "", `${task.estimateMinutes} min`));
   if (task.timing?.hardDeadlineAt) {
     meta.append(element("span", "meta-reason", `Deadline ${formatDate(task.timing.hardDeadlineAt, true)}`));
@@ -221,23 +241,119 @@ function taskList(tasks, reasons = new Map()) {
   return list;
 }
 
+function renderMomentControls() {
+  for (const control of $$('[data-moment-minutes]')) {
+    const value = Number(control.dataset.momentMinutes);
+    const active = value === Number(momentCapsule.availableMinutes || 0);
+    control.classList.toggle("is-active", active);
+    control.setAttribute("aria-pressed", String(active));
+  }
+  for (const control of $$('[data-moment-energy]')) {
+    const active = control.dataset.momentEnergy === momentCapsule.energy;
+    control.classList.toggle("is-active", active);
+    control.setAttribute("aria-pressed", String(active));
+  }
+  const select = $("#moment-context");
+  const contexts = [...new Set(workingMaster.tasks.flatMap((task) => task.contexts || []))]
+    .filter(Boolean)
+    .sort((left, right) => left.localeCompare(right, "sv"));
+  const selected = momentCapsule.context;
+  select.replaceChildren(new Option("Alla", ""));
+  for (const context of contexts) select.append(new Option(context, context));
+  select.value = contexts.includes(selected) ? selected : "";
+  if (select.value !== selected) momentCapsule.context = "";
+}
+
+function attentionExplanation(item) {
+  const details = element("details", "why-now");
+  const summary = element("summary", "", "Varför nu?");
+  const grid = element("div", "reason-grid");
+  for (const [label, value, explanation] of [
+    ["Behov", item.need, "Tid, åtagande och bekräftade trösklar"],
+    ["Passning", item.fit, "Tid, energi, sammanhang och tidsfönster"],
+    ["Hävstång", item.leverage, "Andra uppgifter som detta steg låser upp"],
+  ]) {
+    const factor = element("div", "reason-factor");
+    factor.append(element("span", "", label), element("strong", "", String(value)), element("small", "", explanation));
+    grid.append(factor);
+  }
+  const evidence = element("ul", "reason-evidence");
+  for (const reason of item.why || [item.reason]) evidence.append(element("li", "", reason));
+  const confidence = element("p", "confidence-note", item.confidence === "high"
+    ? "Bedömningen bygger på de taskfält som finns."
+    : "Något underlag saknas, till exempel tidsestimat, sammanhang eller deadlinekälla.");
+  details.append(summary, grid, evidence, confidence);
+  return details;
+}
+
+function focusPrimaryAction(item) {
+  const edit = (label) => button(label, "button button-primary", { "data-edit-task": item.task.id });
+  const start = (label) => button(label, "button button-primary", { "data-start-task": item.task.id });
+  if (item.step.level === "clarify") return edit("Förtydliga nu");
+  if (item.task.state === "doing") return edit("Öppna uppgiften");
+  if (item.task.state === "waiting") return start("Starta uppföljning");
+  if (item.task.state === "blocked") {
+    return unresolvedBlockers(workingMaster, item.task).length
+      ? edit("Granska blockeraren")
+      : start("Starta frigjort steg");
+  }
+  return start("Starta steget");
+}
+
+function clarificationCandidate() {
+  const inbox = workingMaster.tasks.find((task) => task.state === "inbox" && !String(task.nextAction || "").trim());
+  if (inbox) return {
+    task: inbox,
+    question: `Vad är nästa konkreta handling för ”${inbox.title}”?`,
+    hint: "Inkorgen ska inte konkurrera om fokus innan handlingen är tydlig.",
+  };
+  const waiting = workingMaster.tasks.find((task) => task.state === "waiting" && !task.waiting?.followUpAt);
+  if (waiting) return {
+    task: waiting,
+    question: `När vill du följa upp ”${waiting.title}”?`,
+    hint: "Väntan utan en kontrollpunkt riskerar att bli osynlig.",
+  };
+  const blocked = workingMaster.tasks.find((task) => task.state === "blocked" && !task.blockedBy?.length);
+  if (blocked) return {
+    task: blocked,
+    question: `Vad blockerar ”${blocked.title}”?`,
+    hint: "Länka en blockerande uppgift, eller använd Väntar om hindret är externt.",
+  };
+  return null;
+}
+
+function sharedContextCluster(ranked) {
+  const candidates = ranked.slice(0, 8).map((item) => item.task);
+  for (let left = 0; left < candidates.length; left += 1) {
+    for (let right = left + 1; right < candidates.length; right += 1) {
+      const shared = (candidates[left].contexts || []).find((context) => candidates[right].contexts?.includes(context));
+      if (shared) return { context: shared, tasks: [candidates[left], candidates[right]] };
+    }
+  }
+  return null;
+}
+
 function renderNow() {
   const root = $("#now-content");
   root.replaceChildren();
-  const ranked = rankActionableTasks(workingMaster);
-  const counts = taskCounts(workingMaster);
+  const contract = evaluateAttentionContract(workingMaster, new Date(), momentCapsule);
+  const ranked = [contract.focus, ...contract.inSight].filter(Boolean);
+  const clarification = clarificationCandidate();
   const hero = element("div", "hero-grid");
   const focus = element("section", "focus-panel");
   const focusItem = ranked[0];
 
   if (focusItem) {
-    focus.append(element("span", "focus-label", "Föreslaget nästa fokus"));
+    focus.append(element("span", "focus-label", focusItem.task.state === "doing" ? "Pågår" : "Bäst just nu"));
     focus.append(element("h3", "", focusItem.task.title));
-    focus.append(element("p", "focus-next", focusItem.task.nextAction || "Öppna uppgiften och välj minsta möjliga nästa steg."));
+    focus.append(element("p", "step-label", focusItem.step.label));
+    focus.append(element("p", "focus-next", focusItem.step.text));
     focus.append(element("p", "focus-reason", `✦ ${focusItem.reason}`));
+    focus.append(attentionExplanation(focusItem));
     const actions = element("div", "focus-actions");
     actions.append(
-      button("Markera klar", "button button-primary", { "data-complete-task": focusItem.task.id }),
+      focusPrimaryAction(focusItem),
+      button("Inte nu", "button button-secondary", { "data-friction-task": focusItem.task.id }),
       button("Öppna", "button button-secondary", { "data-edit-task": focusItem.task.id }),
     );
     focus.append(actions);
@@ -257,9 +373,9 @@ function renderNow() {
   );
   const stack = element("div", "metric-stack");
   for (const [label, value] of [
-    ["Handlingsbara", ranked.length],
-    ["I inkorgen", counts.inbox || 0],
-    ["Väntar", counts.waiting || 0],
+    ["Synliga nu", Math.min(ranked.length, 3)],
+    ["Hålls tysta", contract.hiddenCount],
+    ["Behöver klargöras", clarification ? 1 : 0],
   ]) {
     const row = element("div", "metric");
     row.append(element("span", "", label), element("strong", "", String(value)));
@@ -272,16 +388,55 @@ function renderNow() {
   const attention = element("section", "attention-section");
   const heading = element("div", "subheading");
   const headingLeft = element("div");
-  headingLeft.append(element("h3", "", "Därefter"), element("p", "", "Högst tre andra saker att hålla i sikte."));
+  headingLeft.append(element("h3", "", "I sikte"), element("p", "", "Högst två saker till. Resten får vara tyst."));
   heading.append(headingLeft);
   attention.append(heading);
-  const next = ranked.slice(1, 4);
+  const next = ranked.slice(1, 3);
   if (next.length) {
     attention.append(taskList(next.map((item) => item.task), new Map(next.map((item) => [item.task.id, item.reason]))));
   } else {
     attention.append(element("div", "quiet-panel", "Inget mer behöver lyftas fram."));
   }
   root.append(attention);
+
+  const today = todayKey();
+  const todayTasks = workingMaster.tasks.filter((task) => (
+    !["done", "cancelled", "trash"].includes(task.state)
+    && (task.timing?.focusDate === today
+      || task.timing?.softTargetDate === today
+      || (task.timing?.hardDeadlineAt && todayKey(new Date(task.timing.hardDeadlineAt)) === today))
+  ));
+  if (todayTasks.length) {
+    const dayPreview = element("section", "now-secondary");
+    const dayHeading = element("div", "subheading");
+    const dayHeadingCopy = element("div");
+    dayHeadingCopy.append(element("h3", "", "Dagens väv"), element("p", "", `${todayTasks.length} valda eller tidsbundna uppgifter.`));
+    dayHeading.append(dayHeadingCopy, button("Öppna dagen", "button button-quiet", { "data-view-jump": "today" }));
+    dayPreview.append(dayHeading, taskList(todayTasks.slice(0, 3)));
+    root.append(dayPreview);
+  }
+
+  const cluster = sharedContextCluster(ranked);
+  if (cluster) {
+    const bundle = element("section", "bundle-card");
+    bundle.append(
+      element("span", "bundle-kicker", "Möjlig samling"),
+      element("h3", "", `Samma sammanhang: ${cluster.context}`),
+      element("p", "", `${cluster.tasks[0].title} och ${cluster.tasks[1].title} kan passa i samma arbetsfönster eller ärenderunda.`),
+    );
+    root.append(bundle);
+  }
+
+  if (clarification) {
+    const clarify = element("section", "clarify-card");
+    clarify.append(
+      element("span", "bundle-kicker", "En fråga, inte en varning"),
+      element("h3", "", clarification.question),
+      element("p", "", clarification.hint),
+      button("Klargör uppgiften", "button button-secondary", { "data-edit-task": clarification.task.id }),
+    );
+    root.append(clarify);
+  }
 }
 
 function renderToday() {
@@ -319,7 +474,16 @@ function renderTasks() {
   if (search) {
     tasks = tasks.filter((task) => {
       const project = projectFor(task);
-      return [task.title, task.notes, task.nextAction, project?.name]
+      return [
+        task.title,
+        task.notes,
+        task.nextAction,
+        task.minimumStep,
+        task.normalStep,
+        task.fullStep,
+        ...(task.contexts || []),
+        project?.name,
+      ]
         .filter(Boolean)
         .some((value) => value.toLocaleLowerCase("sv").includes(search));
     });
@@ -353,6 +517,8 @@ function renderProjects() {
     const tasks = workingMaster.tasks.filter((task) => task.projectId === project.id);
     const open = tasks.filter((task) => !["done", "cancelled", "trash"].includes(task.state)).length;
     const done = tasks.filter((task) => task.state === "done").length;
+    const actionable = tasks.filter((task) => isTaskActionable(task, new Date(), workingMaster)).length;
+    const blocked = tasks.filter((task) => unresolvedBlockers(workingMaster, task).length > 0).length;
     const card = element("article", "project-card");
     card.style.setProperty("--project-color", project.color);
     card.append(
@@ -362,6 +528,15 @@ function renderProjects() {
     const stats = element("div", "project-stats");
     stats.append(element("span", "", `${open} öppna`), element("span", "", `${done} klara`));
     card.append(stats);
+    const health = element("p", `project-health${open && !actionable ? " needs-attention" : ""}`,
+      !open
+        ? "Lugnt, inga öppna steg."
+        : !actionable
+          ? "Saknar ett handlingsbart nästa steg."
+          : blocked
+            ? `${blocked} ${blocked === 1 ? "steg väntar på en blockerare" : "steg väntar på blockerare"}.`
+            : `${actionable} ${actionable === 1 ? "steg kan föras vidare" : "steg kan föras vidare"}.`);
+    card.append(health);
     root.append(card);
   }
 }
@@ -431,8 +606,22 @@ function populateProjectSelects() {
   }
 }
 
+function populateBlockerSelect(task = null) {
+  const select = $("#task-blocked-by");
+  const selected = new Set(task?.blockedBy || []);
+  select.replaceChildren();
+  for (const candidate of workingMaster.tasks) {
+    if (candidate.id === task?.id || candidate.state === "trash") continue;
+    const state = STATE_LABELS[candidate.state] || candidate.state;
+    const option = new Option(`${candidate.title} · ${state}`, candidate.id);
+    option.selected = selected.has(candidate.id);
+    select.append(option);
+  }
+}
+
 function renderAll() {
   populateProjectSelects();
+  renderMomentControls();
   const counts = taskCounts(workingMaster);
   dom.inboxCount.textContent = String(counts.inbox || 0);
   dom.changeCount.textContent = operations.length ? String(operations.length) : "";
@@ -459,7 +648,16 @@ function setView(view, focusMain = false) {
   dom.viewKicker.textContent = kicker;
   dom.viewTitle.textContent = title;
   $$("[data-view-panel]").forEach((panel) => panel.classList.toggle("is-visible", panel.dataset.viewPanel === view));
-  $$("[data-view]").forEach((item) => item.classList.toggle("is-active", item.dataset.view === view));
+  $$("[data-view]").forEach((item) => {
+    const active = item.dataset.view === view;
+    item.classList.toggle("is-active", active);
+    if (active) item.setAttribute("aria-current", "page");
+    else item.removeAttribute("aria-current");
+  });
+  const moreActive = MOBILE_MORE_VIEWS.has(view);
+  $("#mobile-more-button").classList.toggle("is-active", moreActive);
+  if (moreActive) $("#mobile-more-button").setAttribute("aria-current", "page");
+  else $("#mobile-more-button").removeAttribute("aria-current");
   window.history.replaceState(null, "", `#${view}`);
   if (view === "tasks") renderTasks();
   if (focusMain) $("#main-content").focus();
@@ -508,9 +706,7 @@ async function afterMutation(message) {
 }
 
 function endOfTodayIso() {
-  const date = new Date();
-  date.setHours(23, 59, 59, 999);
-  return date.toISOString();
+  return localInputToIso(`${todayKey()}T23:59`);
 }
 
 function openTaskDialog(task = null, initialState = "inbox") {
@@ -523,6 +719,7 @@ function openTaskDialog(task = null, initialState = "inbox") {
   $("#task-next-action").value = task?.nextAction || "";
   $("#task-state").value = task?.state || initialState;
   $("#task-horizon").value = task?.horizon || "next";
+  $("#task-commitment").value = task?.commitmentClass || "intend";
   $("#task-project").value = task?.projectId || "";
   $("#task-priority").value = String(task?.priority ?? 1);
   $("#task-soft-target").value = task?.timing?.softTargetDate || "";
@@ -532,8 +729,29 @@ function openTaskDialog(task = null, initialState = "inbox") {
   $("#task-attention").value = task?.attention?.mode || "auto";
   $("#task-pinned").checked = Boolean(task?.attention?.pinnedUntil && Date.parse(task.attention.pinnedUntil) >= Date.now());
   $("#task-review-at").value = toDatetimeLocal(task?.timing?.reviewAt);
+  $("#task-available-from").value = toDatetimeLocal(task?.timing?.availableFrom);
+  $("#task-deadline-source").value = task?.timing?.deadlineSource || "";
   $("#task-waiting-for").value = task?.waiting?.for || "";
+  $("#task-follow-up-at").value = toDatetimeLocal(task?.waiting?.followUpAt);
+  $("#task-contexts").value = (task?.contexts || []).join(", ");
+  populateBlockerSelect(task);
+  for (const input of $$('input[name="bestWindow[]"]')) input.checked = task?.bestWindows?.includes(input.value) || false;
+  $("#task-minimum-step").value = task?.minimumStep || "";
+  $("#task-normal-step").value = task?.normalStep || "";
+  $("#task-full-step").value = task?.fullStep || "";
   $("#task-notes").value = task?.notes || "";
+  const intelligence = dom.taskForm.querySelector(".task-intelligence");
+  intelligence.open = Boolean(task && (
+    task.contexts?.length
+    || task.bestWindows?.length
+    || task.blockedBy?.length
+    || task.minimumStep
+    || task.normalStep
+    || task.fullStep
+    || task.timing?.availableFrom
+    || task.timing?.deadlineSource
+    || task.waiting?.followUpAt
+  ));
   dom.taskDialog.showModal();
   requestAnimationFrame(() => $("#task-title").focus());
 }
@@ -543,7 +761,10 @@ async function saveTaskFromForm() {
   const before = id ? taskById(id) : null;
   const hardDeadline = $("#task-hard-deadline").value;
   const reviewAt = $("#task-review-at").value;
+  const availableFrom = $("#task-available-from").value;
+  const followUpAt = $("#task-follow-up-at").value;
   const waitingFor = $("#task-waiting-for");
+  const blockedBy = $("#task-blocked-by");
   if ($("#task-state").value === "waiting" && !waitingFor.value.trim()) {
     waitingFor.setCustomValidity("Beskriv vem eller vad uppgiften väntar på.");
     waitingFor.reportValidity();
@@ -551,6 +772,28 @@ async function saveTaskFromForm() {
     return;
   }
   waitingFor.setCustomValidity("");
+  if ($("#task-state").value === "blocked" && !blockedBy.selectedOptions.length) {
+    blockedBy.setCustomValidity("Välj minst en blockerande uppgift, eller använd Väntar för ett externt hinder.");
+    blockedBy.reportValidity();
+    blockedBy.focus();
+    return;
+  }
+  blockedBy.setCustomValidity("");
+  const parsedTimes = [
+    ["#task-hard-deadline", hardDeadline, localInputToIso(hardDeadline)],
+    ["#task-review-at", reviewAt, localInputToIso(reviewAt)],
+    ["#task-available-from", availableFrom, localInputToIso(availableFrom)],
+    ["#task-follow-up-at", followUpAt, localInputToIso(followUpAt)],
+  ];
+  const invalidTime = parsedTimes.find(([, raw, iso]) => raw && !iso);
+  if (invalidTime) {
+    const target = $(invalidTime[0]);
+    target.setCustomValidity("Den lokala tiden finns inte i Europe/Stockholm, sannolikt på grund av tidsomställningen.");
+    target.reportValidity();
+    target.focus();
+    return;
+  }
+  const timeValue = Object.fromEntries(parsedTimes.map(([selector, , iso]) => [selector, iso]));
   const next = createTask({
     ...(before || {}),
     id: before?.id,
@@ -561,16 +804,25 @@ async function saveTaskFromForm() {
     nextAction: $("#task-next-action").value,
     state: $("#task-state").value,
     horizon: $("#task-horizon").value,
+    commitmentClass: $("#task-commitment").value,
     projectId: $("#task-project").value || null,
     priority: Number($("#task-priority").value),
     estimateMinutes: $("#task-estimate").value === "" ? null : Number($("#task-estimate").value),
     energy: $("#task-energy").value,
+    contexts: $("#task-contexts").value.split(",").map((value) => value.trim()).filter(Boolean),
+    bestWindows: $$('input[name="bestWindow[]"]:checked').map((input) => input.value),
+    minimumStep: $("#task-minimum-step").value,
+    normalStep: $("#task-normal-step").value,
+    fullStep: $("#task-full-step").value,
+    blockedBy: [...blockedBy.selectedOptions].map((option) => option.value),
     notes: $("#task-notes").value,
     timing: {
       ...(before?.timing || {}),
+      availableFrom: timeValue["#task-available-from"],
       softTargetDate: $("#task-soft-target").value || null,
-      hardDeadlineAt: hardDeadline ? new Date(hardDeadline).toISOString() : null,
-      reviewAt: reviewAt ? new Date(reviewAt).toISOString() : null,
+      hardDeadlineAt: timeValue["#task-hard-deadline"],
+      deadlineSource: $("#task-deadline-source").value,
+      reviewAt: timeValue["#task-review-at"],
       focusDate: $("#task-pinned").checked ? todayKey() : null,
     },
     attention: {
@@ -581,16 +833,99 @@ async function saveTaskFromForm() {
     waiting: {
       ...(before?.waiting || {}),
       for: waitingFor.value,
+      followUpAt: timeValue["#task-follow-up-at"],
     },
     origin: before?.origin || "web",
   });
   if (!next.title) return;
+  const candidateMaster = replaceTask(workingMaster, next);
+  const validationErrors = validateMaster(candidateMaster);
+  if (validationErrors.length) {
+    const target = validationErrors.some((error) => error.includes("cykel") || error.includes("beroende"))
+      ? blockedBy
+      : validationErrors.some((error) => error.includes("hårda deadline"))
+        ? $("#task-hard-deadline")
+        : $("#task-title");
+    target.setCustomValidity(validationErrors[0]);
+    target.reportValidity();
+    target.focus();
+    return;
+  }
   rememberForUndo();
   const operation = await buildTaskOperation(before ? "task.update" : "task.create", before, next);
-  workingMaster = replaceTask(workingMaster, next);
+  workingMaster = candidateMaster;
   operations.push(operation);
   dom.taskDialog.close();
   await afterMutation(before ? "Uppgiften ändrades lokalt." : "Uppgiften lades till lokalt.");
+}
+
+async function startTask(id) {
+  const before = taskById(id);
+  const hasConcreteStep = [before?.nextAction, before?.minimumStep, before?.normalStep, before?.fullStep]
+    .some((value) => String(value || "").trim());
+  if (
+    !before
+    || ["doing", "done", "cancelled", "trash"].includes(before.state)
+    || !hasConcreteStep
+    || (before.state === "blocked" && unresolvedBlockers(workingMaster, before).length)
+  ) return;
+  rememberForUndo();
+  const next = createTask({
+    ...before,
+    id: before.id,
+    entityVersion: before.entityVersion,
+    createdAt: before.createdAt,
+    state: "doing",
+    timing: { ...before.timing, focusDate: todayKey() },
+    attention: { ...before.attention, pinnedUntil: endOfTodayIso() },
+  });
+  operations.push(await buildTaskOperation("task.update", before, next));
+  workingMaster = replaceTask(workingMaster, next);
+  await afterMutation("Steget markerades som pågående lokalt.");
+}
+
+function openFrictionDialog(id) {
+  frictionTaskId = id;
+  dialogOpener = document.activeElement;
+  dom.frictionDialog.showModal();
+}
+
+async function applyFrictionChoice(reason) {
+  const task = taskById(frictionTaskId);
+  if (!task) return;
+  dom.frictionDialog.close();
+  if (reason === "wrong-time") {
+    rememberForUndo();
+    const next = createTask({
+      ...task,
+      id: task.id,
+      entityVersion: task.entityVersion,
+      createdAt: task.createdAt,
+      attention: {
+        ...task.attention,
+        muteUntil: new Date(Date.now() + 2 * 60 * 60 * 1000).toISOString(),
+        lastDeferralReason: reason,
+        lastDeferralAt: new Date().toISOString(),
+        deferralCount: (task.attention?.deferralCount || 0) + 1,
+      },
+    });
+    operations.push(await buildTaskOperation("task.update", task, next));
+    workingMaster = replaceTask(workingMaster, next);
+    await afterMutation("Uppgiften hålls tyst i två timmar.");
+    return;
+  }
+  requestAnimationFrame(() => {
+    openTaskDialog(task);
+    const targets = {
+      "too-big": "#task-minimum-step",
+      unclear: "#task-next-action",
+      "not-mine": "#task-waiting-for",
+      irrelevant: "#delete-task-button",
+    };
+    if (reason === "not-mine") $("#task-state").value = "waiting";
+    dom.taskForm.querySelector(".task-intelligence").open = true;
+    $(targets[reason] || "#task-title")?.focus();
+  });
 }
 
 async function completeTask(id) {
@@ -697,12 +1032,28 @@ function applyTheme(theme) {
   saveUiSettings({ ...settings, theme });
 }
 
+function saveInteractionSettings() {
+  const settings = loadUiSettings();
+  const { momentCapsule: _discarded, ...safeSettings } = settings;
+  saveUiSettings({ ...safeSettings, strictLock });
+}
+
+function updateMoment(patch) {
+  momentCapsule = { ...momentCapsule, ...patch };
+  renderMomentControls();
+  renderNow();
+  renderProjects();
+}
+
 function resetLockTimer() {
   if (!dataKey) return;
   lockDeadline = Date.now() + (workingMaster?.settings?.defaultAutoLockMinutes || 10) * 60_000;
 }
 
 function lockApp() {
+  for (const dialog of [dom.taskDialog, dom.projectDialog, dom.revisionDialog, dom.frictionDialog, dom.mobileMoreDialog]) {
+    if (dialog.open) dialog.close();
+  }
   dataKey = null;
   baseMaster = null;
   workingMaster = null;
@@ -710,7 +1061,29 @@ function lockApp() {
   operations = [];
   undoHistory = [];
   lastRevisionCode = "";
+  frictionTaskId = null;
+  momentCapsule = { availableMinutes: 30, energy: "medium", context: "" };
   lockDeadline = 0;
+  for (const selector of [
+    "#now-content",
+    "#today-content",
+    "#inbox-content",
+    "#tasks-content",
+    "#projects-content",
+    "#changes-content",
+  ]) $(selector).replaceChildren();
+  dom.taskForm.reset();
+  dom.projectForm.reset();
+  dom.revisionCode.value = "";
+  $("#task-search").value = "";
+  $("#state-filter").value = "active";
+  $("#project-filter").replaceChildren(new Option("Alla projekt", ""));
+  $("#task-project").replaceChildren(new Option("Inget projekt", ""));
+  $("#task-blocked-by").replaceChildren();
+  $("#moment-context").replaceChildren(new Option("Alla", ""));
+  dom.snackbarMessage.textContent = "";
+  dom.liveRegion.textContent = "";
+  dom.snackbar.hidden = true;
   dom.password.value = "";
   dom.appShell.hidden = true;
   dom.lockScreen.hidden = false;
@@ -757,7 +1130,7 @@ async function unlock(password) {
   const overlay = await loadLocalOverlay(unlocked.master, unlocked.dataKey);
   publishedMaster = unlocked.master;
   baseMaster = overlay.base;
-  workingMaster = overlay.working;
+  workingMaster = upgradeMasterSchema(overlay.working);
   operations = overlay.operations;
   staleBase = overlay.stale;
   dataKey = unlocked.dataKey;
@@ -811,6 +1184,21 @@ function wireEvents() {
     if (editButton) openTaskDialog(taskById(editButton.dataset.editTask));
     const completeButton = event.target.closest("[data-complete-task]");
     if (completeButton) await completeTask(completeButton.dataset.completeTask);
+    const startButton = event.target.closest("[data-start-task]");
+    if (startButton) await startTask(startButton.dataset.startTask);
+    const frictionButton = event.target.closest("[data-friction-task]");
+    if (frictionButton) openFrictionDialog(frictionButton.dataset.frictionTask);
+    const frictionChoice = event.target.closest("[data-friction]");
+    if (frictionChoice) await applyFrictionChoice(frictionChoice.dataset.friction);
+    const minutesButton = event.target.closest("[data-moment-minutes]");
+    if (minutesButton) updateMoment({ availableMinutes: Number(minutesButton.dataset.momentMinutes) });
+    const energyButton = event.target.closest("[data-moment-energy]");
+    if (energyButton) updateMoment({ energy: energyButton.dataset.momentEnergy });
+    const moreView = event.target.closest("[data-more-view]");
+    if (moreView) {
+      dom.mobileMoreDialog.close();
+      setView(moreView.dataset.moreView, true);
+    }
     if (event.target.closest("[data-add-project]")) dom.projectDialog.showModal();
     if (event.target.closest("[data-clear-filters]")) {
       $("#task-search").value = "";
@@ -853,6 +1241,22 @@ function wireEvents() {
   $("#theme-toggle").addEventListener("click", () => {
     applyTheme(document.documentElement.dataset.theme === "light" ? "dark" : "light");
   });
+  $("#mobile-more-button").addEventListener("click", () => {
+    dialogOpener = document.activeElement;
+    dom.mobileMoreDialog.showModal();
+  });
+  $("#mobile-theme-toggle").addEventListener("click", () => {
+    applyTheme(document.documentElement.dataset.theme === "light" ? "dark" : "light");
+  });
+  $("#mobile-lock-button").addEventListener("click", () => {
+    dom.mobileMoreDialog.close();
+    lockApp();
+  });
+  $("#strict-lock-toggle").addEventListener("change", (event) => {
+    strictLock = event.target.checked;
+    saveInteractionSettings();
+  });
+  $("#moment-context").addEventListener("change", (event) => updateMoment({ context: event.target.value }));
   dom.taskForm.addEventListener("submit", async (event) => {
     event.preventDefault();
     await saveTaskFromForm();
@@ -872,7 +1276,19 @@ function wireEvents() {
   });
   $("#task-state").addEventListener("change", () => {
     if ($("#task-state").value !== "waiting") $("#task-waiting-for").setCustomValidity("");
+    if ($("#task-state").value !== "blocked") $("#task-blocked-by").setCustomValidity("");
   });
+  $("#task-blocked-by").addEventListener("change", () => {
+    $("#task-blocked-by").setCustomValidity("");
+  });
+  $("#task-title").addEventListener("input", () => $("#task-title").setCustomValidity(""));
+  for (const selector of ["#task-hard-deadline", "#task-review-at", "#task-available-from", "#task-follow-up-at"]) {
+    $(selector).addEventListener("input", () => {
+      for (const timeSelector of ["#task-hard-deadline", "#task-review-at", "#task-available-from", "#task-follow-up-at"]) {
+        $(timeSelector).setCustomValidity("");
+      }
+    });
+  }
   $("#copy-revision-button").addEventListener("click", copyRevision);
   $("#download-revision-button").addEventListener("click", downloadRevision);
   dom.snackbarAction.addEventListener("click", undoLastMutation);
@@ -883,10 +1299,10 @@ function wireEvents() {
     document.addEventListener(name, resetLockTimer, { passive: true });
   }
   document.addEventListener("visibilitychange", () => {
-    if (document.visibilityState === "hidden" && dataKey) lockApp();
+    if (document.visibilityState === "hidden" && dataKey && strictLock) lockApp();
   });
   window.addEventListener("pagehide", () => {
-    if (dataKey) lockApp();
+    if (dataKey && strictLock) lockApp();
   });
   window.addEventListener("pageshow", (event) => {
     if (event.persisted && dataKey) lockApp();
@@ -894,7 +1310,13 @@ function wireEvents() {
   window.addEventListener("focus", () => {
     if (dataKey && lockDeadline && Date.now() >= lockDeadline) lockApp();
   });
-  for (const dialog of [dom.taskDialog, dom.projectDialog, dom.revisionDialog]) {
+  for (const dialog of [
+    dom.taskDialog,
+    dom.projectDialog,
+    dom.revisionDialog,
+    dom.frictionDialog,
+    dom.mobileMoreDialog,
+  ]) {
     dialog.addEventListener("close", () => {
       if (dialogOpener instanceof HTMLElement && document.contains(dialogOpener)) dialogOpener.focus();
       dialogOpener = null;
@@ -904,6 +1326,10 @@ function wireEvents() {
 
 async function start() {
   const settings = loadUiSettings();
+  momentCapsule = { availableMinutes: 30, energy: "medium", context: "" };
+  strictLock = settings.strictLock !== false;
+  saveInteractionSettings();
+  $("#strict-lock-toggle").checked = strictLock;
   applyTheme(settings.theme || (matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark"));
   updateNetworkStatus();
   wireEvents();

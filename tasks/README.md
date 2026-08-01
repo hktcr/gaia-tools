@@ -2,6 +2,20 @@
 
 gAIa Tasks är ett chattstyrt task-system med en privat master och en mobilvänlig, statisk webbvy.
 
+Systemets särdrag är ett transparent uppmärksamhetskontrakt. Det lagrar inte bara uppgifter utan bedömer om en uppgift förtjänar uppmärksamhet i den aktuella stunden. Nu-vyn visar högst ett fokus och två saker i sikte, redovisar varför valet gjordes och kan välja ett minsta, lagom eller fullt steg efter tillgänglig tid, energi och sammanhang. Tystnad tolkas aldrig som återkoppling.
+
+## Uppmärksamhetskontrakt
+
+- En behörighetsgrind stoppar otillgängliga, aktivt blockerade, tystade och oklara inkorgsposter.
+- Behov, passning och hävstång redovisas var för sig. En totalsiffra visas inte som falsk precision.
+- Väntande uppgifter får en separat kandidatväg när `followUpAt` har nåtts.
+- En blockerad uppgift kan lyftas när samtliga uttryckliga blockerare har markerats som klara. Avbrutna eller raderade förutsättningar kräver omplanering.
+- Kontextkapseln med tid, energi och sammanhang finns bara i minnet under den upplåsta sessionen och rensas vid låsning.
+- Stegtrappan använder `minimumStep`, `normalStep` och `fullStep`, men påstår bara att hela steget ryms när ett tidsestimat faktiskt stöder det.
+- ”Inte nu” kräver ett uttryckligt skäl. Endast ”Fel stund” gör en direkt, reversibel tvåtimmarssnooze. Övriga val öppnar uppgiften för granskning.
+- Den schemalagda vakten kör 06, 08, 10, 12, 14, 16, 18 och 20 i `Europe/Stockholm`. Den är tyst när inget meningsfullt har förändrats.
+- Enskilda gAIa Tasks blir inte egna ChatGPT Scheduled Tasks utan en senare uttrycklig begäran från Håkan.
+
 ## Datagränser
 
 - `GAIA_TASKS_MASTER.json` i privat Google Drive är den kanoniska mastern.
@@ -10,7 +24,13 @@ gAIa Tasks är ett chattstyrt task-system med en privat master och en mobilvänl
 - Revideringskoden innehåller bara operationer och resultatmetadata. Den innehåller inte hela mastern.
 - Importverktyget verifierar SHA-256 och HMAC-SHA-256 innan en trevägsmerge får göras.
 - Kalendern är en läskälla för uppmärksamhetskontrollen. Task-appen skriver aldrig till kalendern.
-- `attention-v1` ger varje kontroll ett deterministiskt run-id och uppdaterar en revisionsmärkt, separat logg. Den schemalagda automationen är ensam loggskrivare.
+- `attention-v2` ger varje kontroll ett deterministiskt run-id. Den allmänna relevanshashen täcker alla beslutsfält, medan varje notice-id bara bygger på den aktuella anledningens tillstånd så att orelaterade ändringar inte upprepar en deadline. Historiska v1-poster bevaras vid loggmigreringen. Den schemalagda automationen är ensam loggskrivare.
+
+## Schema och kompatibilitet
+
+- Appen kan läsa master schema 1 och 2. En schema 1-master uppgraderas deterministiskt i minnet när den nya appen används.
+- Den första revideringskoden som använder de nya uppmärksamhetsfälten deklarerar schema 2 och `minimumReaderVersion: 2`. Importen uppgraderar hela mastern innan operationer och resultat-hash verifieras.
+- En äldre PWA-klient avvisar en publicerad schema 2-vault i stället för att riskera att skriva bort okända fält. En redan öppen äldre klient kan bara lämna en schema 1-revision, som mergas utan att sänka masterns schema eller radera schema 2-data.
 
 ## Normal användning
 
@@ -19,6 +39,8 @@ gAIa Tasks är ett chattstyrt task-system med en privat master och en mobilvänl
 3. Öppna `Ändringar`, exportera revideringskoden och klistra in den i chatten.
 4. gAIa kör importverktyget, granskar eventuella konflikter och publicerar en ny krypterad vault.
 5. När sidan öppnas mot den nya revisionen rensas lokala operationer som redan har tillämpats.
+
+På mobil kan strikt integritet låsa appen direkt vid appbyte. Om detta stängs av används den ordinarie tidsgränsen i stället. Datanyckeln lämnar fortfarande aldrig webbläsarens minne.
 
 Lokala webbändringar påverkar inte automatiska påminnelser innan de har importerats till mastern.
 
@@ -33,7 +55,8 @@ Lokala webbändringar påverkar inte automatiska påminnelser innan de har impor
 - `connect-src 'self'`, inga externa script och inga tredjepartsberoenden i webbläsaren
 - manifest och vault hämtas med `no-store`
 - vaultens SHA-256 verifieras före dekryptering
-- appen låser vid bakgrundsläge, sidbyte, BFCache och tio minuters inaktivitet
+- strikt integritetsläge låser direkt vid bakgrundsläge eller sidbyte; annars låser appen efter tio minuters inaktivitet
+- låsning tömmer renderad taskdata, formulär, kontextval och revideringskod ur DOM:en
 - service workern cachar endast appskalet, aldrig `tasks/data/`
 
 GitHub Pages är statisk publicering, inte serverautentisering. En svag eller röjd lösenfras ger inget gott skydd mot offlinegissning. Vid ett verkligt lösenfrasläckage måste datanyckeln roteras, inte bara wrappas om. En projektsida under `hktcr.github.io` delar dessutom webbläsar-origin med andra projektsidor för samma konto. Känslig produktion bör därför senare flyttas till en dedikerad origin.

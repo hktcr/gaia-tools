@@ -10,7 +10,13 @@ import {
   sha256Hex,
   utf8,
 } from "./codec.mjs";
-import { computeMasterHash, validateMaster } from "./model.mjs";
+import {
+  CURRENT_SCHEMA_VERSION,
+  SUPPORTED_SCHEMA_VERSIONS,
+  computeMasterHash,
+  upgradeMasterSchema,
+  validateMaster,
+} from "./model.mjs";
 
 const PREFIX = "GAIAREV1";
 const MAX_CODE_CHARACTERS = 5 * 1024 * 1024;
@@ -32,10 +38,12 @@ const TASK_MUTABLE_FIELDS = new Set([
   "nextAction",
   "state",
   "horizon",
+  "commitmentClass",
   "priority",
   "projectId",
   "tags",
   "contexts",
+  "bestWindows",
   "energy",
   "estimateMinutes",
   "timing",
@@ -241,7 +249,7 @@ export async function createRevisionPayload({
     type: "gaia-task-revision",
     formatVersion: 1,
     schemaVersion: workingMaster.schemaVersion,
-    minimumReaderVersion: 1,
+    minimumReaderVersion: workingMaster.schemaVersion >= 2 ? 2 : 1,
     datasetId: workingMaster.datasetId,
     codeId,
     sourceDeviceId,
@@ -285,8 +293,11 @@ function validateRevisionPayload(payload) {
     !payload
     || payload.type !== "gaia-task-revision"
     || payload.formatVersion !== 1
-    || payload.schemaVersion !== 1
-    || payload.minimumReaderVersion > 1
+    || !SUPPORTED_SCHEMA_VERSIONS.includes(payload.schemaVersion)
+    || !Number.isInteger(payload.minimumReaderVersion)
+    || payload.minimumReaderVersion < 1
+    || payload.minimumReaderVersion > CURRENT_SCHEMA_VERSION
+    || (payload.schemaVersion >= 2 && payload.minimumReaderVersion < 2)
   ) {
     throw new Error("Revisionsformatet stöds inte");
   }
@@ -437,7 +448,10 @@ export async function mergeRevisionIntoMaster(currentMaster, payload, now = new 
   if (!operations.length) {
     return { master: currentMaster, conflicts: [], alreadyApplied: true };
   }
-  const next = deepClone(currentMaster);
+  const targetSchemaVersion = Math.max(currentMaster.schemaVersion, payload.schemaVersion);
+  let next = targetSchemaVersion >= 2
+    ? upgradeMasterSchema(currentMaster)
+    : deepClone(currentMaster);
   const conflicts = [];
   const changedTaskIds = new Set();
   const changedProjectIds = new Set();
@@ -482,6 +496,7 @@ export async function mergeRevisionIntoMaster(currentMaster, payload, now = new 
   }
 
   if (conflicts.length) return { master: null, conflicts };
+  if (targetSchemaVersion >= 2) next = upgradeMasterSchema(next);
   if (exactBase) {
     const resultHash = await computeRevisionResultHash(next);
     if (

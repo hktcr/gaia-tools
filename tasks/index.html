@@ -139,6 +139,37 @@
 
       <main id="main-content" tabindex="-1">
         <section id="view-now" class="view is-visible" data-view-panel="now" aria-labelledby="view-title">
+          <section class="moment-bar" aria-labelledby="moment-title">
+            <div class="moment-copy">
+              <p class="eyebrow">Kontextkapsel</p>
+              <h3 id="moment-title">Vad ryms i din stund?</h3>
+              <p>Valet stannar på den här enheten och hjälper Nu-vyn att välja ett rimligt steg.</p>
+            </div>
+            <div class="moment-controls">
+              <fieldset class="segment-field">
+                <legend>Tid tillgänglig</legend>
+                <div id="moment-minutes" class="segments">
+                  <button type="button" data-moment-minutes="5">5 min</button>
+                  <button type="button" data-moment-minutes="15">15</button>
+                  <button type="button" data-moment-minutes="30">30</button>
+                  <button type="button" data-moment-minutes="60">60</button>
+                  <button type="button" data-moment-minutes="0">Öppet</button>
+                </div>
+              </fieldset>
+              <fieldset class="segment-field">
+                <legend>Energi just nu</legend>
+                <div id="moment-energy" class="segments">
+                  <button type="button" data-moment-energy="low">Låg</button>
+                  <button type="button" data-moment-energy="medium">Normal</button>
+                  <button type="button" data-moment-energy="high">Hög</button>
+                </div>
+              </fieldset>
+              <label class="moment-context">
+                <span>Sammanhang</span>
+                <select id="moment-context"><option value="">Alla</option></select>
+              </label>
+            </div>
+          </section>
           <div id="now-content"></div>
         </section>
         <section id="view-today" class="view" data-view-panel="today" aria-labelledby="today-heading">
@@ -204,10 +235,6 @@
         <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m12 3 2.3 4.7L19.5 9l-3.8 3.7.9 5.3-4.6-2.5L7.4 18l.9-5.3L4.5 9l5.2-1.3L12 3Z"></path></svg>
         <span>Nu</span>
       </button>
-      <button class="bottom-nav-item" type="button" data-view="today">
-        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 4h14v16H5zM8 2v4m8-4v4M5 9h14"></path></svg>
-        <span>Idag</span>
-      </button>
       <button class="bottom-nav-item" type="button" data-view="inbox">
         <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h16v14H4zM4 14h5l2 3h2l2-3h5"></path></svg>
         <span>Inkorg</span>
@@ -217,15 +244,11 @@
       </button>
       <button class="bottom-nav-item" type="button" data-view="tasks">
         <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6h11M9 12h11M9 18h11M4 6l1 1 2-2m-3 7 1 1 2-2m-3 7 1 1 2-2"></path></svg>
-        <span>Alla</span>
+        <span>Flöde</span>
       </button>
-      <button class="bottom-nav-item" type="button" data-view="projects">
-        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 7h7l2 2h9v10H3z"></path></svg>
-        <span>Projekt</span>
-      </button>
-      <button class="bottom-nav-item" type="button" data-view="changes">
-        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 7h10v10H7zM4 12H2m20 0h-2M12 4V2m0 20v-2"></path></svg>
-        <span>Ändringar</span>
+      <button id="mobile-more-button" class="bottom-nav-item" type="button" aria-haspopup="dialog">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="5" cy="12" r="1"></circle><circle cx="12" cy="12" r="1"></circle><circle cx="19" cy="12" r="1"></circle></svg>
+        <span>Mer</span>
       </button>
     </nav>
   </div>
@@ -265,6 +288,15 @@
             <option value="next">Nästa</option>
             <option value="later">Senare</option>
             <option value="someday">Någon gång</option>
+          </select>
+        </label>
+        <label class="field">
+          <span>Åtagande</span>
+          <select id="task-commitment" name="commitmentClass">
+            <option value="must">Måste, bekräftat</option>
+            <option value="intend" selected>Avser att göra</option>
+            <option value="option">Möjlighet</option>
+            <option value="idea">Idé</option>
           </select>
         </label>
         <label class="field">
@@ -325,6 +357,52 @@
           <span>Anteckningar</span>
           <textarea id="task-notes" name="notes" rows="4" maxlength="8000"></textarea>
         </label>
+        <details class="task-intelligence field-wide">
+          <summary>Hjälp gAIa välja rätt stund</summary>
+          <p class="field-help">Dessa uppgifter används för passning och förklaring, aldrig för att skapa en dold deadline.</p>
+          <div class="form-grid intelligence-grid">
+            <label class="field">
+              <span>Tillgänglig från</span>
+              <input id="task-available-from" name="availableFrom" type="datetime-local">
+            </label>
+            <label class="field">
+              <span>Följ upp väntan</span>
+              <input id="task-follow-up-at" name="followUpAt" type="datetime-local">
+            </label>
+            <label class="field field-wide">
+              <span>Sammanhang, separera med kommatecken</span>
+              <input id="task-contexts" name="contexts" type="text" maxlength="400" placeholder="hemma, dator, ärende">
+            </label>
+            <label class="field field-wide">
+              <span>Blockeras av andra uppgifter</span>
+              <select id="task-blocked-by" name="blockedBy" multiple size="4"></select>
+              <small>Välj uppgifter här för status Blockerad. Använd Väntar när hindret är ett svar eller något externt.</small>
+            </label>
+            <fieldset class="field field-wide window-field">
+              <legend>Passar bäst</legend>
+              <label><input type="checkbox" name="bestWindow[]" value="morning"> Morgon</label>
+              <label><input type="checkbox" name="bestWindow[]" value="midday"> Mitt på dagen</label>
+              <label><input type="checkbox" name="bestWindow[]" value="afternoon"> Eftermiddag</label>
+              <label><input type="checkbox" name="bestWindow[]" value="evening"> Kväll</label>
+            </fieldset>
+            <label class="field field-wide">
+              <span>Minsta steg</span>
+              <input id="task-minimum-step" name="minimumStep" type="text" maxlength="400" placeholder="Det minsta men ändå meningsfulla steget">
+            </label>
+            <label class="field field-wide">
+              <span>Lagom steg</span>
+              <input id="task-normal-step" name="normalStep" type="text" maxlength="400">
+            </label>
+            <label class="field field-wide">
+              <span>Hela steget</span>
+              <input id="task-full-step" name="fullStep" type="text" maxlength="400">
+            </label>
+            <label class="field field-wide">
+              <span>Källa till skarp deadline</span>
+              <input id="task-deadline-source" name="deadlineSource" type="text" maxlength="400" placeholder="Mejl, bokningsvillkor eller uttryckligt beslut">
+            </label>
+          </div>
+        </details>
       </div>
       <div class="dialog-actions">
         <button id="delete-task-button" class="button button-danger" type="button" hidden>Lägg i papperskorgen</button>
@@ -333,6 +411,49 @@
         <button class="button button-primary" type="submit">Spara lokalt</button>
       </div>
     </form>
+  </dialog>
+
+  <dialog id="friction-dialog" class="editor-dialog editor-dialog-small" aria-labelledby="friction-dialog-title">
+    <div class="friction-content">
+      <div class="dialog-header">
+        <div><p class="eyebrow">Inte nu</p><h2 id="friction-dialog-title">Vad skaver?</h2></div>
+        <button class="icon-button" type="button" data-close-dialog aria-label="Stäng">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18"></path></svg>
+        </button>
+      </div>
+      <p class="field-help">Tystnad tolkas aldrig. Bara ditt uttryckliga val påverkar uppgiften.</p>
+      <div class="friction-grid">
+        <button type="button" class="friction-choice" data-friction="too-big"><strong>För stor</strong><span>Formulera ett mindre steg</span></button>
+        <button type="button" class="friction-choice" data-friction="unclear"><strong>Oklart</strong><span>Gör nästa handling tydlig</span></button>
+        <button type="button" class="friction-choice" data-friction="wrong-time"><strong>Fel stund</strong><span>Tysta i två timmar</span></button>
+        <button type="button" class="friction-choice" data-friction="not-mine"><strong>Inte min</strong><span>Öppna väntan eller delegering</span></button>
+        <button type="button" class="friction-choice" data-friction="irrelevant"><strong>Inte relevant</strong><span>Öppna för granskning</span></button>
+      </div>
+    </div>
+  </dialog>
+
+  <dialog id="mobile-more-dialog" class="mobile-more-dialog" aria-labelledby="mobile-more-title">
+    <div class="mobile-more-content">
+      <div class="dialog-header">
+        <div><p class="eyebrow">gAIa Tasks</p><h2 id="mobile-more-title">Mer</h2></div>
+        <button class="icon-button" type="button" data-close-dialog aria-label="Stäng">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18"></path></svg>
+        </button>
+      </div>
+      <nav class="more-grid" aria-label="Fler vyer">
+        <button type="button" data-more-view="today"><span>Idag</span><small>Dagens valda åtaganden</small></button>
+        <button type="button" data-more-view="projects"><span>Projekt</span><small>Resultat och flödeshälsa</small></button>
+        <button type="button" data-more-view="changes"><span>Ändringar</span><small>Lokal kö till gAIa</small></button>
+      </nav>
+      <div class="more-settings">
+        <button id="mobile-theme-toggle" class="button button-secondary" type="button">Växla tema</button>
+        <label class="strict-lock-setting">
+          <input id="strict-lock-toggle" type="checkbox">
+          <span><strong>Strikt integritet</strong><small>Lås direkt när appen lämnas. Annars används tidsgränsen.</small></span>
+        </label>
+        <button id="mobile-lock-button" class="button button-secondary" type="button">Lås nu</button>
+      </div>
+    </div>
   </dialog>
 
   <dialog id="project-dialog" class="editor-dialog editor-dialog-small" aria-labelledby="project-dialog-title">

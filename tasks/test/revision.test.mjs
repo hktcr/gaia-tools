@@ -7,6 +7,7 @@ import {
   createTask,
   finalizeMaster,
   replaceTask,
+  upgradeMasterSchema,
 } from "../lib/model.mjs";
 import {
   buildTaskOperation,
@@ -109,4 +110,62 @@ test("skyddade identitetsfält avvisas", async () => {
     mergeRevisionIntoMaster(withTask, payload),
     /skyddat fält/u,
   );
+});
+
+test("schema 1 uppgraderas deterministiskt när en schema 2-revision mergas", async () => {
+  let legacy = createEmptyMaster({
+    datasetId: "revision-legacy-dataset",
+    now: new Date("2026-07-31T08:00:00Z"),
+  });
+  legacy.schemaVersion = 1;
+  legacy.settings.attentionWindows = legacy.settings.attentionWindows.filter((value) => value !== "20:00");
+  const legacyTask = createTask({
+    id: "legacy-task",
+    title: "Äldre uppgift",
+    state: "ready",
+    nextAction: "Öppna underlaget",
+  }, new Date("2026-07-31T08:01:00Z"));
+  delete legacyTask.commitmentClass;
+  delete legacyTask.bestWindows;
+  delete legacyTask.timing.deadlineSource;
+  delete legacyTask.attention.lastDeferralReason;
+  delete legacyTask.attention.lastDeferralAt;
+  delete legacyTask.attention.deferralCount;
+  legacy = await finalizeMaster(replaceTask(legacy, legacyTask), {
+    now: new Date("2026-07-31T08:02:00Z"),
+  });
+
+  let working = upgradeMasterSchema(legacy);
+  const before = working.tasks[0];
+  const after = createTask({
+    ...before,
+    id: before.id,
+    entityVersion: before.entityVersion,
+    createdAt: before.createdAt,
+    title: "Uppgraderad uppgift",
+    commitmentClass: "must",
+  }, new Date("2026-07-31T08:03:00Z"));
+  working = replaceTask(working, after);
+  const operation = await buildTaskOperation("task.update", before, after, {
+    opId: "legacy-upgrade-operation",
+    createdAt: "2026-07-31T08:03:00Z",
+  });
+  const payload = await createRevisionPayload({
+    baseMaster: legacy,
+    workingMaster: working,
+    operations: [operation],
+    sourceDeviceId: "device-schema-upgrade",
+    dataKey: generateDataKey(),
+    codeId: "code-schema-upgrade",
+  });
+  assert.equal(payload.schemaVersion, 2);
+  assert.equal(payload.minimumReaderVersion, 2);
+
+  const merged = await mergeRevisionIntoMaster(legacy, payload, new Date("2026-07-31T08:04:00Z"));
+  assert.deepEqual(merged.conflicts, []);
+  assert.equal(merged.master.schemaVersion, 2);
+  assert.equal(merged.master.settings.attentionWindows.includes("20:00"), true);
+  assert.equal(merged.master.tasks[0].title, "Uppgraderad uppgift");
+  assert.equal(merged.master.tasks[0].commitmentClass, "must");
+  assert.deepEqual(merged.master.tasks[0].bestWindows, []);
 });
