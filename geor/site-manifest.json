@@ -1,0 +1,31 @@
+{
+  "type": "gaia-site-manifest",
+  "schemaVersion": 1,
+  "id": "geor",
+  "name": "GeoR",
+  "description": "Rese- och upptäcktskartor med natur, kultur och sammanhang.",
+  "canonicalRepository": "hktcr/gaia-tools",
+  "canonicalPath": "geor/",
+  "publicUrl": "https://hktcr.github.io/gaia-tools/geor/",
+  "sourceStatus": "built",
+  "publicationStatus": "pending-verification",
+  "updatedAt": "2026-08-05T10:05:00+02:00",
+  "maps": [
+    {
+      "id": "sarpsborg-beito-2026-08-05",
+      "title": "Sarpsborg till Beito",
+      "date": "2026-08-05",
+      "status": "built"
+    }
+  ],
+  "pointers": [
+    "README.md",
+    "../index.html",
+    "MärkR"
+  ],
+  "recovery": {
+    "selfContained": true,
+    "externalRuntimeDependencies": false,
+    "canonicalCopyRequired": true
+  }
+}
