@@ -12,7 +12,7 @@ on:
     branches:
       - main
     paths:
-      - "gaia-execution/requests/tts/gaia_miljobyte_tts.txt"
+      - "gaia-execution/requests/tts/*.txt"
 
 permissions:
   contents: read
@@ -24,12 +24,34 @@ jobs:
     env:
       PYTHONPATH: gaia-execution
       ELEVENLABS_API_KEY: ${{ secrets.ELEVENLABS_API_KEY }}
-      MANUSCRIPT: ${{ inputs.manuscript || 'gaia-execution/requests/tts/gaia_miljobyte_tts.txt' }}
+      REQUESTED_MANUSCRIPT: ${{ inputs.manuscript || '' }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
+      - name: Resolve manuscript
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [[ "$GITHUB_EVENT_NAME" == "workflow_dispatch" ]]; then
+            manuscript="$REQUESTED_MANUSCRIPT"
+          else
+            mapfile -t candidates < <(
+              git diff-tree --no-commit-id --name-only -r "$GITHUB_SHA" |
+                grep '^gaia-execution/requests/tts/.*\.txt$' || true
+            )
+            if [[ "${#candidates[@]}" -ne 1 ]]; then
+              echo "Expected exactly one changed TTS manuscript, found ${#candidates[@]}" >&2
+              exit 2
+            fi
+            manuscript="${candidates[0]}"
+          fi
+          case "$manuscript" in
+            gaia-execution/requests/tts/*.txt) ;;
+            *) echo "Invalid manuscript path" >&2; exit 2 ;;
+          esac
+          echo "MANUSCRIPT=$manuscript" >> "$GITHUB_ENV"
       - name: Validate request
         shell: bash
         run: |
@@ -55,7 +77,7 @@ jobs:
 
           manuscript = Path(os.environ["MANUSCRIPT"])
           text = manuscript.read_text(encoding="utf-8").strip()
-          output = Path("gaia-execution/output/elevenlabs/gaia_miljobyte_river.mp3")
+          output = Path("gaia-execution/output/elevenlabs") / f"{manuscript.stem}_river.mp3"
           result = generate(text, output, provider="elevenlabs", allow_paid=True)
           receipt = {
               "status": "success",
@@ -68,6 +90,7 @@ jobs:
               "audio_sha256": hashlib.sha256(output.read_bytes()).hexdigest(),
               "audio_bytes": output.stat().st_size,
               "created_at": time.time(),
+              "manuscript": str(manuscript),
               "artifact": output.name,
           }
           Path("gaia-execution/output/elevenlabs/receipt.json").write_text(
@@ -79,7 +102,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: gaia-miljobyte-river-${{ github.run_id }}
+          name: gaia-tts-river-${{ github.run_id }}
           path: gaia-execution/output/elevenlabs
           if-no-files-found: error
           retention-days: 30
