@@ -1,0 +1,70 @@
+name: gAIa OpenAI TTS
+
+on:
+  push:
+    paths:
+      - "gaia-execution/requests/tts/*.openai.txt"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  synthesize:
+    runs-on: ubuntu-latest
+    env:
+      OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Resolve manuscript
+        id: manuscript
+        shell: bash
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            manuscript="$(find gaia-execution/requests/tts -maxdepth 1 -name '*.openai.txt' -print | sort | tail -n 1)"
+          else
+            manuscript="$(git diff --name-only HEAD^ HEAD | grep '^gaia-execution/requests/tts/.*\.openai\.txt$' | head -n 1)"
+          fi
+          if [ -z "$manuscript" ] || [ ! -f "$manuscript" ]; then
+            echo "No OpenAI TTS manuscript found" >&2
+            exit 1
+          fi
+          stem="$(basename "$manuscript" .openai.txt)"
+          echo "path=$manuscript" >> "$GITHUB_OUTPUT"
+          echo "stem=$stem" >> "$GITHUB_OUTPUT"
+
+      - name: Verify configured secret
+        shell: bash
+        run: |
+          if [ -z "$OPENAI_API_KEY" ]; then
+            echo "OPENAI_API_KEY is not configured" >&2
+            exit 1
+          fi
+
+      - name: Generate Swedish narration
+        shell: bash
+        run: |
+          mkdir -p gaia-execution/output/tts
+          python gaia-execution/gaia_exec/tts_openai.py \
+            "${{ steps.manuscript.outputs.path }}" \
+            "gaia-execution/output/tts/${{ steps.manuscript.outputs.stem }}_openai_marin.mp3" \
+            --receipt "gaia-execution/output/tts/${{ steps.manuscript.outputs.stem }}_openai_receipt.json"
+
+      - name: Upload narration
+        uses: actions/upload-artifact@v4
+        with:
+          name: "${{ steps.manuscript.outputs.stem }}-openai-tts"
+          path: |
+            gaia-execution/output/tts/${{ steps.manuscript.outputs.stem }}_openai_marin.mp3
+            gaia-execution/output/tts/${{ steps.manuscript.outputs.stem }}_openai_receipt.json
+          if-no-files-found: error
+          retention-days: 14
