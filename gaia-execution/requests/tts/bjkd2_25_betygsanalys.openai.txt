@@ -1,0 +1,49 @@
+Sammanfattning av betygsanalysen för BJK D två, tjugofem.
+
+<break time="0.8s" />
+
+Här följer en tydlig genomgång av de viktigaste resultaten för klass nio D två. Analysen innehåller inga elevnamn. Det är också viktigt att säga redan från början att materialet är en screening av mönster i betygen. Det visar var något avviker, men det kan inte ensamt förklara varför.
+
+Den mest intressanta upptäckten var att klassens utmaningar inte främst kunde beskrivas som ett typiskt problem kopplat till elever utan betyg i moderna språk.
+
+I slutunderlaget ingick tjugotvå elever. Klassens genomsnittliga meritvärde var 194 komma 4. Gruppen med giltigt betyg i moderna språk bestod av sexton elever. Deras meritvärde var 216 komma 1, men de hade samtidigt tjugosex F. Gruppen utan giltigt betyg i moderna språk bestod av sex elever. Deras meritvärde var 136 komma 7 och de hade tjugotre F.
+
+När gruppen utan betyg i moderna språk räknades bort ökade klassens meritvärde med 21 komma 7 poäng. I de andra klasserna var motsvarande ökning betydligt större, mellan 52 komma 8 och 72 komma 5 poäng. D två hade dessutom den lägsta andelen elever i gruppen utan moderna språk, 27 procent, jämfört med 35 till 50 procent i övriga klasser.
+
+Det som verkligen stack ut var alltså att även gruppen med betyg i moderna språk hade många underkända betyg. Det var en tydlig signal om att en generell insats som bara riktas mot elever utan moderna språk skulle missa en stor del av D tvås problematik.
+
+<break time="0.8s" />
+
+Det andra tydliga fyndet gällde de naturorienterande ämnena. Från årskurs sju till årskurs nio sjönk klassens genomsnitt i biologi från 11 komma 6 till 9 komma 6. Antalet F ökade från ett till fem. I fysik sjönk genomsnittet från 10 komma 9 till 9 komma 2, och antalet F ökade från tre till fem. I kemi sjönk genomsnittet från 11 komma 0 till 10 komma 0, samtidigt som antalet F ökade från tre till fyra.
+
+Detta var särskilt intressant eftersom klassens totala meritvärde under samma period ökade med 7 komma 8 poäng. Flera andra ämnen utvecklades positivt eller stabilt. Engelska ökade med 2 komma 6 poäng. Idrott ökade med 1 komma 9. Bild ökade med 1 komma 5. Matematik och svenska ökade båda med 0 komma 3. Geografi var i stort sett stabilt.
+
+Nedgången i de naturorienterande ämnena framstod därför som relativt avgränsad, inte som en allmän försämring i alla ämnen.
+
+I jämförelsen mellan elever med betyg i moderna språk var andelen F i D två 25 procent i biologi, 27 procent i fysik och 20 procent i kemi. I motsvarande grupp i de andra klasserna låg andelarna på omkring 5 procent i biologi och 3 procent i både fysik och kemi.
+
+Samtidigt fanns tecken på att utmaningen inte var helt begränsad till de naturorienterande ämnena. Även religion och musik hade en högre andel F än jämförelsegruppen.
+
+<break time="0.8s" />
+
+Ett tredje viktigt mönster var polarisering. Bland eleverna med betyg i moderna språk var andelen A nästan densamma som i andra klasser, cirka 15 procent. Men D två hade ungefär dubbelt så stor andel E, 28 komma 8 procent jämfört med 14 komma 3 procent. Andelen F var också tydligt högre, 9 komma 6 procent jämfört med 3 komma 1 procent.
+
+Det betyder att klassens starkaste elever presterade ungefär som förväntat, samtidigt som en svagare del av gruppen samlade många E och F. Resultatbilden var alltså mer polariserad än jämförelseklassernas.
+
+<break time="0.8s" />
+
+Den longitudinella jämförelsen gav ytterligare en ovanlig signal. I den matchade elevgruppen förbättrade gruppen utan betyg i moderna språk sitt meritvärde med ungefär sjutton poäng, medan gruppen med betyg i moderna språk förbättrades med ungefär fem poäng. D två var den enda klassen med detta mönster. Den jämförelsen gäller den matchade gruppen över tid, ungefär tjugo elever, och inte samtliga tjugotvå elever i slutunderlaget.
+
+En explorativ modellanalys pekade i samma riktning. Biologi hade det tydligaste negativa avvikelsevärdet, minus 1 komma 76. Fysik låg också negativt. Engelska, geografi och hem- och konsumentkunskap låg däremot positivt. Sådana avvikelser visar vilka ämnen som skiljer sig från elevgruppens övriga resultatprofil. De visar inte orsaken.
+
+<break time="1.0s" />
+
+Den samlade slutsatsen är därför följande.
+
+BJK D två, tjugofem, bör inte förstås främst som en klass där resultaten förklaras av gruppen utan moderna språk. Problemen omfattade även många elever med betyg i moderna språk. De var särskilt tydliga i biologi, fysik och kemi, samtidigt som de starkaste eleverna fortsatte att nå höga betyg. Klassen hade alltså både en ämnesspecifik nedgång i naturorienterande ämnen och en tydligt polariserad resultatbild.
+
+<break time="0.8s" />
+
+Analysen ger däremot inget säkert svar på orsaken. Möjliga förklaringar som behöver undersökas separat är till exempel lärarbyten, bedömningskalibrering, läsförmåga i kombination med texttunga prov, ämnesspecifik frånvaro, schemaläggning, laborationsmiljö, gruppdynamik och den ökade abstraktionsnivån i årskurs nio.
+
+Det mest ansvarsfulla nästa steget är därför att kombinera betygsanalysen med närvaro, bedömningsunderlag, provresultat och information om undervisningens kontinuitet. Då går det att pröva hypoteserna utan att dra för långtgående slutsatser eller lägga ansvar på enskilda personer.
