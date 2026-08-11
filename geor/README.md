@@ -38,6 +38,8 @@ Varje resa ska minst innehålla:
 
 ## Publiceringsrutin
 
+Den gemensamma och auktoritativa rutinen finns i [`../PUBLICERINGSRUTIN.md`](../PUBLICERINGSRUTIN.md). Stegen nedan är GeoR:s tilläggskontroller.
+
 1. Uppdatera källan i `gaia-tools/geor/`.
 2. Kontrollera att sidan öppnas utan externa script eller kartbibliotek.
 3. Kontrollera listval, sökning, markörer, informationsruta och navigationslänkar.
