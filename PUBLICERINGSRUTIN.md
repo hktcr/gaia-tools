@@ -35,10 +35,12 @@ Använd GitHub-appens Git-datametod så att hela releasen blir en enda atomisk c
 1. Läs `main` och dess committräd från GitHub.
 2. Jämför fjärrgrenens SHA med den bas som testades. Om grenen har ändrats, avbryt skrivningen, hämta ändringen, integrera den och kör testerna igen.
 3. Skapa blobbar för exakt de filer som ingår i releasen.
-4. Skapa ett nytt träd med aktuellt `main`-träd som bas.
-5. Skapa en commit med aktuell `main`-commit som enda förälder.
-6. Flytta `main` till den nya committen med `force: false`.
-7. Läs tillbaka `main`, releasecommitten och kritiska filer från GitHub.
+4. Jämför SHA som GitHub returnerar för varje blob med filens lokala Git-blob-SHA från `git hash-object`. Avbryt om en enda fil skiljer sig. Detta är obligatoriskt även när API-anropet svarar att det lyckades, särskilt för stora filer som kan kapas av en överföringsgräns.
+5. Skapa ett nytt träd med aktuellt `main`-träd som bas.
+6. Kontrollera att det nya trädets SHA är samma som det lokalt testade Git-trädets SHA när releasen motsvarar en lokal commit.
+7. Skapa en commit med aktuell `main`-commit som enda förälder.
+8. Flytta `main` till den nya committen med `force: false`.
+9. Läs tillbaka `main`, releasecommitten och kritiska filer från GitHub.
 
 Använd aldrig tvångsuppdatering av `main`. Gör inte en separat commit per fil när Git-datametoden är tillgänglig.
 
