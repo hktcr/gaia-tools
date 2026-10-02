@@ -3868,16 +3868,16 @@
       "status": "empty"
     },
     "BE33": {
-      "status": "recheck"
+      "status": "empty"
     },
     "BE34": {
-      "status": "recheck"
+      "status": "empty"
     },
     "BF33": {
-      "status": "recheck"
+      "status": "empty"
     },
     "BF34": {
-      "status": "recheck"
+      "status": "empty"
     },
     "AF20": {
       "status": "empty"
@@ -4862,6 +4862,159 @@
     },
     "BM11": {
       "status": "empty"
+    },
+    "C12": {
+      "status": "empty"
+    },
+    "D12": {
+      "status": "empty"
+    },
+    "C13": {
+      "status": "empty"
+    },
+    "D13": {
+      "status": "empty"
+    },
+    "E13": {
+      "status": "empty"
+    },
+    "C14": {
+      "status": "empty"
+    },
+    "N14": {
+      "status": "empty"
+    },
+    "O14": {
+      "status": "empty"
+    },
+    "M15": {
+      "status": "empty"
+    },
+    "N15": {
+      "status": "empty"
+    },
+    "O15": {
+      "status": "empty"
+    },
+    "P15": {
+      "status": "empty"
+    },
+    "M16": {
+      "status": "empty"
+    },
+    "N16": {
+      "status": "empty"
+    },
+    "O16": {
+      "status": "empty"
+    },
+    "P16": {
+      "status": "empty"
+    },
+    "M17": {
+      "status": "empty"
+    },
+    "N17": {
+      "status": "empty"
+    },
+    "O17": {
+      "status": "empty"
+    },
+    "P17": {
+      "status": "empty"
+    },
+    "Q17": {
+      "status": "empty"
+    },
+    "L18": {
+      "status": "empty"
+    },
+    "M18": {
+      "status": "empty"
+    },
+    "N18": {
+      "status": "empty"
+    },
+    "O18": {
+      "status": "empty"
+    },
+    "P18": {
+      "status": "empty"
+    },
+    "Q18": {
+      "status": "empty"
+    },
+    "R18": {
+      "status": "empty"
+    },
+    "O19": {
+      "status": "empty"
+    },
+    "P19": {
+      "status": "empty"
+    },
+    "Q19": {
+      "status": "empty"
+    },
+    "R19": {
+      "status": "empty"
+    },
+    "P20": {
+      "status": "empty"
+    },
+    "Q20": {
+      "status": "empty"
+    },
+    "R20": {
+      "status": "empty"
+    },
+    "S20": {
+      "status": "empty"
+    },
+    "S21": {
+      "status": "empty"
+    },
+    "S22": {
+      "status": "empty"
+    },
+    "AL24": {
+      "status": "empty"
+    },
+    "AM24": {
+      "status": "empty"
+    },
+    "AN24": {
+      "status": "empty"
+    },
+    "AL25": {
+      "status": "empty"
+    },
+    "AM25": {
+      "status": "empty"
+    },
+    "AN25": {
+      "status": "empty"
+    },
+    "AO25": {
+      "status": "empty"
+    },
+    "AL26": {
+      "status": "empty"
+    },
+    "AM26": {
+      "status": "empty"
+    },
+    "AN26": {
+      "status": "empty"
+    },
+    "AO26": {
+      "status": "empty"
+    },
+    "AT49": {
+      "status": "empty"
+    },
+    "AT50": {
+      "status": "empty"
     }
   },
   "groups": {
@@ -5236,6 +5389,73 @@
       "total_nests": 0,
       "total_clusters": 0,
       "empty_grids_added": 134
+    }
+  ],
+  "updates": [
+    {
+      "type": "user_completion",
+      "recorded_date": "2026-10-02",
+      "note": "På användarens uppgift registreras återstående rutor utan bonstatus som tomma: 51 tidigare oregistrerade och 4 tidigare markerade för återkontroll. Detta är en komplettering av status, inte ett nytt daterat fältbesök. Alla tidigare bonuppgifter och fältanteckningar är oförändrade.",
+      "empty_grids_added": 55,
+      "previously_unregistered": [
+        "C12",
+        "D12",
+        "C13",
+        "D13",
+        "E13",
+        "C14",
+        "N14",
+        "O14",
+        "M15",
+        "N15",
+        "O15",
+        "P15",
+        "M16",
+        "N16",
+        "O16",
+        "P16",
+        "M17",
+        "N17",
+        "O17",
+        "P17",
+        "Q17",
+        "L18",
+        "M18",
+        "N18",
+        "O18",
+        "P18",
+        "Q18",
+        "R18",
+        "O19",
+        "P19",
+        "Q19",
+        "R19",
+        "P20",
+        "Q20",
+        "R20",
+        "S20",
+        "S21",
+        "S22",
+        "AL24",
+        "AM24",
+        "AN24",
+        "AL25",
+        "AM25",
+        "AN25",
+        "AO25",
+        "AL26",
+        "AM26",
+        "AN26",
+        "AO26",
+        "AT49",
+        "AT50"
+      ],
+      "previously_recheck": [
+        "BE33",
+        "BE34",
+        "BF33",
+        "BF34"
+      ]
     }
   ]
 }
