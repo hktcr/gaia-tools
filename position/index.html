@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="sv">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#2B5A2B">
+  <meta name="description" content="Mät din position och kopiera eller spara den som bild. Koordinaterna stannar på din enhet tills du själv delar dem.">
+  <meta name="referrer" content="no-referrer">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' blob: data:; connect-src 'self'; object-src 'none'; base-uri 'none'; form-action 'none'">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="Position">
+  <title>Position</title>
+  <link rel="icon" href="./assets/icon-192.png" type="image/png">
+  <link rel="apple-touch-icon" href="./assets/icon-180.png">
+  <link rel="manifest" href="./manifest.webmanifest">
+  <link rel="stylesheet" href="./style.css">
+  <script type="module" src="./app.mjs"></script>
+</head>
+<body>
+<main>
+  <header><div><p class="eyebrow">HÄR ÄR DU</p><h1>Position</h1></div><img id="bird" src="./assets/bird.png" width="94" height="82" alt="Mindre strandpipare"></header>
+  <section aria-label="Din position" class="position-card">
+    <div class="status-line"><span id="status" class="status">Redo att mäta</span><span id="age"></span></div>
+    <div class="coordinate"><span class="label">LATITUD</span><p id="latitude">—</p></div>
+    <div class="coordinate"><span class="label">LONGITUD</span><p id="longitude">—</p></div>
+    <div class="datum">Decimalgrader · WGS 84</div>
+    <div class="metrics"><div><span class="label">NOGGRANNHET</span><strong id="accuracy">—</strong></div><div><span class="label">MÄTTID</span><strong id="measured-time">—</strong><span id="measured-date"></span></div></div>
+  </section>
+  <button class="primary measure" id="measure"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="7"/><circle cx="12" cy="12" r="2"/><path d="M12 2v3m0 14v3M2 12h3m14 0h3"/></svg><span id="measure-label">Mät min position</span></button>
+  <p id="message" class="message" role="status" aria-live="polite">Mäter i upp till 12 sekunder. Håll telefonen stilla, gärna utomhus.</p>
+  <section class="export" aria-label="Position som bild">
+    <button id="copy" class="secondary" disabled>Kopiera som bild</button>
+    <div class="export-row"><button id="share" class="tertiary" disabled>Dela bild</button><button id="save" class="tertiary" disabled>Spara PNG</button></div>
+    <p id="export-message" class="helper" role="status" aria-live="polite">Mät först. Klistra sedan in bilden i chatten.</p>
+    <div id="image-preview" hidden><img id="export-image" alt="Din exporterade positionsbild"><p class="helper">Om filen öppnas i webbläsaren: håll inne bilden och välj Spara bild.</p></div>
+  </section>
+  <footer>
+    <p>Platsen mäts bara när du trycker. Appen lagrar eller skickar inga koordinater. Du väljer själv om du vill kopiera, spara eller dela bilden.</p>
+    <details><summary>Om noggrannhet &amp; hemskärmsikon</summary><p>Noggrannheten är enhetens rapporterade uppskattning i meter. Den är ingen garanti för en exakt GPS-position. Mättid och ålder visar när positionen faktiskt uppmättes.</p><p>På Android: öppna webbläsarens meny och välj <b>Lägg till på startskärmen</b> eller <b>Installera app</b>. På iPhone: öppna i Safari, tryck Dela och välj <b>Lägg till på hemskärmen</b>.</p><p>Platsåtkomst kräver HTTPS och ditt tillstånd. Webbläsaren och enhetens platstjänst hanterar själva mätningen. Sidan stoppar mätningen när du lämnar den.</p></details>
+  </footer>
+</main>
+</body>
+</html>
