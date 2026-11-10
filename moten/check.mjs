@@ -121,7 +121,12 @@ try{
   await context.close();console.log('PASS: Chrome '+width+' layout, originals, reader, close/reopen, fallback, dark/reduced motion');
  }
  const noJs=await browser.newContext({javaScriptEnabled:false});await mockOriginals(noJs,local);const noJsPage=await noJs.newPage();await noJsPage.goto(local);await noJsPage.locator('#pack .study-link').click();await noJsPage.waitForURL(sample);assert.equal(noJsPage.url(),sample);await noJs.close();
- const modified=await browser.newContext();await mockOriginals(modified,local);const mp=await modified.newPage();await mp.goto(local);const pop=mp.waitForEvent('popup');await mp.locator('#pack .study-link').click({button:'middle'});const mt=await pop;await mt.waitForLoadState();assert.equal(mt.url(),sample);assert.equal(await mp.locator('#article-reader').isVisible(),false);await modified.close();
+ const modified=await browser.newContext();await mockOriginals(modified,local);const mp=await modified.newPage();await mp.goto(local);
+ // A native middle-click emits auxclick; headless Chrome does not consistently open a background tab.
+ // Verify that the enhancement leaves both auxiliary and modified clicks uncancelled.
+ await mp.evaluate(()=>{document.addEventListener('click',e=>{if(e.ctrlKey)window.modifiedPrevented=e.defaultPrevented});document.addEventListener('auxclick',e=>{window.auxPrevented=e.defaultPrevented});});
+ await mp.locator('#pack .study-link').click({button:'middle'});assert.equal(await mp.evaluate(()=>window.auxPrevented),false);assert.equal(await mp.locator('#article-reader').isVisible(),false);
+ await mp.locator('#pack .study-link').click({modifiers:['Control']});assert.equal(await mp.evaluate(()=>window.modifiedPrevented),false);assert.equal(await mp.locator('#article-reader').isVisible(),false);await modified.close();
  const rootPage=await browser.newPage();await rootPage.goto('http://127.0.0.1:8765/moten/');await rootPage.locator('.meeting-link').click();assert.ok(rootPage.url().endsWith('/ai-2026-11-11/'));await rootPage.close();
  assert.deepEqual(errors,[]);
  console.log('PASS: Git blob integrity, two identical builds, syntax, 18 studies/25 source links, keyboard, mouse/touch, denied frames, no-JS/middle-click, short viewport, hub navigation.');
