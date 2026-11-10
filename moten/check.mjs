@@ -18,7 +18,7 @@ assert.equal(data.studies.length,18);
 assert.equal(new Set(data.studies.map(s=>s.id)).size,18);
 for(const s of data.studies){assert.ok(s.limit.length>30);assert.ok(s.finding.length>30);assert.equal(new URL(s.url).protocol,'https:');}
 const root=resolve('.');
-const server=createServer((req,res)=>{try{let path=resolve(root,'.'+decodeURIComponent(new URL(req.url,'http://localhost').pathname));if(path!==root&&!path.startsWith(root+sep)){res.writeHead(403);return res.end()}if(path.endsWith(sep)||!extname(path))path=resolve(path,'index.html');const body=readFileSync(path);res.setHeader('Content-Type',({'.html':'text/html; charset=utf-8','.css':'text/css; charset=utf-8','.png':'image/png','.json':'application/json'})[extname(path)]||'application/octet-stream');res.end(body)}catch{res.writeHead(404);res.end('Not found')}});
+const server=createServer((req,res)=>{try{let path=resolve(root,'.'+decodeURIComponent(new URL(req.url,'http://localhost').pathname));if(path!==root&&!path.startsWith(root+sep)){res.writeHead(403);return res.end()}if(path.endsWith(sep)||!extname(path))path=resolve(path,'index.html');const body=readFileSync(path);res.setHeader('Content-Type',({'.html':'text/html; charset=utf-8','.css':'text/css; charset=utf-8','.png':'image/png','.ttf':'font/ttf','.json':'application/json'})[extname(path)]||'application/octet-stream');res.end(body)}catch{res.writeHead(404);res.end('Not found')}});
 await new Promise(r=>server.listen(8765,'127.0.0.1',r));
 mkdirSync('moten-test-output',{recursive:true});
 const browser=await chromium.launch({channel:'chrome'});
@@ -29,6 +29,8 @@ try{
   const page=await context.newPage();page.on('pageerror',e=>errors.push(e.message));
   const response=await page.goto('http://127.0.0.1:8765/moten/ai-2026-11-11/');
   assert.equal(response.status(),200);
+  await page.evaluate(()=>document.fonts.ready);
+  assert.ok(await page.evaluate(()=>document.fonts.check('17px "Liberation Sans"')),'Embedded font loaded');
   assert.equal(await page.locator('h1').textContent(),'AI iundervisningen.');
   assert.equal(await page.locator('.study-link').count(),18);
   assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1),'No horizontal overflow at '+width);
