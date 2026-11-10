@@ -1,11 +1,11 @@
 @font-face{font-family:"Liberation Sans";src:url("LiberationSans-Regular.ttf") format("truetype");font-weight:400;font-style:normal;font-display:swap}
 @font-face{font-family:"Liberation Sans";src:url("LiberationSans-Bold.ttf") format("truetype");font-weight:700;font-style:normal;font-display:swap}
 :root{color-scheme:light;--paper:#faf8f3;--ink:#27312f;--muted:#626a63;--line:#d8d9d1;--accent:#315b55;--wash:#f0f1eb;--focus:#97722d}
-*{box-sizing:border-box}html{scroll-behavior:smooth;scroll-padding-top:2rem}body{margin:0;background:var(--paper);color:var(--ink);font:17px/1.6 "Liberation Sans",Arial,sans-serif;-webkit-text-size-adjust:100%}
+*{box-sizing:border-box}a,summary{-webkit-tap-highlight-color:rgba(49,91,85,.08)}html{scroll-behavior:smooth;scroll-padding-top:2rem}body{margin:0;background:var(--paper);color:var(--ink);font:17px/1.6 "Liberation Sans",Arial,sans-serif;-webkit-text-size-adjust:100%}
 .page{width:min(880px,calc(100% - 80px));margin:0 auto}a{color:var(--accent);text-underline-offset:.2em;text-decoration-thickness:1px}a:hover{text-decoration-thickness:2px}a:focus-visible,summary:focus-visible{outline:3px solid var(--focus);outline-offset:4px}p{margin:0 0 1rem}
 .skip{position:absolute;left:1rem;top:-6rem;z-index:5;background:var(--paper);padding:.65rem 1rem}.skip:focus{top:1rem}
 .meeting-header{position:relative;padding:2rem 0 0;margin-bottom:2.4rem;border-bottom:1px solid var(--line);isolation:isolate}
-.meeting-header:before{content:"";position:absolute;z-index:-1;inset:0 -100px 0 auto;width:440px;max-width:75vw;background:linear-gradient(90deg,var(--paper),transparent 50%),url("ink-paper.png") right 46%/cover no-repeat;opacity:.38;mask-image:linear-gradient(0deg,transparent,#000 25%,#000 80%,transparent);pointer-events:none}
+.meeting-header:before{content:"";position:absolute;z-index:-1;inset:0 -20px 0 auto;width:440px;max-width:75vw;background:linear-gradient(90deg,var(--paper),transparent 50%),url("ink-paper.png") right 46%/cover no-repeat;opacity:.38;mask-image:linear-gradient(0deg,transparent,#000 25%,#000 80%,transparent);pointer-events:none}
 .masthead{display:flex;align-items:center;justify-content:space-between;gap:1rem;font-size:.8rem;color:var(--muted);margin-bottom:2.2rem}.brand{display:inline-flex;align-items:center;min-height:44px;font-size:1.35rem;letter-spacing:-.05em;text-decoration:none;color:var(--ink)}.brand span{color:var(--accent);font-weight:700}
 h1{font-size:clamp(2rem,4.2vw,2.65rem);line-height:1.15;letter-spacing:-.025em;font-weight:400;margin:0 0 .6rem;max-width:100%;text-wrap:balance}
 .subtitle{font-size:1.05rem;color:var(--muted);margin-bottom:1.5rem}
