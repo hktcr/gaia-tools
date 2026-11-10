@@ -64,4 +64,40 @@ try{
  assert.equal(response.status,200,'Existing Pages site is reachable');
  assert.match(await response.text(),/gAIa|GAIA|gaia/i);
  console.log('PASS: canonical public Pages base https://hktcr.github.io/gaia-tools/');
+ if(process.env.GITHUB_REF==='refs/heads/main'){
+  const publicUrl='https://hktcr.github.io/gaia-tools/moten/ai-2026-11-11/';
+  let live='';
+  for(let attempt=0;attempt<36;attempt++){
+   const response=await fetch(publicUrl+'?release='+process.env.GITHUB_SHA+'&attempt='+attempt,{signal:AbortSignal.timeout(15000)});
+   live=await response.text();
+   if(response.ok&&live===before)break;
+   await new Promise(r=>setTimeout(r,5000));
+  }
+  assert.equal(live,before,'Published HTML equals tested HTML');
+  const {createHash}=await import('node:crypto');
+  for(const path of ['moten/assets/style.css','moten/assets/ink-paper.png','moten/assets/LiberationSans-Regular.ttf','moten/assets/LiberationSans-Bold.ttf']){
+   const response=await fetch('https://hktcr.github.io/gaia-tools/'+path+'?release='+process.env.GITHUB_SHA,{signal:AbortSignal.timeout(30000)});
+   assert.equal(response.status,200,'Published asset '+path);
+   const bytes=Buffer.from(await response.arrayBuffer());
+   assert.equal(createHash('sha1').update('blob '+bytes.length+'\0').update(bytes).digest('hex'),files[path],'Published asset integrity '+path);
+  }
+  for(const width of [390,768,1024,1440]){
+   const context=await browser.newContext({viewport:{width,height:1000},isMobile:width===390,hasTouch:width===390});
+   const page=await context.newPage();
+   await page.goto(publicUrl+'?release='+process.env.GITHUB_SHA);
+   await page.evaluate(()=>document.fonts.ready);
+   assert.equal(await page.locator('.study-link').count(),18);
+   assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1));
+   await page.locator('.more summary').first()[width===390?'tap':'click']();
+   assert.ok(await page.locator('#wang').isVisible());
+   const original=data.studies.find(s=>s.id==='pack').url;
+   await page.route(original,route=>route.fulfill({status:200,contentType:'text/html',body:'<title>Original destination</title>'}));
+   if(width===1024){await page.locator('#pack .study-link').focus();await page.keyboard.press('Enter');}
+   else await page.locator('#pack .study-link')[width===390?'tap':'click']();
+   await page.waitForURL(original);assert.equal(page.url(),original);
+   await context.close();
+  }
+  console.log('PASS: published HTML and assets match release; public Chrome 390/768/1024/1440, mouse, touch, keyboard, expansion and direct original navigation.');
+ }
+
 }finally{await browser.close();await new Promise(r=>server.close(r));}

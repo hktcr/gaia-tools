@@ -5,7 +5,7 @@
   "moten/ai-2026-11-11/index.html": "74b6e1c6cba67a0efee40a99f1c8624a7e192ef1",
   "moten/ai-2026-11-11/studies.json": "265a77c249cb7cb370e06cfc068fa071bae251c1",
   "moten/build.mjs": "de91c7005e076baeb723fb38a2afbd8e99f12c24",
-  "moten/check.mjs": "57d553a668baf0311d3c4d8b8d19c227ce7eecc2",
+  "moten/check.mjs": "f444a5113ac59cf29ec922718653f90d2ed76752",
   ".github/workflows/moten-check.yml": "249a3841e1783c7017e55a7775484903fee4df32",
   "moten/README.md": "270efe89435293f16cd0ab3a191861f60e5f5909",
   "moten/assets/LiberationSans-Regular.ttf": "626dd9364f12c6036ec8eae38c4fc73735b9ed23",
