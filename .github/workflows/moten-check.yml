@@ -1,7 +1,7 @@
 name: Meeting pages checks
 on:
   push:
-    branches: [main, work/ai-mote-2026-11-11]
+    branches: [main, 'work/ai-mote-2026-11-11*']
     paths: ['moten/**', '.github/workflows/moten-check.yml']
 permissions:
   contents: read
