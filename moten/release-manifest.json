@@ -1,14 +1,15 @@
 {
   "moten/index.html": "4d4090602d71df7934abe5bc4590018d1c444aa2",
-  "moten/assets/style.css": "c184fbd4e812880ec7861bff995c71d82cbc01d6",
-  "moten/assets/ink-paper.png": "5b1d5f44d76bbc92c00fb62944204426d4698ef1",
-  "moten/ai-2026-11-11/index.html": "16a9360eed4324c49a77181a18b69e753c4d9d67",
+  "moten/assets/style.css": "a5392c67d87f8db60c954b225284f1fd123d3435",
+  "moten/ai-2026-11-11/index.html": "b5e930065eec63cf2ac42552096b705bb3938099",
   "moten/ai-2026-11-11/studies.json": "e56b2fc322c0c90c415b86703a8179206e192c8a",
-  "moten/build.mjs": "c7b4da93004e8184aba9f5ab9e260070fffac6c4",
-  "moten/check.mjs": "8358863fc640f95cb987545a54635549043abbdb",
+  "moten/build.mjs": "8eaece893de92ed764c8a9154b1a256df3ccd281",
+  "moten/check.mjs": "7087c81cb8aa10bc42e560a7b0ab8bd086db610d",
   ".github/workflows/moten-check.yml": "148751dac7b35df018779a36c11923704336abe0",
-  "moten/README.md": "270efe89435293f16cd0ab3a191861f60e5f5909",
+  "moten/README.md": "0e494e8da2e897f195fa9dc31666f34fd867d883",
   "moten/assets/LiberationSans-Regular.ttf": "626dd9364f12c6036ec8eae38c4fc73735b9ed23",
   "moten/assets/LiberationSans-Bold.ttf": "4581ebf3ee005eb2857f65af52efbe6ab186ac33",
-  "moten/assets/FONT-LICENSE.txt": "aba73e8a403084a93a245ca00e4a0db007886e0a"
+  "moten/assets/FONT-LICENSE.txt": "aba73e8a403084a93a245ca00e4a0db007886e0a",
+  "moten/assets/academic-futures.webp": "bedad3f20a2ab7b9164b6e3be68d45e9aa0e7893",
+  "moten/assets/article-reader.js": "6c853cc2ae23a7d82e4a0724662adf0900da91cc"
 }

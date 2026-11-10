@@ -10,7 +10,7 @@ const row=s=>`<article class="study" id="${esc(s.id)}">
 const group=g=>data.filter(s=>s.group===g).map(row).join("\n");
 const quotes=["tech","sv","sva","bild","musik","sh"].map(k=>`<li><a href="${esc(remiss[k].url)}">${esc(remiss[k].label)} <span aria-hidden="true">↗</span></a><q>${esc(remiss[k].quote)}</q></li>`).join("\n");
 return `<!doctype html>
-<html lang="sv"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="color-scheme" content="light dark"><meta name="description" content="Originalstudier om AI, lärande och bedömning. Underlag inför kollegiets samtal den 11 november 2026."><meta name="gaia-release" content="ai-mote-2026-11-11-v2"><title>AI i undervisningen · gAIa</title><link rel="stylesheet" href="../assets/style.css?v=2"></head>
+<html lang="sv"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="color-scheme" content="light dark"><meta name="description" content="Originalstudier om AI, lärande och bedömning. Underlag inför kollegiets samtal den 11 november 2026."><meta name="gaia-release" content="ai-mote-2026-11-11-v3"><title>AI i undervisningen · gAIa</title><link rel="stylesheet" href="../assets/style.css?v=3"><script defer src="../assets/article-reader.js?v=3"></script></head>
 <body id="top" class="meeting-page"><a class="skip" href="#innehall">Hoppa till innehållet</a>
 <div class="page">
 <header class="meeting-header">
@@ -34,7 +34,12 @@ ${group("kompression")}
 </details></section>
 </main>
 <footer class="page-footer"><p>Urval under arbete · Uppdaterat 10 november 2026</p><p>18 studier och rapporter. Ett riktat urval, inte en systematisk forskningsöversikt.</p><a href="../">Alla mötesunderlag</a></footer>
-</div></body></html>`;
+</div>
+<dialog id="article-reader" class="article-reader" aria-labelledby="reader-title" aria-describedby="reader-help">
+<div class="reader-bar"><div class="reader-heading"><p class="reader-label">Originalkälla <span aria-hidden="true">·</span> <span id="reader-source"></span></p><h2 id="reader-title"></h2></div><button type="button" id="reader-close" class="reader-close" aria-label="Stäng originalkällan" autofocus><span aria-hidden="true">×</span></button></div>
+<div class="reader-tools"><p id="reader-help">Vissa förlag tillåter inte inbäddning. Om sidan är tom eller blockerad, öppna originalet i en ny flik.</p><a id="reader-external" class="reader-external" target="_blank" rel="noopener noreferrer">Öppna i ny flik <span aria-hidden="true">↗</span></a></div>
+<div id="reader-viewport" class="reader-viewport"></div>
+</dialog></body></html>`;
 }
 const data=JSON.parse(readFileSync(new URL('./ai-2026-11-11/studies.json',import.meta.url),'utf8'));
 writeFileSync(new URL('./ai-2026-11-11/index.html',import.meta.url),renderMeeting(data.studies,data.remiss));
