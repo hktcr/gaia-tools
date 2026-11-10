@@ -38,6 +38,7 @@ async function readerCheck(page,width,keyboard=false){
  assert.ok(await page.locator('#article-reader').isVisible());
  assert.equal(await page.locator('#reader-close').evaluate(e=>e===document.activeElement),true,'Initial dialog focus');
  assert.equal(await page.locator('#reader-viewport iframe').getAttribute('src'),sample);
+ await page.frameLocator('#reader-viewport iframe').getByText('Original article',{exact:true}).waitFor({state:'visible'});
  assert.ok(await page.frameLocator('#reader-viewport iframe').getByText('Original article',{exact:true}).isVisible(),'Original frame content rendered');
  assert.equal(page.url(),url,'The meeting page stays open');
  assert.equal(await page.evaluate(()=>window.history.length),history,'No extra history entry');

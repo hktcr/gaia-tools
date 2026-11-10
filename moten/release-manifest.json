@@ -4,12 +4,12 @@
   "moten/ai-2026-11-11/index.html": "b5e930065eec63cf2ac42552096b705bb3938099",
   "moten/ai-2026-11-11/studies.json": "e56b2fc322c0c90c415b86703a8179206e192c8a",
   "moten/build.mjs": "8eaece893de92ed764c8a9154b1a256df3ccd281",
-  "moten/check.mjs": "7087c81cb8aa10bc42e560a7b0ab8bd086db610d",
+  "moten/check.mjs": "232fd1c9a4d8735d38cf6e6f5cb6845b8e6f8a63",
   ".github/workflows/moten-check.yml": "148751dac7b35df018779a36c11923704336abe0",
   "moten/README.md": "0e494e8da2e897f195fa9dc31666f34fd867d883",
   "moten/assets/LiberationSans-Regular.ttf": "626dd9364f12c6036ec8eae38c4fc73735b9ed23",
   "moten/assets/LiberationSans-Bold.ttf": "4581ebf3ee005eb2857f65af52efbe6ab186ac33",
   "moten/assets/FONT-LICENSE.txt": "aba73e8a403084a93a245ca00e4a0db007886e0a",
   "moten/assets/academic-futures.webp": "bedad3f20a2ab7b9164b6e3be68d45e9aa0e7893",
-  "moten/assets/article-reader.js": "6c853cc2ae23a7d82e4a0724662adf0900da91cc"
+  "moten/assets/article-reader.js": "73de1ea800da2bbf37d85d6ced9735a388e7d635"
 }

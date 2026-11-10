@@ -42,21 +42,29 @@
     });
   });
 
-  close.addEventListener('click', () => dialog.close());
-  dialog.addEventListener('close', () => {
+  const cleanup = () => {
     // Remove the frame to stop playback, requests and stale content on reopening.
     viewport.replaceChildren();
     document.documentElement.classList.remove('reader-open');
     backdropPress = false;
     trigger?.focus({ preventScroll: true });
-  });
+    trigger = null;
+  };
+  const dismiss = () => {
+    dialog.close();
+    cleanup();
+  };
+  close.addEventListener('click', dismiss);
+  dialog.addEventListener('cancel', event => { event.preventDefault(); dismiss(); });
+  // The close event is queued; do not let an old event clear a newly opened source.
+  dialog.addEventListener('close', () => { if (!dialog.open) cleanup(); });
   const outside = event => {
     const rect = dialog.getBoundingClientRect();
     return event.clientX < rect.left || event.clientX > rect.right || event.clientY < rect.top || event.clientY > rect.bottom;
   };
   dialog.addEventListener('pointerdown', event => { backdropPress = event.target === dialog && outside(event); });
   dialog.addEventListener('click', event => {
-    if (backdropPress && event.target === dialog && outside(event)) dialog.close();
+    if (backdropPress && event.target === dialog && outside(event)) dismiss();
     backdropPress = false;
   });
 })();
