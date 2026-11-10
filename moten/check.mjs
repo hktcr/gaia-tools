@@ -101,7 +101,11 @@ try{
    await page.goto(local);await page.keyboard.press('Tab');assert.equal(await page.locator(':focus').textContent(),'Hoppa till innehållet');await page.keyboard.press('Enter');assert.equal(await page.locator(':focus').getAttribute('id'),'innehall');
    await page.locator('#pack .study-link').focus();await page.keyboard.press('Enter');await page.keyboard.press('Tab');assert.equal(await page.locator(':focus').getAttribute('id'),'reader-external');
    await page.keyboard.press('Tab');await page.keyboard.press('Tab');
-   assert.ok(await page.evaluate(()=>document.activeElement.closest('#article-reader')!==null),'Keyboard stays in modal');
+   // Native dialogs may cycle through browser chrome. They must not focus the inert page.
+   for(let i=0;i<8;i++){
+    assert.ok(await page.evaluate(()=>document.querySelector('#article-reader').matches(':modal')&&!document.activeElement.closest('.page')),'Keyboard cannot reach the page behind the dialog');
+    await page.keyboard.press('Tab');
+   }
    await page.locator('#reader-close').click();
    await page.locator('#pack .study-link').click();await page.mouse.click(4,4);assert.equal(await page.locator('#article-reader').isVisible(),false,'Backdrop closes');
    // Explicit publisher framing denial: no attempt to strip or bypass the policy.
