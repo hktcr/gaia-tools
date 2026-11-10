@@ -31,14 +31,34 @@ try{
   assert.equal(response.status(),200);
   await page.evaluate(()=>document.fonts.ready);
   assert.ok(await page.evaluate(()=>document.fonts.check('17px "Liberation Sans"')),'Embedded font loaded');
-  assert.equal(await page.locator('h1').textContent(),'AI iundervisningen.');
+  assert.equal(await page.locator('h1').textContent(),'AI i undervisningen');
+  assert.equal(await page.locator('.study:visible').count(),7,'Only seven introductory sources visible');
+  assert.ok((await page.locator('.meeting-header').boundingBox()).height<350,'Compact heading');
+  assert.equal(await page.locator('#learnlm-uk .notes-body').isVisible(),false);
+  await page.locator('#learnlm-uk summary')[width===390?'tap':'click']();
+  assert.ok(await page.locator('#learnlm-uk .notes-body').isVisible(),'Study methods and limitations can be opened');
+  await page.locator('#learnlm-uk summary')[width===390?'tap':'click']();
   assert.equal(await page.locator('.study-link').count(),18);
   assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1),'No horizontal overflow at '+width);
   const anchors=await page.locator('.study-link').evaluateAll(es=>es.map(e=>e.getAttribute('href')));
   assert.deepEqual(anchors,data.studies.map(s=>s.url).filter(Boolean).sort((a,b)=>anchors.indexOf(a)-anchors.indexOf(b)));
   const image=await context.request.get('http://127.0.0.1:8765/moten/assets/ink-paper.png');assert.equal(image.status(),200);assert.ok((await image.body()).length>100000);
-  await page.locator('.more summary').first()[width===390?'tap':'click']();
-  assert.ok(await page.locator('#wang').isVisible(),'Details opens');
+  if(width===390||width===1440){
+   await page.evaluate(()=>scrollTo(0,0));
+   const label=width===390?'mobile':'desktop';
+   const preview=(await page.screenshot({type:'jpeg',quality:75,fullPage:false})).toString('base64');
+   for(let i=0;i<preview.length;i+=8000) console.log('PREVIEW_'+label+'_CHUNK '+(i/8000)+' '+preview.slice(i,i+8000));
+   if(width===1440){
+    await page.locator('#kompression').scrollIntoViewIfNeeded();
+    const section=(await page.screenshot({type:'jpeg',quality:75,fullPage:false})).toString('base64');
+    for(let i=0;i<section.length;i+=8000) console.log('PREVIEW_assessment_CHUNK '+(i/8000)+' '+section.slice(i,i+8000));
+   }
+  }
+  await page.locator('#extra-studies > summary').first()[width===390?'tap':'click']();
+  assert.ok(await page.locator('#wang').isVisible(),'Further studies open');
+  assert.equal(await page.locator('.study:visible').count(),18);
+  await page.locator('#remiss-excerpts > summary')[width===390?'tap':'click']();
+  assert.equal(await page.locator('.quotes q:visible').count(),6,'All exact curriculum excerpts retained');
   assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1),'Expanded overflow '+width);
   await page.screenshot({path:'moten-test-output/'+width+'.png',fullPage:true});
   await page.emulateMedia({colorScheme:'dark',reducedMotion:'reduce'});
@@ -49,7 +69,7 @@ try{
    await page.goto('http://127.0.0.1:8765/moten/ai-2026-11-11/');
    await page.keyboard.press('Tab');assert.equal(await page.locator(':focus').textContent(),'Hoppa till innehållet');
    await page.keyboard.press('Enter');assert.equal(await page.locator(':focus').getAttribute('id'),'innehall');
-   await page.locator('.more summary').first().focus();await page.keyboard.press('Enter');assert.ok(await page.locator('#wang').isVisible());
+   await page.locator('#extra-studies > summary').first().focus();await page.keyboard.press('Enter');assert.ok(await page.locator('#wang').isVisible());
    const original=data.studies.find(s=>s.id==='pack').url;
    await page.route(original,route=>route.fulfill({status:200,contentType:'text/html',body:'<title>Original destination</title>'}));
    await page.locator('#pack .study-link').click();await page.waitForURL(original);assert.equal(page.url(),original);
@@ -88,7 +108,7 @@ try{
    await page.evaluate(()=>document.fonts.ready);
    assert.equal(await page.locator('.study-link').count(),18);
    assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1));
-   await page.locator('.more summary').first()[width===390?'tap':'click']();
+   await page.locator('#extra-studies > summary').first()[width===390?'tap':'click']();
    assert.ok(await page.locator('#wang').isVisible());
    const original=data.studies.find(s=>s.id==='pack').url;
    await page.route(original,route=>route.fulfill({status:200,contentType:'text/html',body:'<title>Original destination</title>'}));

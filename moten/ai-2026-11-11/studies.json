@@ -6,11 +6,12 @@
       "author": "LearnLM UK · 2026",
       "type": "Leverantörens forskningsrapport",
       "context": "1 179 elever · 10 skolor · Storbritannien",
-      "title": "Bättre på nästa uppgift – ingen tydlig vinst på det breda provet",
+      "title": "Bättre på nästa uppgift, ingen tydlig vinst på det breda provet",
       "url": "https://services.google.com/fh/files/misc/learnlm_oct26.pdf",
       "original": "LearnLM: UK classroom trial, October 2026",
       "finding": "Elever med AI-stöd lyckades oftare på en efterföljande självständig uppgift. För det bredare matematikprovet sågs ingen tydlig förbättring.",
-      "limit": "Lärare godkände varje AI-meddelande. Resultatet gäller detta övervakade upplägg, inte fritt bruk av en chattbot."
+      "limit": "Lärare godkände varje AI-meddelande. Resultatet gäller detta övervakade upplägg, inte fritt bruk av en chattbot.",
+      "teaser": "Eleverna lyckades oftare på en efterföljande självständig uppgift; någon tydlig förbättring på det bredare matematikprovet sågs inte."
     },
     {
       "id": "learnlm-sl",
@@ -18,11 +19,12 @@
       "author": "LearnLM Sierra Leone · 2026",
       "type": "Leverantörens forskningsrapport",
       "context": "48 klasser · 12 skolor · 8 veckor",
-      "title": "Ett lärarlett AI-upplägg förbättrade matematikresultaten",
+      "title": "Lärarlett AI-upplägg gav bättre resultat i matematik",
       "url": "https://storage.googleapis.com/deepmind-media/LearnLM/learnLM_sierraleone_may26.pdf",
       "original": "LearnLM: Sierra Leone classroom trial, May 2026",
       "finding": "Undervisningspaketet med AI-stött pararbete och lärarledda diskussioner gav en positiv effekt på matematikprovet: 0,258 standardavvikelser.",
-      "limit": "Studien prövar ett samlat undervisningsupplägg. Den isolerar inte AI-delens effekt, och effekten är inte en procentuell ökning."
+      "limit": "Studien prövar ett samlat undervisningsupplägg. Den isolerar inte AI-delens effekt, och effekten är inte en procentuell ökning.",
+      "teaser": "Ett åtta veckor långt upplägg med AI-stött pararbete och lärarledda diskussioner gav bättre resultat på matematikprovet."
     },
     {
       "id": "bergdahl",
@@ -30,11 +32,12 @@
       "author": "Bergdahl · 2026",
       "type": "Tidskriftsartikel",
       "context": "47 elever · årskurs 7 · en svensk skola",
-      "title": "Att granska AI-svar är bara en del av AI-kunnigheten",
+      "title": "Att granska AI-svar är en del av AI-kunnigheten",
       "url": "https://doi.org/10.1186/s40561-026-00464-y",
       "original": "Student epistemic agency in AI-mediated practices",
       "finding": "Studien skiljer elevers förhållningssätt till AI-svar från förståelse för data och algoritmer. Dessa delar av AI-kunnigheten behöver uppmärksammas var för sig.",
-      "limit": "Ett litet, lokalt och huvudsakligen självrapporterat material. Det visar inte att en viss undervisning orsakade bättre kritiskt tänkande."
+      "limit": "Ett litet, lokalt och huvudsakligen självrapporterat material. Det visar inte att en viss undervisning orsakade bättre kritiskt tänkande.",
+      "teaser": "Studien med 47 svenska sjundeklassare skiljer granskning av AI-svar från förståelse för data och algoritmer."
     },
     {
       "id": "pack",
@@ -46,7 +49,8 @@
       "url": "https://www.tesolunion.org/archives-info/347",
       "original": "An Exploratory Evaluation of GPT-4’s Consistency as an English Essay Rater",
       "finding": "Högsta poängen saknades för alla fyra kriterier. Begränsad skalanvändning syntes alltså redan i delbedömningarna.",
-      "limit": "En studentgrupp på B1-nivå och en AI-bedömning per text. Ett residualmått gav motstridigt stöd: alla mått visade inte central tendens."
+      "limit": "En studentgrupp på B1-nivå och en AI-bedömning per text. Ett residualmått gav motstridigt stöd: alla mått visade inte central tendens.",
+      "teaser": "Högsta poängen saknades för alla fyra kriterier i 40 engelska studenttexter, men olika analysmått gav inte entydigt stöd för central tendens."
     },
     {
       "id": "brevik",
@@ -54,11 +58,12 @@
       "author": "Brevik, Jerpseth & Lafontan · 2026",
       "type": "Tidskriftsartikel",
       "context": "32 essätentamina · masterutbildning i folkhälsa",
-      "title": "Ett liknande genomsnitt dolde skillnader mellan arbetena",
+      "title": "Liknande snittbetyg dolde en mindre spridning",
       "url": "https://www.frontiersin.org/journals/education/articles/10.3389/feduc.2026.1904452/full",
       "original": "Large language models as grading assistants in public health education",
       "finding": "Lågt lärarbedömda arbeten tenderade att få högre AI-betyg och högt bedömda lägre. I ChatGPTs upprepade bedömningar saknades A och F.",
-      "limit": "Litet urval och två mänskliga referensbedömare utan uppmätt inbördes reliabilitet. Resultaten varierade med modell och arbetssätt."
+      "limit": "Litet urval och två mänskliga referensbedömare utan uppmätt inbördes reliabilitet. Resultaten varierade med modell och arbetssätt.",
+      "teaser": "I 32 essätentamina låg AI:s genomsnitt nära lärarnas, samtidigt som låga och höga betyg tenderade att dras mot mitten."
     },
     {
       "id": "corsi",
@@ -66,11 +71,12 @@
       "author": "Corsi m.fl. · 2026",
       "type": "Preprint · v1",
       "context": "761 psykologiuppgifter · tre brittiska universitet",
-      "title": "Tre modeller pressade ihop poängskalan i samma material",
+      "title": "Tre modeller pressade ihop poängskalan",
       "url": "https://arxiv.org/html/2610.18019v1",
       "original": "Machine–human agreement in marking undergraduate assignments is specific to model, prompt and institution",
       "finding": "Alla tre modellerna komprimerade poängen med de utvalda instruktionerna. Att kombinera modellerna undanröjde inte den gemensamma avvikelsen.",
-      "limit": "153 uppgifter användes för promptval och 608 för test. Studien fastställer inte orsaken och har ingen intern mätning av mänsklig bedömarreliabilitet."
+      "limit": "153 uppgifter användes för promptval och 608 för test. Studien fastställer inte orsaken och har ingen intern mätning av mänsklig bedömarreliabilitet.",
+      "teaser": "Tre modeller gav en snävare poängspridning i universitetsuppgifter i psykologi; att kombinera modellerna tog inte bort avvikelsen."
     },
     {
       "id": "rulers",
@@ -78,11 +84,12 @@
       "author": "Hong m.fl. · 2026",
       "type": "Konferensartikel · EMNLP",
       "context": "Fyra modeller · elevtexter och genererade texter",
-      "title": "Delbedömningar var ingen generell lösning",
+      "title": "Delbedömningar fungerade olika väl för olika material",
       "url": "https://aclanthology.org/2026.emnlp-main.566/",
       "original": "From Rubrics to Reliable Scores: Evidence-Grounded Text Evaluation with LLM Judges",
       "finding": "Delkriterier gav bättre överensstämmelse med människor för alla fyra modeller på ASAP, men sämre för tre av fyra på SummHF.",
-      "limit": "RULERS kombinerar fasta kriterier, textbelägg och kalibrering och var bäst i de flesta prövningar. Det visar inte att uppdelning ensam löser poängkompression."
+      "limit": "RULERS kombinerar fasta kriterier, textbelägg och kalibrering och var bäst i de flesta prövningar. Det visar inte att uppdelning ensam löser poängkompression.",
+      "teaser": "Uppdelning i kriterier förbättrade överensstämmelsen med människor på ett textmaterial men försämrade den för de flesta modeller på ett annat."
     },
     {
       "id": "wang",
@@ -94,7 +101,8 @@
       "url": "https://aclanthology.org/2025.acl-long.423/",
       "original": "LLMs can Perform Multi-Dimensional Analytic Writing Assessments",
       "finding": "Separata kriteriefrågor gav mer specifik återkoppling än när modellen fick alla kriterier samtidigt.",
-      "limit": "Återkopplingen bedömdes till stor del indirekt med AI. Mer specifika kommentarer är inte i sig bevis på större korrekthet."
+      "limit": "Återkopplingen bedömdes till stor del indirekt med AI. Mer specifika kommentarer är inte i sig bevis på större korrekthet.",
+      "teaser": "Separata kriteriefrågor gav mer specifika kommentarer, men återkopplingens kvalitet bedömdes till stor del med AI."
     },
     {
       "id": "kucia",
@@ -106,7 +114,8 @@
       "url": "https://arxiv.org/html/2604.00259v1",
       "original": "LLM Essay Scoring Under Holistic and Analytic Rubrics: Prompt Effects and Bias",
       "finding": "Analytiska poäng kunde vara komprimerade och lägre än mänskliga poäng, särskilt för grammatik och skrivkonventioner.",
-      "limit": "Helhetsbedömning och analytisk bedömning användes på olika dataset. Metodernas effekter kan därför inte isoleras på samma texter."
+      "limit": "Helhetsbedömning och analytisk bedömning användes på olika dataset. Metodernas effekter kan därför inte isoleras på samma texter.",
+      "teaser": "Även poäng för enskilda kriterier kunde vara komprimerade och systematiskt lägre än människors."
     },
     {
       "id": "yavuz",
@@ -118,7 +127,8 @@
       "url": "https://bera-journals.onlinelibrary.wiley.com/doi/10.1111/bjet.13494",
       "original": "Utilizing large language models for EFL essay grading",
       "finding": "Den starka texten fick högre genomsnitt av ChatGPT än av de mänskliga bedömarna. Starka texter dras alltså inte alltid ned.",
-      "limit": "Bara tre särskilt utvalda texter. Studien räcker inte för generella slutsatser; konsekventa bedömningar behöver inte vara korrekta."
+      "limit": "Bara tre särskilt utvalda texter. Studien räcker inte för generella slutsatser; konsekventa bedömningar behöver inte vara korrekta.",
+      "teaser": "Den starkaste av tre utvalda texter fick högre genomsnitt av ChatGPT än av människorna – ett begränsat motexempel till en allmän kompressionsregel."
     },
     {
       "id": "policar",
@@ -130,7 +140,8 @@
       "url": "https://arxiv.org/html/2501.14499v1",
       "original": "Automated Assignment Grading with Large Language Models: Insights From a Bioinformatics Course",
       "finding": "Fem av sex modeller klassificerade ungefär 85–90 procent av kriterierna korrekt som uppfyllda eller inte uppfyllda.",
-      "limit": "Samma manuella material användes för promptjustering och jämförelse. Ingen direkt jämförelse med helhetsbedömning; en senare tidskriftsversion finns."
+      "limit": "Samma manuella material användes för promptjustering och jämförelse. Ingen direkt jämförelse med helhetsbedömning; en senare tidskriftsversion finns.",
+      "teaser": "Fem av sex modeller klassificerade omkring 85–90 procent av kriterierna korrekt i en avgränsad bioinformatikuppgift."
     },
     {
       "id": "geval",
@@ -142,7 +153,8 @@
       "url": "https://aclanthology.org/2023.emnlp-main.153/",
       "original": "G-Eval: NLG Evaluation using GPT-4 with Better Human Alignment",
       "finding": "Få heltalssteg gav många lika poäng. Författarna prövade sannolikhetsvägda poäng för att få större upplösning.",
-      "limit": "Detta gäller bedömning av AI-genererad text, inte elevers skrivande. Problemet syntes även när enskilda kvaliteter bedömdes."
+      "limit": "Detta gäller bedömning av AI-genererad text, inte elevers skrivande. Problemet syntes även när enskilda kvaliteter bedömdes.",
+      "teaser": "Få heltalssteg gav många lika poäng vid bedömning av AI-genererade texter; sannolikhetsvägda poäng prövades för större upplösning."
     },
     {
       "id": "fujinuma",
@@ -154,7 +166,8 @@
       "url": "https://aclanthology.org/2026.findings-acl.657/",
       "original": "Contrastive Decoding Mitigates Score Range Bias in LLM-as-a-Judge",
       "finding": "Överensstämmelsen med mänskliga bedömningar förändrades när samma fem skalsteg fick andra siffervärden.",
-      "limit": "Skalberoende är inte samma sak som poängkompression. Ogiltiga modellsvar ersattes dessutom med minimipoäng."
+      "limit": "Skalberoende är inte samma sak som poängkompression. Ogiltiga modellsvar ersattes dessutom med minimipoäng.",
+      "teaser": "Överensstämmelsen med människor ändrades när samma fem skalsteg gavs andra siffervärden."
     },
     {
       "id": "zhang",
@@ -166,7 +179,8 @@
       "url": "https://arxiv.org/html/2610.32986v1",
       "original": "LLM-as-a-Judge Version Shift: The Instrument Changed, Not the Standard",
       "finding": "Mistral Small 3.2 gav nästan samma poäng till många olika forskningsförslag. Samma kollaps sågs inte i studiens kodgranskning.",
-      "limit": "Ett avgränsat exempel långt från skolbedömning. Exakt andel används inte här eftersom nämnare i huvudtext och appendix behöver redas ut."
+      "limit": "Ett avgränsat exempel långt från skolbedömning. Exakt andel används inte här eftersom nämnare i huvudtext och appendix behöver redas ut.",
+      "teaser": "Ett modellbyte gav nästan likformiga poäng för många forskningsförslag; samma mönster sågs inte i kodgranskningen."
     },
     {
       "id": "steiss",
@@ -178,7 +192,8 @@
       "url": "https://doi.org/10.1016/j.learninstruc.2024.101894",
       "original": "Comparing the quality of human and ChatGPT feedback of students’ writing",
       "finding": "Tränade människor gav bättre återkoppling än GPT-3.5 i korrekthet, prioritering, vägledning och stödjande ton. AI var bättre på kriterieanknytning.",
-      "limit": "Studien mätte återkopplingens kvalitet, inte hur eleverna sedan förbättrade sina texter. Människorna hade goda utbildnings- och tidsresurser."
+      "limit": "Studien mätte återkopplingens kvalitet, inte hur eleverna sedan förbättrade sina texter. Människorna hade goda utbildnings- och tidsresurser.",
+      "teaser": "Tränade människor gav bättre återkoppling än GPT-3.5 på flera kvaliteter, medan AI var bättre på kriterieanknytning."
     },
     {
       "id": "meyer",
@@ -190,7 +205,8 @@
       "url": "https://doi.org/10.1016/j.caeai.2023.100199",
       "original": "Using LLMs to bring evidence-based feedback into the classroom",
       "finding": "GPT-3.5-återkoppling gav en liten positiv effekt på omedelbar textrevision jämfört med revision utan sådan återkoppling. Ingen säkerställd effekt sågs på nästa skrivuppgift.",
-      "limit": "Ingen grupp med läraråterkoppling. Utfallet bedömdes automatiskt med en separat experttränad modell; 93 elever föll bort av tekniska skäl."
+      "limit": "Ingen grupp med läraråterkoppling. Utfallet bedömdes automatiskt med en separat experttränad modell; 93 elever föll bort av tekniska skäl.",
+      "teaser": "AI-återkoppling gav en liten positiv effekt på den omedelbara textrevisionen, men ingen säkerställd effekt på nästa skrivuppgift."
     },
     {
       "id": "farrokhnia",
@@ -202,7 +218,8 @@
       "url": "https://link.springer.com/article/10.1186/s41239-026-00579-9",
       "original": "Generative AI offers more, but students revise less",
       "finding": "AI-upplägget fick högre kvalitetspoäng för återkopplingen. Någon statistiskt säkerställd skillnad mellan gruppernas reviderade texter kunde inte visas.",
-      "limit": "Små grupper, en uppgift och en lärare. Utebliven säkerställd skillnad visar inte att metoderna är likvärdiga."
+      "limit": "Små grupper, en uppgift och en lärare. Utebliven säkerställd skillnad visar inte att metoderna är likvärdiga.",
+      "teaser": "AI-återkopplingen fick högre kvalitetspoäng, utan någon säkerställd skillnad mellan gruppernas reviderade texter."
     },
     {
       "id": "aila",
@@ -214,7 +231,8 @@
       "url": "https://educationendowmentfoundation.org.uk/projects-and-evaluation/projects/aila-teacher-choices-trial",
       "original": "Aila Teacher Choices Trial",
       "finding": "Lärare med Aila rapporterade i genomsnitt omkring 49 minuter mindre planeringstid per vecka än jämförelsegruppen.",
-      "limit": "Tiden var självrapporterad. Resultatet gäller planeringsarbete och visar inte att elevernas lärande förbättrades."
+      "limit": "Tiden var självrapporterad. Resultatet gäller planeringsarbete och visar inte att elevernas lärande förbättrades.",
+      "teaser": "Lärare med Aila rapporterade omkring 49 minuter mindre planeringstid per vecka; elevlärande undersöktes inte."
     }
   ],
   "remiss": {
