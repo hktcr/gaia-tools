@@ -1,8 +1,8 @@
 name: Presentation version 3 checks
 on:
   push:
-    branches: [main, 'work/ai-presentation-2026-11-11-v3*']
-    paths: ['moten/ai-2026-11-11/presentation/version-3/**', 'moten/presentation-v3-check.mjs', '.github/workflows/presentation-v3-check.yml']
+    branches: [main, 'work/ai-presentation-2026-11-11-v3*', 'work/ai-mote-2026-11-11*']
+    paths: ['moten/ai-2026-11-11/presentation/**', 'moten/presentation-v3-check.mjs', '.github/workflows/presentation-v3-check.yml']
 permissions:
   contents: read
 jobs:
