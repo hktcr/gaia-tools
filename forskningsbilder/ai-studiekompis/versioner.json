@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "current": "1.0.0",
+  "current_path": "version-1/",
+  "versions": [
+    {
+      "version": "1.0.0",
+      "date": "2026-11-11",
+      "path": "version-1/",
+      "status": "current",
+      "note": "Första forskningsbilden. Fem studier, separat övningsresultat och självständigt lärande."
+    }
+  ]
+}
