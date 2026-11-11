@@ -103,7 +103,7 @@ try {
     check('Reserve PDF two builds identical after fixed metadata', one.equals(two));
     await writeFile(path.join(path.dirname(targetPath), 'AI_och_undervisning_reserv_2026-11-11.pdf'), one);
     await writeFile(path.join(output, 'AI_och_undervisning_reserv_2026-11-11.pdf'), one);
-    check('Reserve contains five planned page sections', await p.locator('.print-cover,.print-page').count() === 5);
+    check('Reserve contains nine planned page sections', await p.locator('.print-cover,.print-page').count() === 9);
     await c.close();
   }
 
@@ -137,6 +137,15 @@ try {
         await page.locator('#open-discussion').click();
         await page.locator('#discussion-dialog button').click();
         check(`${item.name}: discussion close and reopen works`, await page.locator('#discussion-dialog').evaluate(n=>!n.open));
+        await page.locator('#open-review').click();
+        check(`${item.name}: written review opens`, await page.locator('#review-dialog').evaluate(n=>n.open));
+        await page.locator('#review-student').selectOption('12');
+        check(`${item.name}: review keeps four qualitative aspects and separate score`, await page.locator('#review-copy dt').count()===4 && (await page.locator('.review-score').textContent()).includes('referens 86') && (await page.locator('.review-score').textContent()).includes('komprimerat 76'));
+        const rd = await page.locator('#review-dialog').evaluate(n=>{const r=n.getBoundingClientRect();return {left:r.left,right:r.right,top:r.top,bottom:r.bottom,sw:n.scrollWidth,cw:n.clientWidth};});
+        check(`${item.name}: review dialog fits viewport`, rd.left>=0 && rd.right<=width+1 && rd.top>=0 && rd.bottom<=height+1 && rd.sw<=rd.cw+1,rd);
+        await screenshot(page, `${item.name}-review.png`,item);
+        await page.keyboard.press('Escape');
+        check(`${item.name}: review Escape restores focus`, await page.locator('#review-dialog').evaluate(n=>!n.open) && await page.locator('#open-review').evaluate(n=>n===document.activeElement));
 
         if (width === 390 || width === 1440 || width === 388) {
           await page.locator('#open-study-sources').click();
