@@ -18,7 +18,7 @@ return `<!doctype html>
 <h1>AI i undervisningen</h1><p class="subtitle">Studier inför kollegiets samtal.</p>
 <nav aria-label="På den här sidan"><a href="#larande">Lärande</a><a href="#kompression">Bedömning</a><a href="#fler-kallor">Fler källor</a><a href="#remiss">Kursplaner</a></nav>
 </header>
-<main id="innehall" tabindex="-1">
+<main id="innehall" tabindex="-1"><p><a href="presentation/full/">Öppna hela presentationen</a> · <a href="presentation/">Kompression i AI-bedömning</a></p>
 <section id="larande" aria-labelledby="h-larande"><h2 id="h-larande">Elevens lärande</h2>${group("larande")}</section>
 <section id="kompression" aria-labelledby="h-kompression"><h2 id="h-kompression">Poängkompression</h2>
 <p class="section-note">Flera studier visar att AI-poäng kan samlas i ett snävare intervall än mänskliga referensbedömningar. Mönstret varierar och har setts även i delpoäng.</p>
