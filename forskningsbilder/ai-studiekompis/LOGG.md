@@ -27,3 +27,18 @@ Källor finns i [studier.json](version-1/studier.json). Nigeria har verifierats 
 Lokala kod- och innehållskontroller, renderad reserv-PDF och publicerade gränssnittsprov redovisas i releaskvittot. Lokal headless-Chrome start och lokal HTTP-bindning är blockerade av körmiljön. Browserpolicyn tillåter inte file-adresser; ingen alternativ file-visningsväg används. Detta begränsar förhandsprov, inte de självständiga kod-/PDF-kontrollerna. Publicerad sida måste provas separat innan den kallas gränssnittsverifierad.
 
 [Återanvändbar metod](../METOD.md) · [Poängkompressionens erfarenhetslogg](../../moten/ai-2026-11-11/presentation/LOGG.md).
+
+## Publiceringskvitto 11 november 2026
+
+Release 9d0a89d7b1de1e0bab6fa1e0739c254adfb4ab90 i gaia-tools och 1d585534d0982cfd349894803308bf899f369191 i markr är skrivna till main och återlästa. Varje blob är jämförd med lokal Git-blobhash. Publika Pages-adresser visar det nya innehållet. Äldre version 3 är oförändrad. Lokala arbetskopior är begränsade exportkopior utan lokalt Git-repo; fjärrgrenen är auktoritativ.
+
+440/440 MärkR-regressioner och 33 DOM/innehållsprov för forskningsbilden godkända. Fem genererade leveransfiler är byteidentiska efter upprepat bygge. Alla fyra PDF-sidor visuellt granskade. Oberoende källgranskning resulterade i två genomförda språkpreciseringar kring Bastanis grupper och icke-signifikant Tutorskillnad.
+
+Verklig Chrome: resultatväxling, fem källpaneler och nästa-knapp, syntes, versionsinformation, spela till slutläge, återställ, piltangent och Escape verifierade. Breda och smala vyer kontrollerade vid 390, 768, 1024 och 1440 CSS-pixlar utan horisontell överflytning. MärkR:s poster 268 och 270 har rätt huvudlänkar och fungerande infällda versionspaneler. En tidigare utgåva med PDF testades i syntetisk testdata, inte fabricerad produktionshistorik.
+
+Begränsning: Fullscreen API nekades i ansluten Chrome; reservläget som använder hela fönstret fungerade. Grov pekemulering och OS-växlad reducerad rörelse är inte liveprovade. Ingen alternativ väg runt webbläsarsäkerhet användes. Lokal file-visning var förbjuden; den publika sidan provades efter ordinarie behörig publicering.
+
+work_status: publicerad, huvudflöden verifierade med ovanstående avgränsning.
+documentation_status: metod, loggar, källunderlag och kvitto sammanförda; framtida tillämpningar följer samma versionsprincip.
+event_id: EVT-4c4b9f46-b3c3-4541-ba4b-b14dbccd0f49.
+[LEKTOR-krönika](https://drive.google.com/file/d/1q-YYp0aIU7GKGafeLvAxqWHxLKfMAQ2q/view) ↔ [huvudkrönika](https://drive.google.com/file/d/1c5gcTDT82TCl3pneLupbvMvQ9ZfD1wRW/view).
