@@ -1,11 +1,14 @@
 {
-  "release": "r78-presentation-r2",
-  "source_revision": "r7.8-final-candidate",
-  "slides": 18,
-  "sha256": {
+  "release": "compression-r1",
+  "slides": 8,
+  "pdf_pages": 11,
+  "data": "12 mathematically constructed examples; no participant data",
+  "previous_release": "archive/r78-presentation-r2/",
+  "files": {
     "FONT-LICENSE.txt": "1315a62758a603a3e6e87a79b8389563789c59c1740b9db8bc2b20e2e2145458",
-    "index.html": "e2d158959df0e9b6bb0cc72e172a7bf4133614c342bc82768b47deebfd689f4a",
-    "AI_och_undervisning_backup_2026-11-11.pdf": "9e891c115dc0af17b8535953db3f43d132be135531c2f31df30914b2826b5131",
-    "README.md": "a0b293e8f87d859ccc0973d889724e551cfd0ec0a36655d63bf9ea6dc4b9c4f9"
+    "index.html": "b328c025253cba916a72ea389cb4b8e6d77f4476e74299c8058e699b96382af8",
+    "AI_och_undervisning_backup_2026-11-11.pdf": "d5a394c45996e4049245a3a80f840558221dba127de2ce2d62021dddeda40a73",
+    "README.md": "b3c7a76c4781eb78bfd7899371a7b4804118cc127e3662e0b3437dbcffbc12aa",
+    "Talarstod_kompression_2026-11-11.txt": "798205dc9c6f0a03c5663590cb4b4eb97cdeb668155735cb08033cd301d6d5eb"
   }
 }

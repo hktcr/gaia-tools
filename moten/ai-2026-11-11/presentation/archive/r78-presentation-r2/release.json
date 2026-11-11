@@ -1,0 +1,11 @@
+{
+  "release": "r78-presentation-r2",
+  "source_revision": "r7.8-final-candidate",
+  "slides": 18,
+  "sha256": {
+    "FONT-LICENSE.txt": "1315a62758a603a3e6e87a79b8389563789c59c1740b9db8bc2b20e2e2145458",
+    "index.html": "e2d158959df0e9b6bb0cc72e172a7bf4133614c342bc82768b47deebfd689f4a",
+    "AI_och_undervisning_backup_2026-11-11.pdf": "9e891c115dc0af17b8535953db3f43d132be135531c2f31df30914b2826b5131",
+    "README.md": "a0b293e8f87d859ccc0973d889724e551cfd0ec0a36655d63bf9ea6dc4b9c4f9"
+  }
+}
