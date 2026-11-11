@@ -34,14 +34,14 @@ try{
  const t0=await page.evaluate(()=>document.getAnimations()[0].currentTime);
  await page.keyboard.press('PageUp');await page.waitForTimeout(100);
  assert.ok(await page.evaluate(()=>document.getAnimations()[0].currentTime)>=t0,'Boundary must not restart');
- await page.locator('#pause').click();
+ await page.locator('#pause').click();await page.evaluate(()=>Promise.all(document.getAnimations().map(a=>a.ready)));
  const paused=await page.evaluate(()=>document.getAnimations().map(a=>a.currentTime));
  await page.waitForTimeout(150);assert.deepEqual(await page.evaluate(()=>document.getAnimations().map(a=>a.currentTime)),paused);
  await page.locator('#pause').click();
  report.performance=await page.evaluate(()=>new Promise(done=>{let first=performance.now(),last=first,t=[];function frame(now){t.push(now-last);last=now;if(now-first<2000)requestAnimationFrame(frame);else done({frames:t.length,meanMs:(now-first)/t.length,maxMs:Math.max(...t),over100Ms:t.filter(x=>x>100).length})}requestAnimationFrame(frame)}));
  assert.ok(report.performance.frames>15,'Animation must keep rendering');
  assert.deepEqual(await page.locator('.export-page.active svg text').allTextContents(),text0);
- assert.ok(await page.evaluate(()=>[...document.querySelectorAll('.export-page.active .branch')].some(el=>getComputedStyle(el).stroke!==el.getAttribute('stroke'))));
+ assert.ok(await page.evaluate(()=>[...document.querySelectorAll('.export-page.active .branch')].some(el=>{const probe=document.createElement('span');probe.style.color=el.getAttribute('stroke');document.body.append(probe);const final=getComputedStyle(probe).color;probe.remove();return getComputedStyle(el).stroke!==final})), 'A decorative branch actually changes colour');
  await page.screenshot({path:'presentation-test-output/first-mid-reveal.png'});
  await page.waitForFunction(()=>document.getElementById('presenter').dataset.motionState==='rest',{},{timeout:12000});
  assert.equal(await page.evaluate(()=>document.getAnimations().length),0);
