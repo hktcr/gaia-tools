@@ -1,0 +1,31 @@
+name: Presentation version 4 checks
+on:
+  push:
+    branches: [main, 'work/ai-presentation-2026-11-11-v4*']
+    paths: ['moten/ai-2026-11-11/presentation/version-4/**', 'moten/presentation-v4-check.mjs', '.github/workflows/presentation-v4-check.yml']
+permissions:
+  contents: read
+jobs:
+  responsive:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: npm install --no-save --package-lock=false playwright@1.56.1
+      - name: Use installed Chrome or install official channel
+        run: |
+          if command -v google-chrome >/dev/null 2>&1; then
+            google-chrome --version
+          else
+            npx playwright install --with-deps chrome
+          fi
+      - run: node moten/presentation-v4-check.mjs moten/ai-2026-11-11/presentation/version-4/index.html
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: presentation-v4-chrome
+          path: responsive-artifacts
+          retention-days: 7
