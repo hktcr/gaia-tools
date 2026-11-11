@@ -54,8 +54,8 @@ try{
  await page.locator('#motion').click();assert.equal(await state(page),'rest');assert.equal(await page.evaluate(()=>document.getAnimations().length),0);assert.ok(await page.locator('#replay').isDisabled());
  await page.reload();assert.ok(await page.locator('#replay').isDisabled());assert.equal(await state(page),'rest');
  await page.locator('#motion').click();assert.equal(await state(page),'rest');await page.locator('#replay').click();assert.equal(await state(page),'running');
- await page.emulateMedia({reducedMotion:'reduce'});assert.equal(await state(page),'rest');assert.ok(await page.locator('#replay').isDisabled());
- await page.emulateMedia({reducedMotion:'no-preference'});assert.equal(await state(page),'rest');
+ await page.emulateMedia({reducedMotion:'reduce'});await page.waitForFunction(()=>document.getElementById('presenter').dataset.motionState==='rest'&&document.getElementById('replay').disabled,{},{timeout:1500});assert.equal(await state(page),'rest');assert.ok(await page.locator('#replay').isDisabled());
+ await page.emulateMedia({reducedMotion:'no-preference'});await page.waitForFunction(()=>!document.getElementById('replay').disabled,{},{timeout:1500});assert.equal(await state(page),'rest');
  pass('Return visits, explicit replay, persisted still mode and live reduced-motion changes');
  await page.locator('#next').focus();await page.keyboard.press('Space');assert.equal(await slide(page),'2');
  await page.keyboard.press('End');assert.equal(await slide(page),'18');assert.equal(await state(page),'rest');assert.ok(await page.locator('#replay').isDisabled());
