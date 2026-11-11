@@ -69,7 +69,7 @@ async function openCase(name, viewport, options = {}) {
     const u = route.request().url();
     return u.startsWith(base + '/') || u.startsWith('data:') ? route.continue() : route.abort('blockedbyclient');
   });
-  const page = await context.newPage();
+  const page = await context.newPage(); page.setDefaultTimeout(5000);
   const item = { name, viewport, options, consoleErrors: [], pageErrors: [] }; report.cases.push(item);
   page.on('pageerror', error => item.pageErrors.push(String(error)));
   page.on('console', message => { if (message.type() === 'error') item.consoleErrors.push(message.text()); });
