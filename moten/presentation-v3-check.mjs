@@ -103,7 +103,7 @@ try {
     check('Reserve PDF two builds identical after fixed metadata', one.equals(two));
     await writeFile(path.join(path.dirname(targetPath), 'AI_och_undervisning_reserv_2026-11-11.pdf'), one);
     await writeFile(path.join(output, 'AI_och_undervisning_reserv_2026-11-11.pdf'), one);
-    check('Reserve contains four planned page sections', await p.locator('.print-cover,.print-page').count() === 4);
+    check('Reserve contains five planned page sections', await p.locator('.print-cover,.print-page').count() === 5);
     await c.close();
   }
 
