@@ -1,9 +1,5 @@
-# AI och undervisning, 11 november 2026
+# AI kan dra poängen mot mitten
 
-Fristående gAIa Presenter för lärarmötet. 21 bilder med talarstöd, fraktalmotiv och tre interaktiva elevdiagram. Länken `./#bild-4` öppnar forskningsbilden direkt. På den bilden öppnar Källor tre klickbara sammanfattningar. Starta diagrammen med Spela. Perspektivknapparna och de numrerade cirklarna låter dig följa samma fiktiva elevexempel.
+En presentationsbild om poängkompression. De fyra skrivbedömningsaspekterna hämtas från svenska i Lgr22, årskurs 9. Uppsatserna och poängen är fiktiva. Klicka på Källor för de tre studiesammanfattningarna och kursplanen.
 
-Reserv-PDF:n har 25 sidor, inklusive en klickbar källbilaga till bild 4. De tre interaktiva bilderna visas i två statiska lägen vardera. Spara PDF bredvid HTML för användning utan uppkoppling.
-
-Bygger på rapportens frysta r7.8-final-candidate, breda r78-presentation-r2 och diagrammotorn från kompressionspresentationen. Kucia m.fl. (2026), tabell 3, ligger till grund för stapeldiagrammet om DREsS i Keywords-villkoret. Diagrammen med elevnummer är matematiskt konstruerade.
-
-Tidigare bred version: ../archive/r78-presentation-r2/. Kompressionspresentation: ../.
+Reserv-PDF innehåller bilden efter kompression samt en klickbar källbilaga. Den tidigare fullversionen med 21 bilder finns i [arkivet](archive/full-visual-r4/).
