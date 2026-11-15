@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="color-scheme" content="light dark">
-  <meta name="description" content="En fristående konceptdemo: ett uppgiftsoriginal, flera vyer och tydligt typade relationer. Enbart syntetiska exempel.">
+  <meta name="description" content="Utforska samma uppgift i flera sammanhang. Interaktiv nodkarta med 24 syntetiska exempel.">
   <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; connect-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none'">
   <title>En bank, flera vägar · Uppgifternas nodkarta</title>
   <link rel="stylesheet" href="style.css">
@@ -13,19 +13,19 @@
   <script src="app.js" defer></script>
 </head>
 <body>
-  <a class="skip" href="#explorer">Till utforskaren</a>
-  <header class="masthead">
-    <a class="wordmark" href="#"><span aria-hidden="true">✳</span> UPPGIFTERNAS NODKARTA</a>
-    <div class="header-tools"><span class="demo-pill">Syntetisk konceptdemo</span><button id="theme" type="button" class="quiet" aria-label="Växla ljust eller mörkt tema">Tema: system</button></div>
-  </header>
-  <main>
-    <section class="intro" aria-labelledby="page-title">
-      <div class="intro-copy"><p class="eyebrow">STRUKTUR FÖRE GRÄNSSNITT</p><h1 id="page-title">En bank.<br>Flera vägar till samma kunskap.</h1><p class="lead">En uppgift behöver inte bo i bara en bok. Ge originalet en stabil identitet och låt tydliga relationer öppna fler vägar till det.</p></div>
-      <aside class="thesis"><div class="thesis-number">01 <span>→</span> ∞</div><h2>Ett original. Många sammanhang.</h2><p>Böcker, kapitel och temapaket är vyer av samma innehåll. Ett huvudområde är en <strong>lins för kartan</strong>, inte en extra lagringsplats.</p><p class="small">24 nyskrivna exempel · Inga verkliga uppgiftsdata</p></aside>
-    </section>
-
-    <section id="explorer" class="explorer" aria-labelledby="explorer-title">
-      <div class="section-top"><div><p class="eyebrow">UTFORSKA SAMBANDEN</p><h2 id="explorer-title">Samma original, ny utsikt</h2></div><div class="view-tabs" role="group" aria-label="Visningssätt"><button id="show-map" type="button" aria-pressed="true">3D-karta</button><button id="show-list" type="button" aria-pressed="false">2D-lista</button></div></div>
+  <a class="skip" href="#graph">Till nodkartan</a>
+  <main id="explorer" class="explorer" aria-label="Uppgifternas nodkarta">
+    <header class="map-toolbar">
+      <h1>En bank, flera sammanhang</h1>
+      <div class="toolbar-actions">
+        <div class="view-tabs" role="group" aria-label="Visningssätt"><button id="show-map" type="button" aria-pressed="true">3D</button><button id="show-list" type="button" aria-pressed="false">Lista</button></div>
+        <button id="toggle-filters" type="button" aria-expanded="false" aria-controls="filter-panel">Filter</button>
+        <button id="toggle-info" type="button" aria-expanded="true" aria-controls="info-panel">Om kartan</button>
+      </div>
+    </header>
+    <section id="filter-panel" class="floating-panel filter-panel" aria-label="Filter och visning" hidden>
+      <button id="close-filters" class="panel-close" type="button" aria-label="Stäng filter">×</button>
+      <h2>Urval och visning</h2>
       <div class="filterbar">
         <div class="field search-field"><label for="search">Sök i exempelbanken</label><input id="search" type="search" placeholder="Begrepp, uppgift eller ID…" autocomplete="off"></div>
         <div class="field"><label for="subject-filter">Ämnesankare</label><select id="subject-filter"><option value="">Alla ämnesankare</option></select></div>
@@ -33,32 +33,37 @@
         <div class="field"><label for="package-filter">Paket</label><select id="package-filter"><option value="">Alla paket</option></select></div>
         <button id="clear-filters" class="quiet clear" type="button">Nollställ filter</button>
       </div>
-      <div class="map-options"><fieldset class="lens-group"><legend>Placera noder efter</legend><label><input type="radio" name="lens" value="subjects" checked><span>Ämnesankare</span></label><label><input type="radio" name="lens" value="books"><span>Böcker</span></label><label><input type="radio" name="lens" value="packages"><span>Paket</span></label></fieldset><div class="relation-options"><label><input id="relations" type="checkbox" checked> Visa länkar i kartan</label><label><input id="proposals" type="checkbox"> Ta med förslag</label></div></div>
+      <div class="map-options"><fieldset class="lens-group"><legend>Gruppera kartan efter</legend><label><input type="radio" name="lens" value="subjects" checked><span>Ämnen</span></label><label><input type="radio" name="lens" value="books"><span>Böcker</span></label><label><input type="radio" name="lens" value="packages"><span>Paket</span></label></fieldset><div class="relation-options"><label><input id="relations" type="checkbox" checked> Visa länkar i kartan</label><label><input id="proposals" type="checkbox"> Ta med förslag</label></div></div>
+
+      <button id="theme" type="button" class="quiet" aria-label="Växla ljust eller mörkt tema">Tema: system</button>
+    </section>
       <div class="explore-grid">
         <div class="visual-area">
           <div id="map-panel" class="map-panel">
-            <div class="canvas-note"><span class="live-dot" aria-hidden="true"></span><span id="map-caption">Ämnesankaret ordnar kartan. Originalet finns bara en gång.</span></div>
+            <div class="canvas-note sr-only"><span class="live-dot" aria-hidden="true"></span><span id="map-caption">Ämnesankaret ordnar kartan. Originalet finns bara en gång.</span></div>
             <canvas id="graph" tabindex="0" role="img" aria-label="Interaktiv 3D-nodkarta. Piltangenter roterar, plus och minus zoomar. Använd 2D-listan för att läsa och välja alla uppgifter." aria-describedby="map-help"></canvas>
             <div id="empty-map" class="empty-map" hidden><h3>Inga uppgifter matchar</h3><p>Prova ett annat ord eller nollställ filtren.</p></div>
-            <div class="map-bottom"><div id="map-help">Dra för att rotera · Zooma med +/− · Välj en nod<br><span>Piltangenter roterar när kartan har fokus. H återställer.</span></div><div class="map-buttons" role="group" aria-label="Kartkontroller"><button id="zoom-out" type="button" aria-label="Zooma ut">−</button><button id="zoom-in" type="button" aria-label="Zooma in">+</button><button id="reset-view" type="button" aria-label="Återställ kartans rotation och zoom">↺</button></div></div>
+            <div class="map-bottom"><div id="map-help">Dra för att rotera · Välj en nod</div><div class="map-buttons" role="group" aria-label="Kartkontroller"><button id="zoom-out" type="button" aria-label="Zooma ut">−</button><button id="zoom-in" type="button" aria-label="Zooma in">+</button><button id="reset-view" type="button" aria-label="Återställ kartans rotation och zoom">↺</button></div></div>
           </div>
-          <div id="list-panel" class="list-panel" hidden><h3 class="sr-only">Uppgifter i 2D-listan</h3><p class="list-intro">Samma urval och relationer som i kartan. Välj en uppgift för att läsa innehåll, placeringar och riktade relationer. <a href="#detail-title">Till det valda originalet →</a></p><ul id="task-list" class="task-list"></ul><p id="empty-list" class="empty-list" hidden>Inga uppgifter matchar. Prova ett annat ord eller nollställ filtren.</p></div>
+          <div id="list-panel" class="list-panel" hidden><h3 class="sr-only">Uppgifter i 2D-listan</h3><p class="list-intro">Välj en uppgift för att se dess kopplingar.</p><ul id="task-list" class="task-list"></ul><p id="empty-list" class="empty-list" hidden>Inga uppgifter matchar. Prova ett annat ord eller nollställ filtren.</p></div>
           <div class="legend" aria-label="Teckenförklaring"><span><i class="legend-dot"></i> Uppgift / ett original</span><span><i class="line membership"></i> Tillhör vy</span><span><i class="line related"></i> Relaterad</span><span><i class="line prerequisite"></i> → Förkunskap</span><span><i class="line proposed"></i> Förslag, ej godkänt</span></div>
           <div class="subject-legend" aria-label="Nodfärg anger ämnesankare"><span>Nodfärg = ämnesankare:</span><span><i class="swatch cell"></i>Cellen</span><span><i class="swatch energy"></i>Energi & materia</span><span><i class="swatch ecology"></i>Ekologi</span><span><i class="swatch genetics"></i>Genetik</span><span><i class="swatch methods"></i>Metod</span><span>＋ = vyankare</span></div>
           <div class="results-row"><p id="results" role="status" aria-live="polite"></p><span id="zoom-label">Zoom 100 %</span></div>
         </div>
-        <aside id="detail-panel" class="detail-panel" aria-labelledby="detail-title"><div id="detail"></div></aside>
+        <aside id="detail-panel" class="detail-panel floating-panel" role="dialog" aria-modal="true" aria-labelledby="detail-title" hidden><button id="close-detail" class="panel-close" type="button" aria-label="Stäng uppgiftsdetaljer">×</button><div id="detail"></div></aside>
       </div>
-      <p class="demo-disclosure"><strong>Allt innehåll är påhittat för demonstrationen.</strong> Böcker, kapitel, kursnamn, ID:n och granskningsstatus är exempel. Noderna visar inte riktiga lärare, skolor, elever eller uppgifter. Avstånd och storlek är layoutval, inte mätvärden.</p>
-    </section>
 
-    <section class="explanation" aria-labelledby="explanation-title"><div class="section-top"><div><p class="eyebrow">VAD STRUKTUREN GER</p><h2 id="explanation-title">Bygg relationen, inte bara hyllan.</h2></div><p class="section-aside">3D är en utforskande vy.<br>Den varaktiga tillgången är datamodellen.</p></div>
-      <div class="principles"><article><span class="step">01</span><h3>Identifiera originalet</h3><p>Ett stabilt uppgifts-ID och en version binder samman innehållet. Flera bokplaceringar skapar inte flera original.</p><p class="principle-tag">Samma källa, mindre dubbelarbete</p></article><article><span class="step">02</span><h3>Säg vad länken betyder</h3><p>”Tillhör kapitel”, ”kräver förkunskap” och ”är relaterad till” är olika relationer. Riktning, källa och granskningsstatus behöver följa med.</p><p class="principle-tag">Spårbarhet före fler taggar</p></article><article><span class="step">03</span><h3>Låt flera verktyg hitta</h3><p>Listor, sök, bokvyer och framtida AI-stöd kan använda samma struktur. Nya förslag behöver valideras innan de används som godkända samband.</p><p class="principle-tag">Mänsklig kontroll kan byggas in</p></article></div>
-    </section>
-    <section class="ai-section" aria-labelledby="ai-title"><div><p class="eyebrow">EN MÖJLIG FRAMTIDA ANVÄNDNING</p><h2 id="ai-title">Bättre underlag för AI.<br>Inte ett löfte om korrekthet.</h2><p>Typade, spårbara samband kan hjälpa ett framtida verktyg att hitta relevant material och visa varför det föreslås. Effekten måste prövas mot verkliga sökuppgifter och kvalitetssäkras.</p></div><div class="trace"><p class="trace-label">ILLUSTRERAT FLÖDE · INGEN AI KÖRS HÄR</p><ol><li><span>Fråga</span>”Hitta uppgifter om kol där eleven jämför modeller.”</li><li><span>Avgränsa</span>Sök begrepp + didaktisk förmåga + godkänd status.</li><li><span>Följ samband</span>Visa original-ID, bokplacering och relevanta förkunskaper.</li><li><span>Kontrollera</span>En redaktör granskar källan och eventuella nya relationsförslag.</li></ol><p class="small">Demo­söket ovan är ett lokalt textfilter. Det finns ingen modell, databas, automatisk faktakontroll eller verklig granskningskö.</p></div></section>
-    <section class="decision" aria-labelledby="decision-title"><p class="eyebrow">LITET NÄSTA STEG</p><h2 id="decision-title">Pröva modellen innan ni skalar kartan.</h2><p>Testa ett litet, granskat urval. Kan två redaktörer förstå och tillämpa samma relationer? Kan en lärare hitta rätt uppgift snabbare? Går en felaktig länk att spåra och rätta på ett ställe?</p></section>
+    <aside id="info-panel" class="floating-panel info-panel" aria-labelledby="info-title">
+      <button id="close-info" class="panel-close" type="button" aria-label="Stäng beskrivning">×</button>
+      <h2 id="info-title">Samma uppgift, flera vägar in</h2>
+      <p>Varje punkt är en uppgift. Linjerna visar dess kopplingar till olika sammanhang. Byt mellan ämnen, böcker och paket under Filter: originalet finns kvar, utan kopior.</p>
+      <details><summary>Taggar och AI-stöd</summary>
+        <p>Tanken är att flera taggar kan användas för att samla samma uppgift i olika kapitel, paket och övningar. Beskrivningar av taggarnas syfte och innehåll kan vägleda AI:s förslag, tillsammans med liknande uppgifters taggar.</p>
+        <p>Den här demon visar fasta exempel på kopplingar. Den kör ingen AI och prövar inte hur bra förslagen blir.</p>
+      </details>
+      <p class="small">24 påhittade uppgifter. Avstånd i kartan är inte mätvärden.</p>
+    </aside>
   </main>
-  <footer><span>Oberoende konceptdemo · Syntetiska biologiexempel</span><span>Statisk sida · Inga externa bibliotek · Ingen analysinsamling</span></footer>
-  <noscript><div class="noscript"><strong>JavaScript är avstängt.</strong> Den interaktiva kartan och listan behöver JavaScript. Resonemanget på sidan går fortfarande att läsa. Alla exempel finns även i den lokala filen data.js.</div></noscript>
+  <noscript><div class="noscript">Nodkartan behöver JavaScript för att visas.</div></noscript>
 </body>
 </html>

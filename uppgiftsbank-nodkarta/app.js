@@ -22,6 +22,74 @@
     items.forEach(item => { const option = node('option', '', item.label); option.value = item.id; $(id).append(option); });
   });
 
+
+  let detailOrigin = null, detailOriginTask = null;
+  function setDetailModal(active) {
+    document.querySelector('.visual-area').inert = active;
+    document.querySelector('.map-toolbar').inert = active;
+  }
+  const closePanel = (id, trigger) => {
+    $(id).hidden = true;
+    if (id === 'detail-panel') setDetailModal(false);
+    if (trigger) $(trigger).setAttribute('aria-expanded', 'false');
+  };
+  const panels = [['filter-panel','toggle-filters'],['info-panel','toggle-info'],['detail-panel',null]];
+  function openPanel(id) {
+    panels.forEach(([other,trigger]) => { if(other !== id) closePanel(other,trigger); });
+    $(id).hidden = false;
+    if (id === 'detail-panel') setDetailModal(true);
+    const entry = panels.find(([panel]) => panel === id);
+    if(entry[1]) $(entry[1]).setAttribute('aria-expanded','true');
+  }
+  function dismissPanel(id, trigger) {
+    closePanel(id, trigger);
+    if (trigger) { $(trigger).focus({preventScroll:true}); return; }
+    // List buttons are recreated by refresh(); resolve the original task by ID.
+    const listOrigin = detailOriginTask && state.view === 'list'
+      ? Array.from($('task-list').querySelectorAll('[data-task]')).find(button => button.dataset.task === detailOriginTask)
+      : null;
+    const target = listOrigin || (detailOrigin?.isConnected && !detailOrigin.closest('[hidden], [inert]') ? detailOrigin : null);
+    if (target) target.focus({preventScroll:true});
+    else $(state.view === 'map' ? 'graph' : 'show-list').focus({preventScroll:true});
+  }
+  [['toggle-filters','filter-panel','close-filters'],['toggle-info','info-panel','close-info']].forEach(([trigger,id,close])=>{
+    $(trigger).addEventListener('click',()=>{
+      if(!$(id).hidden) dismissPanel(id,trigger);
+      else { openPanel(id); $(id === 'filter-panel' ? 'search' : close).focus({preventScroll:true}); }
+    });
+    $(close).addEventListener('click',()=>dismissPanel(id,trigger));
+  });
+  $('close-detail').addEventListener('click',()=>dismissPanel('detail-panel',null));
+
+  // Non-modal panels yield to the next focus target instead of covering it.
+  function revealFocusTarget(target) {
+    if (!target) return;
+    panels.forEach(([id, trigger]) => {
+      if (!trigger || $(id).hidden) return;
+      if (!$(id).contains(target) && !$(trigger).contains(target)) closePanel(id, trigger);
+    });
+  }
+  document.addEventListener('focusout', event => revealFocusTarget(event.relatedTarget));
+  document.addEventListener('focusin', event => revealFocusTarget(event.target));
+
+  document.addEventListener('keydown',event=>{
+    if (event.key === 'Tab' && !$('detail-panel').hidden) {
+      const controls = Array.from($('detail-panel').querySelectorAll(
+        'button:not(:disabled), a[href], input:not(:disabled), select:not(:disabled), textarea:not(:disabled), [tabindex="0"]'
+      )).filter(element => !element.closest('[hidden], [inert]') && element.getClientRects().length);
+      if (!controls.length) { event.preventDefault(); return; }
+      const current = controls.indexOf(document.activeElement);
+      if (current === -1 || (event.shiftKey && current === 0) || (!event.shiftKey && current === controls.length - 1)) {
+        event.preventDefault();
+        controls[event.shiftKey ? controls.length - 1 : 0].focus();
+      }
+      return;
+    }
+    if(event.key !== 'Escape') return;
+    const opened = panels.find(([id])=>!$(id).hidden);
+    if(opened){ event.preventDefault(); dismissPanel(...opened); }
+  });
+
   function resetFilters() {
     state.query = state.subject = state.book = state.package = '';
     $('search').value = $('subject-filter').value = $('book-filter').value = $('package-filter').value = '';
@@ -51,7 +119,7 @@
       button.addEventListener('click', () => selectTask(task.id, 'list'));
       item.append(button); $('task-list').append(item);
     });
-    if (previous) $('task-list').querySelector(`[data-task="${previous}"]`)?.focus({ preventScroll: true });
+    if (previous && $('detail-panel').hidden) $('task-list').querySelector(`[data-task="${previous}"]`)?.focus({ preventScroll: true });
   }
   function section(title) {
     const block = node('section', 'metadata-block'); block.append(node('h4', '', title)); return block;
@@ -108,13 +176,21 @@
     }); root.append(nav);
   }
   function selectTask(id, origin, cleared) {
+    if ($('detail-panel').hidden) {
+      detailOrigin = document.activeElement;
+      detailOriginTask = origin === 'list' ? id : null;
+    }
+    openPanel('detail-panel');
     state.selected = id; state.hover = null;
     refresh(`${id}: ${taskById(id).title} valt.${cleared ? ' Filtren är nollställda för att visa uppgiften.' : ''}`);
-    if (origin === 'relationship' || origin === 'navigation') {
+    if (!$('detail-panel').hidden) {
       const title = $('detail-title'); title.tabIndex = -1; title.focus({ preventScroll: true });
     }
   }
   function setView(view) {
+    closePanel('detail-panel',null);
+    closePanel('filter-panel','toggle-filters');
+    closePanel('info-panel','toggle-info');
     state.view = view;
     $('map-panel').hidden = view !== 'map'; $('list-panel').hidden = view !== 'list';
     $('show-map').setAttribute('aria-pressed', String(view === 'map'));
@@ -259,7 +335,7 @@
       context.beginPath(); context.arc(point.sx, point.sy, point.radius, 0, Math.PI * 2); context.fillStyle = color; context.fill();
       if (selected) { context.beginPath(); context.arc(point.sx, point.sy, 2, 0, Math.PI * 2); context.fillStyle = '#101d2b'; context.fill(); }
       context.globalAlpha = 1;
-      if (canvasWidth > 540 || selected || hover || state.zoom > 1.3) label(point.id, point.sx, point.sy + point.radius + 11, selected || hover ? '#f4f7fa' : '#b4c4d6', `${selected ? 650 : 400} 9px ui-monospace, monospace`);
+      if (selected || hover || state.zoom > 1.3) label(point.id, point.sx, point.sy + point.radius + 11, selected || hover ? '#f4f7fa' : '#b4c4d6', `${selected ? 650 : 400} 9px ui-monospace, monospace`);
     });
     hubs.forEach(hub => {
       const count = points.filter(point => model.memberships(data, point, state.lens).includes(hub.id)).length;
@@ -275,7 +351,7 @@
       let title = `${focus.id} · ${focus.title}`;
       context.font = '600 11px system-ui';
       while (context.measureText(title).width > canvasWidth - 48) title = title.slice(0, -2) + '…';
-      label(title, 21, 49, '#eef4fa', '600 11px system-ui, sans-serif', 'left', true);
+      label(title, 21, canvasHeight - 103, '#eef4fa', '600 11px system-ui, sans-serif', 'left', true);
     }
   }
   function scheduleDraw() { if (!frame) frame = requestAnimationFrame(draw); }
