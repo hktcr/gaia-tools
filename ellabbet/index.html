@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="sv">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="Bygg, mät och förstå elektriska kretsar. Ett svenskt virtuellt ellabb med fria byggen och tolv vägledda uppdrag.">
+<meta name="color-scheme" content="light dark">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none'">
+<title>Ellabbet · Bygg. Mät. Förstå.</title>
+<link rel="icon" href="./icon.svg" type="image/svg+xml"><link rel="stylesheet" href="./style.css">
+<script type="module" src="./app.mjs"></script>
+</head>
+<body>
+<a class="skip-link" href="#workspace">Hoppa till byggytan</a>
+<header class="site-header">
+<a class="brand" href="./" aria-label="Ellabbet, startsida"><span class="brand-icon" aria-hidden="true">ϟ</span><span>ellabbet<span class="brand-small">BYGG. MÄT. FÖRSTÅ.</span></span></a>
+<nav class="mode-switch" aria-label="Arbetsläge"><button id="mode-free" data-mode="free" aria-pressed="true">Bygg fritt</button><button id="mode-guided" data-mode="guided" aria-pressed="false">Uppdrag <span class="count">12</span></button></nav>
+<div class="header-actions"><button id="open-data" class="quiet">Mitt arbete</button><button id="open-help" class="quiet">Hjälp <span aria-hidden="true">?</span></button></div>
+</header>
+<main id="app" class="page"></main>
+<footer class="site-footer"><p><strong>En modell att tänka med.</strong> Stationär likström · En källa · Modellampor med fast resistans</p><p><span id="save-status" role="status">Kontrollerar sparandet…</span> <span class="footer-dot">•</span> <button class="text-button" id="privacy-link">Om sparande och integritet</button> <span class="version">V1.0</span></p></footer>
+<div id="live-status" class="sr-only" role="status" aria-live="polite" aria-atomic="true"></div>
+<div id="toast" class="toast" role="status" hidden></div>
+<dialog id="modal" aria-labelledby="modal-title"><div class="dialog-header"><h2 id="modal-title"></h2><button id="close-modal" aria-label="Stäng dialog" class="icon-button">×</button></div><div id="modal-body"></div></dialog>
+<input id="import-file" type="file" accept="application/json,.json" hidden>
+<noscript><div class="noscript">Ellabbet behöver JavaScript för att beräkna kretsar. Aktivera JavaScript i webbläsaren och ladda om sidan.</div></noscript>
+</body></html>
