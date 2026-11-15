@@ -1,0 +1,23 @@
+'use strict';
+const assert=require('node:assert/strict');
+const M=require('./model.js');
+let count=0;
+function check(name,ok){assert.ok(ok,name);count++;}
+check('broad inherited units resolve tie by book order',M.unitCandidates(['euk','resp'],false)[0].id==='energy');
+check('reviewed units still respect one-placement cap',M.unitCandidates(['euk','endo'],false).map(x=>x.id).join(',')==='cell');
+check('sketched extension permits multiple relevant placements',M.unitCandidates(['euk','endo'],true).map(x=>x.id).join(',')==='cell,evolution');
+check('no units produce no candidate',M.unitCandidates([],true).length===0);
+check('majority siblings suggest energy',M.flockCandidates(false,false,[])[0].id==='energy');
+check('selected similar siblings suggest cell',M.flockCandidates(true,false,[])[0].id==='cell');
+check('excluded winner is not reintroduced or silently replaced',M.flockCandidates(false,false,['energy']).length===0);
+check('manual choice survives different sibling evidence',M.flockCandidates(false,true,['energy'])[0].id==='evolution'&&M.flockCandidates(true,true,[])[0].kind==='manual');
+check('any rule implements OR',M.matches(['selection'],{any:['endo','selection'],all:[],not:[]}));
+check('all rule requires every tag',!M.matches(['endo'],{any:[],all:['endo','euk'],not:[]}));
+check('exclusion stays local to package',!M.matches(['resp','euk'],{any:['euk'],all:[],not:['resp']})&&M.matches(['resp','euk'],{any:['resp'],all:[],not:[]}));
+check('empty query does not limit authorized bank',M.matches([],{any:[],all:[],not:[]}));
+check('blocked task tag is not assigned',!M.taskTags({endo:'blocked'}).includes('endo'));
+check('AI example respects blocked task tag',M.propose({endo:'blocked'},'endo')==='blocked');
+check('AI example proposes without assigning',M.propose({endo:'none'},'endo')==='proposal');
+check('existing tag is not duplicated',M.propose({endo:'assigned'},'endo')==='existing');
+check('new package finds an existing original',M.tasks.filter(t=>M.matches(t.tags,{any:['endo'],all:[],not:[]})).map(t=>t.id).join(',')==='U1');
+console.log(count+' model checks passed');
