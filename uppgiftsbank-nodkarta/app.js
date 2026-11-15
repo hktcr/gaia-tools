@@ -60,6 +60,18 @@
     $(close).addEventListener('click',()=>dismissPanel(id,trigger));
   });
   $('close-detail').addEventListener('click',()=>dismissPanel('detail-panel',null));
+
+  // Non-modal panels yield to the next focus target instead of covering it.
+  function revealFocusTarget(target) {
+    if (!target) return;
+    panels.forEach(([id, trigger]) => {
+      if (!trigger || $(id).hidden) return;
+      if (!$(id).contains(target) && !$(trigger).contains(target)) closePanel(id, trigger);
+    });
+  }
+  document.addEventListener('focusout', event => revealFocusTarget(event.relatedTarget));
+  document.addEventListener('focusin', event => revealFocusTarget(event.target));
+
   document.addEventListener('keydown',event=>{
     if (event.key === 'Tab' && !$('detail-panel').hidden) {
       const controls = Array.from($('detail-panel').querySelectorAll(
