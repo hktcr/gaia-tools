@@ -4,65 +4,36 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="color-scheme" content="light dark">
-  <meta name="description" content="Utforska samma uppgift i flera sammanhang. Interaktiv nodkarta med 24 syntetiska exempel.">
+  <meta name="description" content="Utforska samma uppgift i flera teman, böcker och paket. Interaktiv 3D-nodkarta med enbart syntetiska exempel.">
   <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; connect-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none'">
   <title>En bank, flera vägar · Uppgifternas nodkarta</title>
   <link rel="stylesheet" href="style.css">
-  <script src="data.js" defer></script>
-  <script src="model.js" defer></script>
-  <script src="app.js" defer></script>
+  <script src="data.js" defer></script><script src="model.js" defer></script><script src="app.js" defer></script>
 </head>
 <body>
-  <a class="skip" href="#graph">Till nodkartan</a>
+  <a class="skip" href="#task-list">Till uppgifterna</a>
   <main id="explorer" class="explorer" aria-label="Uppgifternas nodkarta">
-    <header class="map-toolbar">
-      <h1>En bank, flera sammanhang</h1>
+    <header id="map-toolbar" class="map-toolbar">
+      <div class="toolbar-top"><h1>En bank, flera sammanhang</h1><span class="demo-mark">Syntetisk demo</span></div>
       <div class="toolbar-actions">
         <div class="view-tabs" role="group" aria-label="Visningssätt"><button id="show-map" type="button" aria-pressed="true">3D</button><button id="show-list" type="button" aria-pressed="false">Lista</button></div>
-        <button id="toggle-filters" type="button" aria-expanded="false" aria-controls="filter-panel">Filter</button>
-        <button id="toggle-info" type="button" aria-expanded="true" aria-controls="info-panel">Om kartan</button>
+        <button id="toggle-filters" type="button" aria-expanded="false" aria-controls="filter-panel">Sök & vy</button>
+        <button id="toggle-contexts" type="button" aria-expanded="false" aria-controls="context-panel" hidden>Välj</button>
+        <button id="toggle-info" type="button" aria-expanded="false" aria-controls="info-panel">Om</button>
       </div>
+      <div id="lens-tabs" class="lens-tabs" role="group" aria-label="Utforska sammanhang"><button type="button" data-lens="themes" aria-pressed="true">Teman</button><button type="button" data-lens="books" aria-pressed="false">Böcker</button><button type="button" data-lens="packages" aria-pressed="false">Paket</button><button type="button" data-lens="subjects" aria-pressed="false">Ämnen</button></div>
+      <div id="context-choices" class="context-choices" role="group" aria-label="Välj tema"></div>
+      <div class="selection-tools"><button id="compare" type="button" aria-pressed="false">Jämför två</button><div id="match-modes" class="match-modes" role="group" aria-label="Jämförelse" hidden><button type="button" data-mode="all" aria-pressed="true">Gemensamma</button><button type="button" data-mode="any" aria-pressed="false">Alla i båda</button></div><button id="clear-filters" type="button">Visa alla</button></div>
     </header>
-    <section id="filter-panel" class="floating-panel filter-panel" aria-label="Filter och visning" hidden>
-      <button id="close-filters" class="panel-close" type="button" aria-label="Stäng filter">×</button>
-      <h2>Urval och visning</h2>
-      <div class="filterbar">
-        <div class="field search-field"><label for="search">Sök i exempelbanken</label><input id="search" type="search" placeholder="Begrepp, uppgift eller ID…" autocomplete="off"></div>
-        <div class="field"><label for="subject-filter">Ämnesankare</label><select id="subject-filter"><option value="">Alla ämnesankare</option></select></div>
-        <div class="field"><label for="book-filter">Bok</label><select id="book-filter"><option value="">Alla böcker</option></select></div>
-        <div class="field"><label for="package-filter">Paket</label><select id="package-filter"><option value="">Alla paket</option></select></div>
-        <button id="clear-filters" class="quiet clear" type="button">Nollställ filter</button>
-      </div>
-      <div class="map-options"><fieldset class="lens-group"><legend>Gruppera kartan efter</legend><label><input type="radio" name="lens" value="subjects" checked><span>Ämnen</span></label><label><input type="radio" name="lens" value="books"><span>Böcker</span></label><label><input type="radio" name="lens" value="packages"><span>Paket</span></label></fieldset><div class="relation-options"><label><input id="relations" type="checkbox" checked> Visa länkar i kartan</label><label><input id="proposals" type="checkbox"> Ta med förslag</label></div></div>
-
-      <button id="theme" type="button" class="quiet" aria-label="Växla ljust eller mörkt tema">Tema: system</button>
-    </section>
-      <div class="explore-grid">
-        <div class="visual-area">
-          <div id="map-panel" class="map-panel">
-            <div class="canvas-note sr-only"><span class="live-dot" aria-hidden="true"></span><span id="map-caption">Ämnesankaret ordnar kartan. Originalet finns bara en gång.</span></div>
-            <canvas id="graph" tabindex="0" role="img" aria-label="Interaktiv 3D-nodkarta. Piltangenter roterar, plus och minus zoomar. Använd 2D-listan för att läsa och välja alla uppgifter." aria-describedby="map-help"></canvas>
-            <div id="empty-map" class="empty-map" hidden><h3>Inga uppgifter matchar</h3><p>Prova ett annat ord eller nollställ filtren.</p></div>
-            <div class="map-bottom"><div id="map-help">Dra för att rotera · Välj en nod</div><div class="map-buttons" role="group" aria-label="Kartkontroller"><button id="zoom-out" type="button" aria-label="Zooma ut">−</button><button id="zoom-in" type="button" aria-label="Zooma in">+</button><button id="reset-view" type="button" aria-label="Återställ kartans rotation och zoom">↺</button></div></div>
-          </div>
-          <div id="list-panel" class="list-panel" hidden><h3 class="sr-only">Uppgifter i 2D-listan</h3><p class="list-intro">Välj en uppgift för att se dess kopplingar.</p><ul id="task-list" class="task-list"></ul><p id="empty-list" class="empty-list" hidden>Inga uppgifter matchar. Prova ett annat ord eller nollställ filtren.</p></div>
-          <div class="legend" aria-label="Teckenförklaring"><span><i class="legend-dot"></i> Uppgift / ett original</span><span><i class="line membership"></i> Tillhör vy</span><span><i class="line related"></i> Relaterad</span><span><i class="line prerequisite"></i> → Förkunskap</span><span><i class="line proposed"></i> Förslag, ej godkänt</span></div>
-          <div class="subject-legend" aria-label="Nodfärg anger ämnesankare"><span>Nodfärg = ämnesankare:</span><span><i class="swatch cell"></i>Cellen</span><span><i class="swatch energy"></i>Energi & materia</span><span><i class="swatch ecology"></i>Ekologi</span><span><i class="swatch genetics"></i>Genetik</span><span><i class="swatch methods"></i>Metod</span><span>＋ = vyankare</span></div>
-          <div class="results-row"><p id="results" role="status" aria-live="polite"></p><span id="zoom-label">Zoom 100 %</span></div>
-        </div>
-        <aside id="detail-panel" class="detail-panel floating-panel" role="dialog" aria-modal="true" aria-labelledby="detail-title" hidden><button id="close-detail" class="panel-close" type="button" aria-label="Stäng uppgiftsdetaljer">×</button><div id="detail"></div></aside>
-      </div>
-
-    <aside id="info-panel" class="floating-panel info-panel" aria-labelledby="info-title">
-      <button id="close-info" class="panel-close" type="button" aria-label="Stäng beskrivning">×</button>
-      <h2 id="info-title">Samma uppgift, flera vägar in</h2>
-      <p>Varje punkt är en uppgift. Linjerna visar dess kopplingar till olika sammanhang. Byt mellan ämnen, böcker och paket under Filter: originalet finns kvar, utan kopior.</p>
-      <details><summary>Taggar och AI-stöd</summary>
-        <p>Tanken är att flera taggar kan användas för att samla samma uppgift i olika kapitel, paket och övningar. Beskrivningar av taggarnas syfte och innehåll kan vägleda AI:s förslag, tillsammans med liknande uppgifters taggar.</p>
-        <p>Den här demon visar fasta exempel på kopplingar. Den kör ingen AI och prövar inte hur bra förslagen blir.</p>
-      </details>
-      <p class="small">24 påhittade uppgifter. Avstånd i kartan är inte mätvärden.</p>
-    </aside>
+    <div id="visual-area" class="visual-area">
+      <div id="map-panel" class="map-panel"><canvas id="graph" tabindex="0" role="img" aria-label="3D-nodkarta. Piltangenter roterar, plus och minus zoomar, Home passar in kartan. Välj sammanhang ovan och läs samma uppgifter i resultatlistan." aria-describedby="map-help"></canvas><div id="graph-anchors" class="graph-anchors" aria-label="Sammanhang i kartan"></div><div id="empty-map" class="empty-map" hidden>Inga uppgifter matchar. Välj ett annat sammanhang eller Visa alla.</div></div>
+      <section id="results-panel" class="results-panel" aria-labelledby="results-title"><div class="results-heading"><div><h2 id="results-title">Alla uppgifter</h2><p id="results" role="status" aria-live="polite" aria-atomic="true"></p></div><button id="expand-results" type="button" aria-label="Visa uppgifterna i en fullständig lista">Visa lista</button></div><ul id="task-list" class="task-list" tabindex="-1"></ul><p id="empty-list" class="empty-list" hidden>Inga träffar. Prova ett annat urval eller Visa alla.</p></section>
+      <div id="map-bottom" class="map-bottom"><p id="map-help">Välj ett tema · Dra för att rotera</p><div class="map-buttons" role="group" aria-label="Kartkontroller"><button id="zoom-out" type="button" aria-label="Zooma ut">−</button><button id="zoom-in" type="button" aria-label="Zooma in">+</button><button id="reset-view" type="button">Passa in</button></div></div>
+    </div>
+    <section id="context-panel" class="floating-panel context-panel" role="dialog" aria-modal="true" aria-labelledby="context-title" hidden><button id="close-contexts" class="panel-close" type="button" aria-label="Stäng sammanhang">×</button><h2 id="context-title">Välj sammanhang</h2><button id="apply-contexts" class="primary" type="button">Visa urvalet</button></section>
+    <section id="filter-panel" class="floating-panel filter-panel" role="dialog" aria-modal="true" aria-labelledby="filter-title" hidden><button id="close-filters" class="panel-close" type="button" aria-label="Stäng sök och vy">×</button><h2 id="filter-title">Sök & vy</h2><label for="search">Sök inom ditt urval</label><input id="search" type="search" placeholder="Begrepp, uppgift eller ID…" autocomplete="off"><p id="filter-feedback" class="small" role="status" aria-live="polite" aria-atomic="true"></p><div class="relation-options"><label><input id="relations" type="checkbox" checked> Visa uppgiftsrelationer</label><label><input id="proposals" type="checkbox"> Ta med ej godkända förslag</label></div><button id="theme" type="button">Utseende: system</button><button id="apply-filters" class="primary" type="button">Visa uppgifterna</button></section>
+    <aside id="detail-panel" class="floating-panel detail-panel" role="dialog" aria-modal="true" aria-labelledby="detail-title" hidden><button id="close-detail" class="panel-close" type="button" aria-label="Stäng uppgiftsdetaljer">×</button><div id="detail"></div></aside>
+    <aside id="info-panel" class="floating-panel info-panel" role="dialog" aria-modal="true" aria-labelledby="info-title" hidden><button id="close-info" class="panel-close" type="button" aria-label="Stäng beskrivning">×</button><h2 id="info-title">Samma uppgift, flera vägar in</h2><p>Välj ett tema, en bok eller ett paket. Uppgifterna visas direkt i kartan och i listan. Välj Jämför två för att hitta gemensamma uppgifter.</p><p>Varje punkt är ett original. Linjerna till sammanhangen visar tillhörighet. Samma uppgift kan finnas i flera sammanhang utan att kopieras.</p><details><summary>Taggar och AI-stöd</summary><p>Tanken är att flera taggar kan användas för att samla samma uppgift i olika kapitel, paket och övningar. Beskrivningar av taggarnas syfte och innehåll kan vägleda AI:s förslag, tillsammans med liknande uppgifters taggar.</p><p>Den här demon visar fasta exempel på kopplingar. Den kör ingen AI och prövar inte hur bra förslagen blir.</p></details><details><summary>Linjer och färger</summary><p>Nodfärg anger ämnesankare. Heldragen blå uppgiftslänk = relaterad. Prickad lila pil = kräver förkunskap, mot förkunskapen. Streckad gul länk = förslag, inte godkänt.</p></details><p id="demo-disclosure" class="small"></p></aside>
   </main>
   <noscript><div class="noscript">Nodkartan behöver JavaScript för att visas.</div></noscript>
 </body>
