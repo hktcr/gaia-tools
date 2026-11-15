@@ -23,22 +23,33 @@
   });
 
 
-  let detailOrigin = null;
+  let detailOrigin = null, detailOriginTask = null;
+  function setDetailModal(active) {
+    document.querySelector('.visual-area').inert = active;
+    document.querySelector('.map-toolbar').inert = active;
+  }
   const closePanel = (id, trigger) => {
     $(id).hidden = true;
+    if (id === 'detail-panel') setDetailModal(false);
     if (trigger) $(trigger).setAttribute('aria-expanded', 'false');
   };
   const panels = [['filter-panel','toggle-filters'],['info-panel','toggle-info'],['detail-panel',null]];
   function openPanel(id) {
     panels.forEach(([other,trigger]) => { if(other !== id) closePanel(other,trigger); });
     $(id).hidden = false;
+    if (id === 'detail-panel') setDetailModal(true);
     const entry = panels.find(([panel]) => panel === id);
     if(entry[1]) $(entry[1]).setAttribute('aria-expanded','true');
   }
   function dismissPanel(id, trigger) {
     closePanel(id, trigger);
-    if(trigger) $(trigger).focus({preventScroll:true});
-    else if(detailOrigin?.isConnected && !detailOrigin.closest('[hidden]')) detailOrigin.focus({preventScroll:true});
+    if (trigger) { $(trigger).focus({preventScroll:true}); return; }
+    // List buttons are recreated by refresh(); resolve the original task by ID.
+    const listOrigin = detailOriginTask && state.view === 'list'
+      ? Array.from($('task-list').querySelectorAll('[data-task]')).find(button => button.dataset.task === detailOriginTask)
+      : null;
+    const target = listOrigin || (detailOrigin?.isConnected && !detailOrigin.closest('[hidden], [inert]') ? detailOrigin : null);
+    if (target) target.focus({preventScroll:true});
     else $(state.view === 'map' ? 'graph' : 'show-list').focus({preventScroll:true});
   }
   [['toggle-filters','filter-panel','close-filters'],['toggle-info','info-panel','close-info']].forEach(([trigger,id,close])=>{
@@ -50,6 +61,18 @@
   });
   $('close-detail').addEventListener('click',()=>dismissPanel('detail-panel',null));
   document.addEventListener('keydown',event=>{
+    if (event.key === 'Tab' && !$('detail-panel').hidden) {
+      const controls = Array.from($('detail-panel').querySelectorAll(
+        'button:not(:disabled), a[href], input:not(:disabled), select:not(:disabled), textarea:not(:disabled), [tabindex="0"]'
+      )).filter(element => !element.closest('[hidden], [inert]') && element.getClientRects().length);
+      if (!controls.length) { event.preventDefault(); return; }
+      const current = controls.indexOf(document.activeElement);
+      if (current === -1 || (event.shiftKey && current === 0) || (!event.shiftKey && current === controls.length - 1)) {
+        event.preventDefault();
+        controls[event.shiftKey ? controls.length - 1 : 0].focus();
+      }
+      return;
+    }
     if(event.key !== 'Escape') return;
     const opened = panels.find(([id])=>!$(id).hidden);
     if(opened){ event.preventDefault(); dismissPanel(...opened); }
@@ -84,7 +107,7 @@
       button.addEventListener('click', () => selectTask(task.id, 'list'));
       item.append(button); $('task-list').append(item);
     });
-    if (previous) $('task-list').querySelector(`[data-task="${previous}"]`)?.focus({ preventScroll: true });
+    if (previous && $('detail-panel').hidden) $('task-list').querySelector(`[data-task="${previous}"]`)?.focus({ preventScroll: true });
   }
   function section(title) {
     const block = node('section', 'metadata-block'); block.append(node('h4', '', title)); return block;
@@ -141,11 +164,14 @@
     }); root.append(nav);
   }
   function selectTask(id, origin, cleared) {
-    if ($('detail-panel').hidden) detailOrigin = document.activeElement;
+    if ($('detail-panel').hidden) {
+      detailOrigin = document.activeElement;
+      detailOriginTask = origin === 'list' ? id : null;
+    }
     openPanel('detail-panel');
     state.selected = id; state.hover = null;
     refresh(`${id}: ${taskById(id).title} valt.${cleared ? ' Filtren är nollställda för att visa uppgiften.' : ''}`);
-    if (origin === 'relationship' || origin === 'navigation' || origin === 'list') {
+    if (!$('detail-panel').hidden) {
       const title = $('detail-title'); title.tabIndex = -1; title.focus({ preventScroll: true });
     }
   }

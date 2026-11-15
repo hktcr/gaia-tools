@@ -74,3 +74,6 @@ summary:focus-visible{outline:3px solid var(--focus);outline-offset:4px}
  .floating-panel{top:72px;bottom:auto;max-height:calc(100dvh - 140px)}
  .list-panel{top:72px}
 }
+
+/* Keep keyboard focus visible inside the edge-to-edge canvas. */
+#graph:focus-visible{outline:3px solid var(--focus);outline-offset:-5px}
