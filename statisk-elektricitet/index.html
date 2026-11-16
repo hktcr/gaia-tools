@@ -1,0 +1,203 @@
+<!doctype html>
+<html lang="sv">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="description" content="En klickbar tuschberättelse om statisk elektricitet, från bärnsten till elektroner.">
+<meta name="color-scheme" content="light">
+<title>Statisk elektricitet · En berättelse i tusch</title>
+<style>
+:root{color-scheme:light;--ink:#171c1b;--muted:#545955;--rule:#dadbd5;--teal:#296e69;--gold:#a15c21}
+*{box-sizing:border-box}html,body{width:100%;height:100%;margin:0;background:#fff;color:var(--ink)}body{font-family:system-ui,sans-serif;overflow:hidden}
+#stage{width:100%;height:100%;position:relative;display:grid;place-items:center;overflow:hidden;cursor:pointer;touch-action:manipulation}
+#stage:focus{outline:none}body.started #stage:focus-visible{outline:2px solid var(--teal);outline-offset:-5px}
+#scene{position:relative;width:min(100vw,calc(100svh * 1.7778));height:min(100svh,calc(100vw * .5625));display:grid;grid-template-rows:minmax(0,1fr) auto;container-type:inline-size;overflow:hidden}
+#scene[hidden]{display:none}
+#drawing{width:100%;height:100%;min-height:0;display:block;overflow:visible;align-self:end}
+figure{margin:0;padding:0 min(6vw,4.5rem) clamp(1rem,4vmin,2.75rem);text-align:center;min-height:0}
+#chapter{margin:0 0 .36em;font-size:clamp(.65rem,1.3cqw,1.18rem);font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--teal)}
+h1{font-family:Georgia,"Times New Roman",serif;font-weight:400;font-size:clamp(1.36rem,4.2cqw,4.7rem);line-height:1.05;margin:0;letter-spacing:-.024em;text-wrap:balance}
+#detail{font-size:clamp(.85rem,1.96cqw,1.75rem);line-height:1.24;margin:.5em auto 0;text-wrap:balance;color:var(--muted)}
+#detail[hidden]{display:none}
+figcaption{opacity:0}
+.docked{z-index:2;position:absolute;right:max(10px,env(safe-area-inset-right));bottom:max(8px,env(safe-area-inset-bottom));display:flex;gap:3px;align-items:center;opacity:0;pointer-events:none;transition:opacity .18s;background:white;padding:3px 5px;border:1px solid var(--rule);border-radius:7px}
+body.started #stage:hover + nav,body.started nav:hover,nav:focus-within,body.show-controls nav{opacity:1;pointer-events:auto}
+body.started.parked #stage:hover + nav{opacity:0;pointer-events:none}
+button{font:inherit;cursor:pointer;border:0;padding:6px 8px;border-radius:4px;color:var(--ink);background:#fff;white-space:nowrap}
+button:hover,button:focus-visible{background:#eef3ef}button[disabled]{opacity:.35;cursor:default}#count{font-size:.75rem;color:var(--muted);min-width:2em;text-align:center}
+dialog{width:min(46rem,calc(100vw - 2rem));max-height:85svh;overflow:auto;border:1px solid var(--rule);box-shadow:0 12px 80px #17211e34;border-radius:12px;padding:clamp(1rem,4vw,2rem);line-height:1.5}
+dialog::backdrop{background:#15201f59}dialog h2{font:400 2rem Georgia,serif;margin:.2rem 0 1rem}dialog h3{font-size:1rem;margin:1rem 0 .25rem}dialog p{margin:0 0 .65rem}dialog a{color:var(--teal)}dialog .close{float:right;border:1px solid var(--rule)}
+.keyboard{color:var(--muted);font-size:.9rem}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
+@media(max-aspect-ratio:4/5){#scene{width:100vw;height:min(88svh,calc(100vw * 1.02));grid-template-rows:minmax(0,1fr) auto}figure{padding-bottom:1rem}h1{font-size:clamp(1.4rem,6.7cqw,3.3rem)}#detail{font-size:clamp(.85rem,3.4cqw,1.4rem)}}
+@media(pointer:coarse){body.started nav{opacity:1;pointer-events:auto}#scene{margin-bottom:28px}}
+@media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important;transition:none!important}}
+</style>
+</head>
+<body>
+<main id="stage" tabindex="0" aria-label="Presentation. Klicka eller tryck mellanslag för att börja.">
+<section id="scene" hidden>
+<svg id="drawing" viewBox="0 0 1200 570" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="drawing-title"></svg>
+<figure><figcaption><p id="chapter"></p><h1 id="heading"></h1><p id="detail" hidden></p></figcaption></figure>
+</section>
+<span class="sr" id="notice" aria-live="polite"></span>
+</main>
+<nav class="docked" aria-label="Presentationsreglage">
+<button id="prev" title="Tillbaka (vänsterpil)" aria-label="Tillbaka">←</button><span id="count"></span><button id="next" title="Nästa (mellanslag)" aria-label="Nästa">→</button><button id="full" title="Helskärm (F)">Helskärm</button><button id="help" title="Lärarstöd (L)">Lärarstöd</button>
+</nav>
+<dialog id="notes" aria-labelledby="nt">
+<form method="dialog"><button class="close">Stäng</button></form>
+<h2 id="nt">Lärarstöd</h2>
+<p class="keyboard">Klick, mellanslag eller → går framåt. ← går tillbaka. R börjar om från vitt. F växlar helskärm. L öppnar det här stödet.</p>
+<h3>1. Bärnstenen · börja med det oväntade</h3><p>Plinius den äldre beskrev på 70-talet e.Kr. att gniden bärnsten kunde dra till sig strån och torra blad. Visa utan att ge facit. Fråga: ”Vad är det som rör sig? Måste bärnstenen röra vid strået?” Berätta gärna att ordet elektricitet ytterst kommer från grekiskans <em>ēlektron</em>, bärnsten. Utse inte en förstaupptäckare.</p>
+<h3>2. Gilbert · från iakttagelse till försök</h3><p>William Gilbert beskrev år 1600 ett enkelt instrument, ett <em>versorium</em>: en lätt rörlig metallvisare på en spets. Gniden bärnsten eller andra gnidna material kunde få visaren att svänga. Han jämförde effekten med magnetisk attraktion, men skilde dem åt. Bilden är en schematisk tolkning, inte en avbildning av ett bevarat instrument.</p>
+<h3>3. Kammen · låt eleverna förutsäga</h3><p>Visa plastkam eller en plaststav, en torr duk och små pappersbitar. Prova först utan gnidning. Gnid sedan och håll kammen nära utan att röra papperet. Låt eleverna säga vad de tror händer innan du gör det. Testa kombinationen i förväg. Fukt gör ofta försöket svårare.</p>
+<h3>4. Förklaringen · två saker händer</h3><p>Vid kontakt mellan materialen kan elektroner flytta från det ena till det andra. Gnidningen ger upprepad kontakt. I det illustrerade exemplet får kammen ett överskott av elektroner och blir negativ. Vilket material som blir negativt beror på materialkombinationen.</p><p>På avstånd förskjuts laddningen en aning i papperet. Den sida som är närmast kammen blir lite mer positiv än den andra. Attraktionen på nära håll blir starkare än repulsionen längre bort. Papperet är fortfarande neutralt totalt. Ingen elektron behöver hoppa från kammen till papperet för att biten ska lyfta. Tecknen är en modell, inte synliga partiklar i rätt skala.</p>
+<p class="keyboard">Källor: <a href="https://www.attalus.org/pliny/hn37a.html" target="_blank" rel="noopener">Plinius, <em>Naturalis historia</em>, bok 37</a> · <a href="https://en.wikisource.org/wiki/Page:On_the_Magnet_-_Gilbert_(1900_translation_of_1600_work).djvu/76" target="_blank" rel="noopener">Gilbert, <em>De Magnete</em> (1600), bok II, kap. 2</a> · <a href="https://openstax.org/books/university-physics-volume-2/pages/5-2-conductors-insulators-and-charging-by-induction" target="_blank" rel="noopener">OpenStax: laddning och polarisation</a>.</p>
+</dialog>
+<script>
+/* Original code-native ink illustrations. ViewBox 0 0 1200 650.
+   Groups permit selective erase/redraw. Amber = amber, never a magnet.
+   Scene 2 shows a versorium on a pivot, not a compass: no N/S markings. */
+(function () {
+ const ink='fill="none" stroke="#202827" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"';
+ const amber=(x,y,s=1)=>`<g class="amber" transform="translate(${x} ${y}) scale(${s})" ${ink}>
+  <path d="M-91 -19 C-105 -48 -76 -91 -48 -100 C-17 -114 2 -92 30 -95 C65 -93 76 -73 84 -47 C99 -23 81 9 89 34 C77 61 40 84 7 88 C-29 93 -49 72 -71 63 C-97 44 -89 9 -91 -19 Z" fill="#f8f0e5"/>
+  <path d="M-84 -37 C-61 -63 -48 -75 -23 -80 M-52 -96 C-50 -61 -33 -51 -46 -20 C-57 8 -39 26 -48 58 M31 -91 C23 -58 42 -41 27 -9 C15 17 34 40 14 80 M83 -42 C58 -32 59 -5 73 7 M-88 17 C-63 9 -55 29 -36 38 M-19 83 C-12 59 0 48 -9 25" stroke="#b87d35" stroke-width="2"/>
+  <path d="M-65 -48 C-74 -29 -71 -18 -68 -8 M51 39 C40 57 30 62 18 65" stroke="#b87d35" stroke-width="5" opacity=".55"/>
+ </g>`;
+ window.historyInk=[
+ `<g class="history-scene amber-story" ${ink}>
+  <g class="cloth">
+   <path d="M208 157 C286 172 335 141 405 166 C468 180 503 167 554 183 L584 351 C540 370 506 350 475 365 C421 389 374 368 334 381 C282 390 248 371 223 374 C223 297 222 234 208 157Z" fill="white"/>
+   <path d="M210 159 C242 208 237 262 245 318 C252 344 276 355 300 375 M247 171 C275 215 254 259 278 284 M313 169 C347 195 361 193 385 176 M395 169 C382 209 405 242 421 267 M552 185 C521 209 539 254 557 278 M522 355 C500 327 522 297 509 269 M336 378 C363 358 382 347 400 350" stroke-width="2.1"/>
+   <path d="M224 371 L224 384 M235 373 L236 388 M248 378 L247 392 M262 381 L261 395 M278 383 L278 396 M294 383 L296 397 M310 383 L311 395 M325 381 L327 394 M343 379 L346 391 M358 376 L361 388 M374 374 L377 387" stroke-width="1.6"/>
+  </g>
+  ${amber(433,307,1.14)}
+  <g class="rub-strokes" stroke-width="2.4">
+   <path d="M339 129 Q376 104 418 111 M336 121 L339 129 L350 130"/>
+   <path d="M426 124 Q463 128 488 145 M485 135 L488 145 L478 147"/>
+  </g>
+  <g class="straw" stroke-width="2.5">
+   <path d="M657 279 L683 272 L682 278 L660 285 Z M668 279 L679 276" fill="#d69b47" fill-opacity=".16"/>
+   <path d="M744 311 L766 319 L765 325 L741 317 Z" fill="#d69b47" fill-opacity=".16"/>
+   <path d="M797 365 L823 361 L825 367 L798 372 Z" fill="#d69b47" fill-opacity=".16"/>
+   <path d="M867 421 L899 427 L898 433 L867 427 Z"/>
+   <path d="M710 451 L742 444 L741 450 L711 457 Z M760 470 L787 469 L786 475 L761 476 Z M849 474 L862 489 L857 493 L843 477 Z"/>
+  </g>
+  <g class="movement" stroke="#7c8580" stroke-width="1.6">
+   <path d="M696 291 Q685 298 680 304 M782 338 Q773 346 770 353 M837 392 Q827 396 823 402"/>
+  </g>
+  <path d="M624 513 C709 510 819 514 946 510" stroke-width="1.6"/>
+ </g>`,
+ `<g class="history-scene gilbert-story" ${ink}>
+  <g class="book">
+   <path d="M166 192 C232 174 294 184 340 207 C382 184 444 174 493 187 L490 443 C437 432 384 437 340 465 C287 437 231 432 170 447 Z" fill="white"/>
+   <path d="M166 192 L155 203 L160 459 C228 443 284 449 340 478 C389 451 440 445 501 457 L502 199 L493 187 M340 208 L340 465 M169 439 C224 426 289 433 332 456 M348 455 C393 431 443 425 489 436" stroke-width="2"/>
+   <path d="M199 230 Q250 216 306 238 M200 243 Q248 229 305 251 M202 289 Q249 277 304 299 M203 304 Q251 290 304 311 M203 321 Q250 308 304 327 M204 338 Q253 324 305 344 M206 355 Q254 343 305 360 M206 372 Q253 360 305 378 M207 389 Q254 379 305 395 M370 234 Q419 211 462 219 M370 249 Q418 226 460 235 M371 290 Q416 270 461 276 M370 307 Q413 285 461 292 M371 323 Q418 300 461 310 M370 341 Q416 318 460 327 M371 359 Q417 337 459 344 M371 377 Q414 356 458 363 M371 395 Q413 375 459 380" stroke-width="1.4" opacity=".65"/>
+   <path d="M217 259 Q253 248 286 265 M224 266 Q253 257 281 272 M386 260 Q417 246 446 252" stroke-width="4.2"/>
+  </g>
+  <g class="versorium-base">
+   <path d="M651 457 C652 441 682 430 716 430 C750 430 780 440 782 455 L780 474 C763 492 674 495 652 476 Z" fill="white"/>
+   <path d="M652 457 C668 476 761 480 782 455 M677 478 Q722 486 761 476" stroke-width="1.7"/>
+   <path d="M707 442 L712 284 Q716 276 720 284 L725 442 C720 449 711 448 707 442Z" fill="white"/>
+  </g>
+  <g class="versorium-pointer">
+   <path d="M566 338 L714 287 L873 247 L726 304 Z" fill="white" stroke-width="3.6"/>
+   <path d="M568 338 L720 295 L873 247 M715 289 Q722 285 725 293 Q728 299 721 304" stroke-width="1.7"/>
+  </g>
+  ${amber(967,205,.69)}
+  <g class="turn-indication" stroke="#7c8580" stroke-width="1.8">
+   <path d="M815 347 Q843 326 854 299 M843 303 L854 299 L858 311"/>
+  </g>
+  <path d="M593 514 Q767 511 999 514" stroke-width="1.5"/>
+ </g>`
+ ];
+})();
+window.physicsInk = ["<g fill=\"none\" stroke=\"#242925\" stroke-width=\"3.2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M150,476 C320,474 459,477 610,475 M642,476 L1035,476\" stroke-width=\"2\"/><path d=\"M175,215 Q224,194 290,207 L355,254 Q330,286 278,305 L220,298 Q226,271 192,254 Z\" fill=\"#fff\"/><path d=\"M194,217 Q227,233 247,270 M220,212 Q240,229 267,263 M283,225 L311,246 M226,280 Q259,272 293,257\" stroke-width=\"1.4\"/><g transform=\"translate(540,165) rotate(6) scale(1.55)\"><path d=\"M0,0 C-10,-1 -14,5 -14,15 V30 C-14,36 -10,40 -3,40 H226 Q240,40 240,26 V14 Q240,0 226,0 Z\" fill=\"#fff\"/><path d=\"M0,40 V104 Q5,116 10,104 V40\" fill=\"#fff\"/><path d=\"M20,40 V104 Q25,116 30,104 V40\" fill=\"#fff\"/><path d=\"M40,40 V104 Q45,116 50,104 V40\" fill=\"#fff\"/><path d=\"M60,40 V104 Q65,116 70,104 V40\" fill=\"#fff\"/><path d=\"M80,40 V104 Q85,116 90,104 V40\" fill=\"#fff\"/><path d=\"M100,40 V104 Q105,116 110,104 V40\" fill=\"#fff\"/><path d=\"M120,40 V104 Q125,116 130,104 V40\" fill=\"#fff\"/><path d=\"M140,40 V104 Q145,116 150,104 V40\" fill=\"#fff\"/><path d=\"M160,40 V104 Q165,116 170,104 V40\" fill=\"#fff\"/><path d=\"M180,40 V104 Q185,116 190,104 V40\" fill=\"#fff\"/><path d=\"M200,40 V104 Q205,116 210,104 V40\" fill=\"#fff\"/><path d=\"M220,40 V104 Q225,116 230,104 V40\" fill=\"#fff\"/><path d=\"M1,10 C65,7 140,9 224,9\" stroke-width=\"1.4\"/></g><path d=\"M790,395 l24,-15 12,20 -25,13 Z\" fill=\"#fff\"/><path d=\"M712,435 l20,-9 15,16 -22,10 Z\" fill=\"#fff\"/><path d=\"M875,456 l29,2 -3,17 -27,-3 Z\" fill=\"#fff\"/><path d=\"M624,460 l20,-10 13,21 -24,3 Z\" fill=\"#fff\"/><path d=\"M970,462 l24,4 -8,12 -21,-4 Z\" fill=\"#fff\"/><path d=\"M803,422 Q815,401 817,370 M809,381 L817,368 823,382\" stroke=\"#326e70\" stroke-width=\"2.5\"/><path d=\"M735,418 Q746,397 744,378 M737,388 L744,376 751,388\" stroke=\"#326e70\" stroke-width=\"2.5\"/><text x=\"185\" y=\"350\" fill=\"#242925\" stroke=\"none\" font-family=\"Arial,sans-serif\" font-size=\"26\">Gnugga.</text><text x=\"584\" y=\"526\" fill=\"#242925\" stroke=\"none\" font-family=\"Arial,sans-serif\" font-size=\"27\">Vad får papperet att röra sig?</text></g>", "<g fill=\"none\" stroke=\"#242925\" stroke-width=\"3.2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><text x=\"130\" y=\"80\" fill=\"#242925\" stroke=\"none\" font-family=\"Arial,sans-serif\" font-size=\"28\">1. Laddning flyttas</text><text x=\"695\" y=\"80\" fill=\"#242925\" stroke=\"none\" font-family=\"Arial,sans-serif\" font-size=\"28\">2. Papperet påverkas</text><path d=\"M600,116 V511\" stroke=\"#c5c8c4\" stroke-width=\"1.5\"/><path d=\"M135,260 Q190,244 248,265 L318,330 Q287,371 222,383 L168,358 Q185,321 135,298 Z\" fill=\"#fff\"/><path d=\"M152,272 L204,318 M174,265 L230,320 M187,344 L267,305 M214,360 L292,320\" stroke-width=\"1.2\"/><g transform=\"translate(275,185) rotate(28) scale(0.85)\"><path d=\"M0,0 C-10,-1 -14,5 -14,15 V30 C-14,36 -10,40 -3,40 H226 Q240,40 240,26 V14 Q240,0 226,0 Z\" fill=\"#fff\"/><path d=\"M0,40 V104 Q5,116 10,104 V40\" fill=\"#fff\"/><path d=\"M20,40 V104 Q25,116 30,104 V40\" fill=\"#fff\"/><path d=\"M40,40 V104 Q45,116 50,104 V40\" fill=\"#fff\"/><path d=\"M60,40 V104 Q65,116 70,104 V40\" fill=\"#fff\"/><path d=\"M80,40 V104 Q85,116 90,104 V40\" fill=\"#fff\"/><path d=\"M100,40 V104 Q105,116 110,104 V40\" fill=\"#fff\"/><path d=\"M120,40 V104 Q125,116 130,104 V40\" fill=\"#fff\"/><path d=\"M140,40 V104 Q145,116 150,104 V40\" fill=\"#fff\"/><path d=\"M160,40 V104 Q165,116 170,104 V40\" fill=\"#fff\"/><path d=\"M180,40 V104 Q185,116 190,104 V40\" fill=\"#fff\"/><path d=\"M200,40 V104 Q205,116 210,104 V40\" fill=\"#fff\"/><path d=\"M220,40 V104 Q225,116 230,104 V40\" fill=\"#fff\"/><path d=\"M1,10 C65,7 140,9 224,9\" stroke-width=\"1.4\"/></g><path d=\"M243,302 Q278,265 313,254 M300,253 L315,253 308,268\" stroke=\"#326e70\" stroke-width=\"3\"/><path d=\"M269.5,280 h13\" stroke=\"#326e70\" stroke-width=\"3.4\"/><path d=\"M346.0,239 h14\" stroke=\"#326e70\" stroke-width=\"3.4\"/><path d=\"M382.0,259 h14\" stroke=\"#326e70\" stroke-width=\"3.4\"/><path d=\"M189.0,300 h14 M196,293.0 v14\" stroke=\"#b78538\" stroke-width=\"3.4\"/><path d=\"M218.0,323 h14 M225,316.0 v14\" stroke=\"#b78538\" stroke-width=\"3.4\"/><text x=\"130\" y=\"435\" fill=\"#242925\" stroke=\"none\" font-family=\"Arial,sans-serif\" font-size=\"22\">Elektroner går från duken</text><text x=\"130\" y=\"467\" fill=\"#242925\" stroke=\"none\" font-family=\"Arial,sans-serif\" font-size=\"22\">till plasten i det här exemplet.</text><text x=\"130\" y=\"505\" fill=\"#326e70\" stroke=\"none\" font-family=\"Arial,sans-serif\" font-size=\"19\">Plasten får ett överskott av elektroner.</text><path d=\"M730,188 Q724,177 740,177 H782 Q792,177 792,189 V379 Q792,390 779,390 H740 Q730,390 730,378 Z\" fill=\"#fff\"/><path d=\"M752.0,213 h18\" stroke=\"#326e70\" stroke-width=\"3.4\"/><path d=\"M752.0,261 h18\" stroke=\"#326e70\" stroke-width=\"3.4\"/><path d=\"M752.0,309 h18\" stroke=\"#326e70\" stroke-width=\"3.4\"/><path d=\"M752.0,357 h18\" stroke=\"#326e70\" stroke-width=\"3.4\"/><path d=\"M876,187 L1070,200 1061,386 871,374 Z\" fill=\"#fff\"/><path d=\"M913,232 H946\" stroke=\"#d8ddda\" stroke-width=\"1.3\"/><path d=\"M906.0,232 h14 M913,225.0 v14\" stroke=\"#b78538\" stroke-width=\"3.4\"/><path d=\"M939.0,232 h14\" stroke=\"#326e70\" stroke-width=\"3.4\"/><path d=\"M993,232 H1026\" stroke=\"#d8ddda\" stroke-width=\"1.3\"/><path d=\"M986.0,232 h14 M993,225.0 v14\" stroke=\"#b78538\" stroke-width=\"3.4\"/><path d=\"M1019.0,232 h14\" stroke=\"#326e70\" stroke-width=\"3.4\"/><path d=\"M913,286 H946\" stroke=\"#d8ddda\" stroke-width=\"1.3\"/><path d=\"M906.0,286 h14 M913,279.0 v14\" stroke=\"#b78538\" stroke-width=\"3.4\"/><path d=\"M939.0,286 h14\" stroke=\"#326e70\" stroke-width=\"3.4\"/><path d=\"M993,286 H1026\" stroke=\"#d8ddda\" stroke-width=\"1.3\"/><path d=\"M986.0,286 h14 M993,279.0 v14\" stroke=\"#b78538\" stroke-width=\"3.4\"/><path d=\"M1019.0,286 h14\" stroke=\"#326e70\" stroke-width=\"3.4\"/><path d=\"M913,340 H946\" stroke=\"#d8ddda\" stroke-width=\"1.3\"/><path d=\"M906.0,340 h14 M913,333.0 v14\" stroke=\"#b78538\" stroke-width=\"3.4\"/><path d=\"M939.0,340 h14\" stroke=\"#326e70\" stroke-width=\"3.4\"/><path d=\"M993,340 H1026\" stroke=\"#d8ddda\" stroke-width=\"1.3\"/><path d=\"M986.0,340 h14 M993,333.0 v14\" stroke=\"#b78538\" stroke-width=\"3.4\"/><path d=\"M1019.0,340 h14\" stroke=\"#326e70\" stroke-width=\"3.4\"/><text x=\"737\" y=\"151\" fill=\"#326e70\" stroke=\"none\" font-family=\"Arial,sans-serif\" font-size=\"28\">−</text><text x=\"875\" y=\"151\" fill=\"#242925\" stroke=\"none\" font-family=\"Arial,sans-serif\" font-size=\"22\">Neutralt papper</text><path d=\"M1010,415 H866 M882,405 L865,415 882,425\" stroke=\"#326e70\" stroke-width=\"3\"/><text x=\"695\" y=\"467\" fill=\"#242925\" stroke=\"none\" font-family=\"Arial,sans-serif\" font-size=\"22\">Laddningarna förskjuts lite.</text><text x=\"695\" y=\"500\" fill=\"#242925\" stroke=\"none\" font-family=\"Arial,sans-serif\" font-size=\"22\">Papperet dras mot plasten.</text></g>"];
+"use strict";
+const chapters=[
+ ["Antiken · Plinius den äldre","Varför följer strået med?","Gniden bärnsten och lätta strån","En bit bärnsten har gnidits. Lätta strån dras mot den."],
+ ["1600 · William Gilbert","En visare rör sig utan beröring","Bärnstenen får metallvisaren att svänga","En metallvisare balanserar på en spets och vrids mot bärnstenen."],
+ ["Vårt försök","Vad händer om vi gnider kammen?","","En plastkam närmar sig små torra pappersbitar, utan att röra dem."],
+ ["Statisk elektricitet","Kammen laddas. Papperet är fortfarande neutralt.","Gnidning flyttar elektroner. Nära kammen förskjuts laddningen i papperet.","Till vänster flyttar elektroner från duken till kammen. Till höger drar kammen till sig papperets närmaste, svagt positiva sida, utan kontakt."]
+];
+const el=id=>document.getElementById(id);
+const [stage,scene,svg,fig,dialog]=[el("stage"),el("scene"),el("drawing"),document.querySelector("figcaption"),el("notes")];
+const art=[...window.historyInk,...window.physicsInk];
+if(art.length!==4||art.some(value=>typeof value!=="string")) throw Error("De fyra bilderna kunde inte laddas.");
+const reduced=matchMedia("(prefers-reduced-motion: reduce)");
+let index=-1,serial=0,busy=false,active=[],timer=0,restore;
+const animate=(node,frames,opts)=>{const a=node.animate(frames,opts);active.push(a);return a};
+const setButtons=()=>{
+ const shown=index>=0;document.body.classList.toggle("started",shown);
+ el("prev").disabled=!shown;el("next").disabled=index>=chapters.length-1;
+ el("count").textContent=shown?(index+1)+"/4":"";
+ stage.setAttribute("aria-label",shown?"Bild "+(index+1)+" av 4. Klicka eller tryck mellanslag för nästa bild.":"Presentation. Klicka eller tryck mellanslag för att börja.");
+};
+const pause=ms=>new Promise(r=>setTimeout(r,ms));
+async function show(target){
+ if(target<-1||target>=chapters.length||target===index)return;
+ const seq=++serial;busy=true;
+ for(const a of active)a.cancel();active=[];
+ if(index>=0&&!reduced.matches&&target>=0){
+  animate(fig,[{opacity:1},{opacity:0}],{duration:200,fill:"forwards"});
+  animate(svg,[{opacity:1,clipPath:"inset(0 0 0 0)"},{opacity:0,clipPath:"inset(0 0 0 18%)"}],{duration:290,easing:"ease-in",fill:"forwards"});
+  await pause(300); if(seq!==serial)return;
+  for(const a of active)a.cancel();active=[];
+ }
+ index=target;setButtons();
+ if(index<0){
+  scene.hidden=true;svg.replaceChildren();el("notice").textContent="";busy=false;return;
+ }
+ const c=chapters[index];scene.hidden=false;svg.innerHTML='<title id="drawing-title"></title>'+art[index];
+ el("drawing-title").textContent=c[3];
+ el("chapter").textContent=c[0];el("heading").textContent=c[1];el("detail").textContent=c[2];el("detail").hidden=!c[2];
+ el("notice").textContent=c[1];
+ if(reduced.matches){fig.style.opacity="1";busy=false;return}
+ fig.style.opacity="0";
+ const parts=[...svg.querySelectorAll("path,line,polyline,polygon,rect,circle,ellipse,text,image")].filter(n=>!n.closest("defs,clipPath,mask,pattern,symbol,marker"));
+ const timed=parts.map(node=>{let len=0;try{len=node.getTotalLength()}catch{}return {node,len}});
+ const n=timed.length,step=Math.min(61,1500/Math.max(1,n-1));
+ timed.forEach(({node,len},i)=>{
+  const css=getComputedStyle(node),delay=25+i*step;
+  const isLine=len>1&&css.stroke!=="none"&&css.strokeDasharray==="none";
+  if(isLine){
+   const k=Math.ceil(len)+1;
+   animate(node,[{strokeDasharray:k+" "+k,strokeDashoffset:k},{strokeDasharray:k+" "+k,strokeDashoffset:0}],{delay,duration:Math.max(180,Math.min(570,len*.85)),fill:"both",easing:"cubic-bezier(.23,.45,.35,1)"});
+   if(css.fill!=="none"&&css.fillOpacity!=="0"){
+    animate(node,[{fillOpacity:0},{fillOpacity:css.fillOpacity}],{delay:delay+Math.min(220,len*.4),duration:300,fill:"both"});
+   }
+  }else{
+   animate(node,[{opacity:0},{opacity:css.opacity}],{delay:delay+40,duration:330,fill:"both"});
+  }
+ });
+ animate(fig,[{opacity:0,transform:"translateY(7px)"},{opacity:1,transform:"translateY(0)"}],{delay:Math.min(1330,Math.max(500,n*step*.8)),duration:490,fill:"forwards",easing:"ease-out"});
+ await pause(250);if(seq===serial)busy=false;
+}
+function navBy(d){if(!busy)void show(index+d)}
+function fullscreen(){if(document.fullscreenElement)document.exitFullscreen?.().catch(()=>{});else document.documentElement.requestFullscreen?.().catch(()=>{});}
+stage.addEventListener("click",e=>{if(e.detail===0&&e.target!==stage)return;navBy(1)});
+el("prev").onclick=()=>navBy(-1);el("next").onclick=()=>navBy(1);el("full").onclick=fullscreen;
+function openNotes(){restore=document.activeElement;dialog.showModal()}
+el("help").onclick=openNotes;dialog.addEventListener("close",()=>restore?.focus());
+document.addEventListener("fullscreenchange",()=>el("full").textContent=document.fullscreenElement?"Avsluta helskärm":"Helskärm");
+document.addEventListener("keydown",e=>{
+ if(e.defaultPrevented||dialog.open||e.altKey||e.ctrlKey||e.metaKey)return;
+ if((e.key===" "||e.key==="Enter")&&document.activeElement?.tagName==="BUTTON")return;
+ if(e.repeat&&[" ","Enter","ArrowLeft","ArrowRight"].includes(e.key)){e.preventDefault();return}
+ if([" ","ArrowRight","PageDown","Enter"].includes(e.key)){e.preventDefault();navBy(1)}
+ else if(["ArrowLeft","PageUp","Backspace"].includes(e.key)){e.preventDefault();navBy(-1)}
+ else if(e.key==="Home"||e.key.toLowerCase()==="r"){e.preventDefault();void show(-1);stage.focus({preventScroll:true});}
+ else if(e.key.toLowerCase()==="f")fullscreen();
+ else if(e.key.toLowerCase()==="l")openNotes();
+});
+document.addEventListener("pointermove",e=>{
+ if(e.pointerType!=="mouse"||index<0)return;
+ clearTimeout(timer);document.body.classList.remove("parked");timer=setTimeout(()=>document.body.classList.add("parked"),1500);
+});
+setButtons();
+
+</script>
+</body>
+</html>
