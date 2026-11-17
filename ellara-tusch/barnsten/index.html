@@ -37,11 +37,11 @@ details{margin:.55rem auto .15rem;width:min(100%,900px);font-size:.87rem;line-he
 summary{cursor:pointer}
 details p{margin:.35rem 0} details a{color:#6c3403}
 @media(min-width:851px) and (max-height:620px){.board,.toolbar{width:min(100%,max(520px,calc(175svh - 190px)))}.stage{justify-content:flex-start;padding-block:7px}.panel figcaption{font-size:.88rem;padding:.35rem .5rem}.toolbar{margin-block-start:.25rem}}
-@media(max-width:850px){.board{grid-template-columns:repeat(2,minmax(0,1fr));}.panel,.panel:nth-child(4),.panel:nth-child(5){grid-column:auto}.stage{justify-content:flex-start}.toolbar{position:sticky;bottom:0;background:#fffefff2;padding-block:.16rem;padding-bottom:max(.16rem,env(safe-area-inset-bottom));z-index:1}}
+@media(max-width:850px){.board{grid-template-columns:repeat(2,minmax(0,1fr));max-block-size:calc(100svh - 4.8rem);overflow-y:auto;overscroll-behavior:contain;padding:2px 2px 4px}.panel,.panel:nth-child(4),.panel:nth-child(5){grid-column:auto;scroll-margin-block-end:.35rem}.stage{justify-content:flex-start}.toolbar{position:static;background:#fff;padding-block:.16rem;padding-bottom:max(.16rem,env(safe-area-inset-bottom))}}
 @media(max-width:520px){.board{grid-template-columns:1fr}.panel:not(.open){display:none}.stage.waiting .board{min-height:55svh}figcaption{font-size:1rem}.toolbar{font-size:.75rem;justify-content:space-between}.counter{margin-inline-end:0}button{padding-inline:.36rem;min-block-size:2.6rem}}
 @media(max-width:850px) and (min-width:521px){.panel:not(.open){display:none}}
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;animation:none!important}}
-@media print{.panel{visibility:visible!important;display:flex!important;animation:none!important;break-inside:avoid}.stage{display:block;min-height:0;padding:0}.board{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.panel,.panel:nth-child(4),.panel:nth-child(5){grid-column:auto}.toolbar{display:none}.panel{print-color-adjust:exact;-webkit-print-color-adjust:exact}figcaption{font-size:10pt}}
+@media print{.panel{visibility:visible!important;display:flex!important;animation:none!important;break-inside:avoid}.stage{display:block;min-height:0;padding:0}.board{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;max-block-size:none;overflow:visible;padding:0}.panel,.panel:nth-child(4),.panel:nth-child(5){grid-column:auto}.toolbar{display:none}.panel{print-color-adjust:exact;-webkit-print-color-adjust:exact}figcaption{font-size:10pt}}
 </style>
 </head>
 <body>
