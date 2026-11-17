@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="sv">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="light">
+<meta name="description" content="En klickbar tuschserie för fysiklektionen om bärnsten och statisk elektricitet.">
+<title>Det som lyfte | Ellära och magnetism</title>
+<style>
+:root{color-scheme:light;--ink:#221e19;--amber:#8b470a;--paper:#fffaf0;--line:#302921}
+*,*::before,*::after{box-sizing:border-box}
+body{margin:0;background:#fff;color:var(--ink);font-family:system-ui,sans-serif;min-inline-size:0}
+[hidden]{display:none!important}
+.visually-hidden{position:absolute;width:1px;height:1px;padding:0;overflow:hidden;clip-path:inset(50%);white-space:nowrap;border:0}
+.stage{min-block-size:100svh;display:flex;align-items:center;justify-content:center;flex-direction:column;padding:clamp(10px,2vw,28px);outline:none;cursor:pointer}
+.stage.finished{cursor:default}
+.stage:focus-visible:not(.waiting){outline:2px solid var(--amber);outline-offset:-4px}
+.board{display:grid;width:min(100%,1440px,max(850px,calc(181svh - 145px)));grid-template-columns:repeat(6,minmax(0,1fr));gap:clamp(7px,1vw,14px);margin:0 auto;align-content:start}
+.panel{scroll-margin-block-end:3.2rem;min-inline-size:0;visibility:hidden;grid-column:span 2;margin:0;overflow:hidden;display:flex;flex-direction:column;border:2px solid var(--line);background:var(--paper);box-shadow:2px 3px 0 #221e1914}
+.panel:nth-child(4){grid-column:2/span 2}
+.panel:nth-child(5){grid-column:4/span 2}
+.panel.open{visibility:visible;animation:appear .26s ease-out both}
+@keyframes appear{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+.art{aspect-ratio:360/218;overflow:hidden;background:#fffaf0;border-bottom:2px solid var(--line)}
+.art svg{display:block;width:100%;height:100%;overflow:hidden}
+figcaption{padding:.48rem .66rem .58rem;font-size:clamp(.85rem,1.22vw,1.08rem);line-height:1.3;min-block-size:3.3em}
+figcaption strong{display:block;color:var(--amber);font-size:.76em;text-transform:uppercase;letter-spacing:.055em;margin-block-end:.16rem}
+.toolbar{width:min(100%,1440px,max(850px,calc(181svh - 145px)));margin:.55rem auto 0;display:flex;align-items:center;gap:.45rem;justify-content:flex-end;color:#594d41;font-size:.81rem;min-height:2.5rem}
+.stage.waiting .toolbar{visibility:hidden}
+.counter{margin-inline-end:auto}
+button,summary{font:inherit;color:#493021}
+button{cursor:pointer;background:#fff;border:1px solid #877465;border-radius:.22rem;min-block-size:2.45rem;padding:.25rem .63rem}
+button:hover{background:#fff3da}
+button:focus-visible,a:focus-visible,summary:focus-visible{outline:3px solid #a25108;outline-offset:2px}
+button:disabled{opacity:.48;cursor:default}
+details{margin:.55rem auto .15rem;width:min(100%,900px);font-size:.87rem;line-height:1.5;cursor:auto;padding-inline:.2rem}
+summary{cursor:pointer}
+details p{margin:.35rem 0} details a{color:#6c3403}
+@media(min-width:851px) and (max-height:620px){.board,.toolbar{width:min(100%,max(520px,calc(175svh - 190px)))}.stage{justify-content:flex-start;padding-block:7px}.panel figcaption{font-size:.88rem;padding:.35rem .5rem}.toolbar{margin-block-start:.25rem}}
+@media(max-width:850px){.board{grid-template-columns:repeat(2,minmax(0,1fr));}.panel,.panel:nth-child(4),.panel:nth-child(5){grid-column:auto}.stage{justify-content:flex-start}.toolbar{position:sticky;bottom:0;background:#fffefff2;padding-block:.16rem;padding-bottom:max(.16rem,env(safe-area-inset-bottom));z-index:1}}
+@media(max-width:520px){.board{grid-template-columns:1fr}.panel:not(.open){display:none}.stage.waiting .board{min-height:55svh}figcaption{font-size:1rem}.toolbar{font-size:.75rem;justify-content:space-between}.counter{margin-inline-end:0}button{padding-inline:.36rem;min-block-size:2.6rem}}
+@media(max-width:850px) and (min-width:521px){.panel:not(.open){display:none}}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;animation:none!important}}
+@media print{.panel{visibility:visible!important;display:flex!important;animation:none!important;break-inside:avoid}.stage{display:block;min-height:0;padding:0}.board{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.panel,.panel:nth-child(4),.panel:nth-child(5){grid-column:auto}.toolbar{display:none}.panel{print-color-adjust:exact;-webkit-print-color-adjust:exact}figcaption{font-size:10pt}}
+</style>
+</head>
+<body>
+<main class="stage waiting" id="stage" tabindex="0" aria-label="Det som lyfte. Tryck Retur, mellanslag eller högerpil för nästa serieruta.">
+<h1 class="visually-hidden">Det som lyfte</h1>
+<div class="board" id="board" aria-label="Tecknad serie">
+<figure class="panel" aria-hidden="true"><div class="art" role="img" aria-label="En flicka i enkel dräkt håller upp en bärnstensbit vid vattnet."><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 218" focusable="false" aria-hidden="true"><rect width="360" height="218" fill="#fffdf6"/><g stroke="#292927" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M0 77q42-5 87 0t90 0 91 0 92 0M8 91h53m182 0h78M17 105h31m224-1h60M0 150q30-15 59-8m219-5 82-11" fill="none" stroke="#8b8c7c" stroke-width="1"/><path d="M9 211q19-30 53-22l22 29m198 0 28-28 50 5" fill="#ece9df"/><path d="m12 207 26-10m-8 12 24-7m255 1 24-6m-12 12 28-7" stroke-width="1"/><g transform="translate(112 116) scale(0.93)"><path d="M-24 0Q-42 6-52 44l-8 68H53L40 39Q30 6 10 2L-6 18Z" fill="#eee9dc"/><path d="M-24 0-8 40 10 2M-8 40-20 109M17 22 29 109M-35 33l-7 61M-22 42l-7 58M5 50 2 109" fill="none"/><path d="M-25 1-6 22 13 4" fill="none" stroke-width="5" stroke="#d7cab4"/><circle cx="-20" cy="10" r="5" fill="#d69b41"/><path d="m-38 65 10 4m-12 3 11 4m-12 3 10 4m-11 3 10 4" stroke-width="1"/></g><g transform="translate(112 86) scale(0.95)"><path d="M-15 19-19 36 14 40 13 13" fill="#fffdf6"/><path d="M-28-9Q-32-36-5-41 19-42 28-21L27 2 33 12 25 15Q23 32 9 33L-11 25-22 7Z" fill="#fffdf6"/><path d="M-23 9Q-36 4-32-8-42-16-31-23-35-34-22-36-20-47-8-43 1-51 10-42 23-45 27-32 38-26 28-15L18-17 13-29Q1-17-15-14L-18 7Z" fill="#292927"/><path d="m-23-25 4-4m8-8 5-2m9 5 5 3" stroke="#77776c" stroke-width="1"/><path d="M13-6q5-3 10 0M19-2v2m-3 19q5 2 9-1M-21 3q9-7 9 4l-3 6" fill="none"/><path d="m-3 26 11 5" fill="none" stroke-width="1"/></g><path d="M80 145q-14 22 12 29l57 2 32-21-8-12-34 15-34-9M180 155l18-5 15-12q1-6-5-4l-15 8-17-1-5 5" fill="#fffdf6"/><g transform="translate(192 130) scale(0.65)"><path d="M-13 -5 -5 -14 8 -12 16 -1 9 12 -5 14 -15 5Z" fill="#d69b41"/><path d="m-5-14 1 13 13 13M-14 5l10-6 20 0M-4-1 8-12" fill="none" stroke-width="1"/><path d="m0-7 5-2" stroke="#fff1c3" stroke-width="3"/></g><path d="m212 114 8-8m-18 2 2-10M232 182q30-20 55-17l22 9-15 12-38 4Z" fill="none"/><path d="m250 177 20-3m-12 9 20-4M326 162l-3-27m2 18 11-13m-13 4-9-9" fill="none" stroke-width="1"/></g></svg></div><figcaption><strong>1. En tänkt scen</strong>Hon har hittat en bit bärnsten. I ljuset får den färg som honung.</figcaption></figure>
+<figure class="panel" aria-hidden="true"><div class="art" role="img" aria-label="Närbild av händer som gnider bärnsten mot tyg."><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 218" focusable="false" aria-hidden="true"><rect width="360" height="218" fill="#fffdf6"/><g stroke="#292927" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M0 191h360M15 200h323" fill="none"/><g transform="translate(132 113) scale(1)"><path d="M-24 0Q-42 6-52 44l-8 68H53L40 39Q30 6 10 2L-6 18Z" fill="#eee9dc"/><path d="M-24 0-8 40 10 2M-8 40-20 109M17 22 29 109M-35 33l-7 61M-22 42l-7 58M5 50 2 109" fill="none"/><path d="M-25 1-6 22 13 4" fill="none" stroke-width="5" stroke="#d7cab4"/><circle cx="-20" cy="10" r="5" fill="#d69b41"/><path d="m-38 65 10 4m-12 3 11 4m-12 3 10 4m-11 3 10 4" stroke-width="1"/></g><g transform="translate(133 78) scale(1)"><path d="M-15 19-19 36 14 40 13 13" fill="#fffdf6"/><path d="M-28-9Q-32-36-5-41 19-42 28-21L27 2 33 12 25 15Q23 32 9 33L-11 25-22 7Z" fill="#fffdf6"/><path d="M-23 9Q-36 4-32-8-42-16-31-23-35-34-22-36-20-47-8-43 1-51 10-42 23-45 27-32 38-26 28-15L18-17 13-29Q1-17-15-14L-18 7Z" fill="#292927"/><path d="m-23-25 4-4m8-8 5-2m9 5 5 3" stroke="#77776c" stroke-width="1"/><path d="M13-6q5-3 10 0M19-2v2m-3 19q5 2 9-1M-21 3q9-7 9 4l-3 6" fill="none"/><path d="m-3 26 11 5" fill="none" stroke-width="1"/></g><path d="M90 144 124 172l43-7 17-16-15-9-45 15-21-23M174 136l25 11 26 22-9 14-41-27" fill="#fffdf6"/><path d="M174 151q13-20 42-13l37 25-18 24-43-5-27-12Z" fill="#ded6c4"/><path d="m176 159 49 16m-42-28 54 25m-42-32 50 25m-47-15-12 26m24-20-12 24m24-17-12 20" stroke-width="1" opacity=".65"/><g transform="translate(202 151) scale(0.7)"><path d="M-13 -5 -5 -14 8 -12 16 -1 9 12 -5 14 -15 5Z" fill="#d69b41"/><path d="m-5-14 1 13 13 13M-14 5l10-6 20 0M-4-1 8-12" fill="none" stroke-width="1"/><path d="m0-7 5-2" stroke="#fff1c3" stroke-width="3"/></g><path d="m213 151-18 7-6 9q-2 5 6 3l17-6 12 9 7-9-13-17Z" fill="#fffdf6"/><path d="M242 131q17 7 24 22M246 124q20 8 28 26M177 183q16 12 35 10" fill="none" stroke-width="1.5"/><g fill="#e4d4a4" stroke-width="1.4"><path d="m273 187 17-4 1 3-17 4Z"/><path d="m302 186 18 2-1 3-18-2Z"/><path d="m284 178 13 3-1 3-13-3Z"/></g></g></svg></div><figcaption><strong>2. Ull mot bärnsten</strong>Hon gnider bärnstenen mot en bit ulltyg. På bordet ligger några torra strån.</figcaption></figure>
+<figure class="panel" aria-hidden="true"><div class="art" role="img" aria-label="Ett tunt strå lyfter mot bärnstenen. Ett synligt mellanrum finns kvar."><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 218" focusable="false" aria-hidden="true"><rect width="360" height="218" fill="#fffdf6"/><g stroke="#292927" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><g transform="translate(76 130) scale(0.9)"><path d="M-24 0Q-42 6-52 44l-8 68H53L40 39Q30 6 10 2L-6 18Z" fill="#eee9dc"/><path d="M-24 0-8 40 10 2M-8 40-20 109M17 22 29 109M-35 33l-7 61M-22 42l-7 58M5 50 2 109" fill="none"/><path d="M-25 1-6 22 13 4" fill="none" stroke-width="5" stroke="#d7cab4"/><circle cx="-20" cy="10" r="5" fill="#d69b41"/><path d="m-38 65 10 4m-12 3 11 4m-12 3 10 4m-11 3 10 4" stroke-width="1"/></g><g transform="translate(76 88) scale(1.05)"><path d="M-15 19-19 36 14 40 13 13" fill="#fffdf6"/><path d="M-28-9Q-32-36-5-41 19-42 28-21L27 2 33 12 25 15Q23 32 9 33L-11 25-22 7Z" fill="#fffdf6"/><path d="M-23 9Q-36 4-32-8-42-16-31-23-35-34-22-36-20-47-8-43 1-51 10-42 23-45 27-32 38-26 28-15L18-17 13-29Q1-17-15-14L-18 7Z" fill="#292927"/><path d="m-23-25 4-4m8-8 5-2m9 5 5 3" stroke="#77776c" stroke-width="1"/><path d="M13-6q5-3 10 0M19-2v2m-3 19q5 2 9-1M-21 3q9-7 9 4l-3 6" fill="none"/><path d="m-3 26 11 5" fill="none" stroke-width="1"/></g><path d="M47 159q-1 23 33 21l66-9 34-30-8-13-39 24-47 4M170 139l22-2 15-13q3-7-4-7l-15 9-16-1Z" fill="#fffdf6"/><g transform="translate(202 111) scale(0.8)"><path d="M-13 -5 -5 -14 8 -12 16 -1 9 12 -5 14 -15 5Z" fill="#d69b41"/><path d="m-5-14 1 13 13 13M-14 5l10-6 20 0M-4-1 8-12" fill="none" stroke-width="1"/><path d="m0-7 5-2" stroke="#fff1c3" stroke-width="3"/></g><path d="M153 196h198m-188 9h180" fill="none"/><g fill="#eee3b4"><path d="m217 168 5-19 3 1-5 19Z"/><path d="m249 179-8-16 3-1 8 16Z"/><path d="m275 194-18-4 0-3 20 4Z"/><path d="m188 194 17-5 1 3-18 5Z"/></g><path d="m219 184 3-8m15-23-3-9m-5 30 1-8M191 91l-3-9m26 3 4-10M113 78l8-2" fill="none" stroke-width="1"/></g></svg></div><figcaption><strong>3. Strået lyfter</strong>När hon för bärnstenen nära lyfter ett strå. Stenen rör inte vid det.</figcaption></figure>
+<figure class="panel" aria-hidden="true"><div class="art" role="img" aria-label="Samma flicka jämför en gniden och en ogniden bärnstensbit ovanför torra strån."><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 218" focusable="false" aria-hidden="true"><rect width="360" height="218" fill="#fffdf6"/><g stroke="#292927" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M0 180h360m-345 10h330" fill="none"/><g transform="translate(181 93) scale(0.64)"><path d="M-24 0Q-42 6-52 44l-8 68H53L40 39Q30 6 10 2L-6 18Z" fill="#eee9dc"/><path d="M-24 0-8 40 10 2M-8 40-20 109M17 22 29 109M-35 33l-7 61M-22 42l-7 58M5 50 2 109" fill="none"/><path d="M-25 1-6 22 13 4" fill="none" stroke-width="5" stroke="#d7cab4"/><circle cx="-20" cy="10" r="5" fill="#d69b41"/><path d="m-38 65 10 4m-12 3 11 4m-12 3 10 4m-11 3 10 4" stroke-width="1"/></g><g transform="translate(182 68) scale(0.67)"><path d="M-15 19-19 36 14 40 13 13" fill="#fffdf6"/><path d="M-28-9Q-32-36-5-41 19-42 28-21L27 2 33 12 25 15Q23 32 9 33L-11 25-22 7Z" fill="#fffdf6"/><path d="M-23 9Q-36 4-32-8-42-16-31-23-35-34-22-36-20-47-8-43 1-51 10-42 23-45 27-32 38-26 28-15L18-17 13-29Q1-17-15-14L-18 7Z" fill="#292927"/><path d="m-23-25 4-4m8-8 5-2m9 5 5 3" stroke="#77776c" stroke-width="1"/><path d="M13-6q5-3 10 0M19-2v2m-3 19q5 2 9-1M-21 3q9-7 9 4l-3 6" fill="none"/><path d="m-3 26 11 5" fill="none" stroke-width="1"/></g><path d="M147 121 105 132 75 120l-7 12 36 17 49-10M207 125l34 8 29-13 8 11-34 20-34-5" fill="#fffdf6"/><g transform="translate(69 126) scale(0.65)"><path d="M-13 -5 -5 -14 8 -12 16 -1 9 12 -5 14 -15 5Z" fill="#d69b41"/><path d="m-5-14 1 13 13 13M-14 5l10-6 20 0M-4-1 8-12" fill="none" stroke-width="1"/><path d="m0-7 5-2" stroke="#fff1c3" stroke-width="3"/></g><g transform="translate(278 126) scale(0.65)"><path d="M-13 -5 -5 -14 8 -12 16 -1 9 12 -5 14 -15 5Z" fill="#d69b41"/><path d="m-5-14 1 13 13 13M-14 5l10-6 20 0M-4-1 8-12" fill="none" stroke-width="1"/><path d="m0-7 5-2" stroke="#fff1c3" stroke-width="3"/></g><path d="m58 180 17-4m6 4 19-1m-57-3 9 2m214-24 3-17 3 1-3 17m15 8 6-13 2 2-6 13m-22 15 11-3m9 2 15 1" fill="none"/><path d="m269 166 1-6m23-18 3-8" stroke-width="1"/><path d="M174 154v31" stroke="#aaa396" stroke-width="1" stroke-dasharray="2 5"/></g></svg></div><figcaption><strong>4. Hon provar igen</strong>Hon håller två bitar lika nära stråna. Den hon gnidit får stråna att röra sig.</figcaption></figure>
+<figure class="panel" aria-hidden="true"><div class="art" role="img" aria-label="En bärnstensbit och ett ljust strå i förstoring. Rörelselinjer visar att strået dras mot stenen."><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 218" focusable="false" aria-hidden="true"><rect width="360" height="218" fill="#fffdf6"/><g stroke="#292927" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 44q41-13 76 4l37 13 19-5q11-2 12 5l-24 15-34-3 33 18q8 7 0 11L91 82 54 81 18 95" fill="#fffdf6"/><g transform="translate(166 78) scale(1.8)"><path d="M-13 -5 -5 -14 8 -12 16 -1 9 12 -5 14 -15 5Z" fill="#d69b41"/><path d="m-5-14 1 13 13 13M-14 5l10-6 20 0M-4-1 8-12" fill="none" stroke-width="1"/><path d="m0-7 5-2" stroke="#fff1c3" stroke-width="3"/></g><path d="M24 194h312" fill="none"/><g fill="#e4d4a4"><path d="m163 142 8-26 5 1-9 26Z"/><path d="m212 159-13-21 5-2 13 22Z"/><path d="m238 191-25-5 0-4 28 5Z"/><path d="m108 189 28-7 1 4-28 7Z"/><path d="m269 190 20 1-1 4-20-1Z"/></g><path d="m159 163 4-12m17 2 3-13m35-16-4-9m12 30-4-9" fill="none" stroke-width="1.2"/><path d="m46 53 32 4m-37 3 35 5m-30 3 25 4" stroke-width="1"/><path d="M234 47q26 6 39 26m-35-35q29 8 44 32" fill="none" stroke="#a5a18e" stroke-width="1"/></g></svg></div><figcaption><strong>5. Vår förklaring i dag</strong>Gnidningen kan flytta elektroner mellan ullen och bärnstenen. I strået förskjuts laddningarna lite. Motsatt laddning hamnar närmast och dras starkare till bärnstenen. Strået är ändå neutralt.</figcaption></figure>
+</div>
+<div class="toolbar" id="controls" aria-label="Visningskontroller" hidden>
+<span class="counter" id="count"></span>
+<button id="back" type="button" aria-label="Visa föregående ruta">Tillbaka</button>
+<button id="reset" type="button" aria-label="Börja om från helt vit skärm">Börja om</button>
+<button id="forward" type="button" aria-label="Visa nästa ruta">Nästa</button>
+</div>
+<p class="visually-hidden" id="status" aria-live="polite" aria-atomic="true"></p>
+<details id="sourceNote" hidden>
+<summary>Vad vet vi om berättelsen?</summary>
+<p>Flickan och hennes försök är påhittade. Vi vet inte vem som först lade märke till fenomenet. I <em>Naturalis historia</em> från första århundradet e.Kr. beskriver Plinius den äldre hur gniden bärnsten drar till sig bland annat strån.</p><p><a href="https://www.attalus.org/pliny/hn37a.html">Plinius den äldre, <em>Naturalis historia</em>, bok 37, §48 (översättning D. E. Eichholz)</a> · <a href="https://openstax.org/books/university-physics-volume-2/pages/5-2-conductors-insulators-and-charging-by-induction">OpenStax: varför laddad bärnsten kan dra till sig neutrala strån</a></p>
+</details>
+</main>
+<script>
+(()=>{'use strict';
+const stage=document.getElementById('stage'), p=[...document.querySelectorAll('.panel')],
+count=document.getElementById('count'), controls=document.getElementById('controls'), note=document.getElementById('sourceNote'),
+status=document.getElementById('status'), back=document.getElementById('back'), reset=document.getElementById('reset'), forward=document.getElementById('forward');
+let n=0;
+const mobile=matchMedia('(max-width: 850px)'), reduce=matchMedia('(prefers-reduced-motion: reduce)');
+function go(next){
+ const old=n;n=Math.min(p.length,Math.max(0,next));if(n===old)return;
+ p.forEach((elem,i)=>{elem.classList.toggle('open',i<n);elem.setAttribute('aria-hidden',String(i>=n));});
+ stage.classList.toggle('waiting',n===0);stage.classList.toggle('finished',n===p.length);
+ controls.hidden=n===0;
+ note.hidden=n!==p.length;if(note.hidden)note.open=false;
+ const nextHadFocus=document.activeElement===forward;
+ count.textContent=n+' / '+p.length;back.disabled=n===0;forward.disabled=n===p.length;
+ if(nextHadFocus&&n===p.length)back.focus({preventScroll:true});
+ if(n===0){window.scrollTo({top:0,behavior:'instant'});stage.focus({preventScroll:true});status.textContent='Vit startsida.';}
+ else { status.textContent='Ruta '+n+' av '+p.length+'. '+p[n-1].querySelector('figcaption').innerText;
+   if(mobile.matches)p[n-1].scrollIntoView({block:'nearest',behavior:reduce.matches?'instant':'smooth'});
+ }
+}
+stage.addEventListener('click',event=>{if(!event.target.closest('button, a, summary, details'))go(n+1);});
+back.onclick=()=>go(n-1);reset.onclick=()=>go(0);forward.onclick=()=>go(n+1);
+document.addEventListener('keydown',event=>{
+ if(event.altKey||event.ctrlKey||event.metaKey||event.repeat||event.defaultPrevented)return;
+ if(event.target.closest('button, a, summary')&&(event.key===' '||event.key==='Enter'))return;
+ if(['ArrowRight',' ','Enter','PageDown'].includes(event.key)){event.preventDefault();go(n+1);}
+ else if(['ArrowLeft','PageUp','Backspace'].includes(event.key)){event.preventDefault();go(n-1);}
+ else if(event.key==='Home'){event.preventDefault();go(0);}
+});
+})();
+</script>
+</body>
+</html>
