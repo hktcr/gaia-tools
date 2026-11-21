@@ -108,7 +108,17 @@
  for(const id of ['seek','align','seekMode','alignMode'])get(id).addEventListener('change',()=>{cfg[id]=get(id).type==='checkbox'?get(id).checked:get(id).value;});
  get('defaults').addEventListener('click',()=>{Object.assign(cfg,FlockEngine.defaults);sync();engine.reset();render();});
  function expanded(){return document.fullscreenElement===container||container.classList.contains('expanded');}
- function syncExpanded(){const on=expanded();get(on?'fullscreen-rule-slot':'live-rule-slot').append(get('live-rules'));if(!on)get('fullscreen-rules').open=false;expand.textContent=on?'Avsluta helskärm':'Helskärm';expand.setAttribute('aria-pressed',String(on));resize();}
+ function syncExpanded(){
+   const on=expanded(), full=get('fullscreen-predator-slot'), rad=get('predatorRadius').closest('label'), show=get('show-radius').closest('label');
+   get(on?'fullscreen-rule-slot':'live-rule-slot').append(get('live-rules'));
+   if(on){full.append(rad,show);}
+   else{
+     get('normal-radius-toggle').append(show);
+     get('settings').insertBefore(rad,get('repelStrength').closest('label'));
+     get('fullscreen-rules').open=false;
+   }
+   expand.textContent=on?'Avsluta helskärm':'Helskärm';expand.setAttribute('aria-pressed',String(on));resize();
+ }
  function overlay(on){container.classList.toggle('expanded',on);document.body.classList.toggle('has-overlay',on);syncExpanded();}
  expand.addEventListener('click',async()=>{
    if(container.classList.contains('expanded')){overlay(false);return;}
