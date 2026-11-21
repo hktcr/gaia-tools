@@ -5,7 +5,7 @@
   else root.FlockEngine = Engine;
 })(typeof globalThis === 'object' ? globalThis : this, function () {
   'use strict';
-  const PI = Math.PI, TAU = 2 * PI, MAX = 350;
+  const PI = Math.PI, TAU = 2 * PI, MAX = 5000;
   const defaults = Object.freeze({
     count: 120, speed: 72, turnNoise: 1.7,
     seek: false, seekMode: 'nearest', seekStrength: 1.35,
@@ -26,6 +26,171 @@
     const u = Math.max(1e-12, rng());
     return Math.sqrt(-2 * Math.log(u)) * Math.cos(TAU * rng());
   }
+  // Exact nearest on the torus. A balanced spatial tree adapts to dense
+  // clusters and empty space, unlike a fixed-resolution neighborhood search.
+  // Buffers are allocated once; the tree is rebuilt from current positions.
+  function boundsOffset(q, lo, hi, size) {
+    if (q >= lo && q <= hi) return 0;
+    const a = Math.abs(offset(lo - q, size));
+    const b = Math.abs(offset(hi - q, size));
+    return a < b ? a : b;
+  }
+
+  class NearestIndex {
+    constructor(capacity) {
+      const nodes = 2 * capacity;
+      this.ids = new Int32Array(capacity);
+      this.loX = new Float64Array(nodes);
+      this.loY = new Float64Array(nodes);
+      this.hiX = new Float64Array(nodes);
+      this.hiY = new Float64Array(nodes);
+      this.first = new Int32Array(nodes);
+      this.last = new Int32Array(nodes);
+      this.left = new Int32Array(nodes);
+      this.right = new Int32Array(nodes);
+      this.minId = new Int32Array(nodes);
+      this.nextId = new Int32Array(nodes);
+    }
+
+    build(birds, w, h) {
+      this.birds = birds;
+      this.w = w;
+      this.h = h;
+      this.nodes = 0;
+      for (let i = 0; i < birds.length; i++) {
+        const { x, y } = birds[i];
+        // Ordinary engine coordinates are canonical. The original pair
+        // scan preserves semantics for caller-supplied out-of-domain data.
+        if (!(x >= 0 && x <= w && y >= 0 && y <= h)) return false;
+        this.ids[i] = i;
+      }
+      this._build(0, birds.length);
+      return true;
+    }
+
+    _build(start, end) {
+      const node = this.nodes++;
+      const ids = this.ids, birds = this.birds;
+      let lx = Infinity, ly = Infinity, hx = -Infinity, hy = -Infinity;
+      let min = Infinity, second = Infinity;
+      for (let i = start; i < end; i++) {
+        const id = ids[i], { x, y } = birds[id];
+        if (x < lx) lx = x;
+        if (x > hx) hx = x;
+        if (y < ly) ly = y;
+        if (y > hy) hy = y;
+        if (id < min) { second = min; min = id; }
+        else if (id < second) second = id;
+      }
+      this.loX[node] = lx; this.hiX[node] = hx;
+      this.loY[node] = ly; this.hiY[node] = hy;
+      this.minId[node] = min;
+      this.nextId[node] = second === Infinity ? -1 : second;
+      this.first[node] = start; this.last[node] = end;
+      this.left[node] = -1;
+      if (end - start <= 12 || (lx === hx && ly === hy)) return node;
+
+      const axis = hx - lx >= hy - ly ? 'x' : 'y';
+      const mid = (start + end) >>> 1;
+      // In-place median selection, with a work guard for adversarial order.
+      let a = start, b = end - 1, budget = 3 * (end - start);
+      while (a < b) {
+        if ((budget -= b - a + 1) < 0) {
+          this._sortRange(a, b + 1, axis);
+          break;
+        }
+        const pivot = birds[ids[(a + b) >>> 1]][axis];
+        let i = a, j = b;
+        while (i <= j) {
+          while (birds[ids[i]][axis] < pivot) i++;
+          while (birds[ids[j]][axis] > pivot) j--;
+          if (i <= j) {
+            const tmp = ids[i]; ids[i++] = ids[j]; ids[j--] = tmp;
+          }
+        }
+        if (mid <= j) b = j;
+        else if (mid >= i) a = i;
+        else break;
+      }
+      this.left[node] = this._build(start, mid);
+      this.right[node] = this._build(mid, end);
+      return node;
+    }
+
+    _sortRange(start, end, axis) {
+      // Heapsort only on the partition still unresolved; no temporary array.
+      for (let i = ((end - start) >>> 1) - 1; i >= 0; i--) {
+        this._sift(start, end - start, i, axis);
+      }
+      const ids = this.ids;
+      for (let i = end - 1; i > start; i--) {
+        const tmp = ids[start]; ids[start] = ids[i]; ids[i] = tmp;
+        this._sift(start, i - start, 0, axis);
+      }
+    }
+
+    _sift(start, end, parent, axis) {
+      const ids = this.ids, birds = this.birds;
+      const id = ids[start + parent], coordinate = birds[id][axis];
+      for (let child = 2 * parent + 1; child < end; child = 2 * parent + 1) {
+        if (child + 1 < end && birds[ids[start + child]][axis] < birds[ids[start + child + 1]][axis]) child++;
+        if (coordinate >= birds[ids[start + child]][axis]) break;
+        ids[start + parent] = ids[start + child];
+        parent = child;
+      }
+      ids[start + parent] = id;
+    }
+
+    _bound(node, x, y) {
+      const dx = boundsOffset(x, this.loX[node], this.hiX[node], this.w);
+      const dy = boundsOffset(y, this.loY[node], this.hiY[node], this.h);
+      return dx * dx + dy * dy;
+    }
+
+    _consider(id, d) {
+      if (d < this.best || (d === this.best && id < this.target)) {
+        this.best = d;
+        this.target = id;
+      }
+    }
+
+    _query(node, lower, self, x, y) {
+      if (lower > this.best || (lower === this.best && this.minId[node] >= this.target)) return;
+      const l = this.left[node];
+      if (l < 0) {
+        if (this.loX[node] === this.hiX[node] && this.loY[node] === this.hiY[node]) {
+          const id = this.minId[node] === self ? this.nextId[node] : this.minId[node];
+          if (id >= 0) this._consider(id, lower);
+          return;
+        }
+        const birds = this.birds, ids = this.ids;
+        for (let i = this.first[node], end = this.last[node]; i < end; i++) {
+          const id = ids[i];
+          if (id === self) continue;
+          const bird = birds[id];
+          const dx = offset(bird.x - x, this.w), dy = offset(bird.y - y, this.h);
+          this._consider(id, dx * dx + dy * dy);
+        }
+        return;
+      }
+      const r = this.right[node], dl = this._bound(l, x, y), dr = this._bound(r, x, y);
+      if (dl < dr || (dl === dr && this.minId[l] < this.minId[r])) {
+        this._query(l, dl, self, x, y);
+        this._query(r, dr, self, x, y);
+      } else {
+        this._query(r, dr, self, x, y);
+        this._query(l, dl, self, x, y);
+      }
+    }
+
+    query(i) {
+      const { x, y } = this.birds[i];
+      this.best = Infinity;
+      this.target = -1;
+      this._query(0, 0, i, x, y);
+    }
+  }
+
   class FlockEngine {
     constructor(w, h, config = {}) {
       this.w = Math.max(1, finite(w, 600));
@@ -40,6 +205,7 @@
       this._neighborDistances = new Float64Array(MAX);
       this._statDistances = new Float64Array(MAX);
       this._stats = {};
+      this._nearestIndex = new NearestIndex(MAX);
       this.reset();
     }
     reset() {
@@ -93,6 +259,15 @@
     _nearest(dist, writeTargets) {
       // Reuse fixed buffers; statistics never overwrite behavioral targets.
       const b = this.birds, n = b.length;
+      const index = this._nearestIndex;
+      if (n > 40 && index.build(b, this.w, this.h)) {
+        for (let i = 0; i < n; i++) {
+          index.query(i);
+          dist[i] = index.best;
+          if (writeTargets) b[i].nearest = index.target;
+        }
+        return;
+      }
       dist.fill(Infinity, 0, n);
       if (writeTargets) for (let i = 0; i < n; i++) b[i].nearest = -1;
       for (let i = 0; i < n; i++) for (let j = i + 1; j < n; j++) {

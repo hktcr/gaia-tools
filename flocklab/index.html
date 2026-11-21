@@ -1,20 +1,20 @@
 <!doctype html>
-<html lang="sv"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#eeeae0"><title>Flocklabbet • Ett digitalt fältförsök</title><link rel="stylesheet" href="style.css?v=4"><script defer src="engine.js?v=4"></script><script defer src="stats.js?v=4"></script><script defer src="ui.js?v=4"></script></head>
+<html lang="sv"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#f3f6f4"><title>Flocklabbet • Ett digitalt fältförsök</title><link rel="stylesheet" href="style.css?v=5"><script defer src="engine.js?v=5"></script><script defer src="stats.js?v=5"></script><script defer src="ui.js?v=5"></script></head>
 <body><main class="shell">
 <header class="mast">
-  <div class="wordmark"><svg viewBox="0 0 36 36" aria-hidden="true"><path d="M4 25 16 8l2 10 13-5-9 13-9-4-9 3Z" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="m19 11 10-6M23 28l5 4" fill="none" stroke="currentColor" stroke-width="1.5"/></svg><h1>Flocklabbet</h1></div>
+  <div class="wordmark"><svg viewBox="0 0 36 36" aria-hidden="true"><path d="M4 25 16 8l2 10 13-5-9 13-9-4-9 3Z" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="m19 11 10-6M23 28l5 4" fill="none" stroke="currentColor" stroke-width="1.5"/></svg><div class="brand"><span>BETEENDELABB / 01</span><h1>Flocklabbet</h1></div></div>
   <nav class="view-tabs" aria-label="Flocklabbets vyer" role="tablist"><button id="trial-tab" type="button" role="tab" aria-controls="trial" aria-selected="true">Försök</button><button id="stats-tab" type="button" role="tab" aria-controls="stats-panel" aria-selected="false" tabindex="-1">Statistik</button></nav>
 </header>
 <div class="layout" id="trial" role="tabpanel" aria-labelledby="trial-tab">
 <section id="observation" aria-labelledby="field-title">
   <div class="fieldhead">
-    <h2 id="field-title">Flygfält</h2>
+    <h2 id="field-title"><i aria-hidden="true"></i> Flygfält</h2>
     <div class="count-control" role="group" aria-label="Antal småfåglar">
       <label for="count">Småfåglar</label>
       <button type="button" id="count-down" aria-label="En fågel färre">−</button>
-      <input type="number" id="count" value="120" min="1" max="350" step="1" inputmode="numeric" aria-describedby="count-limit">
+      <input type="number" id="count" value="120" min="1" max="5000" step="1" inputmode="numeric" aria-describedby="count-limit">
       <button type="button" id="count-up" aria-label="En fågel fler">+</button>
-      <span id="count-limit" class="sr">Skriv in ett antal mellan 1 och 350.</span>
+      <span id="count-limit" class="sr">Skriv in ett antal mellan 1 och 5 000.</span>
     </div>
     <button id="expand" class="expand" type="button" aria-pressed="false"><span>Helskärm</span></button>
   </div>
@@ -39,7 +39,7 @@
   </div>
 </section>
 <aside class="bench" aria-labelledby="rules-title">
-  <h2 id="rules-title">Flockregler</h2>
+  <p class="bench-kicker">EXPERIMENT</p><h2 id="rules-title">Flockregler</h2>
   <p class="ruleintro">Utan regler flyger fåglarna oberoende av varandra.</p>
   <div id="live-rule-slot"><div id="live-rules">
     <div class="rule">
@@ -51,18 +51,28 @@
       <label class="chooser" for="alignMode">Följ <select id="alignMode"><option value="nearest">Närmaste fågel</option><option value="random">Slumpmässig fågel</option></select></label>
     </div>
   </div></div>
+  <details class="growth-block" open><summary>Flocktillväxt</summary>
+    <label class="growth-switch check" for="growth"><span>Lägg till fåglar automatiskt</span><input id="growth" type="checkbox"></label>
+    <div class="growth-grid">
+      <label for="growth-batch">Nya fåglar<input id="growth-batch" type="number" min="1" max="5000" step="1" value="10" inputmode="numeric"></label>
+      <label for="growth-interval">Varje<input id="growth-interval" type="number" min="1" max="3600" step="1" value="1" inputmode="numeric"></label>
+      <label for="growth-unit">Tidsenhet<select id="growth-unit"><option value="seconds">sekund(er)</option><option value="minutes">minut(er)</option></select></label>
+      <label for="growth-cap">Stoppa vid<input id="growth-cap" type="number" min="1" max="5000" step="1" value="5000" inputmode="numeric"></label>
+    </div><p class="growth-status" id="growth-status"></p>
+  </details>
   <details class="setup"><summary>Justera försöket</summary><div id="normal-radius-toggle"><label class="radius-toggle"><input id="show-radius" type="checkbox"> Visa hur nära en rovfågel påverkar flocken</label></div><div id="settings"></div><button type="button" id="defaults" class="quiet">Standardvärden</button></details>
 </aside></div>
 <section id="stats-panel" role="tabpanel" aria-labelledby="stats-tab" hidden>
  <div class="stats-head"><div><h2>Så förändrades flocken</h2><p id="stats-reason"></p></div><div class="stats-actions"><button id="stats-play" class="quiet" type="button">Starta</button><button id="stats-export" class="quiet" type="button" disabled>Hämta CSV</button></div></div>
  <div class="stats-layout">
   <div class="plot">
-   <canvas id="stats-chart" role="img" aria-label="Tre tidsserier för flockens riktning, avstånd och rovfågelsradie" aria-describedby="stats-summary"></canvas>
+   <canvas id="stats-chart" role="img" aria-label="Fyra tidsserier för fågelantal, flockens riktning, avstånd och rovfågelsradie" aria-describedby="stats-summary"></canvas>
    <p id="stats-summary" class="stat-summary"></p>
   </div>
   <div class="stats-context">
    <h3>Händelser <small>senaste först</small></h3><ul id="stats-events"></ul>
    <details><summary>Hur läser jag diagrammen?</summary><dl>
+    <dt>Småfåglar</dt><dd>Antal vid varje mättillfälle, oavsett om fåglarna lades till för hand eller automatiskt.</dd>
     <dt>Polarisering</dt><dd>0 till 1. Nära 1 betyder att nästan alla flyger åt samma håll. Nära 0 betyder att riktningarna i stort tar ut varandra.</dd>
     <dt>Närmaste granne</dt><dd>Genomsnittligt avstånd till närmaste fågel, i procent av flygfältets kortsida. Lägre värde betyder tätare grannar. Vid färre än två fåglar saknas måttet.</dd>
     <dt>Inom reaktionsavstånd</dt><dd>Andelen småfåglar inom minst en rovfågels radie just då. Inom radien prioriterar småfåglarna undanmanövern framför flockreglerna. Måttet visar närhet, inte hur många som hunnit undan.</dd>

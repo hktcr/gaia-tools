@@ -6,6 +6,48 @@
  const statPoint={},showRadius=get('show-radius'), trial=get('trial'), statsPanel=get('stats-panel'), trialTab=get('trial-tab'), statsTab=get('stats-tab');
  let inStats=false, stepCount=0, frameHandle=0, lastLoggedCount=cfg.count, grid=null;
  let w=engine.w,h=engine.h,dpr=1,playing=false,last=0,acc=0,drag=null,keyPoint=null,countText='';
+ const growthInputs=['growth','growth-batch','growth-interval','growth-unit','growth-cap'].map(get);
+ const [growthToggle,growthBatch,growthInterval,growthUnit,growthCap]=growthInputs;
+ const growthStatus=get('growth-status');
+ const growth={enabled:false,batch:10,interval:1,unit:'seconds',cap:FlockEngine.maxBirds};
+ let startCount=cfg.count,nextGrowthStep=Infinity,capLogged=false;
+ const limitCount=()=>growth.enabled?growth.cap:FlockEngine.maxBirds;
+ function growthPeriod(){return growth.interval*(growth.unit==='minutes'?3600:60);}
+ function growthDescription(){return growth.batch+' per '+growth.interval+' '+(growth.unit==='minutes'?'min':'s')+' · max '+growth.cap;}
+ function updateGrowthStatus(){
+   if(!growthStatus)return;
+   const label=!growth.enabled?'Tillväxt av.':(cfg.count>=growth.cap?'Max nått: '+growth.cap+' småfåglar.':'Tillväxt på: '+growthDescription()+'.');
+   if(growthStatus.textContent!==label)growthStatus.textContent=label;
+ }
+ function syncGrowth(){
+   if(growthToggle){growthToggle.checked=growth.enabled;growthBatch.max=growthCap.max=FlockEngine.maxBirds;growthBatch.value=growth.batch;growthInterval.value=growth.interval;growthUnit.value=growth.unit;growthCap.value=growth.cap;}
+   updateGrowthStatus();
+ }
+ function rescheduleGrowth(){nextGrowthStep=growth.enabled?stepCount+growthPeriod():Infinity;capLogged=false;updateGrowthStatus();}
+ function readGrowth(){
+   const bounded=(input,old,lo,hi)=>input.value!==''&&Number.isFinite(input.valueAsNumber)?clamp(Math.round(input.valueAsNumber),lo,hi):old;
+   const old=growth.enabled+'|'+growthDescription();
+   growth.enabled=growthToggle.checked;growth.batch=bounded(growthBatch,growth.batch,1,FlockEngine.maxBirds);
+   growth.interval=bounded(growthInterval,growth.interval,1,3600);
+   growth.unit=growthUnit.value==='minutes'?'minutes':'seconds';
+   growth.cap=bounded(growthCap,growth.cap,1,FlockEngine.maxBirds);
+   if(old!==growth.enabled+'|'+growthDescription()){
+     if(cfg.count>limitCount()){
+       commitCount(limitCount());
+       eventAt('Antal minskat till nytt max → '+cfg.count);
+     }else syncCount();
+     rescheduleGrowth();
+     eventAt(growth.enabled?'Tillväxt ändrad: '+growthDescription():'Tillväxt av');
+   }
+   syncGrowth();
+ }
+ function tickGrowth(){
+   if(!growth.enabled||stepCount<nextGrowthStep)return;
+   nextGrowthStep+=growthPeriod();
+   if(cfg.count>=growth.cap)return;
+   commitCount(Math.min(growth.cap,cfg.count+growth.batch));
+   if(cfg.count===growth.cap&&!capLogged){capLogged=true;eventAt('Tillväxt nådde max · '+cfg.count+' småfåglar');}
+ }
  function setView(stat){
    const next=stat?statsTab:trialTab,prev=stat?trialTab:statsTab;
    inStats=stat;trial.hidden=stat;statsPanel.hidden=!stat;
@@ -20,9 +62,9 @@
    });
  }
  function eventAt(label){stats.addEvent(stepCount/60,label);if(inStats)stats.render();}
- function clearRun(){stepCount=0;stats.clear();lastLoggedCount=cfg.count;if(inStats)stats.render();}
+ function clearRun(){stepCount=0;stats.clear();lastLoggedCount=cfg.count;rescheduleGrowth();if(inStats)stats.render();}
  function playState(state){
-   if(state&&!stats.size){stats.record(0,engine.getStats(statPoint));eventAt('Försöket startat · '+cfg.count+' småfåglar');}
+   if(state&&!stats.size){stats.record(0,engine.getStats(statPoint));eventAt('Försöket startat · '+cfg.count+' småfåglar');if(growth.enabled)eventAt('Tillväxt vid start: '+growthDescription());}
    else if(state!==playing)eventAt(state?'Fortsatt':'Pausad');
  }
 
@@ -51,6 +93,17 @@
    else {ctx.moveTo(-3.8,-3.5);ctx.lineTo(3,0);ctx.lineTo(-3.8,3.5);ctx.moveTo(-3.8,0);ctx.lineTo(4.8,0);}
    ctx.stroke();ctx.restore();
  }
+ const spriteBins=64,spriteSide=30,spriteRadius=7.5;
+ let spriteAtlas;
+ function atlas(){
+   const a=document.createElement('canvas');a.width=spriteSide*spriteBins;a.height=spriteSide;
+   const c=a.getContext('2d'); c.strokeStyle='#f3f0d9';c.lineCap='round';c.lineJoin='round';c.lineWidth=1.25;
+   for(let i=0;i<spriteBins;i++){
+     c.save();c.translate(i*spriteSide+spriteSide/2,spriteSide/2);c.scale(2,2);c.rotate(2*Math.PI*i/spriteBins);c.beginPath();
+     c.moveTo(-3.8,-3.5);c.lineTo(3,0);c.lineTo(-3.8,3.5);c.moveTo(-3.8,0);c.lineTo(4.8,0);c.stroke();c.restore();
+   }
+   return a;
+ }
  function render(){
    if(inStats)return;
    ctx.setTransform(dpr,0,0,dpr,0,0);
@@ -62,12 +115,21 @@
    }
    ctx.lineWidth=1;ctx.strokeStyle='#92a58f22';ctx.stroke(grid);
    ctx.strokeStyle='#f3f0d9';ctx.lineWidth=1.25;ctx.lineCap='round';ctx.lineJoin='round';ctx.beginPath();
-   for(const b of engine.birds){
-     const x=b.x,y=b.y,c=Math.cos(b.a),s=Math.sin(b.a);
-     ctx.moveTo(x-3.8*c+3.5*s,y-3.8*s-3.5*c);ctx.lineTo(x+3*c,y+3*s);ctx.lineTo(x-3.8*c-3.5*s,y-3.8*s+3.5*c);
-     ctx.moveTo(x-3.8*c,y-3.8*s);ctx.lineTo(x+4.8*c,y+4.8*s);
+   if(engine.birds.length>500){
+     spriteAtlas??=atlas();
+     const k=spriteBins/(2*Math.PI);
+     for(const b of engine.birds){
+       const tile=(Math.round(b.a*k)+spriteBins)&(spriteBins-1);
+       ctx.drawImage(spriteAtlas,tile*spriteSide,0,spriteSide,spriteSide,b.x-spriteRadius,b.y-spriteRadius,2*spriteRadius,2*spriteRadius);
+     }
+   }else{
+     for(const b of engine.birds){
+       const x=b.x,y=b.y,c=Math.cos(b.a),s=Math.sin(b.a);
+       ctx.moveTo(x-3.8*c+3.5*s,y-3.8*s-3.5*c);ctx.lineTo(x+3*c,y+3*s);ctx.lineTo(x-3.8*c-3.5*s,y-3.8*s+3.5*c);
+       ctx.moveTo(x-3.8*c,y-3.8*s);ctx.lineTo(x+4.8*c,y+4.8*s);
+     }
+     ctx.stroke();
    }
-   ctx.stroke();
    for(const p of engine.predators){
      if(showRadius.checked){ctx.save();ctx.strokeStyle=p.type==='hawk'?'#9fd9eb8a':'#f2a4938a';ctx.lineWidth=1;ctx.setLineDash([5,4]);ctx.beginPath();ctx.arc(p.x,p.y,cfg.predatorRadius*engine.scale,0,2*Math.PI);ctx.stroke();ctx.restore();}
      glyph(p.x,p.y,p.a,p.type);
@@ -94,11 +156,11 @@
    render();
  }
  const frame=ts=>{
-   frameHandle=0;if(!playing)return;
+   frameHandle=0;if(!playing||document.hidden)return;
    const elapsed=last?Math.min((ts-last)/1000,.06):0;last=ts;
    acc+=elapsed;
    while(acc>=1/60){
-     engine.step(1/60);acc-=1/60;stepCount++;
+     engine.step(1/60);acc-=1/60;stepCount++;tickGrowth();
      if(stepCount%60===0&&stats.record(stepCount/60,engine.getStats(statPoint))&&inStats)stats.render();
    }
    if(!inStats)render();
@@ -131,39 +193,49 @@
  });
  get('release').addEventListener('click',()=>launch(w/2,h/2,selectedAngle()));
  for(const button of [play,get('stats-play')])button.addEventListener('click',()=>{applyCount(true);playState(!playing);changeState(!playing);});
- get('reset').addEventListener('click',()=>{engine.reset();changeState(false);clearRun();render();});
+ get('reset').addEventListener('click',()=>{cfg.count=Math.min(startCount,limitCount());syncCount();engine.reset();changeState(false);clearRun();render();});
  get('angle').addEventListener('change',render);get('show-radius').addEventListener('change',render);
  const count=get('count'), down=get('count-down'), up=get('count-up');
+ function syncCount(){count.max=limitCount();count.value=cfg.count;down.disabled=cfg.count<=1;up.disabled=cfg.count>=limitCount();}
+ function commitCount(value){cfg.count=value;lastLoggedCount=value;syncCount();engine.step(0);updateGrowthStatus();render();}
+ for(const input of growthInputs){if(input)input.addEventListener('change',readGrowth);}
+ document.addEventListener('visibilitychange',()=>{
+   last=0;acc=0;
+   if(document.hidden&&frameHandle){cancelAnimationFrame(frameHandle);frameHandle=0;}
+   else if(!document.hidden&&playing&&!frameHandle)frameHandle=requestAnimationFrame(frame);
+ });
  function applyCount(commit=false){
    const raw=count.value, val=count.valueAsNumber;
    if(!Number.isFinite(val)||raw===''){if(commit)count.value=cfg.count;return;}
-   if(!commit&&(val<1||val>FlockEngine.maxBirds||!Number.isInteger(val)))return;
-   cfg.count=clamp(Math.round(val),1,FlockEngine.maxBirds);
+   if(!commit&&(val<1||val>limitCount()||!Number.isInteger(val)))return;
+   cfg.count=clamp(Math.round(val),1,limitCount());
    if(commit)count.value=cfg.count;
-   down.disabled=cfg.count<=1;up.disabled=cfg.count>=FlockEngine.maxBirds;
-   engine.step(0);render();
-   if(commit&&cfg.count!==lastLoggedCount){lastLoggedCount=cfg.count;if(playing||stepCount)eventAt('Antal småfåglar → '+cfg.count);}
+   down.disabled=cfg.count<=1;up.disabled=cfg.count>=limitCount();
+   engine.step(0);updateGrowthStatus();render();
+   if(commit&&cfg.count!==lastLoggedCount){lastLoggedCount=cfg.count;if(!stats.size)startCount=cfg.count;if(playing||stepCount)eventAt('Antal småfåglar → '+cfg.count);}
  }
  count.addEventListener('input',()=>applyCount());
  count.addEventListener('change',()=>applyCount(true));
  count.addEventListener('keydown',e=>{if(e.key==='Enter'){applyCount(true);count.select();}});
- for(const [button,increment] of [[down,-1],[up,1]])button.addEventListener('click',()=>{count.value=clamp(cfg.count+increment,1,FlockEngine.maxBirds);applyCount(true);});
+ for(const [button,increment] of [[down,-1],[up,1]])button.addEventListener('click',()=>{count.value=clamp(cfg.count+increment,1,limitCount());applyCount(true);});
  const sliderDefs=[
- ['speed','Småfåglarnas fart',15,180,1],['turnNoise','Slump i svängarna',0,6,.1],
-  ['seekStrength','Kraft mot grannens position',0,6,.05],['alignStrength','Kraft mot grannens riktning',0,6,.05],
-  ['predatorRadius','Reaktionsavstånd',10,250,1],['repelStrength','Styrka på flyktreaktion',0,12,.1],
-  ['falconSpeed','Pilgrimsfalkens fart',80,800,5],['hawkSpeed','Hökens fart',20,250,5],['hawkSeconds','Hökens tid i fältet',2,35,1,' s']
+ ['speed','Småfåglarnas fart',15,180,1,' enheter/s'],['turnNoise','Slump i svängarna',0,6,.1,' rad/s'],
+  ['seekStrength','Sökstyrka mot grannens position',0,6,.05,' /s'],['alignStrength','Synkstyrka för riktning och fart',0,6,.05,' /s'],
+  ['predatorRadius','Reaktionsavstånd',10,250,1,' enheter'],['repelStrength','Flyktstyrka',0,12,.1,' /s'],
+  ['falconSpeed','Pilgrimsfalkens fart',80,800,5,' enheter/s'],['hawkSpeed','Hökens fart',20,250,5,' enheter/s'],['hawkSeconds','Hökens tid i fältet',2,35,1,' s']
  ];
  const fmt=new Intl.NumberFormat('sv-SE',{maximumFractionDigits:2});
  for(const [id,label,min,max,step,suffix=''] of sliderDefs){
    const row=document.createElement('label'),name=document.createElement('span'),output=document.createElement('output'),input=document.createElement('input');
    name.textContent=label;row.htmlFor=id;output.htmlFor=id;input.id=id;input.type='range';input.min=min;input.max=max;input.step=step;
    const show=()=>{output.textContent=fmt.format(cfg[id])+suffix;};input.value=cfg[id];show();
-   input.addEventListener('input',()=>{cfg[id]=Number(input.value);show();if(id==='count'&&!playing){engine.reset();render();}});
+   input.addEventListener('input',()=>{cfg[id]=Number(input.value);show();if(id==='predatorRadius')render();});
+   row.dataset.parameterGroup=['speed','turnNoise','seekStrength','alignStrength'].includes(id)?'smallbirds':'predators';
+   input.addEventListener('change',()=>{if(stats.size)eventAt(label+' → '+fmt.format(cfg[id])+suffix);});
    row.append(name,output,input);get('settings').append(row);
  }
  function sync(){
-   count.value=cfg.count;down.disabled=cfg.count<=1;up.disabled=cfg.count>=FlockEngine.maxBirds;
+   syncCount();syncGrowth();
    for(const id of ['seek','align'])get(id).checked=cfg[id];
    for(const id of ['seekMode','alignMode'])get(id).value=cfg[id];
    for(const [id,,,,,suffix=''] of sliderDefs){const input=get(id);input.value=cfg[id];input.previousElementSibling.textContent=fmt.format(cfg[id])+suffix;}
@@ -173,8 +245,7 @@
    const name=rule==='seek'?'Sök upp':'Synkronisera';
    eventAt(name+': '+(cfg[rule]?(cfg[rule+'Mode']==='random'?'slumpmässig fågel':'närmaste fågel'):'av'));
  });
- get('predatorRadius').addEventListener('change',()=>eventAt('Reaktionsavstånd → '+cfg.predatorRadius));
- get('defaults').addEventListener('click',()=>{Object.assign(cfg,FlockEngine.defaults);sync();engine.reset();changeState(false);clearRun();render();});
+ get('defaults').addEventListener('click',()=>{Object.assign(cfg,FlockEngine.defaults);Object.assign(growth,{enabled:false,batch:10,interval:1,unit:'seconds',cap:FlockEngine.maxBirds});startCount=cfg.count;sync();engine.reset();changeState(false);clearRun();render();});
  function expanded(){return document.fullscreenElement===container||container.classList.contains('expanded');}
  function syncExpanded(){
    const on=expanded(), full=get('fullscreen-predator-slot'), rad=get('predatorRadius').closest('label'), show=get('show-radius').closest('label');

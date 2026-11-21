@@ -6,7 +6,8 @@
  const specs=[
   {label:'Polarisering',unit:'',max:1,color:'#8e4e25',dash:[],shape:'circle'},
   {label:'Närmaste granne',unit:' %',max:10,color:'#1f6151',dash:[6,3],shape:'square'},
-  {label:'Inom reaktionsavstånd',unit:' %',max:100,color:'#384f7a',dash:[2,3],shape:'triangle'}
+  {label:'Inom reaktionsavstånd',unit:' %',max:100,color:'#384f7a',dash:[2,3],shape:'triangle'},
+  {label:'Antal småfåglar',unit:'',max:100,color:'#704f80',dash:[10,3,2,3],shape:'diamond'}
  ];
  const fmt=new Intl.NumberFormat('sv-SE',{maximumFractionDigits:2});
  const timeLabel=t=>{const s=Math.floor(t);return Math.floor(s/60)+':'+String(s%60).padStart(2,'0');};
@@ -60,12 +61,13 @@
   }
   render(){
    const b=this.buffer, has=this.size>0, first=has?this._index(0):0,last=has?this._index(this.size-1):0;
-   const mins=[Infinity,Infinity,Infinity],maxs=[-Infinity,-Infinity,-Infinity];
-   for(let j=0;j<this.size;j++){const i=this._index(j);for(let k=0;k<3;k++){const v=b[i+3+k];if(Number.isFinite(v)){mins[k]=Math.min(mins[k],v);maxs[k]=Math.max(maxs[k],v);}}}
+   const mins=[Infinity,Infinity,Infinity,Infinity],maxs=[-Infinity,-Infinity,-Infinity,-Infinity];
+   const value=(i,k)=>b[k===3?i+1:i+3+k];
+   for(let j=0;j<this.size;j++){const i=this._index(j);for(let k=0;k<4;k++){const v=value(i,k);if(Number.isFinite(v)){mins[k]=Math.min(mins[k],v);maxs[k]=Math.max(maxs[k],v);}}}
    if(this.reason)this.reason.textContent=has?'En mätning per simulerad sekund. Visar som mest den senaste timmen.':'Starta simuleringen för att samla mätvärden.';
    if(this.summary){
     const desc=(v,k)=>Number.isFinite(v)?fmt.format(v)+specs[k].unit:'saknas';
-    this.summary.textContent=has?`${b[last+1]} småfåglar och ${b[last+2]} rovfåglar vid ${timeLabel(b[last])}. `+specs.map((s,k)=>s.label+': nu '+desc(b[last+3+k],k)+', min '+desc(mins[k],k)+', max '+desc(maxs[k],k)+'.').join(' '):'Inga mätvärden ännu.';
+    this.summary.textContent=has?`${b[last+1]} småfåglar och ${b[last+2]} rovfåglar vid ${timeLabel(b[last])}. `+specs.map((s,k)=>s.label+': nu '+desc(value(last,k),k)+', min '+desc(mins[k],k)+', max '+desc(maxs[k],k)+'.').join(' '):'Inga mätvärden ännu.';
    }
    if(this.events&&this.eventDirty){
     this.events.replaceChildren();this.eventDirty=false;
@@ -75,11 +77,11 @@
    const w=cv.clientWidth,h=cv.clientHeight,d=Math.min(2,globalThis.devicePixelRatio||1);
    const bw=Math.round(w*d),bh=Math.round(h*d);if(cv.width!==bw)cv.width=bw;if(cv.height!==bh)cv.height=bh;
    const c=cv.getContext('2d');if(!c)return;c.setTransform(d,0,0,d,0,0);c.clearRect(0,0,w,h);c.font='12px system-ui';c.textBaseline='middle';
-   const left=36,right=w-12,pad=8,row=(h-26)/3;
-   if(right<=left||row<25)return;
+   const left=36,right=w-12,pad=8,row=(h-26)/4;
+   if(right<=left||row<36)return;
    const from=has?b[first]:0,to=has?Math.max(from+10,b[last]):10,x=t=>left+(t-from)/(to-from)*(right-left);
-   for(let k=0;k<3;k++){
-    const s=specs[k],top=pad+k*row+22,bottom=pad+(k+1)*row-5,mx=k===1?Math.max(s.max,Math.ceil(maxs[k]/5)*5):s.max;
+   for(let k=0;k<4;k++){
+    const s=specs[k],top=pad+k*row+22,bottom=pad+(k+1)*row-5,mx=k===1?Math.max(s.max,Math.ceil(maxs[k]/5)*5):k===3?Math.max(s.max,Math.ceil(maxs[k]/100)*100):s.max;
     const y=v=>bottom-v/mx*(bottom-top);
     c.fillStyle='#30382f';c.fillText(s.label+(k===1?' (% av kortsidan)':k===2?' (%)':''),left,top-11);
     c.fillText(fmt.format(mx),1,top);c.fillText('0',14,bottom);
@@ -88,12 +90,13 @@
     c.strokeStyle='#a6a99b';c.lineWidth=.6;c.setLineDash([1,4]);c.beginPath();
     for(let j=0;j<this.eventSize;j++){const t=this.eventTimes[this._eventIndex(j)];if(t>=from&&t<=to){c.moveTo(x(t),top);c.lineTo(x(t),bottom);}}c.stroke();
     c.strokeStyle=s.color;c.lineWidth=1.55;c.setLineDash(s.dash);c.beginPath();let pen=false;
-    for(let j=0;j<this.size;j++){const i=this._index(j),v=b[i+3+k];if(!Number.isFinite(v)){pen=false;continue;}if(pen)c.lineTo(x(b[i]),y(v));else c.moveTo(x(b[i]),y(v));pen=true;}c.stroke();
-    const v=b[last+3+k];if(!Number.isFinite(v))continue;
+    for(let j=0;j<this.size;j++){const i=this._index(j),v=value(i,k);if(!Number.isFinite(v)){pen=false;continue;}if(pen)c.lineTo(x(b[i]),y(v));else c.moveTo(x(b[i]),y(v));pen=true;}c.stroke();
+    const v=value(last,k);if(!Number.isFinite(v))continue;
     const lx=x(b[last]),ly=y(v);c.fillStyle=s.color;c.setLineDash([]);c.beginPath();
     if(s.shape==='circle')c.arc(lx,ly,3,0,2*Math.PI);
     if(s.shape==='square')c.rect(lx-3,ly-3,6,6);
     if(s.shape==='triangle'){c.moveTo(lx,ly-4);c.lineTo(lx+4,ly+3);c.lineTo(lx-4,ly+3);c.closePath();}
+    if(s.shape==='diamond'){c.moveTo(lx,ly-4);c.lineTo(lx+4,ly);c.lineTo(lx,ly+4);c.lineTo(lx-4,ly);c.closePath();}
     c.fill();
    }
    c.fillStyle='#30382f';c.fillText(timeLabel(from),left,h-9);const end=timeLabel(to);c.fillText(end,right-c.measureText(end).width,h-9);
