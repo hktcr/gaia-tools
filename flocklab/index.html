@@ -1,24 +1,57 @@
 <!doctype html>
-<html lang="sv"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#ece9dc"><title>Flocklabbet • Ett digitalt fältförsök</title><link rel="stylesheet" href="style.css"><script defer src="engine.js"></script><script defer src="ui.js"></script></head>
+<html lang="sv"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#eeeae0"><title>Flocklabbet • Ett digitalt fältförsök</title><link rel="stylesheet" href="style.css?v=2"><script defer src="engine.js"></script><script defer src="ui.js?v=2"></script></head>
 <body><main class="shell">
-<header class="mast"><div><p class="eyebrow">FÄLTLABB / BETEENDEEKOLOGI</p><h1>Flocklabbet<span>.</span></h1></div><p class="intro">Två enkla regler. Ingen ledare.<br> Vad får fåglarna att flyga som en flock?</p></header>
+<header class="mast">
+  <div class="wordmark"><svg viewBox="0 0 36 36" aria-hidden="true"><path d="M4 25 16 8l2 10 13-5-9 13-9-4-9 3Z" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="m19 11 10-6M23 28l5 4" fill="none" stroke="currentColor" stroke-width="1.5"/></svg><h1>Flocklabbet</h1></div>
+  <p>Hur uppstår en flock utan ledare?</p>
+</header>
 <div class="layout">
 <section id="observation" aria-labelledby="field-title">
-<div class="fieldhead"><h2 id="field-title">Observationsfält</h2><span id="fieldstatus">PAUSAD</span><button id="expand" type="button" aria-pressed="false">Helskärm</button></div>
-<div class="transport"><button type="button" id="play" class="primary">Starta</button><button type="button" id="reset">Börja om</button></div>
-<div id="canvaswrap"><canvas id="field" tabindex="0" aria-label="Simulerat fågelfält" aria-describedby="help">Använd knapparna för att styra simuleringen.</canvas></div>
-<div class="fieldfoot"><span><i class="dot prey"></i>Småfågel</span><span><i class="dot falcon"></i>Pilgrimsfalk</span><span><i class="dot hawk"></i>Hök</span><span id="counts"></span></div>
-<details id="fullscreen-rules"><summary>Flockregler</summary><div id="fullscreen-rule-slot"></div><div id="fullscreen-predator-slot"></div></details><div class="controls">
-
-<div class="launch"><fieldset><legend>Rovfågel</legend><label><input type="radio" name="predator" value="falcon" checked> Pilgrimsfalk</label><label><input type="radio" name="predator" value="hawk"> Hök</label></fieldset><label for="angle">Riktning <select id="angle"><option value="0">Höger</option><option value="45">Nedåt höger</option><option value="90">Nedåt</option><option value="135">Nedåt vänster</option><option value="180">Vänster</option><option value="225">Uppåt vänster</option><option value="270">Uppåt</option><option value="315">Uppåt höger</option></select></label><button id="release" type="button">Släpp i mitten</button></div>
-<p class="help" id="help">Tryck där rovfågeln ska börja, eller dra från startplatsen i önskad riktning. Med tangentbord: fokusera fältet, flytta korset med pilarna och tryck Enter. Knappen ”Släpp i mitten” fungerar också.</p></div>
+  <div class="fieldhead">
+    <h2 id="field-title">Flygfält</h2>
+    <div class="count-control" role="group" aria-label="Antal småfåglar">
+      <label for="count">Småfåglar</label>
+      <button type="button" id="count-down" aria-label="En fågel färre">−</button>
+      <input type="number" id="count" value="120" min="1" max="350" step="1" inputmode="numeric" aria-describedby="count-limit">
+      <button type="button" id="count-up" aria-label="En fågel fler">+</button>
+      <span id="count-limit" class="sr">Skriv in ett antal mellan 1 och 350.</span>
+    </div>
+    <button id="expand" class="expand" type="button" aria-pressed="false"><span>Helskärm</span></button>
+  </div>
+  <div class="transport">
+    <button type="button" id="play" class="primary">Starta</button>
+    <button type="button" id="reset" class="quiet">Börja om</button>
+    <span id="fieldstatus">PAUSAD</span>
+  </div>
+  <div id="canvaswrap"><canvas id="field" tabindex="0" aria-label="Simulerat fågelfält" aria-describedby="help">Använd knapparna för att styra simuleringen.</canvas></div>
+  <div class="fieldfoot"><span><i class="dot prey"></i>Småfågel</span><span><i class="dot falcon"></i>Pilgrimsfalk</span><span><i class="dot hawk"></i>Hök</span><span id="counts"></span></div>
+  <details id="fullscreen-rules"><summary>Flockregler</summary><div id="fullscreen-rule-slot"></div><div id="fullscreen-predator-slot"></div></details>
+  <div class="controls">
+    <div class="launch">
+      <fieldset><legend>Släpp in</legend>
+        <label class="choice"><input type="radio" name="predator" value="falcon" checked><span>Pilgrimsfalk</span></label>
+        <label class="choice"><input type="radio" name="predator" value="hawk"><span>Hök</span></label>
+      </fieldset>
+      <label class="direction" for="angle">Riktning <select id="angle"><option value="0">Höger</option><option value="45">Nedåt höger</option><option value="90">Nedåt</option><option value="135">Nedåt vänster</option><option value="180">Vänster</option><option value="225">Uppåt vänster</option><option value="270">Uppåt</option><option value="315">Uppåt höger</option></select></label>
+      <button id="release" class="quiet" type="button">Släpp i mitten</button>
+    </div>
+    <p class="help" id="help">Dra i fältet från startpunkt till riktning. Vid ett tryck används vald riktning. Med tangentbord: flytta korset med pilarna och släpp med Enter.</p>
+  </div>
 </section>
 <aside class="bench" aria-labelledby="rules-title">
-<div class="railmark">FÄLTPROTOKOLL / 01</div><h2 id="rules-title">Fåglarnas regler</h2><p class="ruleintro">Med båda av flyger småfåglarna oberoende. Ändra en regel i taget och jämför.</p>
-<div id="live-rule-slot"><div id="live-rules"><div class="rule"><label class="check"><input id="seek" type="checkbox"><span><strong>Sök upp en granne</strong><small>Vrid mot grannens position.</small></span></label><label class="chooser" for="seekMode">Välj granne <select id="seekMode"><option value="nearest">Närmaste fågel</option><option value="random">Slumpmässig fågel</option></select></label></div>
-<div class="rule"><label class="check"><input id="align" type="checkbox"><span><strong>Matcha en grannes riktning och fart</strong><small>Följ grannens färdriktning och anpassa farten.</small></span></label><label class="chooser" for="alignMode">Välj granne <select id="alignMode"><option value="nearest">Närmaste fågel</option><option value="random">Slumpmässig fågel</option></select></label></div>
-</div></div><details><summary>Justera försöket</summary><div id="normal-radius-toggle"><label class="radius-toggle"><input id="show-radius" type="checkbox"> Visa rovfåglarnas reaktionsavstånd</label></div><div id="settings"></div><button type="button" id="defaults">Återställ standardvärden</button></details>
-<div class="note"><strong>Prova</strong><p>Testa varje regel ensam, sedan båda samtidigt. Släpp en pilgrimsfalk genom samma del av fältet. När börjar gruppen hålla ihop igen?</p></div>
+  <h2 id="rules-title">Flockregler</h2>
+  <p class="ruleintro">Utan regler flyger fåglarna oberoende av varandra.</p>
+  <div id="live-rule-slot"><div id="live-rules">
+    <div class="rule">
+      <label class="check"><span><strong>Sök upp en fågel</strong><small>Styr mot dess position.</small></span><input id="seek" type="checkbox"></label>
+      <label class="chooser" for="seekMode">Följ <select id="seekMode"><option value="nearest">Närmaste fågel</option><option value="random">Slumpmässig fågel</option></select></label>
+    </div>
+    <div class="rule">
+      <label class="check"><span><strong>Synkronisera</strong><small>Matcha riktning och fart.</small></span><input id="align" type="checkbox"></label>
+      <label class="chooser" for="alignMode">Följ <select id="alignMode"><option value="nearest">Närmaste fågel</option><option value="random">Slumpmässig fågel</option></select></label>
+    </div>
+  </div></div>
+  <details class="setup"><summary>Justera försöket</summary><div id="normal-radius-toggle"><label class="radius-toggle"><input id="show-radius" type="checkbox"> Visa hur nära en rovfågel påverkar flocken</label></div><div id="settings"></div><button type="button" id="defaults" class="quiet">Standardvärden</button></details>
 </aside></div>
-<footer><details><summary>Om modellen</summary><p>Varje småfågel styr själv och reagerar på rovfåglar i närheten. Småfåglar som passerar en kant kommer tillbaka på motsatt sida. Pilgrimsfalken flyger snabbt rakt fram och lämnar fältet. Höken rör sig långsammare och växlar mellan slumpmässigt valda småfåglar att följa. Modellen visar hur enkla regler kan ge upphov till ett gruppmönster, inte hur en viss art alltid beter sig.</p></details><span>FLOCKLABBET / DIGITALT FÄLTFÖRSÖK</span></footer>
+<footer><details><summary>Så fungerar modellen</summary><p>Småfåglar som passerar en kant kommer tillbaka på motsatt sida. Pilgrimsfalken flyger snabbt rakt fram och lämnar fältet. Höken byter mellan slumpvis valda fåglar en stund. Småfåglarna svänger undan inom reaktionsavståndet; ingen fångas. Det är en modell för att jämföra regler, inte en förutsägelse för en viss art.</p></details></footer>
 <p class="sr" id="announce" role="status"></p><noscript>Aktivera JavaScript för att köra simuleringen.</noscript></main></body></html>

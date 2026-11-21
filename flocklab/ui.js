@@ -6,7 +6,7 @@
  const clamp=(x,a,b)=>Math.max(a,Math.min(b,x));
  const selected=()=>document.querySelector('input[name=predator]:checked').value;
  const selectedAngle=()=>Number(get('angle').value)*Math.PI/180;
- function changeState(state){playing=state;play.textContent=state?'Pausa':'Starta';get('fieldstatus').textContent=state?'PÅGÅR':'PAUSAD';acc=0;}
+ function changeState(state){playing=state;play.textContent=state?'Pausa':'Starta';play.classList.toggle('is-running',state);get('fieldstatus').textContent=state?'PÅGÅR':'PAUSAD';acc=0;}
  function launch(x,y,a){
    const type=selected();
    engine.spawn(type,x,y,a);
@@ -83,11 +83,25 @@
    else launch(keyPoint.x,keyPoint.y,selectedAngle());
  });
  get('release').addEventListener('click',()=>launch(w/2,h/2,selectedAngle()));
- play.addEventListener('click',()=>changeState(!playing));
+ play.addEventListener('click',()=>{applyCount(true);changeState(!playing);});
  get('reset').addEventListener('click',()=>{engine.reset();changeState(false);render();});
  get('angle').addEventListener('change',render);get('show-radius').addEventListener('change',render);
+ const count=get('count'), down=get('count-down'), up=get('count-up');
+ function applyCount(commit=false){
+   const raw=count.value, val=count.valueAsNumber;
+   if(!Number.isFinite(val)||raw===''){if(commit)count.value=cfg.count;return;}
+   if(!commit&&(val<1||val>FlockEngine.maxBirds||!Number.isInteger(val)))return;
+   cfg.count=clamp(Math.round(val),1,FlockEngine.maxBirds);
+   if(commit)count.value=cfg.count;
+   down.disabled=cfg.count<=1;up.disabled=cfg.count>=FlockEngine.maxBirds;
+   engine.step(0);render();
+ }
+ count.addEventListener('input',()=>applyCount());
+ count.addEventListener('change',()=>applyCount(true));
+ count.addEventListener('keydown',e=>{if(e.key==='Enter'){applyCount(true);count.select();}});
+ for(const [button,increment] of [[down,-1],[up,1]])button.addEventListener('click',()=>{count.value=clamp(cfg.count+increment,1,FlockEngine.maxBirds);applyCount(true);});
  const sliderDefs=[
-  ['count','Antal småfåglar',1,350,1],['speed','Småfåglarnas fart',15,180,1],['turnNoise','Slump i svängarna',0,6,.1],
+ ['speed','Småfåglarnas fart',15,180,1],['turnNoise','Slump i svängarna',0,6,.1],
   ['seekStrength','Kraft mot grannens position',0,6,.05],['alignStrength','Kraft mot grannens riktning',0,6,.05],
   ['predatorRadius','Reaktionsavstånd',10,250,1],['repelStrength','Styrka på flyktreaktion',0,12,.1],
   ['falconSpeed','Pilgrimsfalkens fart',80,800,5],['hawkSpeed','Hökens fart',20,250,5],['hawkSeconds','Hökens tid i fältet',2,35,1,' s']
@@ -101,6 +115,7 @@
    row.append(name,output,input);get('settings').append(row);
  }
  function sync(){
+   count.value=cfg.count;down.disabled=cfg.count<=1;up.disabled=cfg.count>=FlockEngine.maxBirds;
    for(const id of ['seek','align'])get(id).checked=cfg[id];
    for(const id of ['seekMode','alignMode'])get(id).value=cfg[id];
    for(const [id,,,,,suffix=''] of sliderDefs){const input=get(id);input.value=cfg[id];input.previousElementSibling.textContent=fmt.format(cfg[id])+suffix;}
