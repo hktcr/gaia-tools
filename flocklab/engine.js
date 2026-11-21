@@ -35,6 +35,11 @@
       this.rng = typeof config.rng === 'function' ? config.rng : Math.random;
       this.birds = [];
       this.predators = [];
+      this._turns = new Float64Array(MAX);
+      this._speeds = new Float64Array(MAX);
+      this._neighborDistances = new Float64Array(MAX);
+      this._statDistances = new Float64Array(MAX);
+      this._stats = {};
       this.reset();
     }
     reset() {
@@ -43,7 +48,7 @@
       const n = this._count();
       while (this.birds.length < n) this._addBird();
       this._nearestAt = 0;
-      this._ruleSignature = '';
+      this._ruleSignature = -1;
       return this;
     }
     _count() {
@@ -63,9 +68,8 @@
       w = Math.max(1, finite(w, this.w));
       h = Math.max(1, finite(h, this.h));
       const sx = w / this.w, sy = h / this.h;
-      for (const objs of [this.birds, this.predators]) {
-        for (const p of objs) { p.x *= sx; p.y *= sy; }
-      }
+      for (const p of this.birds) { p.x *= sx; p.y *= sy; }
+      for (const p of this.predators) { p.x *= sx; p.y *= sy; }
       this.w = w; this.h = h; this.scale = Math.min(w, h) / 600;
       this._nearestAt = 0;
       return this;
@@ -86,19 +90,41 @@
       const j = Math.min(n - 2, Math.floor(this.rng() * (n - 1)));
       return j < self ? j : j + 1;
     }
-    _nearest() {
-      // One symmetric pairwise pass per 0.14 s, only when a nearest rule is on.
-      // A 350-bird hard cap bounds CPU and direct search handles wrapped edges.
-      const b = this.birds, n = b.length, dist = new Float64Array(n);
-      dist.fill(Infinity);
-      for (const o of b) o.nearest = -1;
+    _nearest(dist, writeTargets) {
+      // Reuse fixed buffers; statistics never overwrite behavioral targets.
+      const b = this.birds, n = b.length;
+      dist.fill(Infinity, 0, n);
+      if (writeTargets) for (let i = 0; i < n; i++) b[i].nearest = -1;
       for (let i = 0; i < n; i++) for (let j = i + 1; j < n; j++) {
         const dx = offset(b[j].x - b[i].x, this.w);
         const dy = offset(b[j].y - b[i].y, this.h);
         const d = dx * dx + dy * dy;
-        if (d < dist[i]) { dist[i] = d; b[i].nearest = j; }
-        if (d < dist[j]) { dist[j] = d; b[j].nearest = i; }
+        if (d < dist[i]) { dist[i] = d; if (writeTargets) b[i].nearest = j; }
+        if (d < dist[j]) { dist[j] = d; if (writeTargets) b[j].nearest = i; }
       }
+    }
+    getStats(target = this._stats) {
+      const b = this.birds, p = this.predators, n = b.length;
+      const radius = range(this.config.predatorRadius, 95, 0, 1600) * this.scale;
+      const r2 = radius * radius;
+      let x = 0, y = 0, speed = 0, affected = 0, nearest = 0;
+      if (n > 1) this._nearest(this._statDistances, false);
+      for (let i = 0; i < n; i++) {
+        const bird = b[i];
+        x += Math.cos(bird.a); y += Math.sin(bird.a); speed += bird.motionFactor;
+        if (n > 1) nearest += Math.sqrt(this._statDistances[i]);
+        for (let j = 0; j < p.length; j++) {
+          const dx = bird.x - p[j].x, dy = bird.y - p[j].y;
+          if (dx * dx + dy * dy < r2) { affected++; break; }
+        }
+      }
+      target.count = n;
+      target.predators = p.length;
+      target.polarization = n ? Math.min(1, Math.hypot(x, y) / n) : 0;
+      target.nearestPct = n > 1 ? 100 * nearest / (n * Math.min(this.w, this.h)) : null;
+      target.affectedPct = n ? 100 * affected / n : 0;
+      target.speed = n ? range(this.config.speed, 72, 0, 500) * (speed / n) : 0;
+      return target;
     }
     step(dt) {
       dt = Math.max(0, Math.min(0.12, finite(dt, 0)));
@@ -107,7 +133,7 @@
         if (wanted < this.birds.length) this.birds.length = wanted;
         else while (this.birds.length < wanted) this._addBird();
         this._nearestAt = 0;
-        for (const p of this.birds) p.seekAt = p.alignAt = 0;
+        for (let i = 0; i < this.birds.length; i++) this.birds[i].seekAt = this.birds[i].alignAt = 0;
       }
       if (!dt) return this;
       const steps = Math.ceil(dt / (1 / 45));
@@ -118,15 +144,15 @@
       const c = this.config, w = this.w, h = this.h, s = this.scale, rng = this.rng;
       const seek = !!c.seek, align = !!c.align;
       const sr = c.seekMode === 'random', ar = c.alignMode === 'random';
-      const signature = [seek, align, sr, ar].join('/');
+      const signature = (seek ? 1 : 0) | (align ? 2 : 0) | (sr ? 4 : 0) | (ar ? 8 : 0);
       if (this._ruleSignature !== signature) {
         this._ruleSignature = signature;
         this._nearestAt = 0;
-        for (const p of this.birds) p.seekAt = p.alignAt = 0;
+        for (let i = 0; i < this.birds.length; i++) this.birds[i].seekAt = this.birds[i].alignAt = 0;
       }
       if ((seek && !sr) || (align && !ar)) {
         this._nearestAt -= dt;
-        if (this._nearestAt <= 0) { this._nearest(); this._nearestAt = 0.14; }
+        if (this._nearestAt <= 0) { this._nearest(this._neighborDistances, true); this._nearestAt = 0.14; }
       }
       const birds = this.birds, n = birds.length;
       const baseSpeed = range(c.speed, 72, 0, 500) * s;
@@ -135,7 +161,7 @@
       const alignK = range(c.alignStrength, 1.4, 0, 18);
       const repelK = range(c.repelStrength, 5.5, 0, 24);
       const radius = range(c.predatorRadius, 95, 0, 1600) * s;
-      const turns = new Float64Array(n), speeds = new Float64Array(n);
+      const turns = this._turns, speeds = this._speeds;
       const recovery = 1 - Math.exp(-dt / 0.8);
       const sync = 1 - Math.exp(-alignK * dt);
       const decay = Math.exp(-dt / 0.32), shock = Math.sqrt(1 - decay * decay);
@@ -160,7 +186,8 @@
             speeds[i] = b.motionFactor + sync * (t.motionFactor - b.motionFactor);
           }
         }
-        if (radius && repelK) for (const p of this.predators) {
+        if (radius && repelK) for (let j = 0; j < this.predators.length; j++) {
+          const p = this.predators[j];
           // Predators are not toroidal: a falcon leaving one edge does not appear at the other.
           const dx = b.x - p.x, dy = b.y - p.y, d = Math.hypot(dx, dy);
           if (d < radius) {

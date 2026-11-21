@@ -1,11 +1,11 @@
 <!doctype html>
-<html lang="sv"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#eeeae0"><title>Flocklabbet • Ett digitalt fältförsök</title><link rel="stylesheet" href="style.css?v=2"><script defer src="engine.js"></script><script defer src="ui.js?v=2"></script></head>
+<html lang="sv"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#eeeae0"><title>Flocklabbet • Ett digitalt fältförsök</title><link rel="stylesheet" href="style.css?v=3"><script defer src="engine.js?v=3"></script><script defer src="stats.js?v=3"></script><script defer src="ui.js?v=3"></script></head>
 <body><main class="shell">
 <header class="mast">
   <div class="wordmark"><svg viewBox="0 0 36 36" aria-hidden="true"><path d="M4 25 16 8l2 10 13-5-9 13-9-4-9 3Z" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="m19 11 10-6M23 28l5 4" fill="none" stroke="currentColor" stroke-width="1.5"/></svg><h1>Flocklabbet</h1></div>
-  <p>Hur uppstår en flock utan ledare?</p>
+  <nav class="view-tabs" aria-label="Flocklabbets vyer" role="tablist"><button id="trial-tab" type="button" role="tab" aria-controls="trial" aria-selected="true">Försök</button><button id="stats-tab" type="button" role="tab" aria-controls="stats-panel" aria-selected="false" tabindex="-1">Statistik</button></nav>
 </header>
-<div class="layout">
+<div class="layout" id="trial" role="tabpanel" aria-labelledby="trial-tab">
 <section id="observation" aria-labelledby="field-title">
   <div class="fieldhead">
     <h2 id="field-title">Flygfält</h2>
@@ -53,5 +53,23 @@
   </div></div>
   <details class="setup"><summary>Justera försöket</summary><div id="normal-radius-toggle"><label class="radius-toggle"><input id="show-radius" type="checkbox"> Visa hur nära en rovfågel påverkar flocken</label></div><div id="settings"></div><button type="button" id="defaults" class="quiet">Standardvärden</button></details>
 </aside></div>
+<section id="stats-panel" role="tabpanel" aria-labelledby="stats-tab" hidden>
+ <div class="stats-head"><div><h2>Så förändrades flocken</h2><p id="stats-reason"></p></div><div class="stats-actions"><button id="stats-play" class="quiet" type="button">Starta</button><button id="stats-export" class="quiet" type="button" disabled>Hämta CSV</button></div></div>
+ <div class="stats-layout">
+  <div class="plot">
+   <canvas id="stats-chart" role="img" aria-label="Tre tidsserier för flockens riktning, avstånd och rovfågelsradie" aria-describedby="stats-summary"></canvas>
+   <p id="stats-summary" class="stat-summary"></p>
+  </div>
+  <div class="stats-context">
+   <h3>Händelser <small>senaste först</small></h3><ul id="stats-events"></ul>
+   <details><summary>Hur läser jag diagrammen?</summary><dl>
+    <dt>Polarisering</dt><dd>0 till 1. Nära 1 betyder att nästan alla flyger åt samma håll. Nära 0 betyder att riktningarna i stort tar ut varandra.</dd>
+    <dt>Närmaste granne</dt><dd>Genomsnittligt avstånd till närmaste fågel, i procent av flygfältets kortsida. Lägre värde betyder tätare grannar. Vid färre än två fåglar saknas måttet.</dd>
+    <dt>Inom reaktionsavstånd</dt><dd>Andelen småfåglar inom minst en rovfågels radie just då. Det är inte ett mått på hur många som hunnit svänga undan.</dd>
+   </dl></details>
+   <p class="archive-note">Mätvärden lagras bara i den här fliken. Vid ”Börja om” eller omladdning nollställs de. Hämta CSV om du vill jämföra försök.</p>
+  </div>
+ </div>
+</section>
 <footer><details><summary>Så fungerar modellen</summary><p>Småfåglar som passerar en kant kommer tillbaka på motsatt sida. Pilgrimsfalken flyger snabbt rakt fram och lämnar fältet. Höken byter mellan slumpvis valda fåglar en stund. Småfåglarna svänger undan inom reaktionsavståndet; ingen fångas. Det är en modell för att jämföra regler, inte en förutsägelse för en viss art.</p></details></footer>
 <p class="sr" id="announce" role="status"></p><noscript>Aktivera JavaScript för att köra simuleringen.</noscript></main></body></html>

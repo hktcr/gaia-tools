@@ -2,14 +2,41 @@
 (() => {
  const get = id=>document.getElementById(id), canvas=get('field'), wrap=get('canvaswrap'), container=get('observation'), ctx=canvas.getContext('2d');
  const engine=new FlockEngine(wrap.clientWidth,wrap.clientHeight), cfg=engine.config, counts=get('counts'), play=get('play'), expand=get('expand');
+ const stats=new FlockStats({chart:get('stats-chart'),reason:get('stats-reason'),summary:get('stats-summary'),events:get('stats-events'),exportButton:get('stats-export')});
+ const statPoint={},showRadius=get('show-radius'), trial=get('trial'), statsPanel=get('stats-panel'), trialTab=get('trial-tab'), statsTab=get('stats-tab');
+ let inStats=false, stepCount=0, frameHandle=0, lastLoggedCount=cfg.count, grid=null;
  let w=engine.w,h=engine.h,dpr=1,playing=false,last=0,acc=0,drag=null,keyPoint=null,countText='';
+ function setView(stat){
+   const next=stat?statsTab:trialTab,prev=stat?trialTab:statsTab;
+   inStats=stat;trial.hidden=stat;statsPanel.hidden=!stat;
+   next.setAttribute('aria-selected','true'); next.tabIndex=0; prev.setAttribute('aria-selected','false');prev.tabIndex=-1;
+   if(stat)stats.render();else resize();
+ }
+ for(const button of [trialTab,statsTab]){
+   button.addEventListener('click',()=>setView(button===statsTab));
+   button.addEventListener('keydown',e=>{
+     if(!['ArrowLeft','ArrowRight','Home','End'].includes(e.key))return;
+     e.preventDefault(); const next=e.key==='End'||(e.key!=='Home'&&button===trialTab)?statsTab:trialTab;setView(next===statsTab);next.focus();
+   });
+ }
+ function eventAt(label){stats.addEvent(stepCount/60,label);if(inStats)stats.render();}
+ function clearRun(){stepCount=0;stats.clear();lastLoggedCount=cfg.count;if(inStats)stats.render();}
+ function playState(state){
+   if(state&&!stats.size){stats.record(0,engine.getStats(statPoint));eventAt('Försöket startat · '+cfg.count+' småfåglar');}
+   else if(state!==playing)eventAt(state?'Fortsatt':'Pausad');
+ }
+
  const clamp=(x,a,b)=>Math.max(a,Math.min(b,x));
  const selected=()=>document.querySelector('input[name=predator]:checked').value;
  const selectedAngle=()=>Number(get('angle').value)*Math.PI/180;
- function changeState(state){playing=state;play.textContent=state?'Pausa':'Starta';play.classList.toggle('is-running',state);get('fieldstatus').textContent=state?'PÅGÅR':'PAUSAD';acc=0;}
+ function changeState(state){playing=state;play.textContent=state?'Pausa':'Starta';get('stats-play').textContent=state?'Pausa':'Starta';play.classList.toggle('is-running',state);get('fieldstatus').textContent=state?'PÅGÅR':'PAUSAD';acc=0;last=0;
+   if(playing&&!frameHandle)frameHandle=requestAnimationFrame(frame);
+   else if(!playing&&frameHandle){cancelAnimationFrame(frameHandle);frameHandle=0;}
+ }
  function launch(x,y,a){
    const type=selected();
    engine.spawn(type,x,y,a);
+   eventAt(type==='falcon'?'Pilgrimsfalk släpptes in':'Hök släpptes in');
    get('announce').textContent=(type==='falcon'?'Pilgrimsfalk':'Hök')+' placerad i fältet.';
    render();
  }
@@ -25,15 +52,24 @@
    ctx.stroke();ctx.restore();
  }
  function render(){
+   if(inStats)return;
    ctx.setTransform(dpr,0,0,dpr,0,0);
    ctx.fillStyle='#172c27';ctx.fillRect(0,0,w,h);
-   ctx.lineWidth=1;ctx.strokeStyle='#92a58f22';ctx.beginPath();
-   for(let x=24;x<w;x+=48){ctx.moveTo(x+.5,0);ctx.lineTo(x+.5,h);}
-   for(let y=24;y<h;y+=48){ctx.moveTo(0,y+.5);ctx.lineTo(w,y+.5);}
+   if(!grid){
+     grid=new Path2D();
+     for(let x=24;x<w;x+=48){grid.moveTo(x+.5,0);grid.lineTo(x+.5,h);}
+     for(let y=24;y<h;y+=48){grid.moveTo(0,y+.5);grid.lineTo(w,y+.5);}
+   }
+   ctx.lineWidth=1;ctx.strokeStyle='#92a58f22';ctx.stroke(grid);
+   ctx.strokeStyle='#f3f0d9';ctx.lineWidth=1.25;ctx.lineCap='round';ctx.lineJoin='round';ctx.beginPath();
+   for(const b of engine.birds){
+     const x=b.x,y=b.y,c=Math.cos(b.a),s=Math.sin(b.a);
+     ctx.moveTo(x-3.8*c+3.5*s,y-3.8*s-3.5*c);ctx.lineTo(x+3*c,y+3*s);ctx.lineTo(x-3.8*c-3.5*s,y-3.8*s+3.5*c);
+     ctx.moveTo(x-3.8*c,y-3.8*s);ctx.lineTo(x+4.8*c,y+4.8*s);
+   }
    ctx.stroke();
-   for(const b of engine.birds)glyph(b.x,b.y,b.a);
    for(const p of engine.predators){
-     if(get('show-radius').checked){ctx.save();ctx.strokeStyle=p.type==='hawk'?'#9fd9eb8a':'#f2a4938a';ctx.lineWidth=1;ctx.setLineDash([5,4]);ctx.beginPath();ctx.arc(p.x,p.y,cfg.predatorRadius*engine.scale,0,2*Math.PI);ctx.stroke();ctx.restore();}
+     if(showRadius.checked){ctx.save();ctx.strokeStyle=p.type==='hawk'?'#9fd9eb8a':'#f2a4938a';ctx.lineWidth=1;ctx.setLineDash([5,4]);ctx.beginPath();ctx.arc(p.x,p.y,cfg.predatorRadius*engine.scale,0,2*Math.PI);ctx.stroke();ctx.restore();}
      glyph(p.x,p.y,p.a,p.type);
    }
    if(drag||keyPoint){
@@ -48,14 +84,25 @@
    if(value!==countText){counts.textContent=value;countText=value;}
  }
  function resize(){
-   const nw=Math.max(1,wrap.clientWidth),nh=Math.max(1,wrap.clientHeight);
-   if(keyPoint)keyPoint={x:keyPoint.x*nw/w,y:keyPoint.y*nh/h};
-   dpr=Math.min(2.5,window.devicePixelRatio||1);canvas.width=Math.round(dpr*nw);canvas.height=Math.round(dpr*nh);w=nw;h=nh;engine.resize(w,h);render();
+   const nw=wrap.clientWidth,nh=wrap.clientHeight;
+   if(nw<2||nh<2)return; // The stats tab hides but does not shrink the world.
+   if(keyPoint&&(nw!==w||nh!==h)){keyPoint.x*=nw/w;keyPoint.y*=nh/h;}
+   dpr=Math.min(2.5,window.devicePixelRatio||1,Math.sqrt(3200000/(nw*nh)));
+   const px=Math.round(dpr*nw),py=Math.round(dpr*nh);
+   if(canvas.width!==px)canvas.width=px;if(canvas.height!==py)canvas.height=py;
+   if(nw!==w||nh!==h){w=nw;h=nh;grid=null;engine.resize(w,h);if(stepCount>0)eventAt('Flygfältets format ändrades');}
+   render();
  }
  const frame=ts=>{
+   frameHandle=0;if(!playing)return;
    const elapsed=last?Math.min((ts-last)/1000,.06):0;last=ts;
-   if(playing){acc+=elapsed;while(acc>=1/60){engine.step(1/60);acc-=1/60;}render();}
-   requestAnimationFrame(frame);
+   acc+=elapsed;
+   while(acc>=1/60){
+     engine.step(1/60);acc-=1/60;stepCount++;
+     if(stepCount%60===0&&stats.record(stepCount/60,engine.getStats(statPoint))&&inStats)stats.render();
+   }
+   if(!inStats)render();
+   frameHandle=requestAnimationFrame(frame);
  };
  function local(e){const box=canvas.getBoundingClientRect();return {x:clamp((e.clientX-box.left)*w/box.width,0,w),y:clamp((e.clientY-box.top)*h/box.height,0,h)};}
  canvas.addEventListener('pointerdown',e=>{
@@ -83,8 +130,8 @@
    else launch(keyPoint.x,keyPoint.y,selectedAngle());
  });
  get('release').addEventListener('click',()=>launch(w/2,h/2,selectedAngle()));
- play.addEventListener('click',()=>{applyCount(true);changeState(!playing);});
- get('reset').addEventListener('click',()=>{engine.reset();changeState(false);render();});
+ for(const button of [play,get('stats-play')])button.addEventListener('click',()=>{applyCount(true);playState(!playing);changeState(!playing);});
+ get('reset').addEventListener('click',()=>{engine.reset();changeState(false);clearRun();render();});
  get('angle').addEventListener('change',render);get('show-radius').addEventListener('change',render);
  const count=get('count'), down=get('count-down'), up=get('count-up');
  function applyCount(commit=false){
@@ -95,6 +142,7 @@
    if(commit)count.value=cfg.count;
    down.disabled=cfg.count<=1;up.disabled=cfg.count>=FlockEngine.maxBirds;
    engine.step(0);render();
+   if(commit&&cfg.count!==lastLoggedCount){lastLoggedCount=cfg.count;if(playing||stepCount)eventAt('Antal småfåglar → '+cfg.count);}
  }
  count.addEventListener('input',()=>applyCount());
  count.addEventListener('change',()=>applyCount(true));
@@ -120,8 +168,13 @@
    for(const id of ['seekMode','alignMode'])get(id).value=cfg[id];
    for(const [id,,,,,suffix=''] of sliderDefs){const input=get(id);input.value=cfg[id];input.previousElementSibling.textContent=fmt.format(cfg[id])+suffix;}
  }
- for(const id of ['seek','align','seekMode','alignMode'])get(id).addEventListener('change',()=>{cfg[id]=get(id).type==='checkbox'?get(id).checked:get(id).value;});
- get('defaults').addEventListener('click',()=>{Object.assign(cfg,FlockEngine.defaults);sync();engine.reset();render();});
+ for(const id of ['seek','align','seekMode','alignMode'])get(id).addEventListener('change',()=>{
+   const x=get(id),rule=id.startsWith('seek')?'seek':'align';cfg[id]=x.type==='checkbox'?x.checked:x.value;
+   const name=rule==='seek'?'Sök upp':'Synkronisera';
+   eventAt(name+': '+(cfg[rule]?(cfg[rule+'Mode']==='random'?'slumpmässig fågel':'närmaste fågel'):'av'));
+ });
+ get('predatorRadius').addEventListener('change',()=>eventAt('Reaktionsavstånd → '+cfg.predatorRadius));
+ get('defaults').addEventListener('click',()=>{Object.assign(cfg,FlockEngine.defaults);sync();engine.reset();changeState(false);clearRun();render();});
  function expanded(){return document.fullscreenElement===container||container.classList.contains('expanded');}
  function syncExpanded(){
    const on=expanded(), full=get('fullscreen-predator-slot'), rad=get('predatorRadius').closest('label'), show=get('show-radius').closest('label');
@@ -143,6 +196,6 @@
  });
  document.addEventListener('fullscreenchange',syncExpanded);
  document.addEventListener('keydown',e=>{if(e.key==='Escape'&&container.classList.contains('expanded')){overlay(false);expand.focus();}});
- if('ResizeObserver' in window)new ResizeObserver(resize).observe(wrap);else window.addEventListener('resize',resize);
- sync();resize();requestAnimationFrame(frame);
+ if('ResizeObserver' in window){new ResizeObserver(resize).observe(wrap);new ResizeObserver(()=>{if(inStats)stats.render();}).observe(get('stats-chart'));}else window.addEventListener('resize',()=>{if(inStats)stats.render();else resize();});
+ sync();resize();
 })();

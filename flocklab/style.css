@@ -99,3 +99,27 @@ body.has-overlay{overflow:hidden}
 }
 @media(orientation:landscape) and (max-height:460px){#observation:is(:fullscreen,.expanded) .help{display:none}#observation:is(:fullscreen,.expanded) .fieldhead{min-height:39px}.transport{padding-block:3px}}
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{transition:none!important}}
+
+[hidden]{display:none!important}
+.view-tabs{display:flex;gap:.3rem;padding-bottom:1px}
+.view-tabs button{background:transparent;border:0;border-bottom:2px solid transparent;color:var(--mute);padding:.35rem .58rem;min-height:36px;font-size:.88rem}
+.view-tabs button[aria-selected=true]{border-color:var(--rust);font-weight:670;color:var(--ink)}
+.stats-head{display:flex;align-items:start;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:1rem}
+.stats-head h2{font:500 clamp(1.55rem,4vw,2.65rem)/1.06 var(--serif)}
+#stats-reason{color:var(--mute);margin-top:.3rem;font-size:.82rem}
+.stats-layout{display:grid;grid-template-columns:minmax(0,1fr) minmax(190px,255px);gap:clamp(14px,3vw,32px)}
+.plot{min-width:0;border-block:1px solid var(--hair);padding:.65rem 0}
+#stats-chart{height:clamp(305px,51vw,428px);touch-action:auto;cursor:default}
+.stat-summary{font-size:.8rem;color:var(--mute);margin:.5rem .15rem}
+.stats-context{min-width:0}.stats-context h3{font:500 1.2rem var(--serif);margin:0;border-bottom:1px solid var(--hair);padding-bottom:.5rem}
+.stats-context h3 small{font: .67rem var(--sans);color:var(--mute);margin-left:.3rem}
+.stats-context ul{padding:0;list-style:none;margin:0 0 .65rem;min-height:1.2rem}
+.stats-context li{border-bottom:1px solid var(--hair);padding:.38rem 0;font-size:.79rem}
+.stats-context dl{font-size:.78rem;color:var(--mute);margin:.35rem 0}
+.stats-context dt{font-weight:650;color:var(--ink)}.stats-context dd{margin:0 0 .6rem}
+.archive-note{margin-top:.55rem;font-size:.75rem;color:var(--mute)}
+#stats-export:disabled{opacity:.5;cursor:default}
+@media(max-width:770px){.stats-layout{grid-template-columns:minmax(0,1fr)}}
+@media(max-width:470px){.mast{display:flex;align-items:end;gap:5px}.view-tabs{gap:0}.view-tabs button{font-size:.75rem;padding-inline:.33rem}.wordmark h1{font-size:clamp(1.65rem,7vw,2rem)}}
+
+.stats-actions{display:flex;gap:.4rem;flex-wrap:wrap}
