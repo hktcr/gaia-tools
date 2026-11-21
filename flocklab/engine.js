@@ -162,7 +162,11 @@
       const repelK = range(c.repelStrength, 5.5, 0, 24);
       const radius = range(c.predatorRadius, 95, 0, 1600) * s;
       const turns = this._turns, speeds = this._speeds;
+      const fast = range(c.falconSpeed, 320, 1, 1600) * s;
+      const slow = range(c.hawkSpeed, 105, 1, 800) * s;
+      const radiusSquared = radius * radius;
       const recovery = 1 - Math.exp(-dt / 0.8);
+      const escapeAccel = 1 - Math.exp(-dt / 0.10);
       const sync = 1 - Math.exp(-alignK * dt);
       const decay = Math.exp(-dt / 0.32), shock = Math.sqrt(1 - decay * decay);
       for (let i = 0; i < n; i++) {
@@ -186,15 +190,29 @@
             speeds[i] = b.motionFactor + sync * (t.motionFactor - b.motionFactor);
           }
         }
-        if (radius && repelK) for (let j = 0; j < this.predators.length; j++) {
+        // Flight takes priority over social steering. Start turning at the
+        // edge of the shown radius, not only when the predator is nearly on top.
+        let threat = null, closest2 = radiusSquared;
+        if (repelK) for (let j = 0; j < this.predators.length; j++) {
           const p = this.predators[j];
-          // Predators are not toroidal: a falcon leaving one edge does not appear at the other.
-          const dx = b.x - p.x, dy = b.y - p.y, d = Math.hypot(dx, dy);
-          if (d < radius) {
-            const f = 1 - d / radius;
-            const bearing = d > 1e-8 ? Math.atan2(dy, dx) : b.a + PI / 2;
-            omega += repelK * f * f * angle(bearing - b.a);
+          const dx = b.x - p.x, dy = b.y - p.y, d2 = dx * dx + dy * dy;
+          if (d2 < closest2) { closest2 = d2; threat = p; }
+        }
+        if (threat) {
+          const dx = b.x - threat.x, dy = b.y - threat.y;
+          const ux = Math.cos(threat.a), uy = Math.sin(threat.a);
+          const lead = Math.min(radius, 0.38 * (threat.type === 'falcon' ? fast : slow));
+          const t = Math.max(0, Math.min(lead, dx * ux + dy * uy));
+          let ex = dx - t * ux, ey = dy - t * uy;
+          if (ex * ex + ey * ey < 1e-8) {
+            const side = Math.sin(b.a - threat.a) < -1e-6 ? -1
+              : Math.sin(b.a - threat.a) > 1e-6 ? 1 : i % 2 ? -1 : 1;
+            ex = -uy * side; ey = ux * side;
           }
+          const f = 1 - Math.sqrt(closest2) / radius;
+          omega = repelK * (1 + 0.8 * f) * angle(Math.atan2(ey, ex) - b.a);
+          speeds[i] = Math.max(b.speedFactor, b.motionFactor) + escapeAccel *
+            Math.max(0, b.speedFactor * (1.38 + 0.30 * f) - Math.max(b.speedFactor, b.motionFactor));
         }
         turns[i] = angle(b.a + dt * Math.max(-14, Math.min(14, omega)));
       }
@@ -206,8 +224,6 @@
         b.x = wrap(b.x + Math.cos(b.a) * v * dt, w);
         b.y = wrap(b.y + Math.sin(b.a) * v * dt, h);
       }
-      const fast = range(c.falconSpeed, 320, 1, 1600) * s;
-      const slow = range(c.hawkSpeed, 105, 1, 800) * s;
       const inset = Math.min(50 * s, w * 0.25, h * 0.25);
       const margin = 26 * s;
       for (let i = this.predators.length - 1; i >= 0; i--) {
