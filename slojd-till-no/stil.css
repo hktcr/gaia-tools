@@ -1,0 +1,63 @@
+:root{
+ color-scheme:dark; --bg:#121a20;--ink:#f7f3ea;--quiet:#c1cbd1;--edge:#576874;--accent:#ffba7d;
+ font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:var(--bg);color:var(--ink)
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{margin:0}
+button{font:inherit;color:inherit}
+:focus-visible{outline:3px solid #fff2b6;outline-offset:4px}
+.spelare{background:var(--bg);min-height:100vh;min-height:100svh;display:grid;grid-template-rows:auto 1fr auto;padding-inline:max(16px,env(safe-area-inset-left));padding-block:0 env(safe-area-inset-bottom)}
+.mast,.kontroller,#lektion{width:100%;max-width:1700px;margin-inline:auto}
+.mast,.kontroller{min-height:54px;display:flex;align-items:center;justify-content:space-between;gap:10px}
+.brand{font-size:1rem;font-weight:750;display:flex;align-items:center;gap:.65rem;letter-spacing:.025em}
+.mark{display:block;width:26px;height:13px;border:2px solid var(--accent);border-radius:1px;transform:skew(-17deg);position:relative}
+.mark::after{content:"";position:absolute;left:9px;top:0;bottom:0;border-left:2px solid var(--accent)}
+.fullscreen,.steg{border:1px solid var(--edge);border-radius:5px;background:#19262e;display:inline-flex;min-height:44px;align-items:center;justify-content:center;gap:.5rem;padding:.35rem .75rem;font-weight:650;cursor:pointer;white-space:nowrap}
+.fullscreen:hover,.steg:hover,.dots a:hover{background:#2d404a}
+.steg:disabled{opacity:.45;cursor:default}
+.steg span[aria-hidden]{font-size:1.28em}
+.kontroller{border-top:1px solid #40515b;padding:4px 0 7px}
+.progress{display:flex;flex-direction:column;align-items:center;color:var(--quiet);font-variant-numeric:tabular-nums}
+.progress p{margin:.12rem 0 0;font-size:.813rem;font-weight:650}
+.dots{display:flex;align-items:center}
+.dots a{min-width:32px;height:44px;display:grid;place-items:center;border-radius:4px}
+.dots span{border:1px solid #aab9c1;display:block;width:16px;height:6px}
+.dots [aria-current="step"] span{background:var(--accent);border-color:var(--accent);height:9px}
+#lektion{display:grid;align-items:center;align-content:center;padding-block:12px;gap:24px}
+.bildruta{width:100%;display:grid;gap:clamp(15px,2.5vw,44px);align-items:center}
+.bild{background:#0c1319; min-width:0;display:grid;place-items:center}
+.bild img{display:block;width:100%;height:auto;max-height:580px;object-fit:contain}
+.text{min-width:0;padding:0 0 8px}
+.sal{margin:0;color:var(--accent);font-size:clamp(.875rem,1.5vw,1.18rem);font-weight:800;text-transform:uppercase;letter-spacing:.115em}
+h1{font:700 clamp(2.1rem,4.5vw,6.3rem)/1.02 Georgia,serif;letter-spacing:-.047em;max-width:18ch;margin:.3em 0 .26em;text-wrap:balance}
+.replik{color:var(--quiet);font-size:clamp(1.18rem,2.2vw,2.66rem);line-height:1.34;margin:0;max-width:33ch;text-wrap:pretty}
+.meddelande{position:absolute;top:55px;right:16px;max-width:min(25rem,calc(100% - 32px));margin:0;z-index:5}
+.meddelande:not(:empty){background:#283e46;border:1px solid #9aaeb7;border-radius:5px;padding:.75rem}
+.bildruta:nth-child(n+4){--accent:#82dbd0}
+.js-ready .bildruta{animation:ton-in .24s ease-out}
+@keyframes ton-in{from{opacity:.56;transform:translateX(4px)}to{opacity:1;transform:none}}
+@media(min-width:720px) and (min-aspect-ratio:17/15){
+ .spelare{padding-inline:clamp(18px,2.5vw,54px)}
+ .bildruta{grid-template-columns:minmax(0,1.68fr) minmax(0,1fr)}
+ .bild img{max-height:min(76vh,900px)}
+ .dots a{min-width:44px}
+}
+@media(max-width:540px){
+ .dot-hide{display:none}
+ .steg,.fullscreen{padding-inline:.55rem}
+ .dots a{min-width:24px}
+}
+@media(max-width:370px){
+ .kontroller{gap:4px}.dots a{min-width:20px}.dots span{width:11px}
+}
+@media(pointer:coarse){
+ .dots a{height:46px}
+}
+@media(prefers-reduced-motion:reduce){
+ *,*::before,*::after{animation:none!important;scroll-behavior:auto!important;transition:none!important}
+}
+@media(max-width:400px){
+ .steg span:not([aria-hidden]){position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
+ .steg{min-width:44px}
+}
