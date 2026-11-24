@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="sv">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="release" content="ellara-fran-aska-v1.0.0">
+<meta name="description" content="En kort NO-presentation om hur en urladdning skiljer sig från ström i en enkel krets.">
+<title>Från blixt till lampa</title>
+<style>
+:root{color-scheme:dark;--base:#101c26;--ink:#f8f6ee;--muted:#bbc7cb;--gold:#ffca72;--blue:#83dfeb;--line:#385260;background:var(--base);color:var(--ink);font:100% system-ui,sans-serif}
+*{box-sizing:border-box}body{margin:0;min-height:100svh}main,header,footer{max-width:83rem;margin:auto;padding:clamp(.9rem,2.7vw,2.7rem)}
+header{padding-bottom:.4rem;display:flex;justify-content:space-between;align-items:center;gap:1rem}.brand,.meta{letter-spacing:.1em;text-transform:uppercase;font-weight:750;color:var(--blue);font-size:.82rem}
+article{padding:clamp(1.4rem,3vw,3.1rem) 0;border-top:1px solid var(--line)}
+article:not([hidden])+article{margin-top:1rem}.stage{display:grid;grid-template-columns:1.08fr .92fr;align-items:center;gap:clamp(1.3rem,3vw,3.2rem)}
+h1,h2{margin:.25em 0;font-weight:790;line-height:1.04;letter-spacing:-.038em;font-size:clamp(2.1rem,5.3vw,5.7rem);text-wrap:balance}
+p,li{max-width:48ch;font-size:clamp(1.06rem,2.15vw,1.8rem);line-height:1.42}strong{color:var(--gold)}.note{color:var(--muted);font-size:clamp(.92rem,1.46vw,1.25rem)}
+figure{margin:0}svg{display:block;width:100%;max-height:46vh}figcaption{color:var(--muted);font-size:.95rem;line-height:1.45;text-align:center;margin-top:.4rem}
+button{background:#193345;color:var(--ink);font:inherit;font-weight:650;padding:.58rem .8rem;border:1px solid #607e8c;border-radius:.48rem;min-height:44px;cursor:pointer}
+button:hover{background:#27495d}button:disabled{opacity:.5;cursor:default}button:focus-visible,a:focus-visible{outline:3px solid var(--gold);outline-offset:4px}
+button[aria-pressed="true"]{color:var(--base);background:var(--gold)}[hidden]{display:none!important}
+footer{padding-top:.5rem}.controls{display:flex;align-items:center;justify-content:space-between;gap:.6rem;flex-wrap:wrap;border-top:1px solid var(--line);padding-top:1rem}.controls span{font-variant-numeric:tabular-nums;font-weight:750}
+details{margin-top:1.1rem;color:var(--muted);line-height:1.55}details p{font-size:1rem}a{color:var(--blue)}summary{cursor:pointer}
+.wire{fill:none;stroke:#83dfeb;stroke-width:5;stroke-linecap:round;stroke-linejoin:round}.contact{fill:var(--base);stroke:#83dfeb;stroke-width:4}.rim{fill:none;stroke:var(--gold);stroke-width:5}.label{fill:var(--ink);font:600 21px system-ui,sans-serif}.cord{fill:none;stroke:#bbc7cb;stroke-width:5;stroke-linecap:round}
+@media(max-width:740px){.stage{grid-template-columns:1fr}figure svg{max-height:35vh}.stage li{margin-bottom:.35em}article{padding:1.2rem 0}header{padding-top:.6rem}}
+@media print{body{background:white;color:#111}.controls,#full,.interactive,details{display:none!important}article[hidden]{display:block!important}h1,h2{font-size:28pt}p,li{font-size:13pt}article{break-inside:avoid}.meta,.brand,figcaption,.note{color:#333}strong{color:#333}}
+</style>
+</head>
+<body>
+<header><div class="brand">NO · Ellära</div><button type="button" id="full" hidden>Helskärm</button></header>
+<main id="slides" aria-label="Från blixt till lampa">
+<article id="blixt" aria-labelledby="h1">
+<div class="stage"><div><p class="meta">01 · Förutsäg</p><h1 id="h1" tabindex="-1">Från blixt till lampa</h1><p>En blixt lyser till och försvinner. <strong>Vad behövs för att en lampa ska fortsätta lysa?</strong></p><p class="note">Rita ett förslag med batteri, lampa och ledningar.</p></div>
+<figure><svg viewBox="0 0 450 315" role="img" aria-label="En blixt och en glödande lampa, som visas bredvid varandra"><path d="M125 26 53 170 112 159 91 285 200 115 137 128 168 26Z" fill="#83dfeb"/><path d="M265 153c0-36 27-61 58-61s58 25 58 61c0 30-20 41-29 63h-58c-9-22-29-33-29-63Z" fill="#ffca72"/><path d="M302 230h43m-38 13h33m-29 12h25m-13-199V37m51 38 16-19m-116 19-16-19m139 85h23" fill="none" stroke="#ffca72" stroke-width="6" stroke-linecap="round"/></svg><figcaption>Två sätt att se att elektrisk energi omvandlas till ljus.</figcaption></figure>
+</div></article>
+<article id="urladdning" aria-labelledby="h2">
+<div class="stage"><div><p class="meta">02 · Koppla till åska</p><h2 id="h2" tabindex="-1">Laddning och urladdning</h2><p>Vid <strong>statisk elektricitet</strong> finns laddningar i obalans, till exempel på en gnuggad ballong.</p><p>En blixt är en <strong>urladdning</strong>: laddningar rör sig snabbt en kort stund. Även det är en elektrisk ström.</p></div>
+<div><p class="meta">Vad menar vi med el?</p><p>Elektricitet omfattar fenomen som har med elektrisk laddning att göra. <strong>Ström</strong> handlar särskilt om laddning som rör sig.</p><p class="note">I en krets håller batteriets kemiska processer spänningen uppe under betydligt längre tid än själva blixten varar.</p></div></div>
+</article>
+<article id="krets" aria-labelledby="h3">
+<div class="stage"><div><p class="meta">03 · Visa och pröva</p><h2 id="h3" tabindex="-1">Hela vägen runt</h2><p>Batteriet har <strong>spänning mellan polerna</strong> även när kretsen är bruten.</p><p>Stadig <strong>ström genom lampan</strong> kräver en sluten väg tillbaka till batteriet.</p><button class="interactive" type="button" id="toggle" aria-pressed="false" hidden>Slut brytaren</button><p id="state" class="note" aria-live="polite">Bruten krets: lampan lyser inte.</p></div>
+<figure><svg viewBox="0 0 470 275" role="img" id="circuit" aria-label="Kretsschema med batteri, öppen brytare och släckt lampa">
+<path class="cord" d="M213 234H75V123m0-36V45H203m64 0h125v189H269"/>
+<circle cx="75" cy="105" r="18" fill="#101c26" stroke="#bbc7cb" stroke-width="4" id="lamp"/><path class="cord" style="pointer-events:none" d="m64 94 22 22m0-22-22 22"/>
+<path class="wire" d="M213 211v46m17-39v32m22-39v46m17-39v32"/><path class="wire" d="M208 45l53-27" id="lever"/><circle class="contact" cx="207" cy="45" r="5"/><circle class="contact" cx="263" cy="45" r="5"/>
+<text class="label" x="152" y="239">+</text><text class="label" x="304" y="239">−</text>
+</svg><figcaption>Batteri, strömbrytare, lampa och ledningar.</figcaption></figure>
+</div></article>
+<article id="ord" aria-labelledby="h4">
+<div class="stage"><div><p class="meta">04 · Sätt ord på det</p><h2 id="h4" tabindex="-1">Ström genom.<br>Spänning mellan.</h2>
+<p><strong>Strömstyrka</strong> är hur mycket laddning som passerar på en sekund. Den mäts i ampere.</p><p><strong>Spänning</strong> är hur mycket energi som överförs per mängd laddning mellan två punkter. Den mäts i volt.</p></div>
+<div><p class="meta">Kontrollfråga</p><p>Brytaren är öppen. <strong>Vad är noll, och vad kan finnas kvar?</strong></p><details><summary>Visa svar</summary><p>I den enkla kretsen är den stadiga strömmen noll. Batteriets spänning mellan polerna finns kvar.</p></details></div>
+</div></article>
+<article id="egen-ritning" aria-labelledby="h5">
+<div class="stage"><div><p class="meta">05 · Enskilt</p><h2 id="h5" tabindex="-1">Rita och förklara</h2><ol><li>Rita en krets där lampan lyser.</li><li>Markera ett ställe på andra sidan lampan där du bryter kretsen.</li><li>Förklara varför lampan slocknar.</li></ol></div><div><p class="meta">Tips om du fastnar</p><p>Följ vägen från batteriets ena pol, genom lampan och tillbaka till den andra polen.</p><details><summary>Visa förklaring</summary><p>Ett glapp var som helst i den enda vägen bryter kretsen. Då upphör den stadiga strömmen genom lampan.</p></details></div></div>
+</article>
+<article id="vidare" aria-labelledby="h6">
+<div class="stage"><div><p class="meta">06 · Om ni är redo</p><h2 id="h6" tabindex="-1">Samma krets, nya verktyg</h2><p><strong>Ledare</strong>, som koppar, leder ström bra. <strong>Isolatorer</strong>, som plasten runt en kabel, leder dåligt.</p><p><strong>Resistans</strong> är motstånd mot ström. Vid samma spänning ger högre resistans mindre ström i den enkla kretsen.</p></div><div><p class="meta">Från bild till kopplingsschema</p><p>Byt batteri, lampa och brytare mot deras symboler. <strong>Anslutningarna</strong> ska vara desamma, även om ritningen ändrar form.</p><p class="note">Fortsättning efter en säker grund. Inga beräkningar med Ohms lag i det här passet.</p></div></div>
+</article>
+</main>
+<footer>
+<nav class="controls" aria-label="Bildnavigering" hidden><button type="button" id="prev">← Föregående</button><span id="counter" aria-live="polite"></span><button type="button" id="next">Nästa →</button></nav>
+<details><summary>Lärarstöd och källor</summary><p>Visa bild 1–5 på cirka 5–8 minuter plus egen rittid. Visa först frågan, låt varje elev tänka och visa sedan jämförelsen. Bild 6 är frivillig på torsdag efter atomförhöret, om ni hinner och eleverna har grepp om kretsen. Häftets tryckta s. 7 och brytaren på s. 8 hör till kärnan; läsrådet på s. 2C preciserar ström och spänning. S. 9 hör till fortsättningen. Kör på tavlan med samma förutsägelse, jämförelse och exit om tekniken fallerar.</p><p>Undvik att säga att spänning är en skillnad i antal laddningar eller att strömmen förbrukas i lampan. Lampan omvandlar elektrisk energi till ljus och värme. Som kort liknelse kan du tänka på en cykelkedja: länkarna finns redan runt varvet och förbrukas inte när energi överförs. Liknelsen visar återvägen och att laddning inte förbrukas, men är ingen modell för vad spänning är. Om strömriktning kommer upp: i en metalltråd driver elektronerna motsatt konventionell strömriktning.</p><p>Se även <a href="https://phet.colorado.edu/sims/html/circuit-construction-kit-dc/latest/circuit-construction-kit-dc_sv.html">PhET: Konstruera kretsar, likström</a> och <a href="https://openstax.org/books/physics/pages/19-1-ohms-law">OpenStax: Ohms lag och begreppen</a>. Använd lågspänningsbatteri i praktiska exempel, inte vägguttag.</p></details>
+</footer>
+<script>
+(() => {
+ const all=[...document.querySelectorAll('article')], nav=document.querySelector('nav'), prev=document.querySelector('#prev'), next=document.querySelector('#next'), counter=document.querySelector('#counter'), full=document.querySelector('#full');
+ const idx=()=>all.findIndex(x=>'#'+x.id===location.hash); let i=Math.max(0,idx());
+ function show(n,focus=false){i=Math.max(0,Math.min(n,all.length-1));all.forEach((x,j)=>{x.hidden=j!==i});counter.textContent=(i+1)+' / '+all.length;prev.disabled=i===0;next.disabled=i===all.length-1;if(focus)all[i].querySelector('h1,h2').focus(); }
+ function go(n){show(n,true);if(history.replaceState)history.replaceState(null,'','#'+all[i].id);}
+ nav.hidden=false;show(i);prev.onclick=()=>go(i-1);next.onclick=()=>go(i+1);
+ addEventListener('hashchange',()=>show(Math.max(0,idx()),true));
+ document.addEventListener('keydown',e=>{if(e.defaultPrevented||e.altKey||e.ctrlKey||e.metaKey||/^(BUTTON|A|INPUT|SELECT|TEXTAREA|SUMMARY)$/.test(e.target.tagName))return;if(e.key==='ArrowRight'||e.key==='PageDown'){e.preventDefault();go(i+1);}if(e.key==='ArrowLeft'||e.key==='PageUp'){e.preventDefault();go(i-1);}});
+ if(document.documentElement.requestFullscreen){full.hidden=false;full.onclick=()=>{const action=document.fullscreenElement?document.exitFullscreen():document.documentElement.requestFullscreen();action.catch(()=>{});};document.addEventListener('fullscreenchange',()=>{full.textContent=document.fullscreenElement?'Avsluta helskärm':'Helskärm';});}
+ const toggle=document.querySelector('#toggle'), state=document.querySelector('#state'), circ=document.querySelector('#circuit'), lamp=document.querySelector('#lamp'), lever=document.querySelector('#lever');toggle.hidden=false;
+ toggle.onclick=()=>{const closed=toggle.getAttribute('aria-pressed')==='false';toggle.setAttribute('aria-pressed',String(closed));toggle.textContent=closed?'Öppna brytaren':'Slut brytaren';state.textContent=closed?'Sluten krets: lampan lyser.':'Bruten krets: lampan lyser inte.';lamp.setAttribute('fill',closed?'#ffca72':'#101c26');lever.setAttribute('d',closed?'M208 45l53 0':'M208 45l53-27');circ.setAttribute('aria-label',closed?'Kretsschema med batteri, sluten brytare och tänd lampa':'Kretsschema med batteri, öppen brytare och släckt lampa');};
+})();
+</script>
+</body></html>
