@@ -2,31 +2,32 @@
 <html lang="sv">
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="description" content="Tre verklighetsnära likströmskretsar att undersöka. Förutsäg, koppla och följ ström, spänning och resistans.">
+<meta name="description" content="Nio verklighetsnära likströmskretsar att undersöka. Förutsäg, koppla och följ ström, spänning och resistans.">
 <title>Kretslabbet · Läs kretsen</title>
 <style>
 :root{color-scheme:dark;--bg:#131923;--panel:#1e2937;--ink:#f2f6fc;--muted:#bdc9d8;--mint:#8cf0ca;--line:#43536a;--amber:#ffda82;--blue:#68c2ff;font:16px/1.5 system-ui,sans-serif}
 *{box-sizing:border-box}body{margin:0;color:var(--ink);background:radial-gradient(ellipse at 73% -20%,#283c50,var(--bg) 62%)}main{max-width:1270px;margin:auto;padding:clamp(14px,3vw,42px)}h1,h2,p{margin:0}h1{font-size:clamp(2rem,5vw,3.5rem);letter-spacing:-.045em;line-height:1.05}h2{font-size:1.15rem}.eyebrow{letter-spacing:.17em;text-transform:uppercase;color:var(--mint);font-size:.78rem;font-weight:800}header p{margin-top:.55rem;color:var(--muted)}.tabs,.controls,.switches,.legend{display:flex;flex-wrap:wrap;gap:.55rem;align-items:center}.tabs{margin:1.2rem 0}.layout{display:grid;grid-template-columns:minmax(0,1fr) minmax(245px,.32fr);gap:14px}.box{background:var(--panel);border:1px solid var(--line);border-radius:17px;padding:clamp(10px,1.65vw,20px);min-width:0}.chartbox{padding:10px}.controls,.switches{padding:5px}.switches{border-top:1px solid var(--line);padding-top:11px;margin-top:5px}.scene{width:100%;overflow:auto;border-radius:12px;background-color:#101821;background-image:radial-gradient(#334154 0.8px,transparent 0.8px);background-size:16px 16px}svg{display:block;width:100%;min-width:610px;height:auto}svg text{font:600 17px system-ui,sans-serif;fill:#f2f6fc;paint-order:stroke;stroke:#101821;stroke-width:4px;stroke-linejoin:round}svg .minor{font-size:15px;fill:#c5d3e2}svg .lamp-label{font-size:16px}.legend{font-size:.88rem;color:var(--muted);padding:7px 5px 3px}.sample{width:15px;height:15px;display:inline-block;vertical-align:middle;margin-right:4px;border-radius:4px}button{font:inherit;cursor:pointer;color:var(--ink);background:#263445;border:1px solid #53687f;padding:.5rem .74rem;border-radius:9px;min-height:44px;font-weight:630}button[aria-pressed=true]{color:#0f2725;background:var(--mint);border-color:var(--mint)}button:focus-visible,summary:focus-visible,.scene:focus-visible{outline:3px solid var(--amber);outline-offset:3px}aside p,details p{margin:.42rem 0 .8rem;color:var(--muted)}.metrics{display:grid;gap:5px;margin:10px 0}.metric{padding:.38rem .55rem;background:#15212e;border-radius:7px;display:flex;align-items:center;justify-content:space-between;gap:.55rem}.metric strong{white-space:nowrap}.light{font-size:.87rem;color:var(--amber)}details{border-top:1px solid var(--line);margin-top:.8rem;padding-top:.55rem}summary{cursor:pointer;font-weight:700}a{color:var(--mint)}.sronly{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%)}.small{font-size:.87rem;color:var(--muted)}.scrollnote{display:none}
 @media(max-width:870px){.layout{grid-template-columns:1fr}.box{border-radius:13px}}
 @media(max-width:650px){.scrollnote{display:block;padding:4px}.tabs button{flex:1 1 auto}.controls button,.switches button{flex:1 1 auto}}
+.track{margin:-.45rem 0 .8rem}.diagram-switch{cursor:pointer;outline:none}.diagram-switch .hit-outline{fill:transparent;stroke:none}.diagram-switch:hover .hit-outline,.diagram-switch:focus .hit-outline{stroke:var(--amber);stroke-width:2;fill:#ffda8215}.scene svg{min-width:var(--diagram-min,520px)}#enlarge{border-color:var(--mint);color:var(--mint)}#diagram-dialog{border:0;padding:0;max-width:none;max-height:none;width:100vw;height:100dvh;background:var(--bg);color:var(--ink);margin:0}#diagram-dialog .chartbox{height:100dvh;display:flex;flex-direction:column;border-radius:0}#diagram-dialog .scene{flex:1}#diagram-dialog .scene svg{height:100%;min-height:340px}#next{margin:.25rem 0}#next[hidden]{display:none}@media(max-width:650px){#diagram-dialog .scene svg{height:auto}}
 </style>
 <main>
-<header><div class="eyebrow">Interaktiv ellära · 01</div><h1>Kretslabbet</h1><p>Tre kretsar. Förutsäg vad som händer, slå om en brytare och läs av resultatet.</p></header>
+<header><div class="eyebrow">Interaktiv ellära · Nivå 1–9</div><h1>Kretslabbet</h1><p>Nio nivåer: från en ficklampa till ett helt belysningsnät. Förutsäg, klicka på brytaren i schemat och läs av vad som händer.</p></header>
 <nav class="tabs" id="tabs" aria-label="Välj krets"></nav>
-<div class="layout">
-<section class="box chartbox" aria-label="Interaktivt kopplingsschema">
-<div class="controls" aria-label="Visningslager">
+<p id="section-label" class="small track"></p><div class="layout">
+<section id="chartbox" class="box chartbox" aria-label="Interaktivt kopplingsschema">
+<div class="controls" aria-label="Visningslager"><button id="enlarge" type="button">Öppna stort ⤢</button>
 <button id="current" aria-pressed="true">Ström</button><button id="potential" aria-pressed="true">Potential</button><button id="resistance" aria-pressed="true">Resistans</button><button id="direction" aria-pressed="false">Elektronriktning</button><button id="motion" aria-pressed="true">Rörelse</button>
 </div>
 <p class="small scrollnote">Dra schemat åt sidan på liten skärm.</p>
-<div class="scene" tabindex="0" aria-label="Kopplingsschema, rullbart vid behov"><svg id="svg" viewBox="0 0 900 510" role="img"></svg></div>
+<div class="scene" tabindex="0" aria-label="Kopplingsschema, rullbart vid behov"><svg id="svg" viewBox="0 0 900 510" role="group" aria-label="Kopplingsschema med interaktiva brytare"></svg></div>
 <div class="legend" id="legend"></div>
 <div id="switches" class="switches" aria-label="Strömbrytare"></div>
 </section>
 <aside class="box">
 <div class="eyebrow" id="level"></div><h2 id="title"></h2><p id="intro"></p>
 <h2>Förutsäg först</h2><p id="challenge"></p>
-<div id="meter" class="metrics" aria-label="Mätvärden"></div>
+<button id="next" type="button">Nästa nivå →</button><div id="meter" class="metrics" aria-label="Mätvärden"></div>
 <div id="announce" class="sronly" role="status"></div>
 <details><summary>Förklaring och följdfråga</summary><p id="explain"></p></details>
 <details><summary>Så ska bilden läsas</summary>
@@ -37,13 +38,19 @@
 <div class="switches"><button id="reset">Återställ kretsen</button></div>
 </aside>
 </div>
-</main>
+</main><dialog id="diagram-dialog" aria-label="Kopplingsschema i stort format"><div id="diagram-slot"></div></dialog>
 <script>
 "use strict";
 const cases=[
-{title:"Lamporna i stugan", level:"01 · Tre parallella grenar",v:6,r:0,start:[true,true,true,false],intro:"En batterilåda driver lamporna i kök, hall och på veranda. Varje rum har en egen brytare.",challenge:"Köket och hallen lyser. Vad händer med dem och med batteriets ström om verandan tänds?",explain:"Alla tre grenar ligger direkt över samma batteri. Verandan ger en till väg för laddningen, så den totala strömmen ökar, men övriga lampor får samma spänning i den här idealiserade modellen. Vad händer om huvudbrytaren öppnas i stället?",branches:[["Kök",["Kökslampa",12]],["Hall",["Hallampa",18]],["Veranda",["Verandalampa",24]]]},
-{title:"Belysningen på släpet",level:"02 · Seriekopplat i parallella grenar",v:12,r:0,start:[true,true,true,false],intro:"En förenklad släpvagnskrets med två positionslampor i samma gren, en separat lastlampa och en separat skyltlampa.",challenge:"Vilka lampor slocknar om brytaren till positionslamporna öppnas? Hur stor spänning får var och en av dem när de lyser?",explain:"Två lika stora resistansvärden i serie delar grenspänningen lika. Strömmen genom de två lamporna är densamma. Lastlampan har en egen sluten väg och påverkas inte av positionsbrytaren. När har kretsen störst totalström?",branches:[["Position",["Vänster",12],["Höger",12]],["Last",["Lastlampa",24]],["Skylt",["Skyltlampa",36]]]},
-{title:"Husvagnen med lång kabel",level:"03 · Gemensam resistans före förgreningen",v:12,r:2,start:[true,true,false,false],intro:"Lamporna delar en matning. All matningskabelns resistans har för tydlighetens skull samlats i ett motstånd på plusledningen och överdrivits för att effekten ska synas.",challenge:"Tänd läslampan. Vad händer med taklampans spänning om du också tänder arbetsbelysningen och lampan vid steget?",explain:"När fler grenar stängs ökar strömmen genom den gemensamma kabeln. Då ökar spänningsfallet över kabeln och spänningen över varje påslagen lampgren sjunker. Slå om huvudbrytaren: vilka ledningar har fortfarande en definierad potential?",branches:[["Tak",["Taklampa",18]],["Läslampa",["Läslampa",20]],["Arbete och steg",["Arbetslampa",6],["Steglampa",6]]]}
+{title:"Ficklampan",level:"01 · En lampa och en väg",v:3,r:0,start:[true,false],intro:"En liten ficklampa med batteri, en lampa och en brytare. Batteriets huvudbrytare är redan sluten.",challenge:"Klicka på S1 i schemat. När finns det en hel väg från batteriets pluspol tillbaka till minuspolen?",explain:"Lampan lyser när båda brytarna är slutna. Följ den gröna vägen runt kretsen. Öppna S1 igen: var finns fortfarande spänning trots att strömmen är noll?",branches:[["Ficklampa",["Lampa",12]]]},
+{title:"Två lampor i rad",level:"02 · Seriekoppling",v:6,r:0,start:[true,true],intro:"Två lika små lampor i en enkel ljusslinga ligger i samma gren.",challenge:"Hur många lampor slocknar när du öppnar S1? Jämför spänningen över vardera lampa med batteriets spänning.",explain:"Båda slocknar. Samma ström går genom båda, eftersom det inte finns någon förgrening. Två lika resistanser delar i den här modellen 6 V till 3 V över varje lampa.",branches:[["Ljusslinga",["Lampa A",12],["Lampa B",12]]]},
+{title:"Två cykellampor",level:"03 · Parallellkoppling",v:6,r:0,start:[true,true,false],intro:"Framlyse och baklyse sitter i varsin gren. Ett gemensamt batteri driver båda.",challenge:"Tänd baklyset. Vad händer med framlyset? Titta också på batteriets ström.",explain:"Framlyset är oförändrat i modellen: spänningen över det är fortfarande 6 V. Batteriet levererar mer ström eftersom det nu finns två slutna grenar.",branches:[["Fram",["Framlyse",12]],["Bak",["Baklyse",24]]]},
+{title:"Lamporna i stugan", level:"04 · Tre parallella grenar",v:6,r:0,start:[true,true,true,false],intro:"En batterilåda driver lamporna i kök, hall och på veranda. Varje rum har en egen brytare.",challenge:"Köket och hallen lyser. Vad händer med dem och med batteriets ström om verandan tänds?",explain:"Alla tre grenar ligger direkt över samma batteri. Verandan ger en till väg för laddningen, så den totala strömmen ökar, men övriga lampor får samma spänning i den här idealiserade modellen. Vad händer om huvudbrytaren öppnas i stället?",branches:[["Kök",["Kökslampa",12]],["Hall",["Hallampa",18]],["Veranda",["Verandalampa",24]]]},
+{title:"Belysningen på släpet",level:"05 · Serie och parallell i samma krets",v:12,r:0,start:[true,true,true,false],intro:"En förenklad släpvagnskrets med två positionslampor i samma gren, en separat lastlampa och en separat skyltlampa.",challenge:"Vilka lampor slocknar om brytaren till positionslamporna öppnas? Hur stor spänning får var och en av dem när de lyser?",explain:"Två lika stora resistansvärden i serie delar grenspänningen lika. Strömmen genom de två lamporna är densamma. Lastlampan har en egen sluten väg och påverkas inte av positionsbrytaren. När har kretsen störst totalström?",branches:[["Position",["Vänster",12],["Höger",12]],["Last",["Lastlampa",24]],["Skylt",["Skyltlampa",36]]]},
+{title:"Husvagnen med lång kabel",level:"06 · Gemensam resistans före förgreningen",v:12,r:2,start:[true,true,false,false],intro:"Lamporna delar en matning. All matningskabelns resistans har för tydlighetens skull samlats i ett motstånd på plusledningen och överdrivits för att effekten ska synas.",challenge:"Tänd läslampan. Vad händer med taklampans spänning om du också tänder arbetsbelysningen och lampan vid steget?",explain:"När fler grenar stängs ökar strömmen genom den gemensamma kabeln. Då ökar spänningsfallet över kabeln och spänningen över varje påslagen lampgren sjunker. Slå om huvudbrytaren: vilka ledningar har fortfarande en definierad potential?",branches:[["Tak",["Taklampa",18]],["Läslampa",["Läslampa",20]],["Arbete och steg",["Arbetslampa",6],["Steglampa",6]]]},
+{title:"Belysningen i verkstaden",level:"07 · Fyra zoner, olika laster",v:12,r:1,start:[true,true,false,true,false],intro:"Arbetsbord, dörr, fönster och verktygsskåp delar en lång matning. Fönstrets tre lampor ligger i serie.",challenge:"Vilken brytare ökar batteriets ström mest om du slår om den så att fler lampor lyser? Ändra en brytare i taget.",explain:"En gren med lägre sammanlagd resistans ger i regel större strömtillskott. Strömmen i de redan tända grenarna kan samtidigt minska eftersom matningen har resistans. Jämför med nivå 4.",branches:[["Bord",["Bordslampa",8]],["Dörr",["Dörrlampa",12]],["Fönster",["Vänster",8],["Mitten",8],["Höger",8]],["Skåp",["Skåplampa",16]]]},
+{title:"Nödbelysningen på båten",level:"08 · Felsök fem grenar",v:12,r:1.5,start:[true,true,false,true,false,true],intro:"En förenklad batterikrets med fem oberoende brytare. Två av grenarna har flera lampor.",challenge:"Passagen och rampen ska lysa men inget annat. Vilka brytare behöver ändras? Hur kan du kontrollera att du inte brutit fel gren?",explain:"Passagen är S2 och rampen är S5. Huvudbrytaren måste förbli sluten. Inom varje sluten gren går samma ström genom lampor som ligger i serie. Grenarna behöver inte ha samma ström.",branches:[["Kabin",["Kabinljus",12]],["Passage",["Främre",8],["Bakre",8]],["Däck",["Däcksljus",12]],["Förråd",["Förrådsljus",20]],["Ramp",["Trappsteg",4],["Rampens kant",8]]]},
+{title:"Ljus längs vandringsleden",level:"09 · Sex grenar och tretton lampor",v:12,r:2,start:[true,true,false,false,false,true,false],intro:"En matningskabel driver sex zoner med olika antal lampor och olika resistans. Det är en modell av ett utbrett lågvoltsnät, inte en ritning för installation.",challenge:"Minst åtta lampor ska lysa samtidigt, och spänningsfallet i kabeln ska vara så litet som möjligt. Kan du hitta en kombination och förklara varför den fungerar?",explain:"Jämför lampantal och total resistans per gren. Fler lampor betyder inte alltid större ström: tre lampor i serie kan belasta matningen mindre än en ensam lågohmig lampa. Prova S1, S2 och S5 som kontroll och se om du kan förbättra resultatet.",branches:[["Start",["Start A",12],["Start B",12],["Start C",12]],["Spång",["Spång A",8],["Spång B",8],["Spång C",8]],["Vindskydd",["Vindskydd",8]],["Grind",["Grind A",6],["Grind B",12]],["Vägvisare",["Pil A",12],["Pil B",12]],["Bro",["Bro A",5],["Bro B",5]]]}
 ];
 function solve(c,s){
  const branchR=c.branches.map(([, ...lamps])=>lamps.reduce((sum,[,r])=>sum+r,0));
@@ -77,9 +84,10 @@ function flow(x,y,X,Y,amp){
  return s;
 }
 function wire(x,y,X,Y,v,i,c){return line(x,y,X,Y,cAt(v,c))+flow(x,y,X,Y,i);}
-function sw(x,y,vertical,on,ca,cb){
+function sw(x,y,vertical,on,ca,cb,j){
  const q=vertical?[[x,y],[x,y+40],[x+23,y+34]]:[[x,y],[x+46,y],[x+39,y-20]];
- return dot(...q[0],ca)+dot(...q[1],cb)+line(...q[0],...(on?q[1]:q[2]),on?ca:neutral,4);
+ const label=j===0?"Huvudbrytare":"S"+j+" "+cases[ix].branches[j-1][0];
+ return '<g role="button" tabindex="0" class="diagram-switch" data-diagram-switch="'+j+'" aria-label="'+label+': '+(on?"sluten, tryck för att öppna":"öppen, tryck för att sluta")+'" aria-pressed="'+on+'"><title>'+label+'</title><rect class="hit-outline" x="'+(x-17)+'" y="'+(y-(vertical?12:27))+'" width="'+(vertical?55:80)+'" height="'+(vertical?65:52)+'" rx="8"/>'+dot(...q[0],ca)+dot(...q[1],cb)+line(...q[0],...(on?q[1]:q[2]),on?ca:neutral,4)+'</g>';
 }
 function bulb(x,y,l,c){
  const fill=l.p>1e-8?"rgba(255,209,105,"+(.20+Math.min(.68,l.p/6))+")":"#14222f";
@@ -87,23 +95,26 @@ function bulb(x,y,l,c){
  return '<circle cx="'+x+'" cy="'+y+'" r="19" fill="'+fill+'" stroke="'+k+'" stroke-width="2.5"/>'+line(x-12,y-12,x+12,y+12,k,2)+line(x-12,y+12,x+12,y-12,k,2)+tx(x+30,y-5,l.name,"lamp-label","start")+tx(x+30,y+15,show.resistance?fmt(l.r)+" Ω · "+fmt(l.u)+" V":fmt(l.u)+" V","minor","start");
 }
 function draw(c,m){
- let out='<title>'+c.title+'</title><desc>Batteri till vänster, huvudbrytare överst och tre grenar nedåt. Mätvärden står också bredvid diagrammet.</desc>';
- const ty=91,by=450,home=82, xs=[255,475,695];
- out+=wire(home,235,home,ty,c.v,m.total,c)+wire(home,ty,120,ty,c.v,m.total,c)+sw(120,ty,false,states[0],cAt(c.v,c),cAt(m.rail,c))+tx(144,48,"Huvudbrytare","minor");
+ let out='<title>'+c.title+'</title><desc>Batteri till vänster och huvudbrytare överst. Klicka på brytarna för att öppna eller sluta kretsen. Mätvärden står också bredvid diagrammet.</desc>';
+ const ty=91,by=450,home=82, xs=c.branches.map((_,i)=>255+i*220);
+ const width=xs.at(-1)+200;
+ $("svg").setAttribute("viewBox","0 0 "+width+" 510");
+ $("svg").style.setProperty("--diagram-min",Math.round(width*.7)+"px");
+ out+=wire(home,235,home,ty,c.v,m.total,c)+wire(home,ty,120,ty,c.v,m.total,c)+sw(120,ty,false,states[0],cAt(c.v,c),cAt(m.rail,c),0)+tx(144,48,"Huvudbrytare","minor");
  if(c.r){
   const before=states[0]?c.v:m.rail;
   out+=wire(166,ty,178,ty,before,m.total,c)+'<rect x="178" y="82" width="51" height="18" fill="#14222f" stroke="'+neutral+'" stroke-width="2"/>'+tx(205,119,show.resistance?fmt(c.r)+" Ω":"Kabel","minor")+wire(229,ty,xs[0],ty,m.rail,m.total,c);
  }else out+=wire(166,ty,xs[0],ty,m.rail,m.total,c);
  out+=line(56,235,108,235,amber)+line(65,251,99,251,blue)+tx(43,226,"+")+tx(43,264,"−")+tx(113,252,c.v+" V","minor","start");
  out+=wire(home,by,home,251,0,m.total,c)+wire(xs[0],by,home,by,0,m.total,c);
- for(let j=0;j<3;j++){
+ for(let j=0;j<xs.length;j++){
   const x=xs[j], b=m.branches[j];
   if(j>0){const after=m.branches.slice(j).reduce((a,v)=>a+v.i,0);out+=wire(xs[j-1],ty,x,ty,m.rail,after,c)+wire(x,by,xs[j-1],by,0,after,c);}
   const low=states[j+1]?m.rail:0;
-  out+=wire(x,ty,x,142,m.rail,b.i,c)+sw(x,142,true,states[j+1],cAt(m.rail,c),cAt(low,c))+tx(x+20,138,"S"+(j+1),"minor","start");
+  out+=wire(x,ty,x,142,m.rail,b.i,c)+sw(x,142,true,states[j+1],cAt(m.rail,c),cAt(low,c),j+1)+tx(x+20,138,"S"+(j+1),"minor","start");
   out+=dot(x,ty,cAt(m.rail,c))+dot(x,by,blue);
   let prev=182;
-  b.lamps.forEach((l,k)=>{const y=b.lamps.length===1?285:246+k*96;out+=wire(x,prev,x,y-19,l.up,b.i,c)+bulb(x,y,l,c);prev=y+19;});
+  b.lamps.forEach((l,k)=>{const y=b.lamps.length===1?285:b.lamps.length===2?246+k*96:224+k*78;out+=wire(x,prev,x,y-19,l.up,b.i,c)+bulb(x,y,l,c);prev=y+19;});
   out+=wire(x,prev,x,by,0,b.i,c)+tx(x,483,fmt(b.i)+" A","minor");
  }
  $("svg").innerHTML=out;
@@ -114,8 +125,11 @@ function render(){
  Object.keys(show).forEach(k=>$(k).setAttribute("aria-pressed",String(show[k])));
  $("level").textContent=c.level;$("title").textContent=c.title;$("intro").textContent=c.intro;$("challenge").textContent=c.challenge;$("explain").textContent=c.explain;
  const focus=document.activeElement?.dataset?.sw;
+ const diagramFocus=document.activeElement?.getAttribute?.("data-diagram-switch");
+ $("section-label").textContent=(ix<3?"Grunder":ix<6?"Blandade kretsar":"Felsök större system")+" · Nivå "+(ix+1)+" av "+cases.length;
+ $("next").hidden=ix===cases.length-1;
  $("switches").replaceChildren(...["Huvud",...c.branches.map(b=>b[0])].map((name,j)=>{
-   const btn=document.createElement("button");btn.dataset.sw=j;btn.type="button";btn.setAttribute("aria-pressed",String(states[j]));btn.textContent=(j?"S"+j+" · ":"")+name+": "+(states[j]?"sluten":"öppen");btn.onclick=()=>{states[j]=!states[j];render();$("announce").textContent=btn.textContent.split(":")[0]+(states[j]?" sluten. ":" öppen. ")+"Totalström "+fmt(solve(c,states).total)+" ampere.";};return btn;
+   const btn=document.createElement("button");btn.dataset.sw=j;btn.type="button";btn.setAttribute("aria-pressed",String(states[j]));btn.textContent=(j?"S"+j+" · ":"")+name+": "+(states[j]?"sluten":"öppen");btn.onclick=()=>toggle(j);return btn;
  }));
  if(focus!==undefined)document.querySelector('[data-sw="'+focus+'"]')?.focus();
  const metric=(label,val)=>'<div class="metric"><span>'+label+'</span><strong>'+val+'</strong></div>';
@@ -123,7 +137,22 @@ function render(){
  const swatch=(color,label)=>'<span><i class="sample" style="background:'+color+'"></i>'+label+'</span>';
  $("legend").innerHTML=(show.potential?swatch(blue,"0 V")+swatch(amber,c.v+" V")+swatch("#a7a3ec","Mellannivåer")+swatch("#8793a4","Flytande"):swatch(neutral,"Ledning"))+(show.current?swatch(mint,show.direction?"Elektroner: − till + i yttre kretsen":"Strömriktning: + till − i yttre kretsen"):"");
  draw(c,m);
+ if(diagramFocus!=null)$("svg").querySelector('[data-diagram-switch="'+diagramFocus+'"]')?.focus();
 }
+function toggle(j){
+ if(!Number.isInteger(j)||j<0||j>=states.length)return;
+ states[j]=!states[j];render();
+ $("announce").textContent=(j?"S"+j:"Huvudbrytaren")+(states[j]?" sluten. ":" öppen. ")+"Totalström "+fmt(solve(cases[ix],states).total)+" ampere.";
+}
+$("svg").addEventListener("click",e=>{const control=e.target.closest("[data-diagram-switch]");if(control)toggle(Number(control.dataset.diagramSwitch));});
+$("svg").addEventListener("keydown",e=>{const control=e.target.closest("[data-diagram-switch]");if(control&&!e.repeat&&(e.key==="Enter"||e.key===" ")){e.preventDefault();toggle(Number(control.dataset.diagramSwitch));}});
+$("next").onclick=()=>{if(ix+1<cases.length){pick(ix+1);$("tabs").querySelector('[aria-pressed="true"]')?.focus();}};
+const chart=$("chartbox"), dialog=$("diagram-dialog"), home=chart.parentElement;
+$("enlarge").onclick=()=>{
+ if(dialog.open){dialog.close();return;}
+ $("diagram-slot").append(chart);$("enlarge").textContent="Stäng stort schema ×";dialog.showModal();$("enlarge").focus();
+};
+dialog.addEventListener("close",()=>{home.prepend(chart);$("enlarge").textContent="Öppna stort ⤢";$("enlarge").focus();});
 cases.forEach((c,i)=>{const e=document.createElement("button");e.type="button";e.textContent=(i+1)+". "+c.title;e.onclick=()=>pick(i);$("tabs").append(e);});
 for(const k of Object.keys(show))$(k).onclick=()=>{show[k]=!show[k];render();};
 notMotion.addEventListener("change",e=>{show.motion=!e.matches;render();});
@@ -131,3 +160,4 @@ $("reset").onclick=()=>pick(ix);
 render();
 </script>
 </html>
+
