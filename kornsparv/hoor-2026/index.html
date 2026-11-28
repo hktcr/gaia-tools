@@ -32,37 +32,49 @@ a{color:#244d68} .scroll{overflow:auto}table{border-collapse:collapse;width:100%
 <section class="chart" aria-labelledby="chart-title"><h2 id="chart-title">Inventeringspunkter över tid</h2>
 <fieldset><legend>Visa i diagrammet</legend><div class="toggles">
 <label><input data-layer="core" type="checkbox" checked> Österlens kärnområde</label>
-<label><input data-layer="region" type="checkbox" checked> Skånetotal</label>
+<label><input data-layer="region" type="checkbox" checked> Skåne: rapporterade hanar</label>
 <label><input data-layer="hist" type="checkbox" checked> Äldre sydostdata</label>
-<label><input id="stats-toggle" type="checkbox" aria-controls="stats-panel"> Statistik</label>
+<label><input data-layer="regionRev" type="checkbox"> Skåne: besatta revir/par</label>
+<label><input data-layer="histRev" type="checkbox"> Äldre sydost: revir</label>
+<label><input id="lines-toggle" type="checkbox" checked> Jämförelselinjer</label>
+<label><input id="stats-toggle" type="checkbox" aria-controls="stats-panel"> Beskrivande statistik</label>
+<label><input id="test-toggle" type="checkbox" aria-controls="test-panel"> Statistiskt test</label>
 </div></fieldset>
 <div id="chart-host"><svg id="plot" role="group" aria-label="Tidsdiagram, klicka på en punkt för källa och metod"></svg></div>
-<div class="key"><span><b class="k">●</b> Österlen</span><span><b class="s">■</b> Skåne</span><span><b class="h">◇</b> äldre sydost</span><span>│ intervall</span></div>
-<p class="fine">Endast Österlens jämförbara räkningar 2025–2026 binds ihop. 2023 och 2024 saknar riktad inventering. Luckor är inte nollor.</p></section>
+<div class="key"><span><b class="k">●</b> Österlen</span><span><b class="s">■</b> Skåne</span><span><b class="h">◇</b> äldre sydost</span><span><b style="color:#7e4467">■</b> Skåne: revir/par</span><span><b style="color:#685e39">◇</b> äldre revir</span><span>│ rapporterat intervall</span></div>
+<p class="fine">Linjer ritas bara inom en namngiven jämförelse. Äldre mått och regionala totalsiffror ligger som punkter. År utan riktad inventering är luckor, inte nollor.</p></section>
 <aside>
 <section class="card" id="detail" aria-labelledby="detail-title"><p class="tag">Inventeringspunkt</p><h2 id="detail-title">2026</h2><div id="point-detail" aria-live="polite"></div></section>
-<section class="card" id="stats-panel" hidden><p class="tag">Illustrativ jämförelse</p><h2>Vad bär skillnaden?</h2><p><strong id="change"></strong> färre räknade hanar. Utan jämförbara besöksdata går det inte att skilja verklig förändring från skillnader i upptäckt och täckning.</p><p>Om talen vore oberoende Poissonräkningar med lika exponering ger det exakta tvåsidiga testet <strong id="pvalue"></strong>. Det är ett räkneexempel under ett antagande, inte ett test av den verkliga beståndstrenden.</p></section>
+<section class="card" id="stats-panel" hidden><p class="tag">Beskrivning per vald serie</p><h2>Vad räknades?</h2><div id="series-stats"></div></section>
+<section class="card" id="test-panel" hidden><p class="tag">Villkorad jämförelse · Österlen</p><h2>Är 39 till 30 statistiskt säkerställt?</h2><p id="test-adjust">Exakt tvåsidigt test under antagandet om oberoende Poissonräkningar med lika effektiv inventeringsinsats: <strong id="pvalue"></strong>. Kvot 2026/2025: <strong>0,77</strong> (exakt 95 % KI under samma antaganden: 0,46–1,27).</p><p>En skillnad är inte statistiskt säkerställd med den modellen. Liknande bedömd insats garanterar inte lika upptäckbarhet. Testet gäller två räkningar, inte en långsiktig trend.</p></section>
 </aside></div>
 <div class="details">
-<details><summary>Hur punkterna valdes och vad som inte blandas</summary><p>Huvuddiagrammet visar hanar i riktad inventering eller sammanställning av inventeringar; överlappande serier är alternativa geografiska avgränsningar, inte additiva. Äldre mätningar visas utan förbindelse eftersom täckning och protokoll inte är harmoniserade. 2009 skiljer källan mellan cirka 40 hanar i det närmare materialet och minst 50 i ett bredare område; den bredare siffran plottas inte.</p><p>Häckningar, par, besatta revir och vinterflockar är andra mått. Utvalda alternativa mått finns i tabellen och läggs inte på samma kurva. Spontanrapporter från Artportalen kan hjälpa oss att hitta lokaler men kan inte ersätta riktade inventeringsår.</p></details>
+<details><summary>Hur punkterna valdes och vad som inte blandas</summary><p>Huvuddiagrammet skiljer på räknade hanar och revir eller par. Överlappande geografiska serier ska inte summeras. Äldre mätningar visas utan förbindelse eftersom täckning och protokoll inte är harmoniserade. 2009 skiljer källan mellan cirka 40 hanar i det närmare materialet och minst 50 i ett bredare område; den bredare siffran plottas inte.</p><p>Häckningar, par, besatta revir och vinterflockar är andra mått. Utvalda alternativa mått finns i tabellen och läggs inte på samma kurva. Spontanrapporter från Artportalen kan hjälpa oss att hitta lokaler men kan inte ersätta riktade inventeringsår.</p></details>
 <details><summary>Fler inventeringsuppgifter, tabell och originalkällor</summary>
 <div class="scroll"><table><thead><tr><th>År</th><th>Antal</th><th>Mått och område</th></tr></thead><tbody id="rows"></tbody></table></div>
-<ol><li><a href="https://skof.se/fagelintresse/fisk-2/kornsparv/">SkOF, Fåglar i Skåne: Kornsparv</a>, år för år.</li><li><a href="https://skof.se/kornsparven-minskar/">SkOF:s redovisning av 2026 års inventering</a>, med jämförelseåret 2025.</li><li><a href="https://cdn.birdlife.se/wp-content/uploads/sites/53/2023/02/Anser2022-4-low.pdf">Anser 4/2022, s. 36</a>, inventeringen i Skåne.</li><li><a href="https://cdn.birdlife.se/wp-content/uploads/2021/06/Fagelaret-2011_fagelrapporten.pdf">Fågelåret 2011</a> och <a href="https://cdn.birdlife.se/wp-content/uploads/2021/06/Fagelaret-2012_fagelrapporten.pdf">Fågelåret 2012</a>.</li></ol>
+<ol><li><a href="https://skof.se/fagelintresse/fisk-2/kornsparv/">SkOF, Fåglar i Skåne: Kornsparv</a>, år för år.</li><li><a href="https://skof.se/kornsparven-minskar/">SkOF:s redovisning av 2026 års inventering</a>, med jämförelseåret 2025.</li><li><a href="https://cdn.birdlife.se/wp-content/uploads/sites/53/2023/02/Anser2022-4-low.pdf">Anser 4/2022, s. 36</a>, inventeringen i Skåne.</li><li><a href="https://cdn.birdlife.se/wp-content/uploads/sites/53/2022/03/Anser2021-1-low.pdf">Anser 1/2021, s. 39</a>, 2020 års inventering och häckningar per kommun.</li><li><a href="https://cdn.birdlife.se/wp-content/uploads/2021/06/Fagelaret-2011_fagelrapporten.pdf">Fågelåret 2011</a> och <a href="https://cdn.birdlife.se/wp-content/uploads/2021/06/Fagelaret-2012_fagelrapporten.pdf">Fågelåret 2012</a>.</li><li><a href="https://www.naturvardsverket.se/4ac286/globalassets/media/publikationer-pdf/5500/978-91-620-5502-x.pdf">Naturvårdsverket, åtgärdsprogram 5502</a>, äldre uppföljning s. 13 och 15.</li><li><a href="https://skof.se/wp-content/uploads/2025/10/Inventering-av-kornsparv-pa-Osterlen-juni-och-juli-2025_v2.pdf">SkOF:s inventering 2025</a> (slutord s. 9) och <a href="https://skof.se/wp-content/uploads/2026/10/Kornsparvsinventeringsrapport_2026.pdf">inventeringen 2026</a>.</li></ol>
 </details>
 </div><p class="fine">Underlag: verifierade offentliga rapporter, kontrollerade 28 november 2026. Ingen egen skattning av beståndets storlek.</p>
 </main><script>
 'use strict';
 const F='https://skof.se/fagelintresse/fisk-2/kornsparv/',A='https://cdn.birdlife.se/wp-content/uploads/sites/53/2023/02/Anser2022-4-low.pdf',N='https://skof.se/kornsparven-minskar/';
+const V25='https://skof.se/wp-content/uploads/2025/10/Inventering-av-kornsparv-pa-Osterlen-juni-och-juli-2025_v2.pdf',V26='https://skof.se/wp-content/uploads/2026/10/Kornsparvsinventeringsrapport_2026.pdf', AN20='https://cdn.birdlife.se/wp-content/uploads/sites/53/2022/03/Anser2021-1-low.pdf', NV='https://www.naturvardsverket.se/4ac286/globalassets/media/publikationer-pdf/5500/978-91-620-5502-x.pdf';
 const data=[
+{y:2000,v:10,q:'cirka',g:'histRev',m:'Revir',area:'Sydöstra Skåne',note:'Äldre uppföljning, Naturvårdsverket rapport 5502 s. 15. Inte samma protokoll som 2025–2026.',src:NV+'#page=16'},
+{y:2003,v:20,q:'cirka',g:'hist',m:'Revirhävdande hanar',area:'Hammar–Ingelstorp–Hagestad, sydöstra Skåne',note:'Regionalt delområde, uttryckligen åtskilt från Fredshög. Naturvårdsverket rapport 5502 s. 13.',src:NV+'#page=14'},
+{y:2004,v:32,g:'histRev',m:'Revir',area:'Sydöstra Skåne',note:'Äldre uppföljning, Naturvårdsverket rapport 5502 s. 15. Ingen jämförbar besöksinsats verifierad.',src:NV+'#page=16'},
+{y:2021,v:46,g:'regionRev',m:'Besatta revir',area:'Skåne',note:'Retrospektiv uppgift i 2025 års inventeringsrapport, slutord s. 9; annat mått än hanar.',src:V25+'#page=9'},
+{y:2022,v:48,g:'regionRev',m:'Besatta revir',area:'Skåne',note:'Retrospektiv uppgift i 2025 års inventeringsrapport, slutord s. 9; annat mått än hanar.',src:V25+'#page=9'},
+{y:2025,v:44,q:'minst',g:'regionRev',m:'Revir/par',area:'Skåne',note:'Minimital; rapporten anger att årets regionala inventering var mindre intensiv än tidigare. Ingen likvärdig trendpunkt.',src:V25+'#page=9'},
 {y:2009,v:40,q:'cirka',g:'hist',m:'Revirhävdande hanar',area:'Sydöstra Skåne, närmare uppföljning',note:'Bredare uppgifter från Ystad–Simrishamn gav minst 50. Det är inte samma urval.',src:F},
 {y:2010,v:32,g:'hist',m:'Hanar',area:'Sydöstra Skåne',note:'Kurt Ivarssons sammanställning. 17 honor och 15 ensamma revirhävdande hanar redovisades separat.',src:F},
 {y:2011,v:18,g:'hist',m:'Revirhävdande hanar',area:'Ingelstorp–Borrby',note:'Riktad uppföljning fram till 14 augusti. Sju honor redovisades separat.',src:F},
 {y:2016,v:20,q:'cirka',g:'hist',m:'Revirhävdande hanar',area:'Häckningsområdet i sydost',note:'Sammanställning av Kurt Ivarsson. Minst tolv par bedömdes ha häckat.',src:F},
-{y:2020,v:54,q:'minst',g:'region',m:'Hanar',area:'Skåne, flera delområden',note:'Summering av inventeringar. Minst 33 honor; antalet är inte par.',src:F},
+{y:2020,v:54,q:'minst',g:'region',m:'Hanar',area:'Skåne, flera delområden',note:'Projektets inventering. Minst 33 honor; antalet är inte par. Anser 2021:1, s. 39.',src:AN20},
 {y:2021,v:57,g:'region',m:'Bedömda hanar',area:'Skåne, flera delområden',note:'Sammanställning inom Länsstyrelsens åtgärdsprogram. Rapporten anger också 51 honor och 40–41 häckningsförsök.',src:F},
 {y:2022,v:67.5,lo:67,hi:68,g:'region',m:'Revirhållande hanar',area:'Skåne, flera delområden',note:'Inventering inom Länsstyrelsens åtgärdsprogram. Mittpunkten i intervallet ritas tillsammans med intervallet.',src:A},
-{y:2025,v:39,g:'core',m:'Revirhävdande hanar',area:'Österlens jämförelseområde',note:'SkOF:s 2025-siffra för jämförelsen med 2026; andra lokaler tillkommer i Skånetotalen.',src:N},
-{y:2026,v:30,g:'core',m:'Revirhävdande hanar',area:'Österlen, främst Kabusa–Simrishamn sydost om väg 9',note:'SkOF:s räkning under juni och juli. Det observerade antalet är inte en skattning av alla häckande par.',src:N}];
+{y:2025,v:39,g:'core',m:'Revirhävdande hanar',area:'Österlens jämförelseområde',note:'SkOF:s 2025-siffra för jämförelsen med 2026; andra lokaler tillkommer i Skånetotalen.',src:V25},
+{y:2026,v:30,g:'core',m:'Revirhävdande hanar',area:'Österlen, främst Kabusa–Simrishamn sydost om väg 9',note:'SkOF:s räkning under juni och juli. Det observerade antalet är inte en skattning av alla häckande par.',src:V26}];
 const other=[
 [2012,'24','Häckningar eller revir, Ivarssons kärnområde; minst 26 i Skåne i FiSk.'],
 [2013,'10 + 2','Säkra respektive misstänkta häckningar; fyra till synes ensamma hanar därutöver.'],
@@ -70,46 +82,67 @@ const other=[
 [2017,'18','Revir, inventeringsområdet i sydost.'],
 [2018,'12','Revir, inventeringsområdet i sydost.'],
 [2019,'ca 25 + 5','Sjungande fåglar i Ystad respektive Simrishamn; metoder och täckning skiljer sig.'],
+[2020,'17','Konstaterade häckningar i Ystads och Simrishamns kommuner (11 + 6), inte revirhävdande hanar. Anser 2021:1, s. 39.'],
 [2023,'—','Ingen riktad inventering redovisad.'],[2024,'—','Ingen riktad inventering redovisad.'],
-[2025,'minst 44','Revir/par i hela Skåne, enligt SkOF:s senare redovisning. Inte antal hanar i samma geografi som 39.']];
-const colors={core:'#315b41',region:'#375a7e',hist:'#865821'}, ns='http://www.w3.org/2000/svg', plot=document.getElementById('plot'),host=document.getElementById('chart-host');
+[2026,'minst 26','Ungfåglar i Österlens riktade inventering; inte ett revir- eller hanmått.']];
+const colors={core:'#315b41',region:'#375a7e',hist:'#865821',regionRev:'#7e4467',histRev:'#685e39'}, ns='http://www.w3.org/2000/svg', plot=document.getElementById('plot'),host=document.getElementById('chart-host');
 const enabled=()=>new Set([...document.querySelectorAll('[data-layer]:checked')].map(x=>x.dataset.layer));
 const word=d=>d.lo?d.lo+'–'+d.hi:(d.q?d.q+' ':'')+d.v;
 const elem=(name,props={},str)=>{let e=document.createElementNS(ns,name);for(const[k,v] of Object.entries(props))e.setAttribute(k,v);if(str!==undefined)e.textContent=str;return e};
-let selected=data.at(-1);
+data.forEach(d=>d.key=d.g+'-'+d.y);
+const seriesNames={core:'Österlen: revirhävdande hanar',region:'Skåne: hanar',hist:'Äldre sydost: hanar',regionRev:'Skåne: revir/par',histRev:'Äldre sydost: revir'};
+let selected=data.find(d=>d.key==='core-2026');
 function detail(d){
  selected=d;document.getElementById('detail-title').textContent=d?d.y+' · '+word(d):'Inga valda serier';
  const dest=document.getElementById('point-detail');dest.replaceChildren(); if(!d)return;
  for(const [value,style] of [[d.m,'metric'],[d.area,''],[d.note,'sub']]){const p=document.createElement('p');p.className=style;p.textContent=value;dest.append(p)}
  const a=document.createElement('a');a.href=d.src;a.textContent='Öppna originalkällan';dest.append(a);
- for(const g of plot.querySelectorAll('.point'))g.setAttribute('aria-pressed',String(g.dataset.year==d.y))
+ for(const g of plot.querySelectorAll('.point'))g.setAttribute('aria-pressed',String(g.dataset.key===d.key))
 }
 function draw(){
  const w=Math.max(290,Math.floor(host.clientWidth)),h=w<520?315:330,l=35,r=22,t=17,b=35;plot.setAttribute('viewBox','0 0 '+w+' '+h);plot.replaceChildren();
- const X=y=>l+(w-l-r)*(y-2009)/17,Y=v=>h-b-(h-t-b)*v/75;
+ const X=y=>l+(w-l-r)*(y-2000)/26,Y=v=>h-b-(h-t-b)*v/75;
  for(let v=0;v<=75;v+=15){plot.append(elem('line',{x1:l,x2:w-r,y1:Y(v),y2:Y(v),stroke:'#dedacf'}),elem('text',{x:l-7,y:Y(v)+4,'text-anchor':'end',fill:'#535d51','font-size':11},v))}
- const labels=w<460?[2009,2013,2017,2021,2026]:[2009,2011,2013,2015,2017,2019,2021,2023,2026];
+ const labels=w<460?[2000,2006,2013,2020,2026]:[2000,2004,2009,2013,2017,2020,2023,2026];
  for(const yy of labels)plot.append(elem('text',{x:X(yy),y:h-11,'text-anchor':'middle',fill:'#535d51','font-size':11},yy));
  const en=enabled(),shown=data.filter(d=>en.has(d.g));
- if(en.has('core')){
-  const d=data.slice(-2);plot.append(elem('line',{x1:X(d[0].y),y1:Y(d[0].v),x2:X(d[1].y),y2:Y(d[1].v),stroke:colors.core,'stroke-width':2.5,'data-comparable':'2025-2026'}))
+ if(en.has('core')&&document.getElementById('lines-toggle').checked){
+  const d=data.filter(x=>x.g==='core').sort((a,b)=>a.y-b.y);
+  const a={x1:X(d[0].y),y1:Y(d[0].v),x2:X(d[1].y),y2:Y(d[1].v)};
+  const g=elem('g',{'data-comparable':'2025-2026','aria-label':'Österlen 2025–2026: 39 till 30 räknade hanar'});
+  g.append(elem('line',{...a,stroke:colors.core,'stroke-width':2.5}),elem('title',{},'Österlen 2025–2026: −9 (−23 %).'));
+  const tag=[document.getElementById('stats-toggle').checked?'−9 (−23 %)':'',document.getElementById('test-toggle').checked?'p ≈ 0,34':''].filter(Boolean).join(' · ');
+  if(tag)g.append(elem('text',{x:a.x2-7,y:Math.min(a.y1,a.y2)+31,'text-anchor':'end','font-size':11,'font-weight':'650',fill:colors.core},tag));
+  plot.append(g)
  }
+ updatePanels(en);
  for(const d of shown){
-  const x=X(d.y),y=Y(d.v),color=colors[d.g],g=elem('g',{class:'point',tabindex:0,role:'button','aria-label':d.y+', '+word(d)+' '+d.m.toLowerCase()+', '+d.area,'data-year':d.y});
+  const x=X(d.y),y=Y(d.v),color=colors[d.g],g=elem('g',{class:'point',tabindex:0,role:'button','aria-label':d.y+', '+word(d)+' '+d.m.toLowerCase()+', '+d.area,'data-year':d.y,'data-key':d.key});
   g.append(elem('title',{},d.y+' · '+word(d)+' · '+d.area),elem('circle',{cx:x,cy:y,r:15,fill:'transparent'}),elem('circle',{cx:x,cy:y,r:12,class:'ring'}));
   if(d.lo){for(let i of [-1,1])g.append(elem('line',{x1:x-7,x2:x+7,y1:Y(d.v+i*.5),y2:Y(d.v+i*.5),stroke:color,'stroke-width':1.5}));g.append(elem('line',{x1:x,x2:x,y1:Y(d.lo),y2:Y(d.hi),stroke:color,'stroke-width':1.5}));}
   if(d.g==='core')g.append(elem('circle',{cx:x,cy:y,r:6.5,fill:color}));
-  if(d.g==='region')g.append(elem('rect',{x:x-6,y:y-6,width:12,height:12,fill:d.lo?'#fffdf7':color,stroke:color,'stroke-width':2}));
-  if(d.g==='hist')g.append(elem('path',{d:'M'+x+' '+(y-7)+' l7 7 -7 7 -7 -7 Z',fill:'#fffdf7',stroke:color,'stroke-width':2}));
-  if(w>=490||d.g==='core')g.append(elem('text',{x:x+(d.y===2009?13:0),y:y-13,'text-anchor':'middle','font-size':11,'font-weight':650,fill:color},d.lo?d.lo+'–'+d.hi:(d.q==='cirka'?'≈':d.q==='minst'?'≥':'')+d.v));
+  if(d.g==='region'||d.g==='regionRev')g.append(elem('rect',{x:x-6,y:y-6,width:12,height:12,fill:d.lo?'#fffdf7':color,stroke:color,'stroke-width':2}));
+  if(d.g==='hist'||d.g==='histRev')g.append(elem('path',{d:'M'+x+' '+(y-7)+' l7 7 -7 7 -7 -7 Z',fill:'#fffdf7',stroke:color,'stroke-width':2}));
+  if(w>=490||d.g==='core')g.append(elem('text',{x:x+(d.y===2000?8:0),y:y-13,'text-anchor':'middle','font-size':11,'font-weight':650,fill:color},d.lo?d.lo+'–'+d.hi:(d.q==='cirka'?'≈':d.q==='minst'?'≥':'')+d.v));
   g.addEventListener('click',()=>detail(d));g.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();detail(d)}});plot.append(g)
  }
  detail(shown.includes(selected)?selected:shown.at(-1))
 }
 function exact(n,k){let p=2**(-n),sum=p;for(let j=1;j<=k;j++){p*= (n-j+1)/j;sum+=p}return 2*sum}
-const sw=document.getElementById('stats-toggle'),panel=document.getElementById('stats-panel');
-sw.addEventListener('change',()=>panel.hidden=!sw.checked);
-document.getElementById('change').textContent='9 av 39, alltså cirka 23 %';
+function updatePanels(en){
+ const st=document.getElementById('stats-toggle'), te=document.getElementById('test-toggle');
+ document.getElementById('stats-panel').hidden=!st.checked;
+ document.getElementById('test-panel').hidden=!te.checked;
+ const box=document.getElementById('series-stats');box.replaceChildren();
+ for(const g of en){
+  const ds=data.filter(d=>d.g===g).sort((a,b)=>a.y-b.y);
+  const p=document.createElement('p'),b=document.createElement('strong');b.textContent=seriesNames[g]+': ';p.append(b);
+  const desc=g==='core'?'2 mättillfällen, 39 och 30. Skillnad −9 (−23 %).':ds.length+' rapporterade mättillfällen. '+ds.map(d=>d.y+' '+word(d)).join('; ')+'. Ingen gemensam trendmodell.';
+  p.append(desc);box.append(p);
+ }
+ if(!en.size)box.textContent='Välj en serie i diagrammet för att visa siffrorna.';
+}
+document.querySelectorAll('#stats-toggle,#lines-toggle,#test-toggle').forEach(x=>x.addEventListener('change',draw));
 document.getElementById('pvalue').textContent='p ≈ '+exact(69,30).toFixed(2).replace('.',',');
 const list=data.map(d=>[d.y,word(d),d.m+' · '+d.area]).concat(other).sort((a,b)=>a[0]-b[0]);
 for(const row of list){const tr=document.createElement('tr');for(const x of row){const c=document.createElement('td');c.textContent=x;tr.append(c)}document.getElementById('rows').append(tr)}
