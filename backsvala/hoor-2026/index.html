@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="sv"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex"><title>Backsvala i Skåne | Inventeringsbild</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;family=JetBrains+Mono:wght@400;600&amp;display=swap">
+<style>
+:root{--ink:#202823;--muted:#4f5c53;--green:#245747;--pale:#eef5ef;--edge:#d4dfd5;--brick:#9e4b37;--cream:#f9f3e8}*{box-sizing:border-box}body{margin:0;background:#fff;color:var(--ink);font:1rem/1.55 Inter,system-ui,sans-serif}a{color:#205444;text-underline-offset:.15em}button,select{font:inherit}main{max-width:1170px;margin:auto;padding:40px clamp(16px,5vw,64px)}header{border-top:4px solid var(--green);padding-top:24px}.over{font:600 .77rem/1.3 "JetBrains Mono",monospace;color:var(--green);letter-spacing:.11em;text-transform:uppercase;margin:0 0 8px}h1{font-size:clamp(2.45rem,7vw,5rem);line-height:1;letter-spacing:-.075em;margin:0}h2{line-height:1.2;font-size:clamp(1.2rem,2.5vw,1.7rem);margin:0 0 .55em}p{margin:0 0 .7em}.lead{max-width:68ch;margin:16px 0;color:var(--muted);font-size:1.1rem}.cards{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin:25px 0}.stat,.panel{border:1px solid var(--edge);border-radius:15px;padding:clamp(14px,2.5vw,27px)}.stat{display:block;text-decoration:none;color:inherit;background:var(--pale)}.stat:nth-child(2){background:var(--cream)}.stat strong{display:block;font:700 clamp(1.1rem,3.6vw,2.2rem)/1.22 "JetBrains Mono",monospace;color:var(--green);margin:7px 0}.stat span:last-child{font-size:.88rem;color:var(--muted)}.panel{margin-top:20px}.controls{display:flex;flex-wrap:wrap;gap:12px;align-items:end;margin:14px 0 18px}.controls label{display:grid;gap:5px;color:var(--muted);font-size:.9rem}.controls select{color:var(--ink);border:1px solid #7c8d81;border-radius:8px;background:#fff;max-width:100%;padding:8px;min-height:44px}.chart{display:grid;gap:6px}.bar{display:grid;grid-template-columns:6.5rem minmax(32px,1fr) minmax(5.8rem,auto);gap:12px;align-items:center;border:0;border-radius:8px;background:#f4f7f4;padding:8px;text-align:left;color:var(--ink);min-height:44px;width:100%;cursor:pointer}.bar:hover,.bar[aria-pressed=true]{background:#dfece2}.track{height:15px;background:#e3eae3;border-radius:3px;display:block}.fill{display:block;height:100%;border-radius:3px;background:var(--green)}.fill.alternate{background:var(--brick)}.bar b{text-align:right;font:600 .9rem/1.2 "JetBrains Mono",monospace}.detail{border-left:3px solid var(--green);padding:10px 13px;background:var(--pale);border-radius:0 7px 7px 0;margin-top:15px;min-height:4.4rem}.sub,small{color:var(--muted);font-size:.875rem}.local{scroll-margin-top:1rem}.table{width:100%;border-collapse:collapse;margin:.65rem 0}.table th,.table td{padding:7px 8px;text-align:left;border-bottom:1px solid var(--edge)}summary{font-weight:700;cursor:pointer;padding:5px 0;min-height:38px}ol,ul{padding-left:1.4em}li{margin:.3em 0}footer{padding:18px 0 0;color:var(--muted);font-size:.85rem}a:focus-visible,button:focus-visible,select:focus-visible,summary:focus-visible{outline:3px solid #80522d;outline-offset:3px}@media(max-width:580px){main{padding-top:22px}.cards{grid-template-columns:1fr;gap:7px}.stat{padding:12px}.stat strong{display:inline;margin-left:.55em}.stat span:last-child{display:block;margin-top:5px}.bar{grid-template-columns:5.6rem minmax(20px,1fr) 5.1rem;gap:7px;padding:7px}.bar b{font-size:.78rem}}@media print{main{padding:0}.panel,.stat{break-inside:avoid}a{text-decoration:none}.controls{display:none}}
+</style></head>
+<body><main><header><p class="over">gAIa / Fågelinventeringar / Skåne</p><h1>Backsvala i Skåne</h1><p class="lead"><i>Riparia riparia</i>. En inventeringsbild över landskapet, branten och grustaget. Välj ett mått i taget: kolonier, bohål och häckande par är tre olika saker.</p></header>
+<section class="cards" aria-label="Tre resultat">
+<a class="stat" href="#diagram"><span>Kända kolonier i Skåne</span><strong>95 → 56</strong><span>2020–21 jämfört med 2026</span></a>
+<a class="stat" href="#diagram" id="quarry-card"><span>Kolonier i sand- och bergtäkter</span><strong>30 → 17</strong><span>Samma två inventeringsomgångar</span></a>
+<a class="stat" href="#maglaby"><span>Maglaby, Åstorp</span><strong>100 · 150 · 335</strong><span>Bohål 2020, 2021 och 2026</span></a></section>
+<section class="panel" id="diagram"><p class="over">Välj vad du vill visa</p><h2 id="plot-title">Kända kolonier i Skåne</h2><div class="controls"><label>Serie<select id="series">
+<option value="count">Skåne: rapporterade kolonier</option><option value="habitat">Skåne: kolonier per miljö</option><option value="holes">Skåne: bohål</option><option value="pairs">Skåne: uppskattat antal par</option><option value="mag">Maglaby: bohål och observerade fåglar</option><option value="ven">Ven: bohål</option></select></label>
+<label id="detailControl" hidden>Miljö eller mått<select id="part"></select></label></div><p id="explain" class="sub"></p><div id="bars" class="chart" aria-label="Diagram"></div><div id="datum" class="detail" aria-live="polite"></div><noscript><p>För diagrammen behövs JavaScript. Huvudresultaten står överst och de lokala resultaten finns nedan.</p></noscript></section>
+<section class="panel local" id="maglaby"><p class="over">Närbild / Åstorps kommun</p><h2>Grustaget vid Maglaby</h2><table class="table"><thead><tr><th>År</th><th>Räknade bohål</th><th>Observerade svalor</th></tr></thead><tbody><tr><td>2020</td><td>100</td><td>45</td></tr><tr><td>2021</td><td>150</td><td>50</td></tr><tr><td>2026</td><td>335</td><td>60</td></tr></tbody></table><p>Legnells rapport 2026 för tillbaka Maglaby till samma täktserie som den äldre kommunrapporten förde under Kvidinge. I 2026 års tabell fördelas hålen på fyra grupper. <strong>Hålen har blivit fler i de redovisade räkningarna; det visar inte att antalet häckande par har ökat lika mycket.</strong></p><p class="sub"><a href="https://cdn.birdlife.se/wp-content/uploads/sites/53/2022/06/Backsvala-detaljerad.pdf#page=8">2020–21, kommunbilagan s. 8</a> · <a href="https://skof.se/backsvalorna-i-skane-kartlagda-2026/">2026, SkOF:s rapportsida (lokaltabell och täktjämförelse)</a>. Ingen verifierad obruten årsserie. Inga koordinater publiceras här.</p></section>
+<section class="panel"><details><summary>Vad går att jämföra?</summary><p>I länsöversikten är 2020–21 en <strong>tvåårig inventeringsomgång</strong>; 2026 gäller en sommar. Besök, rapportering, riktade kustinventeringar och hur närliggande grupper räknas kan skilja sig. 95 → 56 är 41 procent färre <em>kända kolonier i sammanställningen</em>, inte 41 procent färre fåglar. Ingen trendlinje eller signifikans läggs över olika upplägg.</p><p>Äldre uppskattningar av häckande par byggde delvis på antagen beläggning i bohålen. Bengtsson anger 65 procent för metoden 2003 och 70 procent för 2017, med varierande typer av rapporter. Resultaten är värdefulla, men inte exakta populationsräkningar.</p><p>Inventeringen 1994 var inriktad på täkter, inte ett heltäckande länsurval. Därför ligger dess 117 lokaler med häckning inte på samma diagram som de senare länssiffrorna. Rapporten anger 8 869 registrerade par och uppskattar 10 000–15 000 i hela Skåne.</p></details>
+<details><summary>Källor och dataluckor</summary><ol>
+<li><a href="https://cdn.birdlife.se/wp-content/uploads/sites/53/2022/12/backsvala_2017.pdf#page=2">Kenneth Bengtsson, <i>Backsvalan i Skåne 2017</i>, Anser 4/2017, s. 19–20</a>. Atlasbedömning, historik, jämförelse 2003–2017 och metod.</li>
+<li><a href="https://cdn.birdlife.se/wp-content/uploads/sites/53/2022/06/Backsvala-detaljerad.pdf#page=9">Bengt Legnell, kartläggningen 2020–21, kommunbilaga och länssammanfattning</a>. Kända kolonier, bohål och täckningsskillnader.</li>
+<li><a href="https://skof.se/backsvalorna-i-skane-kartlagda-2026/">Bengt Legnell, kartläggningen 2026 och SkOF:s redovisning</a>. Länsjämförelsen, miljöerna, Maglaby och jämförelsetabellen för Ven.</li>
+<li><a href="https://cdn.birdlife.se/wp-content/uploads/sites/53/2024/07/Backsvala-strandkolonier-2024.pdf">Bengt Legnell, strandkolonier 2024</a>. Kustens inventeringsupplägg och exempel på hur ras ändrar häckningsmiljöer.</li>
+</ol><p><strong>Lucka:</strong> Ingen verifierad länssumma för bohål 2026 i denna bild. Serier för enskilda kolonier eller rapporter med oklar täckning fyller inte det hålet.</p></details></section>
+<footer>gAIa · Inventeringsbild för samtal och källkontroll</footer></main>
+<script>
+const bib={
+a:['Anser 4/2017','https://cdn.birdlife.se/wp-content/uploads/sites/53/2022/12/backsvala_2017.pdf#page=2'],
+b:['Kommunbilagan 2020–21','https://cdn.birdlife.se/wp-content/uploads/sites/53/2022/06/Backsvala-detaljerad.pdf#page=8'],
+c:['Länssammanfattningen 2020–21','https://cdn.birdlife.se/wp-content/uploads/sites/53/2022/06/Backsvala-detaljerad.pdf#page=9'],
+d:['SkOF:s rapportsida 2026','https://skof.se/backsvalorna-i-skane-kartlagda-2026/']
+};
+const sets={
+count:{title:'Kända kolonier i Skåne',info:'Rapporterade eller kända kolonier. Varje stapel är en inventeringsomgång. Ingen årsinterpolering.',unit:'kolonier',rows:[
+ ['2003',111,'a','Skånes del av riksinventeringen. Senare genomgång pekar på missade strandkolonier.'],
+ ['2017',74,'a','Skåneinventering via lokalbesök och rapportering; bland annat Ven var ofullständigt inventerat.'],
+ ['2020–21',95,'c','Tvåårig kartläggning med riktad inventering av strandbranter.'],
+ ['2026',56,'d','Kända kolonier i 2026 års kartläggning, 39 färre än 2020–21.']]},
+habitat:{title:'Kolonier per häckningsmiljö', info:'Antal rapporterade kolonier inom vald miljö. Miljöerna här är inte en fullständig uppdelning av länssumman.',unit:'kolonier',parts:{
+ 'Sand- och bergtäkter':[['2020–21',30,'d','Rapporterade kolonier i täkter.'],['2026',17,'d','Färre täkter med kända kolonier, trots att flera kvarvarande täktkolonier vuxit i antal hål.']],
+ 'Naturliga rasbranter':[['2020–21',27,'d','Kolonier i naturliga rasbranter enligt 2026 års jämförelse.'],['2026',17,'d','Kolonier i naturliga rasbranter enligt samma jämförelse.']],
+ 'Stensättning':[['2020–21',5,'d','Kolonier mellan stenblock, huvudsakligen i hamnmiljö.'],['2026',5,'d','Samma antal; det var inte genomgående samma hamnar.']]}},
+holes:{title:'Bohål i den skånska sammanställningen',info:'Historiska sammanställningar, inte häckande par. 2003 års stapel innefattar ett uppskattat tillägg.',unit:'bohål',rows:[
+ ['2003',12240,'c','Legnells efterhandsvärde inkluderar cirka 1 000 uppskattade bohål från missade kolonier.','≈ '],
+ ['2017',7000,'c','Avrundat antal enligt Legnells historiska sammanställning.','≈ '],
+ ['2020–21',5000,'c','Avrundat antal i den tvååriga inventeringsomgången.','≈ ']]},
+pairs:{title:'Uppskattat antal häckande par i Skåne',info:'Skattningar med olika täckning och antaganden. Staplar med intervall går till den övre gränsen; se etiketten för hela intervallet.',unit:'par',rows:[
+ ['1984',15000,'a','Atlasbaserad uppskattning, 10 000–15 000 par.','', '10–15 000'],
+ ['1994',15000,'a','För hela Skåne skattades 10 000–15 000 par. Fältarbetet var koncentrerat till täkter.','', '10–15 000'],
+ ['2003',9000,'a','Avrundad uppskattning för hela Skåne, inte ett exakt antal bon.','≈ '],
+ ['2017',4241,'a','Inventeringens beräknade antal par, bland annat med 70 procent antagen beläggning.']]},
+mag:{title:'Grustaget vid Maglaby, Åstorp',info:'Den äldre kommunrapporten kallar täkten Kvidinge; Legnell kopplar den äldre jämförelsen till Maglaby 2026. Inga värden har fyllts i för mellanåren.',parts:{
+ 'Räknade bohål':[['2020',100,'b','Kvidinge, grustäkt.'],['2021',150,'b','Kvidinge, grustäkt.'],['2026',335,'d','Maglaby. Fyra grupper av bohål. Bohål och aktiva bon är olika mått.']],
+ 'Observerade svalor':[['2020',45,'b','Observerade exemplar vid redovisad räkning.'],['2021',50,'b','Observerade exemplar vid redovisad räkning.'],['2026',60,'d','Svalor uppgivna i lokaltabellen; inte en skattning av kolonins totalpopulation.']]}},
+ven:{title:'Ven: bohål i rapportens kustjämförelse',info:'Alla redovisade delkolonier på ön tillsammans enligt 2026 års jämförelsetabell. Antal besök och grupper kan variera.',unit:'bohål',rows:[
+ ['2020–21',1300,'d','Retrospektivt värde från 2026 års jämförelsetabell.'],
+ ['2022',1600,'d','Värde i 2026 års jämförelsetabell.'],['2023',659,'d','Samma jämförelse.'],['2024',1120,'d','Samma jämförelse.'],['2025',661,'d','Samma jämförelse.'],['2026',960,'d','Fyra delområden i lokaltabellen.']]}
+};
+const sel=document.querySelector('#series'),part=document.querySelector('#part'),dcon=document.querySelector('#detailControl'), bars=document.querySelector('#bars'), detail=document.querySelector('#datum');
+const fmt=new Intl.NumberFormat('sv-SE');
+function draw(reset=false){
+ const s=sets[sel.value], ps=Object.keys(s.parts||{});
+ dcon.hidden=!ps.length;dcon.style.display=ps.length?'':'none';
+ if(reset){part.replaceChildren(...ps.map(k=>new Option(k,k)));}
+ const rows=s.rows||s.parts[part.value];const max=Math.max(...rows.map(r=>r[1]));
+ document.querySelector('#plot-title').textContent=s.title;
+ document.querySelector('#explain').textContent=s.info;
+ function show(i){const [y,v,src,n,p='',dt]=rows[i];const name=s.unit||(sel.value==='habitat'?'kolonier':part.value.toLowerCase());
+ const strong=document.createElement('strong');strong.textContent=y+' · '+(dt||p+fmt.format(v))+' '+name+'. ';
+ const a=document.createElement('a');a.href=bib[src][1];a.textContent=bib[src][0];
+ detail.replaceChildren(strong,document.createTextNode(n+' '),a);[...bars.children].forEach((el,j)=>el.setAttribute('aria-pressed',String(j===i)));
+ }
+ const all=rows.map(([y,v,k,n,p='',dt],i)=>{const b=document.createElement('button');b.type='button';b.className='bar';const value=dt||p+fmt.format(v);
+ const yr=document.createElement('span'),bar=document.createElement('span'),fill=document.createElement('span'),txt=document.createElement('b');
+ yr.textContent=y;txt.textContent=value;bar.className='track';bar.setAttribute('aria-hidden','true');
+ fill.className='fill'+(y==='2026'?' alternate':'');fill.style.width=(100*v/max)+'%';bar.append(fill);b.append(yr,bar,txt);b.addEventListener('click',()=>show(i));return b;});
+ bars.replaceChildren(...all);show(rows.length-1);
+}
+sel.addEventListener('change',()=>draw(true));part.addEventListener('change',()=>draw());
+document.getElementById('quarry-card').addEventListener('click',()=>{sel.value='habitat';draw(true);});draw(true);
+</script></body></html>
